@@ -1,8 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 public class EventSO : ScriptableObject
 {
+	public event Action Callbacks;
 
+	public void Raise() => this.Callbacks?.Invoke();
 }
