@@ -4,7 +4,7 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "ScriptableObjects/Event")]
 public class EventSO : ScriptableObject
 {
-	public event Action Callbacks;
+	public event Action Listeners;
 
-	public void Raise() => this.Callbacks?.Invoke();
+	public void Raise() => this.Listeners?.Invoke();
 }

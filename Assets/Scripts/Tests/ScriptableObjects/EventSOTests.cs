@@ -12,7 +12,7 @@ public class EventSOTests : TestCollection
 		var called = 0;
 		var eventSO = ScriptableObject.CreateInstance<EventSO>();
 
-		eventSO.Callbacks += () => ++called;
+		eventSO.Listeners += () => ++called;
 		eventSO.Raise();
 
 		Assert.AreEqual(1, called);
