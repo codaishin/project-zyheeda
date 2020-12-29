@@ -9,7 +9,8 @@ public abstract class BaseInputSO : ScriptableObject
 	protected abstract bool GetDown(in KeyCode code);
 	protected abstract bool GetUp(in KeyCode code);
 
-	public bool GetKey(in KeyCode code, in KeyState state) => state switch {
+	public virtual bool GetKey(in KeyCode code, in KeyState state)
+		=> state switch {
 			KeyState.Up => this.GetUp(code),
 			KeyState.Down => this.GetDown(code),
 			KeyState.Hold => this.Get(code),
