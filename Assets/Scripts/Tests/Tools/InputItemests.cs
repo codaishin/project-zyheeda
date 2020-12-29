@@ -1,10 +1,8 @@
-using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
-using UnityEngine.TestTools;
 
-public class InputListenerMBTests : TestCollection
+public class InputItemTests : TestCollection
 {
 	private class MockInputSO : BaseInputSO
 	{
@@ -30,16 +28,16 @@ public class InputListenerMBTests : TestCollection
 		var state = KeyState.Down;
 		var inputSO = ScriptableObject.CreateInstance<MockInputSO>();
 		var eventSO = ScriptableObject.CreateInstance<EventSO>();
-		var inputListenerMB = new GameObject("obj").AddComponent<InputListenerMB>();
+		var inputItem = new InputItem();
 
 		inputSO.keyStates[key] = state;
 		eventSO.Listeners += () => ++called;
-		inputListenerMB.keyCode = key;
-		inputListenerMB.keyState = state;
-		inputListenerMB.events = new EventSO[] { eventSO };
-		inputListenerMB.inputSO = inputSO;
+		inputItem.keyCode = key;
+		inputItem.keyState = state;
+		inputItem.events = new EventSO[] { eventSO };
+		inputItem.inputSO = inputSO;
 
-		inputListenerMB.Listen();
+		inputItem.Apply();
 
 		Assert.AreEqual(1, called);
 	}
@@ -52,15 +50,15 @@ public class InputListenerMBTests : TestCollection
 		var state = KeyState.Down;
 		var eventSO = ScriptableObject.CreateInstance<EventSO>();
 		var inputSO = ScriptableObject.CreateInstance<MockInputSO>();
-		var inputListenerMB = new GameObject("obj").AddComponent<InputListenerMB>();
+		var inputItem = new InputItem();
 
 		eventSO.Listeners += () => ++called;
-		inputListenerMB.keyCode = key;
-		inputListenerMB.keyState = state;
-		inputListenerMB.events = new EventSO[] { eventSO };
-		inputListenerMB.inputSO = inputSO;
+		inputItem.keyCode = key;
+		inputItem.keyState = state;
+		inputItem.events = new EventSO[] { eventSO };
+		inputItem.inputSO = inputSO;
 
-		inputListenerMB.Listen();
+		inputItem.Apply();
 
 		Assert.AreEqual(0, called);
 	}
