@@ -3,14 +3,15 @@ using UnityEngine;
 
 public struct InputItem
 {
+	public delegate bool ValidationFunc(in KeyCode key, in KeyState state);
+
 	public KeyCode keyCode;
 	public KeyState keyState;
-	public BaseInputSO inputSO;
 	public EventSO[] events;
 
-	public void Apply()
+	public void Apply(in ValidationFunc validate)
 	{
-		if (this.inputSO.GetKey(this.keyCode, this.keyState)) {
+		if (validate(this.keyCode, this.keyState)) {
 			this.events.ForEach(e => e.Raise());
 		}
 	}
