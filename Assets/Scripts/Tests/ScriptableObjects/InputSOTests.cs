@@ -26,84 +26,84 @@ public class InputSOTests : TestCollection
 	public void HoldSpace()
 	{
 		var key = KeyCode.Space;
-		var mode = KeyState.Hold;
+		var state = KeyState.Hold;
 		var inputSO = ScriptableObject.CreateInstance<MockInputSO>();
-		inputSO.keyStates[key] = mode;
+		inputSO.keyStates[key] = state;
 
-		Assert.True(inputSO.GetKey(key, mode));
+		Assert.True(inputSO.GetKey(key, state));
 	}
 
 	[Test]
 	public void HoldSpaceFalse()
 	{
 		var key = KeyCode.Space;
-		var mode = KeyState.Hold;
+		var state = KeyState.Hold;
 		var inputSO = ScriptableObject.CreateInstance<MockInputSO>();
 
-		Assert.False(inputSO.GetKey(key, mode));
+		Assert.False(inputSO.GetKey(key, state));
 	}
 
 	[Test]
 	public void DownK()
 	{
 		var key = KeyCode.K;
-		var mode = KeyState.Down;
+		var state = KeyState.Down;
 		var inputSO = ScriptableObject.CreateInstance<MockInputSO>();
-		inputSO.keyStates[key] = mode;
+		inputSO.keyStates[key] = state;
 
-		Assert.True(inputSO.GetKey(key, mode));
+		Assert.True(inputSO.GetKey(key, state));
 	}
 
 	[Test]
 	public void DownKFalse()
 	{
 		var key = KeyCode.K;
-		var mode = KeyState.Down;
+		var state = KeyState.Down;
 		var inputSO = ScriptableObject.CreateInstance<MockInputSO>();
 
-		Assert.False(inputSO.GetKey(key, mode));
+		Assert.False(inputSO.GetKey(key, state));
 	}
 
 	[Test]
 	public void UpE()
 	{
 		var key = KeyCode.E;
-		var mode = KeyState.Up;
+		var state = KeyState.Up;
 		var inputSO = ScriptableObject.CreateInstance<MockInputSO>();
-		inputSO.keyStates[key] = mode;
+		inputSO.keyStates[key] = state;
 
-		Assert.True(inputSO.GetKey(key, mode));
+		Assert.True(inputSO.GetKey(key, state));
 	}
 
 	[Test]
 	public void UpEFalse()
 	{
 		var key = KeyCode.E;
-		var mode = KeyState.Up;
+		var state = KeyState.Up;
 		var inputSO = ScriptableObject.CreateInstance<MockInputSO>();
 
-		Assert.False(inputSO.GetKey(key, mode));
+		Assert.False(inputSO.GetKey(key, state));
 	}
 
 	[Test]
 	public void OddStateWThrows()
 	{
 		var key = KeyCode.W;
-		var mode = (KeyState)(-1);
+		var state = (KeyState)(-1);
 		var inputSO = ScriptableObject.CreateInstance<MockInputSO>();
 
-		Assert.Throws<System.ArgumentException>(() => inputSO.GetKey(key, mode));
+		Assert.Throws<System.ArgumentException>(() => inputSO.GetKey(key, state));
 	}
 
 	[Test]
 	public void OddStateWThrowsMessage()
 	{
 		var key = KeyCode.W;
-		var mode = (KeyState)(-1);
+		var state = (KeyState)(-1);
 		var inputSO = ScriptableObject.CreateInstance<MockInputSO>();
 
 		try {
-			inputSO.GetKey(key, mode);
+			inputSO.GetKey(key, state);
 		} catch (System.ArgumentException e) {
 			Assert.AreEqual("KeyState \"-1\" not recognised", e.Message);
 		}
