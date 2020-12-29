@@ -1,10 +1,12 @@
-using System.Linq;
+using System;
 using UnityEngine;
 
+[Serializable]
 public struct InputItem
 {
 	public delegate bool ValidationFunc(in KeyCode key, in KeyState state);
 
+	public string name;
 	public KeyCode keyCode;
 	public KeyState keyState;
 	public EventSO eventSO;
