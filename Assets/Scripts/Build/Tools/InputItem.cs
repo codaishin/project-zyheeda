@@ -7,12 +7,12 @@ public struct InputItem
 
 	public KeyCode keyCode;
 	public KeyState keyState;
-	public EventSO[] events;
+	public EventSO eventSO;
 
 	public void Apply(in ValidationFunc validate)
 	{
 		if (validate(this.keyCode, this.keyState)) {
-			this.events.ForEach(e => e.Raise());
+			this.eventSO.Raise();
 		}
 	}
 }

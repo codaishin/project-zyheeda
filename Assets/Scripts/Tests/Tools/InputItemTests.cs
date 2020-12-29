@@ -12,7 +12,7 @@ public class InputItemTests : TestCollection
 		var inputItem = new InputItem();
 
 		eventSO.Listeners += () => ++called;
-		inputItem.events = new EventSO[] { eventSO };
+		inputItem.eventSO = eventSO;
 
 		inputItem.Apply((in KeyCode _, in KeyState __) => true);
 
@@ -27,7 +27,7 @@ public class InputItemTests : TestCollection
 		var inputItem = new InputItem();
 
 		eventSO.Listeners += () => ++called;
-		inputItem.events = new EventSO[] { eventSO };
+		inputItem.eventSO = eventSO;
 
 		inputItem.Apply((in KeyCode _, in KeyState __) => false);
 
