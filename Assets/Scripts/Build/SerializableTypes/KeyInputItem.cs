@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 
 [Serializable]
-public struct InputItem
+public struct KeyInputItem
 {
 	public delegate bool ValidationFunc(in KeyCode key, in KeyState state);
 

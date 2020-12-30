@@ -4,9 +4,9 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-public class InputGroupSOTests
+public class KeyInputGroupSOTests
 {
-	private class MockInputSO : BaseInputSO
+	private class MockKeyInputSO : BaseKeyInputSO
 	{
 		public List<(KeyCode, KeyState)> used = new List<(KeyCode, KeyState)>();
 
@@ -26,17 +26,17 @@ public class InputGroupSOTests
 	{
 		var calledA = 0;
 		var calledB = 0;
-		var inputSO = ScriptableObject.CreateInstance<MockInputSO>();
-		var inputGroupSO = ScriptableObject.CreateInstance<InputGroupSO>();
+		var inputSO = ScriptableObject.CreateInstance<MockKeyInputSO>();
+		var inputGroupSO = ScriptableObject.CreateInstance<KeyInputGroupSO>();
 		var eventA = ScriptableObject.CreateInstance<EventSO>();
 		var eventB = ScriptableObject.CreateInstance<EventSO>();
 
 		eventA.Listeners += () => ++calledA;
 		eventB.Listeners += () => ++calledB;
 		inputGroupSO.inputSO = inputSO;
-		inputGroupSO.items = new InputItem[] {
-			new InputItem{ eventSO = eventA },
-			new InputItem{ eventSO = eventB },
+		inputGroupSO.items = new KeyInputItem[] {
+			new KeyInputItem{ eventSO = eventA },
+			new KeyInputItem{ eventSO = eventB },
 		};
 		inputGroupSO.Apply();
 
@@ -49,22 +49,22 @@ public class InputGroupSOTests
 	[Test]
 	public void InjectsInputSOCallback()
 	{
-		var inputSO = ScriptableObject.CreateInstance<MockInputSO>();
-		var inputGroupSO = ScriptableObject.CreateInstance<InputGroupSO>();
+		var inputSO = ScriptableObject.CreateInstance<MockKeyInputSO>();
+		var inputGroupSO = ScriptableObject.CreateInstance<KeyInputGroupSO>();
 		var eventSO = ScriptableObject.CreateInstance<EventSO>();
-		var itemA = new InputItem{
+		var itemA = new KeyInputItem{
 			keyCode = KeyCode.U,
 			keyState = KeyState.Up,
 			eventSO = eventSO,
 		};
-		var itemB = new InputItem{
+		var itemB = new KeyInputItem{
 			keyCode = KeyCode.D,
 			keyState = KeyState.Down,
 			eventSO = eventSO,
 		};
 
 		inputGroupSO.inputSO = inputSO;
-		inputGroupSO.items = new InputItem[] { itemA, itemB };
+		inputGroupSO.items = new KeyInputItem[] { itemA, itemB };
 		inputGroupSO.Apply();
 
 		CollectionAssert.AreEqual(

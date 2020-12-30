@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public abstract class BaseInputSO : ScriptableObject
+public abstract class BaseKeyInputSO : ScriptableObject
 {
 	protected abstract bool Get(in KeyCode code);
 	protected abstract bool GetDown(in KeyCode code);
