@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEditor;
 
 [CustomPropertyDrawer(typeof(Reference))]
-public class GameObjectWrapperDrawer : PropertyDrawer
+public class ReferencePropertyDrawer : PropertyDrawer
 {
 	private static
 	(bool, bool) State(in SerializedProperty a, in SerializedProperty b)
@@ -27,12 +27,12 @@ public class GameObjectWrapperDrawer : PropertyDrawer
 		SerializedProperty prObj = property.FindPropertyRelative("gameObject");
 		SerializedProperty prRef = property.FindPropertyRelative("referenceSO");
 		string text = label.text;
-		(bool stObj, bool stRef) = GameObjectWrapperDrawer.State(prObj, prRef);
+		(bool stObj, bool stRef) = ReferencePropertyDrawer.State(prObj, prRef);
 
 		rect = new Rect(rect.x, rect.y, rect.width, rect.height / 2);
 		GUI.enabled = stObj;
 		EditorGUI.PropertyField(rect, prObj, new GUIContent($"{text} Object"));
-		rect = new Rect(rect.x, rect.y + rect.height ,rect.width, rect.height);
+		rect = new Rect(rect.x, rect.y + rect.height, rect.width, rect.height);
 		GUI.enabled = stRef;
 		EditorGUI.PropertyField(rect, prRef, new GUIContent($"{text} Reference"));
 		GUI.enabled = true;
