@@ -27,4 +27,26 @@ public class TransformMoveToMBTests : TestCollection
 			moveTo.transform.position
 		);
 	}
+
+	[Test]
+	public void MoveToFixed()
+	{
+		var moveTo = new GameObject("obj").AddComponent<TransformMoveToMB>();
+		moveTo.MoveToFixed(new Vector3(10, 0, 0));
+
+		Assert.AreEqual(new Vector3(10, 0, 0), moveTo.transform.position);
+	}
+
+	[Test]
+	public void MoveToFixedDeltaPerSecond()
+	{
+		var moveTo = new GameObject("obj").AddComponent<TransformMoveToMB>();
+		moveTo.deltaPerSecond = 10;
+		moveTo.MoveToFixed(new Vector3(10, 0, 0));
+
+		Assert.AreEqual(
+			new Vector3(1, 0, 0) * Time.fixedDeltaTime * 10,
+			moveTo.transform.position
+		);
+	}
 }
