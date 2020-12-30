@@ -4,7 +4,7 @@ public class RayCastHitMB : MonoBehaviour
 {
 	private BaseRayProviderMB rayProvider;
 
-	public Reference rayProviderReference;
+	public Reference raySource;
 	public LayerMask layerConstraints;
 
 	[Header("On Hit Callbacks")]
@@ -19,7 +19,7 @@ public class RayCastHitMB : MonoBehaviour
 		if (this.onHitPoint == null) {
 			this.onHitPoint = new Vector3Event();
 		}
-		this.rayProvider = this.rayProviderReference
+		this.rayProvider = this.raySource
 			.GameObject
 			.GetComponent<BaseRayProviderMB>();
 	}
