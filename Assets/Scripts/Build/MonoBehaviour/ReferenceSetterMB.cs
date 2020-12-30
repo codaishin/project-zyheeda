@@ -7,6 +7,8 @@ public class ReferenceSetterMB : MonoBehaviour
 
 	private void Start() => this.SetReference();
 
+	private void OnDestroy() => this.referenceSO.Clear();
+
 	public void SetReference()
 	{
 		if (this.referenceSO.GameObject) {

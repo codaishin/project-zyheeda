@@ -76,4 +76,22 @@ public class ReferenceSetterMBTests : TestCollection
 
 		Assert.AreSame(obj, referenceSO.GameObject);
 	}
+
+	[UnityTest]
+	public IEnumerator UnsetOnDestroy()
+	{
+		var obj = new GameObject("obj");
+		var setterMB = obj.AddComponent<ReferenceSetterMB>();
+		var referenceSO = ScriptableObject.CreateInstance<ReferenceSO>();
+
+		setterMB.referenceSO = referenceSO;
+
+		yield return new WaitForEndOfFrame();
+
+		UnityEngine.Object.Destroy(obj);
+
+		yield return new WaitForEndOfFrame();
+
+		Assert.Null(referenceSO.GameObject);
+	}
 }
