@@ -4,5 +4,5 @@ using UnityEngine;
 
 public class MouseSO : BaseMouseSO
 {
-
+	public override Vector3 Position => Input.mousePosition;
 }
