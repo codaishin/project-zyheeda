@@ -1,10 +1,15 @@
-using System.Collections;
-using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
-using UnityEngine.TestTools;
 
-public class ReferenceSOTests
+public class ReferenceSOTests : TestCollection
 {
+	[Test]
+	public void Clear()
+	{
+		var reference = ScriptableObject.CreateInstance<ReferenceSO>();
+		reference.GameObject = new GameObject("obj");
+		reference.Clear();
 
+		Assert.Null(reference.GameObject);
+	}
 }
