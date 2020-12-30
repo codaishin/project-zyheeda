@@ -1,17 +1,9 @@
-using System;
 using UnityEngine;
-using UnityEngine.Events;
 
 public abstract class BaseRayProviderMB : MonoBehaviour
 {
 	public abstract Ray Ray { get; }
 }
-
-[Serializable]
-public class GameObjectEvent : UnityEvent<GameObject> {}
-
-[Serializable]
-public class Vector3Event : UnityEvent<Vector3> {}
 
 public class RayCastHitMB : MonoBehaviour
 {
