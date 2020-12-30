@@ -10,7 +10,7 @@ public class ReferenceTests : TestCollection
 	public void ExposeGameObject()
 	{
 		var obj = new GameObject("obj");
-		var reference = new Reference(obj);
+		var reference = (Reference)obj;
 
 		Assert.AreSame(obj, reference.GameObject);
 	}
@@ -20,7 +20,7 @@ public class ReferenceTests : TestCollection
 	{
 		var obj = new GameObject("obj");
 		var referenceSO = ScriptableObject.CreateInstance<ReferenceSO>();
-		var reference = new Reference(referenceSO);
+		var reference = (Reference)referenceSO;
 
 		referenceSO.GameObject = obj;
 		Assert.AreSame(obj, reference.GameObject);
@@ -31,7 +31,7 @@ public class ReferenceTests : TestCollection
 	{
 		var obj = new GameObject("obj");
 		var referenceSO = ScriptableObject.CreateInstance<ReferenceSO>();
-		var reference = new Reference(obj, referenceSO);
+		var reference = (Reference)(obj, referenceSO);
 
 		Assert.Throws<System.ArgumentException>(() => _ = reference.GameObject);
 	}
@@ -41,7 +41,7 @@ public class ReferenceTests : TestCollection
 	{
 		var obj = new GameObject("obj");
 		var referenceSO = ScriptableObject.CreateInstance<ReferenceSO>();
-		var reference = new Reference(obj, referenceSO);
+		var reference = (Reference)(obj, referenceSO);
 
 		try {
 			_ = reference.GameObject;
