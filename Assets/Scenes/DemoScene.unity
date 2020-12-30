@@ -401,7 +401,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16afd7ba4785e0146b2c03b99dc380b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  deltaPerSecond: 1
+  deltaPerSecond: 5
 --- !u!4 &924026604
 Transform:
   m_ObjectHideFlags: 0
@@ -432,7 +432,7 @@ MonoBehaviour:
   rayProviderMB: {fileID: 963194229}
   layers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 2147483648
   onHitGameObject:
     m_PersistentCalls:
       m_Calls: []
@@ -588,7 +588,7 @@ GameObject:
   - component: {fileID: 1029663251}
   - component: {fileID: 1029663250}
   - component: {fileID: 1029663249}
-  m_Layer: 0
+  m_Layer: 31
   m_Name: Plane
   m_TagString: Untagged
   m_Icon: {fileID: 0}
