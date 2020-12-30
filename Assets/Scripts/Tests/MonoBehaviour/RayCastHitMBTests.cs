@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
@@ -46,9 +45,11 @@ public class RayCastHitMBTests : TestCollection
 		rayCastHitMB.rayProviderMB = rayProviderMB;
 
 		yield return new WaitForEndOfFrame();
-		yield return new WaitForEndOfFrame();
 
 		rayCastHitMB.onHitGameObject.AddListener(o => hit = o);
+
+		yield return new WaitForEndOfFrame();
+
 		rayCastHitMB.TryHit();
 
 		Assert.AreSame(sphere, hit);
