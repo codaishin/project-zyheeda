@@ -430,7 +430,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rayProviderMB: {fileID: 963194229}
-  layers:
+  layerConstraints:
     serializedVersion: 2
     m_Bits: 2147483648
   onHitGameObject:

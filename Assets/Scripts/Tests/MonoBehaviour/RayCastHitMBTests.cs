@@ -67,7 +67,7 @@ public class RayCastHitMBTests : TestCollection
 		cubeWater.layer = LayerMask.NameToLayer("Water");
 		rayProviderMB.ray = new Ray(Vector3.up * 2, Vector3.down);
 		rayCastHitMB.rayProviderMB = rayProviderMB;
-		rayCastHitMB.layers = LayerMask.GetMask("Water");
+		rayCastHitMB.layerConstraints = LayerMask.GetMask("Water");
 
 		yield return new WaitForEndOfFrame();
 
@@ -136,7 +136,7 @@ public class RayCastHitMBTests : TestCollection
 		cubeWater.layer = LayerMask.NameToLayer("Water");
 		rayProviderMB.ray = new Ray(Vector3.up * 2, Vector3.down);
 		rayCastHitMB.rayProviderMB = rayProviderMB;
-		rayCastHitMB.layers = LayerMask.GetMask("Water");
+		rayCastHitMB.layerConstraints = LayerMask.GetMask("Water");
 
 		yield return new WaitForEndOfFrame();
 
