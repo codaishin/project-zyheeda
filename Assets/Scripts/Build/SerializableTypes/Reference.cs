@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
@@ -11,7 +10,8 @@ public struct Reference
 	[SerializeField]
 	private ReferenceSO referenceSO;
 
-	public GameObject GameObject {
+	public GameObject GameObject
+	{
 		get {
 			if (this.gameObject) {
 				if (this.referenceSO) {
@@ -23,17 +23,20 @@ public struct Reference
 		}
 	}
 
-	public Reference(in GameObject gameObject) {
+	public Reference(in GameObject gameObject)
+	{
 		this.gameObject = gameObject;
 		this.referenceSO = default;
 	}
 
-	public Reference(in ReferenceSO referenceSO) {
+	public Reference(in ReferenceSO referenceSO)
+	{
 		this.gameObject = default;
 		this.referenceSO = referenceSO;
 	}
 
-	public Reference(in GameObject gameObject, in ReferenceSO referenceSO) {
+	public Reference(in GameObject gameObject, in ReferenceSO referenceSO)
+	{
 		this.gameObject = gameObject;
 		this.referenceSO = referenceSO;
 	}
