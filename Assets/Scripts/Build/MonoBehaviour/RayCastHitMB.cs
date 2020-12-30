@@ -2,7 +2,9 @@ using UnityEngine;
 
 public class RayCastHitMB : MonoBehaviour
 {
-	public BaseRayProviderMB rayProviderMB;
+	private BaseRayProviderMB rayProvider;
+
+	public Reference raySource;
 	public LayerMask layerConstraints;
 
 	[Header("On Hit Callbacks")]
@@ -17,6 +19,9 @@ public class RayCastHitMB : MonoBehaviour
 		if (this.onHitPoint == null) {
 			this.onHitPoint = new Vector3Event();
 		}
+		this.rayProvider = this.raySource
+			.GameObject
+			.GetComponent<BaseRayProviderMB>();
 	}
 
 	public void TryHit()
@@ -28,6 +33,6 @@ public class RayCastHitMB : MonoBehaviour
 	}
 
 	private bool Hit(out RaycastHit hit) => this.layerConstraints == default
-		? Physics.Raycast(this.rayProviderMB.Ray, out hit, float.MaxValue)
-		: Physics.Raycast(this.rayProviderMB.Ray, out hit, float.MaxValue, this.layerConstraints);
+		? Physics.Raycast(this.rayProvider.Ray, out hit, float.MaxValue)
+		: Physics.Raycast(this.rayProvider.Ray, out hit, float.MaxValue, this.layerConstraints);
 }

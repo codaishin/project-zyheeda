@@ -16,6 +16,8 @@ public class RayCastHitMBTests : TestCollection
 	public IEnumerator OnHitGameObjectInitAfterStart()
 	{
 		var rayCastHitMB = new GameObject("hitter").AddComponent<RayCastHitMB>();
+		var rayProviderMB = new GameObject("ray").AddComponent<MockRayMB>();
+		rayCastHitMB.raySource = rayProviderMB;
 
 		yield return new WaitForEndOfFrame();
 
@@ -26,6 +28,8 @@ public class RayCastHitMBTests : TestCollection
 	public IEnumerator OnHitGameObjectDefaultNull()
 	{
 		var rayCastHitMB = new GameObject("hitter").AddComponent<RayCastHitMB>();
+		var rayProviderMB = new GameObject("ray").AddComponent<MockRayMB>();
+		rayCastHitMB.raySource = rayProviderMB;
 
 		Assert.Null(rayCastHitMB.onHitObject);
 
@@ -42,7 +46,7 @@ public class RayCastHitMBTests : TestCollection
 
 		sphere.transform.position = Vector3.up;
 		rayProviderMB.ray = new Ray(Vector3.up * 2, Vector3.down);
-		rayCastHitMB.rayProviderMB = rayProviderMB;
+		rayCastHitMB.raySource = rayProviderMB;
 
 		yield return new WaitForEndOfFrame();
 
@@ -67,7 +71,7 @@ public class RayCastHitMBTests : TestCollection
 		sphereDefault.transform.position = Vector3.up;
 		cubeWater.layer = LayerMask.NameToLayer("Water");
 		rayProviderMB.ray = new Ray(Vector3.up * 2, Vector3.down);
-		rayCastHitMB.rayProviderMB = rayProviderMB;
+		rayCastHitMB.raySource = rayProviderMB;
 		rayCastHitMB.layerConstraints = LayerMask.GetMask("Water");
 
 		yield return new WaitForEndOfFrame();
@@ -85,6 +89,8 @@ public class RayCastHitMBTests : TestCollection
 	public IEnumerator OnHitVector3InitAfterStart()
 	{
 		var rayCastHitMB = new GameObject("hitter").AddComponent<RayCastHitMB>();
+		var rayProviderMB = new GameObject("ray").AddComponent<MockRayMB>();
+		rayCastHitMB.raySource = rayProviderMB;
 
 		yield return new WaitForEndOfFrame();
 
@@ -95,6 +101,8 @@ public class RayCastHitMBTests : TestCollection
 	public IEnumerator OnHitVector3DefaultNull()
 	{
 		var rayCastHitMB = new GameObject("hitter").AddComponent<RayCastHitMB>();
+		var rayProviderMB = new GameObject("ray").AddComponent<MockRayMB>();
+		rayCastHitMB.raySource = rayProviderMB;
 
 		Assert.Null(rayCastHitMB.onHitPoint);
 
@@ -111,7 +119,7 @@ public class RayCastHitMBTests : TestCollection
 
 		sphere.transform.position = Vector3.up;
 		rayProviderMB.ray = new Ray(Vector3.up * 2, Vector3.down);
-		rayCastHitMB.rayProviderMB = rayProviderMB;
+		rayCastHitMB.raySource = rayProviderMB;
 
 		yield return new WaitForEndOfFrame();
 
@@ -136,7 +144,7 @@ public class RayCastHitMBTests : TestCollection
 		sphereDefault.transform.position = Vector3.up;
 		cubeWater.layer = LayerMask.NameToLayer("Water");
 		rayProviderMB.ray = new Ray(Vector3.up * 2, Vector3.down);
-		rayCastHitMB.rayProviderMB = rayProviderMB;
+		rayCastHitMB.raySource = rayProviderMB;
 		rayCastHitMB.layerConstraints = LayerMask.GetMask("Water");
 
 		yield return new WaitForEndOfFrame();

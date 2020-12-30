@@ -23,21 +23,15 @@ public struct Reference
 		}
 	}
 
-	public Reference(in GameObject gameObject)
-	{
-		this.gameObject = gameObject;
-		this.referenceSO = default;
-	}
+	public static implicit operator Reference(in GameObject gameObject) =>
+		new Reference { gameObject = gameObject };
 
-	public Reference(in ReferenceSO referenceSO)
-	{
-		this.gameObject = default;
-		this.referenceSO = referenceSO;
-	}
+	public static implicit operator Reference(in Component component) =>
+		new Reference { gameObject = component.gameObject };
 
-	public Reference(in GameObject gameObject, in ReferenceSO referenceSO)
-	{
-		this.gameObject = gameObject;
-		this.referenceSO = referenceSO;
-	}
+	public static implicit operator Reference(in ReferenceSO referenceSO) =>
+		new Reference { referenceSO = referenceSO };
+
+	public static implicit operator Reference(in (GameObject, ReferenceSO) refTuple) =>
+		new Reference { gameObject = refTuple.Item1, referenceSO = refTuple.Item2 };
 }
