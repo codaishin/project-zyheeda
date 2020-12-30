@@ -119,7 +119,7 @@ public class RayCastHitMBTests : TestCollection
 
 		sphere.transform.position = Vector3.up;
 		rayProviderMB.ray = new Ray(Vector3.up * 2, Vector3.down);
-		rayCastHitMB.raySource = rayProviderMB.gameObject;
+		rayCastHitMB.raySource = rayProviderMB;
 
 		yield return new WaitForEndOfFrame();
 
@@ -144,7 +144,7 @@ public class RayCastHitMBTests : TestCollection
 		sphereDefault.transform.position = Vector3.up;
 		cubeWater.layer = LayerMask.NameToLayer("Water");
 		rayProviderMB.ray = new Ray(Vector3.up * 2, Vector3.down);
-		rayCastHitMB.raySource = rayProviderMB.gameObject;
+		rayCastHitMB.raySource = rayProviderMB;
 		rayCastHitMB.layerConstraints = LayerMask.GetMask("Water");
 
 		yield return new WaitForEndOfFrame();
