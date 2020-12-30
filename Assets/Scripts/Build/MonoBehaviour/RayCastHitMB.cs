@@ -6,24 +6,24 @@ public class RayCastHitMB : MonoBehaviour
 	public LayerMask layerConstraints;
 
 	[Header("On Hit Callbacks")]
-	public GameObjectEvent onHitGameObject;
-	public Vector3Event onHitVector3;
+	public GameObjectEvent onHitObject;
+	public Vector3Event onHitPoint;
 
 	private void Start()
 	{
-		if (this.onHitGameObject == null) {
-			this.onHitGameObject = new GameObjectEvent();
+		if (this.onHitObject == null) {
+			this.onHitObject = new GameObjectEvent();
 		}
-		if (this.onHitVector3 == null) {
-			this.onHitVector3 = new Vector3Event();
+		if (this.onHitPoint == null) {
+			this.onHitPoint = new Vector3Event();
 		}
 	}
 
 	public void TryHit()
 	{
 		if (this.Hit(out RaycastHit hit)) {
-			this.onHitGameObject.Invoke(hit.transform.gameObject);
-			this.onHitVector3.Invoke(hit.point);
+			this.onHitObject.Invoke(hit.transform.gameObject);
+			this.onHitPoint.Invoke(hit.point);
 		}
 	}
 

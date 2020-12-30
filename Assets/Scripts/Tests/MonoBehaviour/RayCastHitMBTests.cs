@@ -19,7 +19,7 @@ public class RayCastHitMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		Assert.NotNull(rayCastHitMB.onHitGameObject);
+		Assert.NotNull(rayCastHitMB.onHitObject);
 	}
 
 	[UnityTest]
@@ -27,7 +27,7 @@ public class RayCastHitMBTests : TestCollection
 	{
 		var rayCastHitMB = new GameObject("hitter").AddComponent<RayCastHitMB>();
 
-		Assert.Null(rayCastHitMB.onHitGameObject);
+		Assert.Null(rayCastHitMB.onHitObject);
 
 		yield break;
 	}
@@ -46,7 +46,7 @@ public class RayCastHitMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		rayCastHitMB.onHitGameObject.AddListener(o => hit = o);
+		rayCastHitMB.onHitObject.AddListener(o => hit = o);
 
 		yield return new WaitForEndOfFrame();
 
@@ -72,7 +72,7 @@ public class RayCastHitMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		rayCastHitMB.onHitGameObject.AddListener(o => hit = o);
+		rayCastHitMB.onHitObject.AddListener(o => hit = o);
 
 		yield return new WaitForEndOfFrame();
 
@@ -88,7 +88,7 @@ public class RayCastHitMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		Assert.NotNull(rayCastHitMB.onHitVector3);
+		Assert.NotNull(rayCastHitMB.onHitPoint);
 	}
 
 	[UnityTest]
@@ -96,7 +96,7 @@ public class RayCastHitMBTests : TestCollection
 	{
 		var rayCastHitMB = new GameObject("hitter").AddComponent<RayCastHitMB>();
 
-		Assert.Null(rayCastHitMB.onHitVector3);
+		Assert.Null(rayCastHitMB.onHitPoint);
 
 		yield break;
 	}
@@ -115,7 +115,7 @@ public class RayCastHitMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		rayCastHitMB.onHitVector3.AddListener(v => hit = v);
+		rayCastHitMB.onHitPoint.AddListener(v => hit = v);
 
 		yield return new WaitForSeconds(0.5f); // FIXME: Sometimes odd behaviour when not waiting
 
@@ -141,7 +141,7 @@ public class RayCastHitMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		rayCastHitMB.onHitVector3.AddListener(v => hit = v);
+		rayCastHitMB.onHitPoint.AddListener(v => hit = v);
 
 		yield return new WaitForEndOfFrame();
 

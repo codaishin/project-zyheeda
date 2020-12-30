@@ -433,10 +433,10 @@ MonoBehaviour:
   layerConstraints:
     serializedVersion: 2
     m_Bits: 2147483648
-  onHitGameObject:
+  onHitObject:
     m_PersistentCalls:
       m_Calls: []
-  onHitVector3:
+  onHitPoint:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 924026603}
