@@ -4,9 +4,9 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-public class InputSOTests : TestCollection
+public class BaseKeyInputSOTests : TestCollection
 {
-	private class MockInputSO : BaseInputSO
+	private class MockKeyInputSO : BaseKeyInputSO
 	{
 		public Dictionary<KeyCode, KeyState> keyStates =
 			new Dictionary<KeyCode, KeyState>();
@@ -27,7 +27,7 @@ public class InputSOTests : TestCollection
 	{
 		var key = KeyCode.Space;
 		var state = KeyState.Hold;
-		var inputSO = ScriptableObject.CreateInstance<MockInputSO>();
+		var inputSO = ScriptableObject.CreateInstance<MockKeyInputSO>();
 		inputSO.keyStates[key] = state;
 
 		Assert.True(inputSO.GetKey(key, state));
@@ -38,7 +38,7 @@ public class InputSOTests : TestCollection
 	{
 		var key = KeyCode.Space;
 		var state = KeyState.Hold;
-		var inputSO = ScriptableObject.CreateInstance<MockInputSO>();
+		var inputSO = ScriptableObject.CreateInstance<MockKeyInputSO>();
 
 		Assert.False(inputSO.GetKey(key, state));
 	}
@@ -48,7 +48,7 @@ public class InputSOTests : TestCollection
 	{
 		var key = KeyCode.K;
 		var state = KeyState.Down;
-		var inputSO = ScriptableObject.CreateInstance<MockInputSO>();
+		var inputSO = ScriptableObject.CreateInstance<MockKeyInputSO>();
 		inputSO.keyStates[key] = state;
 
 		Assert.True(inputSO.GetKey(key, state));
@@ -59,7 +59,7 @@ public class InputSOTests : TestCollection
 	{
 		var key = KeyCode.K;
 		var state = KeyState.Down;
-		var inputSO = ScriptableObject.CreateInstance<MockInputSO>();
+		var inputSO = ScriptableObject.CreateInstance<MockKeyInputSO>();
 
 		Assert.False(inputSO.GetKey(key, state));
 	}
@@ -69,7 +69,7 @@ public class InputSOTests : TestCollection
 	{
 		var key = KeyCode.E;
 		var state = KeyState.Up;
-		var inputSO = ScriptableObject.CreateInstance<MockInputSO>();
+		var inputSO = ScriptableObject.CreateInstance<MockKeyInputSO>();
 		inputSO.keyStates[key] = state;
 
 		Assert.True(inputSO.GetKey(key, state));
@@ -80,7 +80,7 @@ public class InputSOTests : TestCollection
 	{
 		var key = KeyCode.E;
 		var state = KeyState.Up;
-		var inputSO = ScriptableObject.CreateInstance<MockInputSO>();
+		var inputSO = ScriptableObject.CreateInstance<MockKeyInputSO>();
 
 		Assert.False(inputSO.GetKey(key, state));
 	}
@@ -90,7 +90,7 @@ public class InputSOTests : TestCollection
 	{
 		var key = KeyCode.W;
 		var state = (KeyState)(-1);
-		var inputSO = ScriptableObject.CreateInstance<MockInputSO>();
+		var inputSO = ScriptableObject.CreateInstance<MockKeyInputSO>();
 
 		Assert.Throws<System.ArgumentException>(() => inputSO.GetKey(key, state));
 	}
@@ -100,7 +100,7 @@ public class InputSOTests : TestCollection
 	{
 		var key = KeyCode.W;
 		var state = (KeyState)(-1);
-		var inputSO = ScriptableObject.CreateInstance<MockInputSO>();
+		var inputSO = ScriptableObject.CreateInstance<MockKeyInputSO>();
 
 		try {
 			inputSO.GetKey(key, state);

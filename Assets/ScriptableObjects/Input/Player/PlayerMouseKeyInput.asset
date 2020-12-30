@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fb51a63e398b78a409dac77c272660c1, type: 3}
-  m_Name: PlayerMouseInput
+  m_Name: PlayerMouseKeyInput
   m_EditorClassIdentifier: 
   inputSO: {fileID: 11400000, guid: 64199461d458d3542b4e790dd776d784, type: 2}
   items:
   - name: Move
     keyCode: 323
-    keyState: 1
+    keyState: 0
     eventSO: {fileID: 11400000, guid: 73e2e7e49199b3e4b91e991eadb7d2b5, type: 2}
