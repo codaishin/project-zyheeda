@@ -219,6 +219,64 @@ Transform:
   m_Father: {fileID: 924026604}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &324943628
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 324943630}
+  - component: {fileID: 324943629}
+  m_Layer: 0
+  m_Name: ApplyInput
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &324943629
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 324943628}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30af8627dace4454c8f416ddbfadc2d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onUpdate:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: 78b40d598bf1fed4a9dc599c5cbe7e9f, type: 2}
+        m_TargetAssemblyTypeName: KeyInputGroupSO, Build
+        m_MethodName: Apply
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!4 &324943630
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 324943628}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -323,6 +381,7 @@ GameObject:
   - component: {fileID: 924026604}
   - component: {fileID: 924026603}
   - component: {fileID: 924026605}
+  - component: {fileID: 924026606}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -340,8 +399,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 16afd7ba4785e0146b2c03b99dc380b0, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   deltaPerSecond: 1
 --- !u!4 &924026604
 Transform:
@@ -368,9 +427,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7b5aa89a909941047bcaba63525e1e5b, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
-  rayProviderMB: {fileID: 0}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rayProviderMB: {fileID: 963194229}
   layers:
     serializedVersion: 2
     m_Bits: 0
@@ -379,7 +438,47 @@ MonoBehaviour:
       m_Calls: []
   onHitVector3:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 924026603}
+        m_TargetAssemblyTypeName: TransformMoveToMB, Build
+        m_MethodName: MoveTo
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &924026606
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 924026602}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5078fb333eca7064588c2a8a4a3672de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  listenTo: {fileID: 11400000, guid: 73e2e7e49199b3e4b91e991eadb7d2b5, type: 2}
+  onRaise:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 924026605}
+        m_TargetAssemblyTypeName: RayCastHitMB, Build
+        m_MethodName: TryHit
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
@@ -391,6 +490,7 @@ GameObject:
   - component: {fileID: 963194228}
   - component: {fileID: 963194227}
   - component: {fileID: 963194226}
+  - component: {fileID: 963194229}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -463,6 +563,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 45, y: 0, z: 0}
+--- !u!114 &963194229
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963194225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 638d8dcaba6cc2d4b8638772aefdda95, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mouseSO: {fileID: 11400000, guid: dbb9a8184dd2bc74d82536754f3ccb34, type: 2}
 --- !u!1 &1029663248
 GameObject:
   m_ObjectHideFlags: 0
@@ -559,4 +672,3 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-
