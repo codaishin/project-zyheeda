@@ -16,6 +16,8 @@ public class RayCastHitMBTests : TestCollection
 	public IEnumerator OnHitGameObjectInitAfterStart()
 	{
 		var rayCastHitMB = new GameObject("hitter").AddComponent<RayCastHitMB>();
+		var rayProviderMB = new GameObject("ray").AddComponent<MockRayMB>();
+		rayCastHitMB.rayProviderReference = rayProviderMB;
 
 		yield return new WaitForEndOfFrame();
 
@@ -26,6 +28,8 @@ public class RayCastHitMBTests : TestCollection
 	public IEnumerator OnHitGameObjectDefaultNull()
 	{
 		var rayCastHitMB = new GameObject("hitter").AddComponent<RayCastHitMB>();
+		var rayProviderMB = new GameObject("ray").AddComponent<MockRayMB>();
+		rayCastHitMB.rayProviderReference = rayProviderMB;
 
 		Assert.Null(rayCastHitMB.onHitObject);
 
@@ -85,6 +89,8 @@ public class RayCastHitMBTests : TestCollection
 	public IEnumerator OnHitVector3InitAfterStart()
 	{
 		var rayCastHitMB = new GameObject("hitter").AddComponent<RayCastHitMB>();
+		var rayProviderMB = new GameObject("ray").AddComponent<MockRayMB>();
+		rayCastHitMB.rayProviderReference = rayProviderMB;
 
 		yield return new WaitForEndOfFrame();
 
@@ -95,6 +101,8 @@ public class RayCastHitMBTests : TestCollection
 	public IEnumerator OnHitVector3DefaultNull()
 	{
 		var rayCastHitMB = new GameObject("hitter").AddComponent<RayCastHitMB>();
+		var rayProviderMB = new GameObject("ray").AddComponent<MockRayMB>();
+		rayCastHitMB.rayProviderReference = rayProviderMB;
 
 		Assert.Null(rayCastHitMB.onHitPoint);
 
