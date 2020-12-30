@@ -14,4 +14,17 @@ public class TransformMoveToMBTests : TestCollection
 
 		Assert.AreEqual(new Vector3(10, 0, 0), moveTo.transform.position);
 	}
+
+	[Test]
+	public void MoveToDeltaPerSecond()
+	{
+		var moveTo = new GameObject("obj").AddComponent<TransformMoveToMB>();
+		moveTo.deltaPerSecond = 10;
+		moveTo.MoveTo(new Vector3(10, 0, 0));
+
+		Assert.AreEqual(
+			new Vector3(1, 0, 0) * Time.deltaTime * 10,
+			moveTo.transform.position
+		);
+	}
 }
