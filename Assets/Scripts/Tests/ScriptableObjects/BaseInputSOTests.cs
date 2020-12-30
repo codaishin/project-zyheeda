@@ -4,7 +4,7 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-public class InputSOTests : TestCollection
+public class BaseInputSOTests : TestCollection
 {
 	private class MockInputSO : BaseInputSO
 	{
