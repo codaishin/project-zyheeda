@@ -19,11 +19,16 @@ public class MoveTowardsOngoingMB : MonoBehaviour
 
 	public void BeginMoveTo(Vector3 position)
 	{
+		this.StopMoving();
+		this.currentMove = this.MoveTo(position);
+		this.StartCoroutine(this.currentMove);
+	}
+
+	public void StopMoving()
+	{
 		if (this.currentMove != null) {
 			this.StopCoroutine(this.currentMove);
 		}
-		this.currentMove = this.MoveTo(position);
-		this.StartCoroutine(this.currentMove);
 	}
 
 	private IEnumerator MoveTo(Vector3 position)
