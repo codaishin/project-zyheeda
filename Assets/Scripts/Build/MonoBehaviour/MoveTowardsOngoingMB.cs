@@ -34,10 +34,10 @@ public class MoveTowardsOngoingMB : MonoBehaviour
 	private IEnumerator MoveTo(Vector3 position)
 	{
 		while (this.agentTransform.position != position) {
-			yield return new WaitForFixedUpdate();
 			this.agentTransform.position = this.deltaPerSecond == default
 				? position
 				: this.Interpolate(position);
+			yield return new WaitForFixedUpdate();
 		}
 	}
 }

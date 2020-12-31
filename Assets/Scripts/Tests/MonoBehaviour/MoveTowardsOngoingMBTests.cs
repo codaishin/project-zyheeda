@@ -7,7 +7,7 @@ using UnityEngine.TestTools;
 public class MoveTowardsOngoingMBTests : TestCollection
 {
 	[UnityTest]
-	public IEnumerator MoveOneFrame()
+	public IEnumerator MoveImmediate()
 	{
 		var position = new Vector3(1, 0, 0);
 		var agent = new GameObject("agent");
@@ -18,13 +18,11 @@ public class MoveTowardsOngoingMBTests : TestCollection
 
 		mover.BeginMoveTo(position);
 
-		yield return new WaitForFixedUpdate();
-
 		Tools.AssertEqual(position, agent.transform.position);
 	}
 
 	[UnityTest]
-	public IEnumerator MoveOneFrameSpeed()
+	public IEnumerator MoveImmediateSpeed()
 	{
 		var position = new Vector3(10, 0, 0);
 		var agent = new GameObject("agent");
@@ -35,8 +33,6 @@ public class MoveTowardsOngoingMBTests : TestCollection
 		yield return new WaitForEndOfFrame();
 
 		mover.BeginMoveTo(position);
-
-		yield return new WaitForFixedUpdate();
 
 		Tools.AssertEqual(
 			Vector3.right * Time.fixedDeltaTime * 10,
@@ -45,7 +41,7 @@ public class MoveTowardsOngoingMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator MoveTwoFramesSpeed()
+	public IEnumerator MoveOneFramesSpeed()
 	{
 		var position = new Vector3(10, 0, 0);
 		var agent = new GameObject("agent");
@@ -57,7 +53,6 @@ public class MoveTowardsOngoingMBTests : TestCollection
 
 		mover.BeginMoveTo(position);
 
-		yield return new WaitForFixedUpdate();
 		yield return new WaitForFixedUpdate();
 
 		Tools.AssertEqual(
@@ -78,9 +73,6 @@ public class MoveTowardsOngoingMBTests : TestCollection
 		yield return new WaitForEndOfFrame();
 
 		mover.BeginMoveTo(position);
-
-		yield return new WaitForFixedUpdate();
-
 		mover.StopMoving();
 
 		yield return new WaitForFixedUpdate();
@@ -92,7 +84,7 @@ public class MoveTowardsOngoingMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator MoveTwoOverrideOldMove()
+	public IEnumerator MoveOverrideOldMove()
 	{
 		var right = new Vector3(10, 0, 0);
 		var left = new Vector3(-10, 0, 0);
@@ -104,12 +96,7 @@ public class MoveTowardsOngoingMBTests : TestCollection
 		yield return new WaitForEndOfFrame();
 
 		mover.BeginMoveTo(right);
-
-		yield return new WaitForFixedUpdate();
-
 		mover.BeginMoveTo(left);
-
-		yield return new WaitForFixedUpdate();
 
 		Tools.AssertEqual(Vector3.zero, agent.transform.position);
 	}
