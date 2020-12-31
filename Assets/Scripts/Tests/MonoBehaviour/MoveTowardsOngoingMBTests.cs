@@ -65,4 +65,27 @@ public class MoveTowardsOngoingMBTests : TestCollection
 			agent.transform.position
 		);
 	}
+
+	[UnityTest]
+	public IEnumerator MoveTwoOverrideOldMove()
+	{
+		var right = new Vector3(10, 0, 0);
+		var left = new Vector3(-10, 0, 0);
+		var agent = new GameObject("agent");
+		var mover = new GameObject("mover").AddComponent<MoveTowardsOngoingMB>();
+		mover.agent = agent;
+		mover.deltaPerSecond = 10;
+
+		yield return new WaitForEndOfFrame();
+
+		mover.BeginMoveTo(right);
+
+		yield return new WaitForFixedUpdate();
+
+		mover.BeginMoveTo(left);
+
+		yield return new WaitForFixedUpdate();
+
+		Tools.AssertEqual(Vector3.zero, agent.transform.position);
+	}
 }

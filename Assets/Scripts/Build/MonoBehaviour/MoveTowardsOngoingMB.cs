@@ -1,9 +1,9 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class MoveTowardsOngoingMB : MonoBehaviour
 {
+	private IEnumerator currentMove;
 	private Transform agentTransform;
 
 	public Reference agent;
@@ -19,7 +19,11 @@ public class MoveTowardsOngoingMB : MonoBehaviour
 
 	public void BeginMoveTo(Vector3 position)
 	{
-		this.StartCoroutine(this.MoveTo(position));
+		if (this.currentMove != null) {
+			this.StopCoroutine(this.currentMove);
+		}
+		this.currentMove = this.MoveTo(position);
+		this.StartCoroutine(this.currentMove);
 	}
 
 	private IEnumerator MoveTo(Vector3 position)
