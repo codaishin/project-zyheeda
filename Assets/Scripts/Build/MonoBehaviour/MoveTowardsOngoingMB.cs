@@ -24,7 +24,7 @@ public class MoveTowardsOngoingMB : MonoBehaviour, IPausable<WaitForFixedUpdate>
 	public void BeginMoveTo(Vector3 position)
 	{
 		this.StopMoving();
-		this.currentMove = this.MoveTo(position);
+		this.currentMove = this.Manage(this.MoveTo(position));
 		this.StartCoroutine(this.currentMove);
 	}
 
