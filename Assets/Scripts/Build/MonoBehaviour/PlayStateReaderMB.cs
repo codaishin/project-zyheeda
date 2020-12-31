@@ -5,16 +5,22 @@ using UnityEngine.Events;
 
 public class PlayStateReaderMB : MonoBehaviour
 {
+	private PlayState lastState;
+
 	public PlayStateSwitchSO stateSwitch;
 	public PlayState state;
-
 	public UnityEvent onStateEnter;
+	public UnityEvent onStateExit;
 
 	private void Start()
 	{
 		if (this.onStateEnter == null) {
 			this.onStateEnter = new UnityEvent();
 		}
+		if (this.onStateExit == null) {
+			this.onStateExit = new UnityEvent();
+		}
+		this.lastState = this.stateSwitch.State;
 		this.stateSwitch.OnStateChange += this.Apply;
 	}
 
@@ -23,10 +29,13 @@ public class PlayStateReaderMB : MonoBehaviour
 		this.stateSwitch.OnStateChange -= this.Apply;
 	}
 
-	private void Apply(PlayState state)
+	private void Apply(PlayState newState)
 	{
-		if (state == this.state) {
+		if (newState == this.state) {
 			this.onStateEnter.Invoke();
+		} else if (this.lastState == this.state) {
+			this.onStateExit.Invoke();
 		}
+		this.lastState = newState;
 	}
 }
