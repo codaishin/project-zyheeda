@@ -100,4 +100,11 @@ public class MoveTowardsOngoingMBTests : TestCollection
 
 		Tools.AssertEqual(Vector3.zero, agent.transform.position);
 	}
+
+	[Test]
+	public void ImplementsIPausable()
+	{
+		var mover = new GameObject("mover").AddComponent<MoveTowardsOngoingMB>();
+		Assert.True(mover is IPausable<WaitForFixedUpdate>);
+	}
 }

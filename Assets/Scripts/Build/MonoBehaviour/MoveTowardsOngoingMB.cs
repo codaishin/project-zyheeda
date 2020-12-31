@@ -1,13 +1,17 @@
 using System.Collections;
 using UnityEngine;
 
-public class MoveTowardsOngoingMB : MonoBehaviour
+public class MoveTowardsOngoingMB : MonoBehaviour, IPausable<WaitForFixedUpdate>
 {
 	private IEnumerator currentMove;
 	private Transform agentTransform;
 
 	public Reference agent;
 	public float deltaPerSecond;
+
+	public bool Paused { get; set; }
+
+	public WaitForFixedUpdate Pause => default;
 
 	private void Start() => this.agentTransform = this.agent.GameObject.transform;
 
