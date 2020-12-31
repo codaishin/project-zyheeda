@@ -4,7 +4,7 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-public class PlayStateSOTests : TestCollection
+public class PlayStateSwitchSOTests : TestCollection
 {
 	[Test]
 	public void OnPlayStateChange()
@@ -60,5 +60,18 @@ public class PlayStateSOTests : TestCollection
 		stateSO.SetState(stateValue);
 
 		Assert.AreEqual(PlayState.Play, called);
+	}
+
+	[Test]
+	public void OnPlayStateChangeOnlyCalledOnActualChange()
+	{
+		var called = 0;
+		var stateSO = ScriptableObject.CreateInstance<PlayStateSwitchSO>();
+
+		stateSO.State = PlayState.Paused;
+		stateSO.OnStateChange += _ => ++called;
+		stateSO.State = PlayState.Paused;
+
+		Assert.AreEqual(0, called);
 	}
 }

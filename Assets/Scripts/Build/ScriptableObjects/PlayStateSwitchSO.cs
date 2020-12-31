@@ -17,8 +17,10 @@ public class PlayStateSwitchSO : ScriptableObject
 
 	private void ApplyState(in PlayState state)
 	{
-		this.state = state;
-		this.OnStateChange?.Invoke(state);
+		if (state != this.state) {
+			this.state = state;
+			this.OnStateChange?.Invoke(state);
+		}
 	}
 
 	public void SetState(PlayStateValueSO value) => this.State = value.state;
