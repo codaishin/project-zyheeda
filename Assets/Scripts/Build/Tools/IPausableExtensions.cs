@@ -3,7 +3,8 @@ using System.Collections;
 public static class IPausableExtensions
 {
 	public static
-	IEnumerator Manage<T>(this IPausable<T> pausable, IEnumerator enumerator)
+	IEnumerator Manage<TPauseYield>(this IPausable<TPauseYield> pausable,
+	                                IEnumerator enumerator)
 	{
 		bool notEmpty = enumerator.MoveNext();
 		while (notEmpty) {
