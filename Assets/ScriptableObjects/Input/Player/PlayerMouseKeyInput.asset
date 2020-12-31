@@ -16,5 +16,5 @@ MonoBehaviour:
   items:
   - name: Move
     keyCode: 323
-    keyState: 0
-    eventSO: {fileID: 11400000, guid: 73e2e7e49199b3e4b91e991eadb7d2b5, type: 2}
+    keyState: 1
+    eventSO: {fileID: 11400000, guid: b30b2baa09a76a541b7c2e5ff360d901, type: 2}
