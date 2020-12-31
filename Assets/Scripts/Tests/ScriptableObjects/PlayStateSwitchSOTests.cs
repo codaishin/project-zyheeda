@@ -10,7 +10,7 @@ public class PlayStateSOTests : TestCollection
 	public void OnPlayStateChange()
 	{
 		var called = PlayState.None;
-		var stateSO = ScriptableObject.CreateInstance<PlayStateSO>();
+		var stateSO = ScriptableObject.CreateInstance<PlayStateSwitchSO>();
 
 		stateSO.OnStateChange += v => called = v;
 		stateSO.State = PlayState.Paused;
@@ -21,7 +21,7 @@ public class PlayStateSOTests : TestCollection
 	[Test]
 	public void EmptyOnStateChange()
 	{
-		var stateSO = ScriptableObject.CreateInstance<PlayStateSO>();
+		var stateSO = ScriptableObject.CreateInstance<PlayStateSwitchSO>();
 
 		Assert.DoesNotThrow(() => stateSO.State = PlayState.Paused);
 	}
@@ -29,7 +29,7 @@ public class PlayStateSOTests : TestCollection
 	[Test]
 	public void StatePropertyReflectsState()
 	{
-		var stateSO = ScriptableObject.CreateInstance<PlayStateSO>();
+		var stateSO = ScriptableObject.CreateInstance<PlayStateSwitchSO>();
 
 		stateSO.State = PlayState.Paused;
 
@@ -39,7 +39,7 @@ public class PlayStateSOTests : TestCollection
 	[Test]
 	public void StateStateViaStateObject()
 	{
-		var stateSO = ScriptableObject.CreateInstance<PlayStateSO>();
+		var stateSO = ScriptableObject.CreateInstance<PlayStateSwitchSO>();
 		var stateValue = ScriptableObject.CreateInstance<PlayStateValueSO>();
 
 		stateValue.state = PlayState.Play;
@@ -52,7 +52,7 @@ public class PlayStateSOTests : TestCollection
 	public void InvokeOnStateChangeViaStateObject()
 	{
 		var called = PlayState.None;
-		var stateSO = ScriptableObject.CreateInstance<PlayStateSO>();
+		var stateSO = ScriptableObject.CreateInstance<PlayStateSwitchSO>();
 		var stateValue = ScriptableObject.CreateInstance<PlayStateValueSO>();
 
 		stateValue.state = PlayState.Play;
