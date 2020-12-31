@@ -4,7 +4,7 @@ using UnityEngine;
 public enum PlayState { None = default, Play, Paused, Menu }
 
 [CreateAssetMenu(menuName = "ScriptableObjects/PlayState/Switch")]
-public class PlayStateSO : ScriptableObject
+public class PlayStateSwitchSO : ScriptableObject
 {
 	private PlayState state;
 
@@ -17,8 +17,10 @@ public class PlayStateSO : ScriptableObject
 
 	private void ApplyState(in PlayState state)
 	{
-		this.state = state;
-		this.OnStateChange?.Invoke(state);
+		if (state != this.state) {
+			this.state = state;
+			this.OnStateChange?.Invoke(state);
+		}
 	}
 
 	public void SetState(PlayStateValueSO value) => this.State = value.state;
