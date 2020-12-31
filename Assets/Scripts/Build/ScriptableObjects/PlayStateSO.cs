@@ -1,15 +1,9 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
-[Serializable]
 public enum PlayState { None = default, Play, Paused, Menu }
 
-public class PlayStateValueSO : ScriptableObject
-{
-	public PlayState state;
-}
-
+[CreateAssetMenu(menuName = "ScriptableObjects/PlayState/Switch")]
 public class PlayStateSO : ScriptableObject
 {
 	private PlayState state;
