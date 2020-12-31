@@ -35,4 +35,30 @@ public class PlayStateSOTests : TestCollection
 
 		Assert.AreEqual(PlayState.Paused, stateSO.State);
 	}
+
+	[Test]
+	public void StateStateViaStateObject()
+	{
+		var stateSO = ScriptableObject.CreateInstance<PlayStateSO>();
+		var stateValue = ScriptableObject.CreateInstance<PlayStateValueSO>();
+
+		stateValue.state = PlayState.Play;
+		stateSO.SetState(stateValue);
+
+		Assert.AreEqual(PlayState.Play, stateSO.State);
+	}
+
+	[Test]
+	public void InvokeOnStateChangeViaStateObject()
+	{
+		var called = PlayState.None;
+		var stateSO = ScriptableObject.CreateInstance<PlayStateSO>();
+		var stateValue = ScriptableObject.CreateInstance<PlayStateValueSO>();
+
+		stateValue.state = PlayState.Play;
+		stateSO.OnStateChange += v => called = v;
+		stateSO.SetState(stateValue);
+
+		Assert.AreEqual(PlayState.Play, called);
+	}
 }
