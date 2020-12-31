@@ -49,6 +49,24 @@ public class PlayStateReaderMBTests : TestCollection
 	}
 
 	[UnityTest]
+	public IEnumerator OnStateEnterOnStart()
+	{
+		var called = 0;
+		var reader = new GameObject("reader").AddComponent<PlayStateReaderMB>();
+		var stateSwitch = ScriptableObject.CreateInstance<PlayStateSwitchSO>();
+
+		stateSwitch.State = PlayState.Paused;
+		reader.stateSwitch = stateSwitch;
+		reader.state = PlayState.Paused;
+		reader.onStateEnter = new UnityEngine.Events.UnityEvent();
+		reader.onStateEnter.AddListener(() => ++called);
+
+		yield return new WaitForEndOfFrame();
+
+		Assert.AreEqual(1, called);
+	}
+
+	[UnityTest]
 	public IEnumerator OnStateEnterOnlyOnRealEnter()
 	{
 		var called = 0;
@@ -128,6 +146,24 @@ public class PlayStateReaderMBTests : TestCollection
 
 		reader.onStateExit.AddListener(() => ++called);
 		stateSwitch.State = PlayState.Play;
+
+		Assert.AreEqual(1, called);
+	}
+
+	[UnityTest]
+	public IEnumerator OnStateExitOnStart()
+	{
+		var called = 0;
+		var reader = new GameObject("reader").AddComponent<PlayStateReaderMB>();
+		var stateSwitch = ScriptableObject.CreateInstance<PlayStateSwitchSO>();
+
+		stateSwitch.State = PlayState.Play;
+		reader.stateSwitch = stateSwitch;
+		reader.state = PlayState.Paused;
+		reader.onStateExit = new UnityEngine.Events.UnityEvent();
+		reader.onStateExit.AddListener(() => ++called);
+
+		yield return new WaitForEndOfFrame();
 
 		Assert.AreEqual(1, called);
 	}

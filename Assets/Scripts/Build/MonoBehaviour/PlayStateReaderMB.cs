@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -22,8 +20,15 @@ public class PlayStateReaderMB : MonoBehaviour
 		if (this.onStateExit == null) {
 			this.onStateExit = new UnityEvent();
 		}
+		this.ApplyOnStart();
 		this.lastState = this.stateSwitch.State;
 		this.stateSwitch.OnStateChange += this.Apply;
+	}
+
+	private void ApplyOnStart()
+	{
+		this.lastState = this.state;
+		this.Apply(this.stateSwitch.State);
 	}
 
 	private void OnDestroy()
