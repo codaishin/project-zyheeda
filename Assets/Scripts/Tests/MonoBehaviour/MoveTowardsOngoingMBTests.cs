@@ -100,4 +100,37 @@ public class MoveTowardsOngoingMBTests : TestCollection
 
 		Tools.AssertEqual(Vector3.zero, agent.transform.position);
 	}
+
+	[Test]
+	public void ImplementsIPausable()
+	{
+		var mover = new GameObject("mover").AddComponent<MoveTowardsOngoingMB>();
+		Assert.True(mover is IPausable<WaitForFixedUpdate>);
+	}
+
+	[UnityTest]
+	public IEnumerator MoveWithPauses()
+	{
+		var position = new Vector3(10, 0, 0);
+		var agent = new GameObject("agent");
+		var mover = new GameObject("mover").AddComponent<MoveTowardsOngoingMB>();
+		mover.agent = agent;
+		mover.deltaPerSecond = 10;
+
+		yield return new WaitForEndOfFrame();
+
+		mover.BeginMoveTo(position);
+		mover.Paused = true;
+
+		yield return new WaitForFixedUpdate();
+
+		mover.Paused = false;
+
+		yield return new WaitForFixedUpdate();
+
+		Tools.AssertEqual(
+			Vector3.right * Time.fixedDeltaTime * 10 * 2,
+			agent.transform.position
+		);
+	}
 }
