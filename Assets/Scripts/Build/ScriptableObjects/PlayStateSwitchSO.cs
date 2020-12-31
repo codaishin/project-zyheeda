@@ -4,7 +4,7 @@ using UnityEngine;
 public enum PlayState { None = default, Play, Paused, Menu }
 
 [CreateAssetMenu(menuName = "ScriptableObjects/PlayState/Switch")]
-public class PlayStateSO : ScriptableObject
+public class PlayStateSwitchSO : ScriptableObject
 {
 	private PlayState state;
 
