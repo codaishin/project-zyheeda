@@ -6,14 +6,14 @@ public static class IPausableExtensions
 	IEnumerator Manage<TPauseYield>(this IPausable<TPauseYield> pausable,
 	                                IEnumerator enumerator)
 	{
-		bool notEmpty = enumerator.MoveNext();
-		while (notEmpty) {
+		while (true) {
 			if (pausable.Paused) {
 				yield return pausable.Pause;
-			} else {
+			} else if (enumerator.MoveNext()) {
 				yield return enumerator.Current;
-				notEmpty = enumerator.MoveNext();
+			} else {
+				yield break;
 			}
-		}
+		};
 	}
 }

@@ -69,6 +69,22 @@ public class IPausableExtensionTests : TestCollection
 			pausable.Paused = !pausable.Paused;
 		}
 
-		CollectionAssert.AreEqual(new int[] { 0, -1, 1, -1, 2 }, result);
+		CollectionAssert.AreEqual(new int[] { 0, -1, 1, -1, 2, -1 }, result);
+	}
+
+	[Test]
+	public void WhenPausedPreventFirstIteration()
+	{
+		var ran = false;
+		IEnumerator generate() { ran = true; yield break; }
+		var enumerator = generate();
+		var pausable = new MockPausable();
+
+		enumerator = pausable.Manage(enumerator);
+		pausable.Paused = true;
+
+		enumerator.MoveNext();
+
+		Assert.False(ran);
 	}
 }
