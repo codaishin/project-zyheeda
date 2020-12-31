@@ -9,6 +9,8 @@ public class PlayStateReaderMB : MonoBehaviour
 
 	public PlayStateSwitchSO stateSwitch;
 	public PlayState state;
+
+	[Header("State Callbacks")]
 	public UnityEvent onStateEnter;
 	public UnityEvent onStateExit;
 
