@@ -10,6 +10,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e1b9a9909a4031e498853a9b64198ba8, type: 3}
-  m_Name: Paused
+  m_Name: Menu
   m_EditorClassIdentifier: 
-  state: 2
+  state: 3
