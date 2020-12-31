@@ -19,8 +19,16 @@ public class MoveTowardsOngoingMB : MonoBehaviour
 
 	public void BeginMoveTo(Vector3 position)
 	{
-		this.agentTransform.position = this.deltaPerSecond == default
-			? position
-			: this.Interpolate(position);
+		this.StartCoroutine(this.MoveTo(position));
+	}
+
+	private IEnumerator MoveTo(Vector3 position)
+	{
+		while (this.agentTransform.position != position) {
+			yield return new WaitForFixedUpdate();
+			this.agentTransform.position = this.deltaPerSecond == default
+				? position
+				: this.Interpolate(position);
+		}
 	}
 }
