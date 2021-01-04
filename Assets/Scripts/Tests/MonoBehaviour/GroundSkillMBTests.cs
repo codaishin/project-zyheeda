@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
@@ -38,7 +37,7 @@ public class GroundSkillMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator UpdaSelectorPosition()
+	public IEnumerator UpdateSelectorPosition()
 	{
 		var groundSkill = new GameObject("groundSkill").AddComponent<GroundSkillMB>();
 		var skill = new GameObject("skill").AddComponent<SkillMB>();
