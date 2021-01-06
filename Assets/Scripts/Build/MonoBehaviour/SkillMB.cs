@@ -5,7 +5,7 @@ using UnityEngine;
 public class SkillMB : MonoBehaviour, IPausable<WaitForFixedUpdate>
 {
 	private List<IEnumerator> runningRoutines = new List<IEnumerator>();
-	private float lastBegun;
+	private float coolDown;
 
 	public CharacterMB agent;
 	public Skill skill;
@@ -14,15 +14,25 @@ public class SkillMB : MonoBehaviour, IPausable<WaitForFixedUpdate>
 	public bool Paused { get; set; }
 	public WaitForFixedUpdate Pause => default;
 
+	private float CalculateCooldown() => this.skill.appliesPerSecond == default
+		? default
+		: 1f / this.skill.appliesPerSecond;
+
+	private IEnumerator ApplyTo(GameObject target)
+	{
+		IEnumerator iterator = this.behaviour.Apply(this.agent, this, target);
+		this.coolDown = this.CalculateCooldown();
+		while (iterator.MoveNext()) {
+			yield return iterator.Current;
+			this.coolDown -= Time.fixedDeltaTime;
+		}
+	}
+
 	public void Begin(GameObject target)
 	{
-		float cooldown = this.skill.appliesPerSecond == 0
-			? 0
-			: 1f / this.skill.appliesPerSecond;
-		if (Time.fixedTime - this.lastBegun >= cooldown) {
-			IEnumerator routine = this.Manage(this.behaviour.Apply(this.agent, this, target));
+		if (this.coolDown <= 0) {
+			IEnumerator routine = this.Manage(this.ApplyTo(target));
 			this.StartCoroutine(routine);
-			this.lastBegun = Time.fixedTime;
 			this.runningRoutines.Add(routine);
 		}
 	}

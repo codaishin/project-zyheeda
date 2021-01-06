@@ -215,11 +215,35 @@ public class SkillMBTests : TestCollection
 
 		skill.Begin(target);
 
-		yield return new WaitForSeconds(0.11f);
+		yield return new WaitForSeconds(0.12f);
 
 		skill.Begin(target);
 
 		Assert.AreEqual(2, behaviour.applies);
+	}
+
+	[UnityTest]
+	public IEnumerator NoApplyDuringCooldownWhenPaused()
+	{
+		var skill = new GameObject("skill").AddComponent<SkillMB>();
+		var behaviour = ScriptableObject.CreateInstance<MockSkillBehaviourSO>();
+		var target = new GameObject("target");
+
+		skill.agent = new GameObject("agent").AddComponent<CharacterMB>();
+		skill.skill.appliesPerSecond = 10;
+		skill.behaviour = behaviour;
+
+		yield return new WaitForEndOfFrame();
+
+		skill.Begin(target);
+		skill.Paused = true;
+
+		yield return new WaitForSeconds(0.12f);
+
+		skill.Paused = false;
+		skill.Begin(target);
+
+		Assert.AreEqual(1, behaviour.applies);
 	}
 
 	[UnityTest]
