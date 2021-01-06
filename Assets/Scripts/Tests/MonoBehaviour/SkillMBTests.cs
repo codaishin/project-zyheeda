@@ -7,13 +7,17 @@ public class SkillMBTests : TestCollection
 {
 	private class MockSkillBehaviourSO : BaseSkillBehaviourSO
 	{
-		public GameObject agent;
+		public CharacterMB agent;
+		public SkillMB skill;
 		public GameObject target;
 
-		public override void Apply(in GameObject agent, in GameObject target)
+		public override
+		IEnumerator Apply(CharacterMB agent, SkillMB skill, GameObject target)
 		{
 			this.agent = agent;
 			this.target = target;
+			this.skill = skill;
+			yield break;
 		}
 	}
 
@@ -23,14 +27,14 @@ public class SkillMBTests : TestCollection
 		var skill = new GameObject("skill").AddComponent<SkillMB>();
 		var behaviour = ScriptableObject.CreateInstance<MockSkillBehaviourSO>();
 
-		skill.agent = new GameObject("agent");
+		skill.agent = new GameObject("agent").AddComponent<CharacterMB>();
 		skill.behaviour = behaviour;
 
 		yield return new WaitForEndOfFrame();
 
-		skill.Apply(null);
+		skill.Begin(null);
 
-		Assert.AreSame(skill.agent.GameObject, behaviour.agent);
+		Assert.AreSame(skill.agent, behaviour.agent);
 	}
 
 	[UnityTest]
@@ -40,13 +44,30 @@ public class SkillMBTests : TestCollection
 		var behaviour = ScriptableObject.CreateInstance<MockSkillBehaviourSO>();
 		var target = new GameObject("target");
 
-		skill.agent = new GameObject("agent");
+		skill.agent = new GameObject("agent").AddComponent<CharacterMB>();
 		skill.behaviour = behaviour;
 
 		yield return new WaitForEndOfFrame();
 
-		skill.Apply(target);
+		skill.Begin(target);
 
 		Assert.AreSame(target, behaviour.target);
+	}
+
+	[UnityTest]
+	public IEnumerator CallsCorrectSkill()
+	{
+		var skill = new GameObject("skill").AddComponent<SkillMB>();
+		var behaviour = ScriptableObject.CreateInstance<MockSkillBehaviourSO>();
+		var target = new GameObject("target");
+
+		skill.agent = new GameObject("agent").AddComponent<CharacterMB>();
+		skill.behaviour = behaviour;
+
+		yield return new WaitForEndOfFrame();
+
+		skill.Begin(target);
+
+		Assert.AreSame(skill, behaviour.skill);
 	}
 }

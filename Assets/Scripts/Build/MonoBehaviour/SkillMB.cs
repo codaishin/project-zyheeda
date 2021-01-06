@@ -1,15 +1,15 @@
+using System.Collections;
 using UnityEngine;
 
 public class SkillMB : MonoBehaviour
 {
-	private GameObject agentObject;
-
-	public Reference agent;
+	public CharacterMB agent;
+	public Skill skill;
 	public BaseSkillBehaviourSO behaviour;
 
-	private void Start() =>
-		this.agentObject = this.agent.GameObject;
-
-	public void Apply(GameObject target) =>
-		this.behaviour.Apply(this.agentObject, target);
+	public void Begin(GameObject target)
+	{
+		IEnumerator iterator = this.behaviour.Apply(this.agent, this, target);
+		while(iterator.MoveNext()) { }
+	}
 }

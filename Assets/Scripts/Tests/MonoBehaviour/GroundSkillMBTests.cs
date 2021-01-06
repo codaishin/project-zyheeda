@@ -7,13 +7,17 @@ public class GroundSkillMBTests : TestCollection
 {
 	private class MockSkillBehaviourSO : BaseSkillBehaviourSO
 	{
-		public GameObject agent;
+		public CharacterMB agent;
+		public SkillMB skill;
 		public GameObject target;
 
-		public override void Apply(in GameObject agent, in GameObject target)
+		public override
+		IEnumerator Apply(CharacterMB agent, SkillMB skill, GameObject target)
 		{
 			this.agent = agent;
 			this.target = target;
+			this.skill = skill;
+			yield break;
 		}
 	}
 
@@ -24,16 +28,16 @@ public class GroundSkillMBTests : TestCollection
 		var skill = new GameObject("skill").AddComponent<SkillMB>();
 		var behaviour = ScriptableObject.CreateInstance<MockSkillBehaviourSO>();
 
-		skill.agent = new GameObject("agent");
+		skill.agent = new GameObject("agent").AddComponent<CharacterMB>();
 		skill.behaviour = behaviour;
 		groundSkill.skill = skill;
 		groundSkill.selector = new GameObject("selector");
 
 		yield return new WaitForEndOfFrame();
 
-		groundSkill.Apply(default);
+		groundSkill.Begin(default);
 
-		Assert.AreSame(groundSkill.selector.GameObject, behaviour.target);
+		Assert.AreSame(groundSkill.selector, behaviour.target);
 	}
 
 	[UnityTest]
@@ -43,18 +47,15 @@ public class GroundSkillMBTests : TestCollection
 		var skill = new GameObject("skill").AddComponent<SkillMB>();
 		var behaviour = ScriptableObject.CreateInstance<MockSkillBehaviourSO>();
 
-		skill.agent = new GameObject("agent");
+		skill.agent = new GameObject("agent").AddComponent<CharacterMB>();
 		skill.behaviour = behaviour;
 		groundSkill.skill = skill;
 		groundSkill.selector = new GameObject("selector");
 
 		yield return new WaitForEndOfFrame();
 
-		groundSkill.Apply(Vector3.up);
+		groundSkill.Begin(Vector3.up);
 
-		Assert.AreEqual(
-			Vector3.up,
-			groundSkill.selector.GameObject.transform.position
-		);
+		Assert.AreEqual(Vector3.up, groundSkill.selector.transform.position);
 	}
 }
