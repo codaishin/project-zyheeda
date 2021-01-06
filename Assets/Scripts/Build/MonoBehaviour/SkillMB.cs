@@ -9,7 +9,6 @@ public class SkillMB : MonoBehaviour
 
 	public void Begin(GameObject target)
 	{
-		IEnumerator iterator = this.behaviour.Apply(this.agent, this, target);
-		while(iterator.MoveNext()) { }
+		this.StartCoroutine(this.behaviour.Apply(this.agent, this, target));
 	}
 }

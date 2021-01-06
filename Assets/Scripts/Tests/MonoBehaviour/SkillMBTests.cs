@@ -11,13 +11,18 @@ public class SkillMBTests : TestCollection
 		public SkillMB skill;
 		public GameObject target;
 
+		public int iterations;
+
 		public override
 		IEnumerator Apply(CharacterMB agent, SkillMB skill, GameObject target)
 		{
 			this.agent = agent;
 			this.target = target;
 			this.skill = skill;
-			yield break;
+			while (this.iterations < 100) {
+				++this.iterations;
+				yield return new WaitForFixedUpdate();
+			}
 		}
 	}
 
@@ -69,5 +74,28 @@ public class SkillMBTests : TestCollection
 		skill.Begin(target);
 
 		Assert.AreSame(skill, behaviour.skill);
+	}
+
+	[UnityTest]
+	public IEnumerator BehaviourRunsAsCoroutine()
+	{
+		var skill = new GameObject("skill").AddComponent<SkillMB>();
+		var behaviour = ScriptableObject.CreateInstance<MockSkillBehaviourSO>();
+		var target = new GameObject("target");
+		var ran = new int[2];
+
+		skill.agent = new GameObject("agent").AddComponent<CharacterMB>();
+		skill.behaviour = behaviour;
+
+		yield return new WaitForEndOfFrame();
+
+		skill.Begin(target);
+		ran[0] = behaviour.iterations;
+
+		yield return new WaitForFixedUpdate();
+
+		ran[1] = behaviour.iterations;
+
+		CollectionAssert.AreEqual(new int[] { 1, 2 }, ran);
 	}
 }
