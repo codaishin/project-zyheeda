@@ -1,9 +1,10 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class SkillMB : MonoBehaviour, IPausable<WaitForFixedUpdate>
 {
-	private IEnumerator currentBehaviour;
+	private List<IEnumerator> runningRoutines = new List<IEnumerator>();
 	private float lastBegun;
 
 	public CharacterMB agent;
@@ -19,14 +20,16 @@ public class SkillMB : MonoBehaviour, IPausable<WaitForFixedUpdate>
 			? 0
 			: 1f / this.skill.appliesPerSecond;
 		if (Time.fixedTime - this.lastBegun >= cooldown) {
+			IEnumerator routine = this.Manage(this.behaviour.Apply(this.agent, this, target));
+			this.StartCoroutine(routine);
 			this.lastBegun = Time.fixedTime;
-			this.currentBehaviour = this.Manage(this.behaviour.Apply(this.agent, this, target));
-			this.StartCoroutine(this.currentBehaviour);
+			this.runningRoutines.Add(routine);
 		}
 	}
 
 	public void End()
 	{
-		this.StopCoroutine(this.currentBehaviour);
+		this.runningRoutines.ForEach(this.StopCoroutine);
+		this.runningRoutines.Clear();
 	}
 }

@@ -221,4 +221,25 @@ public class SkillMBTests : TestCollection
 
 		Assert.AreEqual(2, behaviour.applies);
 	}
+
+	[UnityTest]
+	public IEnumerator ApplyEndToAllCoroutines()
+	{
+		var skill = new GameObject("skill").AddComponent<SkillMB>();
+		var behaviour = ScriptableObject.CreateInstance<MockSkillBehaviourSO>();
+		var target = new GameObject("target");
+
+		skill.agent = new GameObject("agent").AddComponent<CharacterMB>();
+		skill.behaviour = behaviour;
+
+		yield return new WaitForEndOfFrame();
+
+		skill.Begin(target);
+		skill.Begin(target);
+		skill.End();
+
+		yield return new WaitForFixedUpdate();
+
+		Assert.AreEqual(2, behaviour.iterations);
+	}
 }
