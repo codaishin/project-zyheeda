@@ -18,9 +18,10 @@ public class SkillMB : MonoBehaviour, IPausable<WaitForFixedUpdate>
 		? default
 		: 1f / this.skill.appliesPerSecond;
 
-	private IEnumerator ApplyTo(GameObject target)
+	private IEnumerator<WaitForFixedUpdate> ApplyTo(GameObject target)
 	{
-		IEnumerator iterator = this.behaviour.Apply(this.agent, this, target);
+		IEnumerator<WaitForFixedUpdate> iterator =
+			this.behaviour.Apply(this.agent, this, target);
 		this.coolDown = this.CalculateCooldown();
 		while (iterator.MoveNext()) {
 			yield return iterator.Current;
