@@ -3,7 +3,7 @@ using System;
 [Serializable]
 public struct Skill
 {
-	public float applyPerSecond;
-	public float offensiveSuccessBonus;
-	public float devensiveSuccessBonus;
+	public float appliesPerSecond;
+	public int offensiveSuccessBonus;
+	public int devensiveSuccessBonus;
 }

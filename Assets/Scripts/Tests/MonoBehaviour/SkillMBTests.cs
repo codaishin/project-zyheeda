@@ -6,20 +6,21 @@ using UnityEngine.TestTools;
 
 public class SkillMBTests : TestCollection
 {
-	private class MockSkillBehaviourSO : BaseSkillBehaviourSO
+	private class MockSkillBehaviourSO : BaseFixedUpdateSkillBehaviourSO
 	{
 		public CharacterMB agent;
 		public SkillMB skill;
 		public GameObject target;
-
 		public int iterations;
+		public int applies;
 
 		public override
-		IEnumerator Apply(CharacterMB agent, SkillMB skill, GameObject target)
+		IEnumerator<WaitForFixedUpdate> Apply(CharacterMB agent, SkillMB skill, GameObject target)
 		{
 			this.agent = agent;
 			this.target = target;
 			this.skill = skill;
+			++this.applies;
 			while (this.iterations < 10) {
 				++this.iterations;
 				yield return new WaitForFixedUpdate();
@@ -178,5 +179,46 @@ public class SkillMBTests : TestCollection
 		yield return new WaitForFixedUpdate();
 
 		Assert.Greater(behaviour.iterations, 1);
+	}
+
+	[UnityTest]
+	public IEnumerator NoApplyDuringCooldown()
+	{
+		var skill = new GameObject("skill").AddComponent<SkillMB>();
+		var behaviour = ScriptableObject.CreateInstance<MockSkillBehaviourSO>();
+		var target = new GameObject("target");
+
+		skill.agent = new GameObject("agent").AddComponent<CharacterMB>();
+		skill.skill.appliesPerSecond = 10;
+		skill.behaviour = behaviour;
+
+		yield return new WaitForEndOfFrame();
+
+		skill.Begin(target);
+		skill.Begin(target);
+
+		Assert.AreEqual(1, behaviour.applies);
+	}
+
+	[UnityTest]
+	public IEnumerator CanApplyAfterCooldown()
+	{
+		var skill = new GameObject("skill").AddComponent<SkillMB>();
+		var behaviour = ScriptableObject.CreateInstance<MockSkillBehaviourSO>();
+		var target = new GameObject("target");
+
+		skill.agent = new GameObject("agent").AddComponent<CharacterMB>();
+		skill.skill.appliesPerSecond = 10;
+		skill.behaviour = behaviour;
+
+		yield return new WaitForEndOfFrame();
+
+		skill.Begin(target);
+
+		yield return new WaitForSeconds(0.11f);
+
+		skill.Begin(target);
+
+		Assert.AreEqual(2, behaviour.applies);
 	}
 }
