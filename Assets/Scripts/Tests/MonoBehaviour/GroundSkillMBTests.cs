@@ -1,18 +1,19 @@
 using System.Collections;
+using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 
 public class GroundSkillMBTests : TestCollection
 {
-	private class MockSkillBehaviourSO : BaseSkillBehaviourSO
+	private class MockSkillBehaviourSO : BaseFixedUpdateSkillBehaviourSO
 	{
 		public CharacterMB agent;
 		public SkillMB skill;
 		public GameObject target;
 
 		public override
-		IEnumerator Apply(CharacterMB agent, SkillMB skill, GameObject target)
+		IEnumerator<WaitForFixedUpdate> Apply(CharacterMB agent, SkillMB skill, GameObject target)
 		{
 			this.agent = agent;
 			this.target = target;
