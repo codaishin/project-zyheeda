@@ -7,9 +7,8 @@ public class SkillMB : MonoBehaviour, IPausable<WaitForFixedUpdate>
 	private List<IEnumerator> runningRoutines = new List<IEnumerator>();
 	private float coolDown;
 
-	public ItemMB item;
+	public BaseItemMB item;
 	public Skill data;
-	public BaseFixedUpdateSkillBehaviourSO behaviour;
 
 	public bool Paused { get; set; }
 	public WaitForFixedUpdate Pause => default;
@@ -20,8 +19,7 @@ public class SkillMB : MonoBehaviour, IPausable<WaitForFixedUpdate>
 
 	private IEnumerator<WaitForFixedUpdate> ApplyTo(GameObject target)
 	{
-		IEnumerator<WaitForFixedUpdate> iterator =
-			this.behaviour.Apply(this.item, this, target);
+		IEnumerator<WaitForFixedUpdate> iterator = this.item.Apply(this, target);
 		this.coolDown = this.CalculateCooldown();
 		while (iterator.MoveNext()) {
 			yield return iterator.Current;

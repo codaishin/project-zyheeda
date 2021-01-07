@@ -1,8 +1,8 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ItemMB : MonoBehaviour
+public abstract class BaseItemMB : MonoBehaviour
 {
-
+	public abstract
+	IEnumerator<WaitForFixedUpdate> Apply(SkillMB skill, GameObject target);
 }

@@ -6,16 +6,14 @@ using UnityEngine.TestTools;
 
 public class GroundSkillMBTests : TestCollection
 {
-	private class MockSkillBehaviourSO : BaseFixedUpdateSkillBehaviourSO
+	private class MockItemMB : BaseItemMB
 	{
-		public ItemMB item;
 		public SkillMB skill;
 		public GameObject target;
 
 		public override
-		IEnumerator<WaitForFixedUpdate> Apply(ItemMB item, SkillMB skill, GameObject target)
+		IEnumerator<WaitForFixedUpdate> Apply(SkillMB skill, GameObject target)
 		{
-			this.item = item;
 			this.target = target;
 			this.skill = skill;
 			yield break;
@@ -27,10 +25,9 @@ public class GroundSkillMBTests : TestCollection
 	{
 		var groundSkill = new GameObject("groundSkill").AddComponent<GroundSkillMB>();
 		var skill = new GameObject("skill").AddComponent<SkillMB>();
-		var behaviour = ScriptableObject.CreateInstance<MockSkillBehaviourSO>();
+		var item = new GameObject("agent").AddComponent<MockItemMB>();
 
-		skill.item = new GameObject("agent").AddComponent<ItemMB>();
-		skill.behaviour = behaviour;
+		skill.item = item;
 		groundSkill.skill = skill;
 		groundSkill.selector = new GameObject("selector");
 
@@ -38,7 +35,7 @@ public class GroundSkillMBTests : TestCollection
 
 		groundSkill.Begin(default);
 
-		Assert.AreSame(groundSkill.selector, behaviour.target);
+		Assert.AreSame(groundSkill.selector, item.target);
 	}
 
 	[UnityTest]
@@ -46,10 +43,8 @@ public class GroundSkillMBTests : TestCollection
 	{
 		var groundSkill = new GameObject("groundSkill").AddComponent<GroundSkillMB>();
 		var skill = new GameObject("skill").AddComponent<SkillMB>();
-		var behaviour = ScriptableObject.CreateInstance<MockSkillBehaviourSO>();
 
-		skill.item = new GameObject("agent").AddComponent<ItemMB>();
-		skill.behaviour = behaviour;
+		skill.item = new GameObject("agent").AddComponent<MockItemMB>();
 		groundSkill.skill = skill;
 		groundSkill.selector = new GameObject("selector");
 
