@@ -250,4 +250,28 @@ public class ProjectileManagerTests : TestCollection
 
 		Assert.AreEqual(2, manager.Projectiles.Count());
 	}
+
+	[Test]
+	public void ProjectileLookAtTarget()
+	{
+		var spawn = new GameObject("self");
+		var target = new GameObject("target");
+		var prefab = new GameObject("prefab");
+		var manager = new ProjectileManager();
+
+		target.transform.position = Vector3.up;
+		manager.spawnPoint = spawn.transform;
+		manager.prefab = prefab;
+		manager.deltaPerSecond = 1;
+		var iterator = manager.ProjectileRoutineTo(target.transform);
+
+		iterator.MoveNext();
+
+		var expected = Quaternion.LookRotation(Vector3.up);
+
+		Tools.AssertEqual(
+			expected.eulerAngles,
+			manager.Projectiles.First().transform.rotation.eulerAngles
+		);
+	}
 }

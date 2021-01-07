@@ -57,6 +57,7 @@ public class ProjectileManager : IProjectileManager
 		this.Activate(projectile);
 		while (projectile.position != target.position) {
 			projectile.position = this.Interpolate(projectile, target);
+			projectile.LookAt(target);
 			yield return new WaitForFixedUpdate();
 		}
 		this.Deactivate(projectile);
