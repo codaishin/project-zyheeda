@@ -121,8 +121,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7841215414286169623}
   - component: {fileID: 7841215414286169621}
-  - component: {fileID: 7841215414286169622}
-  - component: {fileID: 7841215414286169620}
+  - component: {fileID: 7841215412951489898}
   m_Layer: 0
   m_Name: TrackPlayer
   m_TagString: Untagged
@@ -162,7 +161,7 @@ MonoBehaviour:
   target:
     gameObject: {fileID: 0}
     referenceSO: {fileID: 11400000, guid: 1581ede234bcf8449a707bf6512f1637, type: 2}
---- !u!114 &7841215414286169622
+--- !u!114 &7841215412951489898
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -171,38 +170,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 7841215414286169608}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30af8627dace4454c8f416ddbfadc2d8, type: 3}
+  m_Script: {fileID: 11500000, guid: c94837f92ef8c3a47a36b5c4d1ec3468, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  onUpdate:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 7841215414286169621}
-        m_TargetAssemblyTypeName: TrackerMB, Build
-        m_MethodName: Track
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!114 &7841215414286169620
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7841215414286169608}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5078fb333eca7064588c2a8a4a3672de, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  listenTo: {fileID: 11400000, guid: b30b2baa09a76a541b7c2e5ff360d901, type: 2}
-  onRaise:
+  onLateUpdate:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 7841215414286169621}
