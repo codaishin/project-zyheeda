@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -14,8 +12,5 @@ public class LateUpdateMB : MonoBehaviour
 		}
 	}
 
-	private void LateUpdate()
-	{
-		this.onLateUpdate.Invoke();
-	}
+	private void LateUpdate() => this.onLateUpdate.Invoke();
 }
