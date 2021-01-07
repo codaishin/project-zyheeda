@@ -7,21 +7,19 @@ public class SkillMB : MonoBehaviour, IPausable<WaitForFixedUpdate>
 	private List<IEnumerator> runningRoutines = new List<IEnumerator>();
 	private float coolDown;
 
-	public CharacterMB agent;
-	public Skill skill;
-	public BaseFixedUpdateSkillBehaviourSO behaviour;
+	public BaseItemMB item;
+	public Skill data;
 
 	public bool Paused { get; set; }
 	public WaitForFixedUpdate Pause => default;
 
-	private float CalculateCooldown() => this.skill.appliesPerSecond == default
+	private float CalculateCooldown() => this.data.speedPerSecond == default
 		? default
-		: 1f / this.skill.appliesPerSecond;
+		: 1f / this.data.speedPerSecond;
 
 	private IEnumerator<WaitForFixedUpdate> ApplyTo(GameObject target)
 	{
-		IEnumerator<WaitForFixedUpdate> iterator =
-			this.behaviour.Apply(this.agent, this, target);
+		IEnumerator<WaitForFixedUpdate> iterator = this.item.Apply(this, target);
 		this.coolDown = this.CalculateCooldown();
 		while (iterator.MoveNext()) {
 			yield return iterator.Current;
