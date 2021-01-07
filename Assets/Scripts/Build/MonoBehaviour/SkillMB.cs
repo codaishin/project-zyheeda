@@ -7,7 +7,7 @@ public class SkillMB : MonoBehaviour, IPausable<WaitForFixedUpdate>
 	private List<IEnumerator> runningRoutines = new List<IEnumerator>();
 	private float coolDown;
 
-	public CharacterMB agent;
+	public ItemMB item;
 	public Skill skill;
 	public BaseFixedUpdateSkillBehaviourSO behaviour;
 
@@ -21,7 +21,7 @@ public class SkillMB : MonoBehaviour, IPausable<WaitForFixedUpdate>
 	private IEnumerator<WaitForFixedUpdate> ApplyTo(GameObject target)
 	{
 		IEnumerator<WaitForFixedUpdate> iterator =
-			this.behaviour.Apply(this.agent, this, target);
+			this.behaviour.Apply(this.item, this, target);
 		this.coolDown = this.CalculateCooldown();
 		while (iterator.MoveNext()) {
 			yield return iterator.Current;

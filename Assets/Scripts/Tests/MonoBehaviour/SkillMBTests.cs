@@ -8,16 +8,16 @@ public class SkillMBTests : TestCollection
 {
 	private class MockSkillBehaviourSO : BaseFixedUpdateSkillBehaviourSO
 	{
-		public CharacterMB agent;
+		public ItemMB item;
 		public SkillMB skill;
 		public GameObject target;
 		public int iterations;
 		public int applies;
 
 		public override
-		IEnumerator<WaitForFixedUpdate> Apply(CharacterMB agent, SkillMB skill, GameObject target)
+		IEnumerator<WaitForFixedUpdate> Apply(ItemMB agent, SkillMB skill, GameObject target)
 		{
-			this.agent = agent;
+			this.item = agent;
 			this.target = target;
 			this.skill = skill;
 			++this.applies;
@@ -29,19 +29,19 @@ public class SkillMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator CallsCorrectAgent()
+	public IEnumerator CallsCorrectItem()
 	{
 		var skill = new GameObject("skill").AddComponent<SkillMB>();
 		var behaviour = ScriptableObject.CreateInstance<MockSkillBehaviourSO>();
 
-		skill.agent = new GameObject("agent").AddComponent<CharacterMB>();
+		skill.item = new GameObject("agent").AddComponent<ItemMB>();
 		skill.behaviour = behaviour;
 
 		yield return new WaitForEndOfFrame();
 
 		skill.Begin(null);
 
-		Assert.AreSame(skill.agent, behaviour.agent);
+		Assert.AreSame(skill.item, behaviour.item);
 	}
 
 	[UnityTest]
@@ -51,7 +51,7 @@ public class SkillMBTests : TestCollection
 		var behaviour = ScriptableObject.CreateInstance<MockSkillBehaviourSO>();
 		var target = new GameObject("target");
 
-		skill.agent = new GameObject("agent").AddComponent<CharacterMB>();
+		skill.item = new GameObject("agent").AddComponent<ItemMB>();
 		skill.behaviour = behaviour;
 
 		yield return new WaitForEndOfFrame();
@@ -68,7 +68,7 @@ public class SkillMBTests : TestCollection
 		var behaviour = ScriptableObject.CreateInstance<MockSkillBehaviourSO>();
 		var target = new GameObject("target");
 
-		skill.agent = new GameObject("agent").AddComponent<CharacterMB>();
+		skill.item = new GameObject("agent").AddComponent<ItemMB>();
 		skill.behaviour = behaviour;
 
 		yield return new WaitForEndOfFrame();
@@ -86,7 +86,7 @@ public class SkillMBTests : TestCollection
 		var target = new GameObject("target");
 		var ran = new int[2];
 
-		skill.agent = new GameObject("agent").AddComponent<CharacterMB>();
+		skill.item = new GameObject("agent").AddComponent<ItemMB>();
 		skill.behaviour = behaviour;
 
 		yield return new WaitForEndOfFrame();
@@ -109,7 +109,7 @@ public class SkillMBTests : TestCollection
 		var target = new GameObject("target");
 		var ran = new int[2];
 
-		skill.agent = new GameObject("agent").AddComponent<CharacterMB>();
+		skill.item = new GameObject("agent").AddComponent<ItemMB>();
 		skill.behaviour = behaviour;
 
 		yield return new WaitForEndOfFrame();
@@ -140,7 +140,7 @@ public class SkillMBTests : TestCollection
 		var behaviour = ScriptableObject.CreateInstance<MockSkillBehaviourSO>();
 		var target = new GameObject("target");
 
-		skill.agent = new GameObject("agent").AddComponent<CharacterMB>();
+		skill.item = new GameObject("agent").AddComponent<ItemMB>();
 		skill.behaviour = behaviour;
 
 		yield return new WaitForEndOfFrame();
@@ -161,7 +161,7 @@ public class SkillMBTests : TestCollection
 		var behaviour = ScriptableObject.CreateInstance<MockSkillBehaviourSO>();
 		var target = new GameObject("target");
 
-		skill.agent = new GameObject("agent").AddComponent<CharacterMB>();
+		skill.item = new GameObject("agent").AddComponent<ItemMB>();
 		skill.behaviour = behaviour;
 
 		yield return new WaitForEndOfFrame();
@@ -188,7 +188,7 @@ public class SkillMBTests : TestCollection
 		var behaviour = ScriptableObject.CreateInstance<MockSkillBehaviourSO>();
 		var target = new GameObject("target");
 
-		skill.agent = new GameObject("agent").AddComponent<CharacterMB>();
+		skill.item = new GameObject("agent").AddComponent<ItemMB>();
 		skill.skill.speedPerSecond = 10;
 		skill.behaviour = behaviour;
 
@@ -207,7 +207,7 @@ public class SkillMBTests : TestCollection
 		var behaviour = ScriptableObject.CreateInstance<MockSkillBehaviourSO>();
 		var target = new GameObject("target");
 
-		skill.agent = new GameObject("agent").AddComponent<CharacterMB>();
+		skill.item = new GameObject("agent").AddComponent<ItemMB>();
 		skill.skill.speedPerSecond = 10;
 		skill.behaviour = behaviour;
 
@@ -229,7 +229,7 @@ public class SkillMBTests : TestCollection
 		var behaviour = ScriptableObject.CreateInstance<MockSkillBehaviourSO>();
 		var target = new GameObject("target");
 
-		skill.agent = new GameObject("agent").AddComponent<CharacterMB>();
+		skill.item = new GameObject("agent").AddComponent<ItemMB>();
 		skill.skill.speedPerSecond = 10;
 		skill.behaviour = behaviour;
 
@@ -253,7 +253,7 @@ public class SkillMBTests : TestCollection
 		var behaviour = ScriptableObject.CreateInstance<MockSkillBehaviourSO>();
 		var target = new GameObject("target");
 
-		skill.agent = new GameObject("agent").AddComponent<CharacterMB>();
+		skill.item = new GameObject("agent").AddComponent<ItemMB>();
 		skill.behaviour = behaviour;
 
 		yield return new WaitForEndOfFrame();

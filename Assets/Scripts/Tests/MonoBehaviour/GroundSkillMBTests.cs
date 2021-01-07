@@ -8,14 +8,14 @@ public class GroundSkillMBTests : TestCollection
 {
 	private class MockSkillBehaviourSO : BaseFixedUpdateSkillBehaviourSO
 	{
-		public CharacterMB agent;
+		public ItemMB item;
 		public SkillMB skill;
 		public GameObject target;
 
 		public override
-		IEnumerator<WaitForFixedUpdate> Apply(CharacterMB agent, SkillMB skill, GameObject target)
+		IEnumerator<WaitForFixedUpdate> Apply(ItemMB item, SkillMB skill, GameObject target)
 		{
-			this.agent = agent;
+			this.item = item;
 			this.target = target;
 			this.skill = skill;
 			yield break;
@@ -29,7 +29,7 @@ public class GroundSkillMBTests : TestCollection
 		var skill = new GameObject("skill").AddComponent<SkillMB>();
 		var behaviour = ScriptableObject.CreateInstance<MockSkillBehaviourSO>();
 
-		skill.agent = new GameObject("agent").AddComponent<CharacterMB>();
+		skill.item = new GameObject("agent").AddComponent<ItemMB>();
 		skill.behaviour = behaviour;
 		groundSkill.skill = skill;
 		groundSkill.selector = new GameObject("selector");
@@ -48,7 +48,7 @@ public class GroundSkillMBTests : TestCollection
 		var skill = new GameObject("skill").AddComponent<SkillMB>();
 		var behaviour = ScriptableObject.CreateInstance<MockSkillBehaviourSO>();
 
-		skill.agent = new GameObject("agent").AddComponent<CharacterMB>();
+		skill.item = new GameObject("agent").AddComponent<ItemMB>();
 		skill.behaviour = behaviour;
 		groundSkill.skill = skill;
 		groundSkill.selector = new GameObject("selector");
