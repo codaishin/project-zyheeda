@@ -8,15 +8,15 @@ public class SkillMB : MonoBehaviour, IPausable<WaitForFixedUpdate>
 	private float coolDown;
 
 	public ItemMB item;
-	public Skill skill;
+	public Skill data;
 	public BaseFixedUpdateSkillBehaviourSO behaviour;
 
 	public bool Paused { get; set; }
 	public WaitForFixedUpdate Pause => default;
 
-	private float CalculateCooldown() => this.skill.speedPerSecond == default
+	private float CalculateCooldown() => this.data.speedPerSecond == default
 		? default
-		: 1f / this.skill.speedPerSecond;
+		: 1f / this.data.speedPerSecond;
 
 	private IEnumerator<WaitForFixedUpdate> ApplyTo(GameObject target)
 	{

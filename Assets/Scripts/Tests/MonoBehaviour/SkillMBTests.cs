@@ -189,7 +189,7 @@ public class SkillMBTests : TestCollection
 		var target = new GameObject("target");
 
 		skill.item = new GameObject("agent").AddComponent<ItemMB>();
-		skill.skill.speedPerSecond = 10;
+		skill.data.speedPerSecond = 10;
 		skill.behaviour = behaviour;
 
 		yield return new WaitForEndOfFrame();
@@ -208,7 +208,7 @@ public class SkillMBTests : TestCollection
 		var target = new GameObject("target");
 
 		skill.item = new GameObject("agent").AddComponent<ItemMB>();
-		skill.skill.speedPerSecond = 10;
+		skill.data.speedPerSecond = 10;
 		skill.behaviour = behaviour;
 
 		yield return new WaitForEndOfFrame();
@@ -230,7 +230,7 @@ public class SkillMBTests : TestCollection
 		var target = new GameObject("target");
 
 		skill.item = new GameObject("agent").AddComponent<ItemMB>();
-		skill.skill.speedPerSecond = 10;
+		skill.data.speedPerSecond = 10;
 		skill.behaviour = behaviour;
 
 		yield return new WaitForEndOfFrame();
