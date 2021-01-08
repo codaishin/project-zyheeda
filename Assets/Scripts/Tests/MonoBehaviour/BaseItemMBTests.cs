@@ -6,5 +6,24 @@ using UnityEngine.TestTools;
 
 public class BaseItemMBTests : TestCollection
 {
+	private class MockItemMB : BaseItemMB
+	{
+		public override
+		IEnumerator<WaitForFixedUpdate> Apply(SkillMB skill, GameObject target)
+		{
+			throw new System.NotImplementedException();
+		}
+	}
 
+	private class MockEffectMB : BaseEffectMB
+	{
+
+	}
+
+	[Test]
+	public void EffectsNotNull()
+	{
+		var item = new GameObject("item").AddComponent<MockItemMB>();
+		Assert.NotNull(item.Effects);
+	}
 }

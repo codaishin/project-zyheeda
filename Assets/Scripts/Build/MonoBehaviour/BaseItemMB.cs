@@ -3,6 +3,10 @@ using UnityEngine;
 
 public abstract class BaseItemMB : MonoBehaviour
 {
+	public Dictionary<int, BaseEffectMB> Effects { get; private set; }
+
 	public abstract
 	IEnumerator<WaitForFixedUpdate> Apply(SkillMB skill, GameObject target);
+
+	private void Awake() => this.Effects = new Dictionary<int, BaseEffectMB>();
 }
