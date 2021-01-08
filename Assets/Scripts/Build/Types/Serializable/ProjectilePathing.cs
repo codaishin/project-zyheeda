@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
-public class ProjectilePathing : IProjectileManager
+public struct ProjectilePathing : IProjectileManager
 {
 	public Transform spawnPoint;
 	public BaseMagazineMB magazine;
