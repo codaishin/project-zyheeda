@@ -11,7 +11,7 @@ public class MoveTowardsOngoingMB : MonoBehaviour, IPausable<WaitForFixedUpdate>
 
 	public bool Paused { get; set; }
 
-	public WaitForFixedUpdate Pause => default;
+	public WaitForFixedUpdate Pause => new WaitForFixedUpdate();
 
 	private void Start() => this.agentTransform = this.agent.GameObject.transform;
 
