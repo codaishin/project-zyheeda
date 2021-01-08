@@ -4,9 +4,10 @@ using UnityEngine;
 public abstract class BaseItemMB : MonoBehaviour
 {
 	public Dictionary<int, BaseEffectMB> Effects {
-		get; private set;
+		get;
+		private set;
 	} = new Dictionary<int, BaseEffectMB>();
 
 	public abstract
-	IEnumerator<WaitForFixedUpdate> Apply(SkillMB skill, GameObject target);
+	bool Apply(SkillMB skill, GameObject target, out IEnumerator<WaitForFixedUpdate> routine);
 }

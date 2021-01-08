@@ -62,9 +62,24 @@ public class BaseProjectileLauncherMBTests
 		var target = new GameObject("target").AddComponent<MockHitableMB>();
 
 		skill.data.offense = 42;
-		launcher.Apply(skill, target.gameObject).MoveNext();
+		launcher.Apply(skill, target.gameObject, out var routine);
+		routine.MoveNext();
 
 		Assert.AreEqual(42, target.usedOffense);
+	}
+
+	[Test]
+	public void CallTryHitValid()
+	{
+		var launcher = new GameObject("launcher").AddComponent<MockLauncherMB>();
+		var skill = new GameObject("skill").AddComponent<SkillMB>();
+		var target = new GameObject("target").AddComponent<MockHitableMB>();
+
+		skill.data.offense = 42;
+		var valid = launcher.Apply(skill, target.gameObject, out var routine);
+		routine.MoveNext();
+
+		Assert.True(valid);
 	}
 
 	[Test]
@@ -75,9 +90,9 @@ public class BaseProjectileLauncherMBTests
 		var target = new GameObject("target").AddComponent<MockHitableMB>();
 
 		launcher.projectilePathing.iterations = 5;
-		var iterator = launcher.Apply(skill, target.gameObject);
+		launcher.Apply(skill, target.gameObject, out var routine);
 		var count = 0;
-		while (iterator.MoveNext()) {
+		while (routine.MoveNext()) {
 			++count;
 		}
 		Assert.AreEqual(5, count);
@@ -90,8 +105,8 @@ public class BaseProjectileLauncherMBTests
 		var skill = new GameObject("skill").AddComponent<SkillMB>();
 		var target = new GameObject("target").AddComponent<MockHitableMB>();
 
-		var iterator = launcher.Apply(skill, target.gameObject);
-		while (iterator.MoveNext());
+		launcher.Apply(skill, target.gameObject, out var routine);
+		while (routine.MoveNext());
 
 		Assert.AreSame(target.transform, launcher.projectilePathing.target);
 	}
@@ -104,12 +119,11 @@ public class BaseProjectileLauncherMBTests
 		var target = new GameObject("target");
 
 		launcher.projectilePathing.iterations = 5;
-		var iterator = launcher.Apply(skill, target.gameObject);
-		var count = 0;
-		while (iterator.MoveNext()) {
-			++count;
-		}
-		Assert.AreEqual(0, count);
+		var valid = launcher.Apply(skill, target.gameObject, out var routine);
+		Assert.AreEqual(
+			(null as IEnumerator<WaitForFixedUpdate>, false),
+			(routine, valid)
+		);
 	}
 
 	[Test]
@@ -124,7 +138,8 @@ public class BaseProjectileLauncherMBTests
 		};
 
 		target.hit = true;
-		launcher.Apply(skill, target.gameObject).MoveNext();
+		launcher.Apply(skill, target.gameObject, out var routine);
+		routine.MoveNext();
 
 		CollectionAssert.AreEqual(
 			new (SkillMB, GameObject)[] {
@@ -146,7 +161,8 @@ public class BaseProjectileLauncherMBTests
 			launcher.gameObject.AddComponent<MockEffectMB>(),
 		};
 
-		launcher.Apply(skill, target.gameObject).MoveNext();
+		launcher.Apply(skill, target.gameObject, out var routine);
+		routine.MoveNext();
 
 		Assert.True(effects.All(e => !e.skill && !e.target));
 	}
@@ -165,8 +181,8 @@ public class BaseProjectileLauncherMBTests
 
 		target.hit = true;
 		launcher.projectilePathing.iterations = 2;
-		var iterator = launcher.Apply(skill, target.gameObject);
-		while (iterator.MoveNext()) {
+		launcher.Apply(skill, target.gameObject, out var routine);
+		while (routine.MoveNext()) {
 			applied.Add(effects.All(e => e.skill || e.target));
 		}
 		applied.Add(effects.All(e => e.skill || e.target));

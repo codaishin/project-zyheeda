@@ -9,7 +9,7 @@ public class BaseEffectMBTests : TestCollection
 	private class MockItemMB : BaseItemMB
 	{
 		public override
-		IEnumerator<WaitForFixedUpdate> Apply(SkillMB skill, GameObject target)
+		bool Apply(SkillMB skill, GameObject target, out IEnumerator<WaitForFixedUpdate> routine)
 		{
 			throw new System.NotImplementedException();
 		}
