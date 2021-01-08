@@ -11,7 +11,7 @@ public class SkillMB : MonoBehaviour, IPausable<WaitForFixedUpdate>
 	public Skill data;
 
 	public bool Paused { get; set; }
-	public WaitForFixedUpdate Pause => default;
+	public WaitForFixedUpdate Pause => new WaitForFixedUpdate();
 
 	private float CalculateCooldown() => this.data.speedPerSecond == default
 		? default

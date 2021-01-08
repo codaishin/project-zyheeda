@@ -287,4 +287,11 @@ public class SkillMBTests : TestCollection
 
 		Assert.AreEqual(2, item.iterationsDone);
 	}
+
+	[Test]
+	public void PauseNotNull()
+	{
+		var skill = new GameObject("skill").AddComponent<SkillMB>();
+		Assert.NotNull(skill.Pause);
+	}
 }
