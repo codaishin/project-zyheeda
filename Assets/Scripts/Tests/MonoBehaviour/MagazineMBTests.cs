@@ -51,4 +51,43 @@ public class MagazineMBTests : TestCollection
 		var projectile = magazine.GetOrMakeProjectile();
 		Assert.AreSame(magazine, projectile.Magazine);
 	}
+
+	[UnityTest]
+	public IEnumerator OnlyOneProjectile()
+	{
+		var magazine = new GameObject("magazine").AddComponent<MagazineMB>();
+		var prefab = new GameObject("prefab")
+			.AddComponent<MockComponent>().gameObject
+			.AddComponent<ProjectileMB>();
+
+		magazine.projectilePrefab = prefab;
+
+		var projectileA = magazine.GetOrMakeProjectile();
+
+		yield return new WaitForEndOfFrame();
+
+		projectileA.enabled = false;
+
+		yield return new WaitForEndOfFrame();
+
+		var projectileB = magazine.GetOrMakeProjectile();
+
+		Assert.AreSame(projectileA, projectileB);
+	}
+
+	[Test]
+	public void TwoProjectile()
+	{
+		var magazine = new GameObject("magazine").AddComponent<MagazineMB>();
+		var prefab = new GameObject("prefab")
+			.AddComponent<MockComponent>().gameObject
+			.AddComponent<ProjectileMB>();
+
+		magazine.projectilePrefab = prefab;
+
+		var projectileA = magazine.GetOrMakeProjectile();
+		var projectileB = magazine.GetOrMakeProjectile();
+
+		Assert.AreNotSame(projectileA, projectileB);
+	}
 }

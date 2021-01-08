@@ -1,21 +1,30 @@
-using System;
-using System.Collections;
+using System.Linq;
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 
 public class MagazineMB : MonoBehaviour
 {
+	private List<ProjectileMB> projectiles = new List<ProjectileMB>();
+
 	public ProjectileMB projectilePrefab;
 
-	private ProjectileMB MakeProjectile()
+	private ProjectileMB CoupleWith(in ProjectileMB projectile)
 	{
-		ProjectileMB projectile = GameObject.Instantiate(this.projectilePrefab);
 		projectile.Magazine = this;
+		this.projectiles.Add(projectile);
 		return projectile;
 	}
 
-	public ProjectileMB GetOrMakeProjectile()
-	{
-		return this.MakeProjectile();
-	}
+	private ProjectileMB MakeProjectile() =>
+		this.CoupleWith(GameObject.Instantiate(this.projectilePrefab));
+
+	private bool GetProjectile(out ProjectileMB projectile) =>
+		projectile = this.projectiles
+			.Where(p => !p.enabled)
+			.FirstOrDefault();
+
+	public ProjectileMB GetOrMakeProjectile() =>
+		this.GetProjectile(out ProjectileMB projectile)
+			? projectile
+			: this.MakeProjectile();
 }
