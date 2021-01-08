@@ -66,7 +66,7 @@ public class MagazineMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		projectileA.enabled = false;
+		projectileA.Store();
 
 		yield return new WaitForEndOfFrame();
 
@@ -89,5 +89,51 @@ public class MagazineMBTests : TestCollection
 		var projectileB = magazine.GetOrMakeProjectile();
 
 		Assert.AreNotSame(projectileA, projectileB);
+	}
+
+	[UnityTest]
+	public IEnumerator ProjectileActive()
+	{
+		var magazine = new GameObject("magazine").AddComponent<MagazineMB>();
+		var prefab = new GameObject("prefab")
+			.AddComponent<MockComponent>().gameObject
+			.AddComponent<ProjectileMB>();
+
+		magazine.projectilePrefab = prefab;
+
+		var projectile = magazine.GetOrMakeProjectile();
+
+		yield return new WaitForEndOfFrame();
+
+		projectile.Store();
+
+		yield return new WaitForEndOfFrame();
+
+		magazine.GetOrMakeProjectile();
+
+		Assert.True(projectile.gameObject.activeSelf);
+	}
+
+	[UnityTest]
+	public IEnumerator ProjectileNoParent()
+	{
+		var magazine = new GameObject("magazine").AddComponent<MagazineMB>();
+		var prefab = new GameObject("prefab")
+			.AddComponent<MockComponent>().gameObject
+			.AddComponent<ProjectileMB>();
+
+		magazine.projectilePrefab = prefab;
+
+		var projectile = magazine.GetOrMakeProjectile();
+
+		yield return new WaitForEndOfFrame();
+
+		projectile.Store();
+
+		yield return new WaitForEndOfFrame();
+
+		magazine.GetOrMakeProjectile();
+
+		Assert.Null(projectile.transform.parent);
 	}
 }

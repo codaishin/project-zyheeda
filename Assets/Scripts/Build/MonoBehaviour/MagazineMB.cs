@@ -8,23 +8,29 @@ public class MagazineMB : BaseMagazineMB
 
 	public ProjectileMB projectilePrefab;
 
-	private ProjectileMB CoupleWith(in ProjectileMB projectile)
+	private ProjectileMB InstantiateCoupled(in ProjectileMB projectilePrefab)
 	{
+		ProjectileMB projectile = GameObject.Instantiate(projectilePrefab);
 		projectile.Magazine = this;
 		this.projectiles.Add(projectile);
 		return projectile;
 	}
 
 	private ProjectileMB MakeProjectile() =>
-		this.CoupleWith(GameObject.Instantiate(this.projectilePrefab));
+		this.InstantiateCoupled(this.projectilePrefab);
 
 	private bool GetProjectile(out ProjectileMB projectile) =>
 		projectile = this.projectiles
-			.Where(p => !p.enabled)
+			.Where(p => !p.gameObject.activeSelf)
 			.FirstOrDefault();
 
-	public override ProjectileMB GetOrMakeProjectile() =>
-		this.GetProjectile(out ProjectileMB projectile)
-			? projectile
-			: this.MakeProjectile();
+	public override ProjectileMB GetOrMakeProjectile()
+	{
+		if (!this.GetProjectile(out ProjectileMB projectile)) {
+			projectile = this.MakeProjectile();
+		}
+		projectile.gameObject.SetActive(true);
+		projectile.transform.SetParent(null);
+		return projectile;
+	}
 }
