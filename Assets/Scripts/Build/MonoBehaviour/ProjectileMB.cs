@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ProjectileMB : MonoBehaviour
 {
-	public MagazineMB Magazine { get; set; }
+	public BaseMagazineMB Magazine { get; set; }
 
 	public void Store()
 	{

@@ -18,13 +18,17 @@ public class ProjectilePathing : IProjectilePathing
 
 	public IEnumerator<WaitForFixedUpdate> ProjectileRoutineTo(Transform target)
 	{
-		Transform projectile = this.magazine.GetOrMakeProjectile().transform;
-		projectile.position = this.spawnPoint.position;
-		while (projectile.position != target.position) {
-			projectile.position = this.Interpolate(projectile, target);
-			projectile.LookAt(target);
+		ProjectileMB projectile = this.magazine.GetOrMakeProjectile();
+		projectile.transform.position = this.spawnPoint.position;
+		projectile.Magazine = this.magazine;
+		while (projectile.transform.position != target.position) {
+			projectile.transform.position = this.Interpolate(
+				projectile.transform,
+				target
+			);
+			projectile.transform.LookAt(target);
 			yield return new WaitForFixedUpdate();
 		}
-		projectile.gameObject.SetActive(false);
+		projectile.Store();
 	}
 }

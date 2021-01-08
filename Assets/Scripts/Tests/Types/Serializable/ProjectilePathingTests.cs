@@ -84,7 +84,7 @@ public class ProjectilePathingTests : TestCollection
 	}
 
 	[Test]
-	public void DisableProjectileWhenTargetReached()
+	public void StoreProjectileWhenTargetReached()
 	{
 		var spawn = new GameObject("spawn");
 		var target = new GameObject("target");
@@ -99,7 +99,10 @@ public class ProjectilePathingTests : TestCollection
 
 		while (iterator.MoveNext());
 
-		Assert.False(magazine.Projectile.gameObject.activeSelf);
+		Assert.AreEqual(
+			(true, true),
+			(!magazine.Projectile.isActiveAndEnabled, magazine.Projectile.transform.parent == magazine.transform)
+		);
 	}
 
 	[Test]
