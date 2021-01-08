@@ -5,6 +5,8 @@ public abstract class BaseEffectMB : MonoBehaviour
 {
 	public BaseItemMB Item { get; private set; }
 
+	public abstract void Apply(in SkillMB skill, in GameObject target);
+
 	private void Awake()
 	{
 		this.Item = this.GetComponent<BaseItemMB>();

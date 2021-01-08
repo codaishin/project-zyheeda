@@ -17,7 +17,10 @@ public class BaseItemMBTests : TestCollection
 
 	private class MockEffectMB : BaseEffectMB
 	{
-
+		public override void Apply(in SkillMB skill, in GameObject target)
+		{
+			throw new System.NotImplementedException();
+		}
 	}
 
 	[Test]
