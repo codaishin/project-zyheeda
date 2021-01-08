@@ -11,4 +11,14 @@ public abstract class BaseEffectMB : MonoBehaviour
 	{
 		this.Item = this.GetComponent<BaseItemMB>();
 	}
+
+	private void OnEnable()
+	{
+		this.Item.Effects.Add(this.GetInstanceID(), this);
+	}
+
+	private void OnDisable()
+	{
+		this.Item.Effects.Remove(this.GetInstanceID());
+	}
 }
