@@ -6,7 +6,13 @@ using UnityEngine.TestTools;
 
 public class BaseHitableMBTests
 {
-	private class MockHitableMB : BaseHitableMB {}
+	private class MockHitableMB : BaseHitableMB
+	{
+		public override bool Hit(in int offense)
+		{
+			throw new System.NotImplementedException();
+		}
+	}
 
 	[Test]
 	public void OnlyOneHitable()
