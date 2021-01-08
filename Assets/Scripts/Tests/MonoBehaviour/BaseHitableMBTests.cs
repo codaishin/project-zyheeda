@@ -8,7 +8,7 @@ public class BaseHitableMBTests
 {
 	private class MockHitableMB : BaseHitableMB
 	{
-		public override bool Hit(in int offense)
+		public override bool TryHit(in int offense)
 		{
 			throw new System.NotImplementedException();
 		}
