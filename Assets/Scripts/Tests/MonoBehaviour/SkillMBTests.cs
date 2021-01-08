@@ -10,19 +10,24 @@ public class SkillMBTests : TestCollection
 	{
 		public SkillMB skill;
 		public GameObject target;
-		public int iterations;
+		public int iterationsDone;
 		public int applies;
+		public bool valid = true;
 
 		public override
-		IEnumerator<WaitForFixedUpdate> Apply(SkillMB skill, GameObject target)
+		bool Apply(SkillMB skill, GameObject target, out IEnumerator<WaitForFixedUpdate> routine)
 		{
+			IEnumerator<WaitForFixedUpdate> iterate() {
+				while (this.valid && this.iterationsDone < 10) {
+					++this.iterationsDone;
+					yield return new WaitForFixedUpdate();
+				}
+			}
 			this.target = target;
 			this.skill = skill;
 			++this.applies;
-			while (this.iterations < 10) {
-				++this.iterations;
-				yield return new WaitForFixedUpdate();
-			}
+			routine = iterate();
+			return this.valid;
 		}
 	}
 
@@ -71,11 +76,11 @@ public class SkillMBTests : TestCollection
 		yield return new WaitForEndOfFrame();
 
 		skill.Begin(target);
-		ran[0] = item.iterations;
+		ran[0] = item.iterationsDone;
 
 		yield return new WaitForFixedUpdate();
 
-		ran[1] = item.iterations;
+		ran[1] = item.iterationsDone;
 
 		CollectionAssert.AreEqual(new int[] { 1, 2 }, ran);
 	}
@@ -93,12 +98,12 @@ public class SkillMBTests : TestCollection
 		yield return new WaitForEndOfFrame();
 
 		skill.Begin(target);
-		ran[0] = item.iterations;
+		ran[0] = item.iterationsDone;
 		skill.End();
 
 		yield return new WaitForFixedUpdate();
 
-		ran[1] = item.iterations;
+		ran[1] = item.iterationsDone;
 
 		CollectionAssert.AreEqual(new int[] { 1, 1 }, ran);
 	}
@@ -128,7 +133,7 @@ public class SkillMBTests : TestCollection
 
 		yield return new WaitForFixedUpdate();
 
-		Assert.AreEqual(1, item.iterations);
+		Assert.AreEqual(1, item.iterationsDone);
 	}
 
 	[UnityTest]
@@ -154,7 +159,7 @@ public class SkillMBTests : TestCollection
 		yield return new WaitForFixedUpdate();
 		yield return new WaitForFixedUpdate();
 
-		Assert.Greater(item.iterations, 1);
+		Assert.Greater(item.iterationsDone, 1);
 	}
 
 	[UnityTest]
@@ -190,6 +195,50 @@ public class SkillMBTests : TestCollection
 		skill.Begin(target);
 
 		yield return new WaitForSeconds(0.12f);
+
+		skill.Begin(target);
+
+		Assert.AreEqual(2, item.applies);
+	}
+
+	[UnityTest]
+	public IEnumerator CanAttemptToApplyAgainAfterInvalid()
+	{
+		var skill = new GameObject("skill").AddComponent<SkillMB>();
+		var target = new GameObject("target");
+		var item = new GameObject("item").AddComponent<MockItemMB>();
+
+		skill.item = item;
+		skill.data.speedPerSecond = 0.1f;
+		item.valid = false;
+
+		yield return new WaitForEndOfFrame();
+
+		skill.Begin(target);
+
+		yield return new WaitForEndOfFrame();
+
+		skill.Begin(target);
+
+		Assert.AreEqual(2, item.applies);
+	}
+
+	[UnityTest]
+	public IEnumerator CanAttemptToApplyAgainAfterCooldownLongerThanSkill()
+	{
+		var skill = new GameObject("skill").AddComponent<SkillMB>();
+		var target = new GameObject("target");
+		var item = new GameObject("item").AddComponent<MockItemMB>();
+
+		skill.item = item;
+		skill.data.speedPerSecond = 10f;
+		item.iterationsDone = 9; // 9 out of 10 iterations done
+
+		yield return new WaitForEndOfFrame();
+
+		skill.Begin(target);
+
+		yield return new WaitForSeconds(0.11f);
 
 		skill.Begin(target);
 
@@ -236,6 +285,6 @@ public class SkillMBTests : TestCollection
 
 		yield return new WaitForFixedUpdate();
 
-		Assert.AreEqual(2, item.iterations);
+		Assert.AreEqual(2, item.iterationsDone);
 	}
 }
