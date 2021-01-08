@@ -6,49 +6,32 @@ using UnityEngine.TestTools;
 
 public class ProjectileManagerTests : TestCollection
 {
-	private class MockPrefabMB : MonoBehaviour {}
-
-	[Test]
-	public void ProjectileInstantiate()
+	private class MockMagazineMB : BaseMagazineMB
 	{
-		var spawn = new GameObject("self");
-		var target = new GameObject("target");
-		var prefab = new GameObject("prefab");
-		var manager = new ProjectileManager();
+		private ProjectileMB projectile;
 
-		manager.spawnPoint = spawn.transform;
-		manager.prefab = prefab;
-		manager.ProjectileRoutineTo(target.transform).MoveNext();
+		public ProjectileMB Projectile => this.projectile;
 
-		Assert.AreEqual(1, manager.Projectiles.Count());
-	}
+		public override ProjectileMB GetOrMakeProjectile() => this.projectile;
 
-	[Test]
-	public void ProjectileInstantiatePrefab()
-	{
-		var spawn = new GameObject("self");
-		var target = new GameObject("target");
-		var prefab = new GameObject("prefab").AddComponent<MockPrefabMB>();
-		var manager = new ProjectileManager();
-
-		manager.spawnPoint = spawn.transform;
-		manager.prefab = prefab.gameObject;
-		manager.ProjectileRoutineTo(target.transform).MoveNext();
-
-		Assert.True(manager.Projectiles.First().TryGetComponent(out MockPrefabMB _));
+		private void Awake()
+		{
+			this.projectile = new GameObject("projectile")
+				.AddComponent<ProjectileMB>();
+		}
 	}
 
 	[Test]
 	public void MoveProjectileToTarget()
 	{
-		var spawn = new GameObject("self");
+		var spawn = new GameObject("spawn");
 		var target = new GameObject("target");
-		var prefab = new GameObject("prefab");
+		var magazine = new GameObject("magazine").AddComponent<MockMagazineMB>();
 		var manager = new ProjectileManager();
 
 		target.transform.position = Vector3.right;
 		manager.spawnPoint = spawn.transform;
-		manager.prefab = prefab;
+		manager.magazine = magazine;
 		manager.deltaPerSecond = 1;
 		var iterator = manager.ProjectileRoutineTo(target.transform);
 
@@ -56,21 +39,39 @@ public class ProjectileManagerTests : TestCollection
 
 		Tools.AssertEqual(
 			Vector3.right * Time.fixedDeltaTime,
-			manager.Projectiles.First().transform.position
+			magazine.Projectile.transform.position
 		);
+	}
+
+	[Test]
+	public void ProjectileSpawnPosition()
+	{
+		var spawn = new GameObject("spawn");
+		var target = new GameObject("target");
+		var magazine = new GameObject("magazine").AddComponent<MockMagazineMB>();
+		var manager = new ProjectileManager();
+
+		target.transform.position = Vector3.back;
+		manager.spawnPoint = spawn.transform;
+		manager.magazine = magazine;
+		spawn.transform.position = Vector3.back;
+
+		manager.ProjectileRoutineTo(target.transform).MoveNext();
+
+		Assert.AreEqual(Vector3.back, magazine.Projectile.transform.position);
 	}
 
 	[Test]
 	public void MoveProjectileFullyToTarget()
 	{
-		var spawn = new GameObject("self");
+		var spawn = new GameObject("spawn");
 		var target = new GameObject("target");
-		var prefab = new GameObject("prefab");
+		var magazine = new GameObject("magazine").AddComponent<MockMagazineMB>();
 		var manager = new ProjectileManager();
 
 		target.transform.position = Vector3.right;
 		manager.spawnPoint = spawn.transform;
-		manager.prefab = prefab;
+		manager.magazine = magazine;
 		manager.deltaPerSecond = 0.5f;
 		var iterator = manager.ProjectileRoutineTo(target.transform);
 
@@ -78,190 +79,40 @@ public class ProjectileManagerTests : TestCollection
 
 		Tools.AssertEqual(
 			target.transform.position,
-			manager.Projectiles.First().transform.position
+			magazine.Projectile.transform.position
 		);
 	}
 
 	[Test]
 	public void DisableProjectileWhenTargetReached()
 	{
-		var spawn = new GameObject("self");
+		var spawn = new GameObject("spawn");
 		var target = new GameObject("target");
-		var prefab = new GameObject("prefab");
+		var magazine = new GameObject("magazine").AddComponent<MockMagazineMB>();
 		var manager = new ProjectileManager();
 
 		target.transform.position = Vector3.right;
 		manager.spawnPoint = spawn.transform;
-		manager.prefab = prefab;
+		manager.magazine = magazine;
 		manager.deltaPerSecond = 0.5f;
 		var iterator = manager.ProjectileRoutineTo(target.transform);
 
 		while (iterator.MoveNext());
 
-		Assert.False(manager.Projectiles.First().gameObject.activeSelf);
-	}
-
-	[Test]
-	public void AttachProjectileWhenTargetReached()
-	{
-		var spawn = new GameObject("self");
-		var target = new GameObject("target");
-		var prefab = new GameObject("prefab");
-		var manager = new ProjectileManager();
-
-		target.transform.position = Vector3.right;
-		manager.spawnPoint = spawn.transform;
-		manager.prefab = prefab;
-		manager.deltaPerSecond = 0.5f;
-		var iterator = manager.ProjectileRoutineTo(target.transform);
-
-		while (iterator.MoveNext());
-
-		Assert.AreSame(spawn.transform, manager.Projectiles.First().parent);
-	}
-
-	[Test]
-	public void ProjectileNotDisabledInFlight()
-	{
-		var spawn = new GameObject("self");
-		var target = new GameObject("target");
-		var prefab = new GameObject("prefab");
-		var manager = new ProjectileManager();
-
-		target.transform.position = Vector3.right;
-		manager.spawnPoint = spawn.transform;
-		manager.prefab = prefab;
-		manager.deltaPerSecond = 0.5f;
-		var iterator = manager.ProjectileRoutineTo(target.transform);
-		var states = new List<bool>();
-
-		while (iterator.MoveNext()) {
-			states.Add(manager.Projectiles.First().gameObject.activeSelf);
-		}
-
-		Assert.True(states.All(s => s));
-	}
-
-	[Test]
-	public void ProjectileDetachedInFlight()
-	{
-		var spawn = new GameObject("self");
-		var target = new GameObject("target");
-		var prefab = new GameObject("prefab");
-		var manager = new ProjectileManager();
-
-		target.transform.position = Vector3.right;
-		manager.spawnPoint = spawn.transform;
-		manager.prefab = prefab;
-		manager.deltaPerSecond = 0.5f;
-		var iterator = manager.ProjectileRoutineTo(target.transform);
-		var states = new List<Transform>();
-
-		while (iterator.MoveNext()) {
-			states.Add(manager.Projectiles.First().parent);
-		}
-
-		Assert.True(states.All(s => s == null));
-	}
-
-	[Test]
-	public void ReuseProjectile()
-	{
-		var spawn = new GameObject("self");
-		var target = new GameObject("target");
-		var prefab = new GameObject("prefab");
-		var manager = new ProjectileManager();
-
-		target.transform.position = Vector3.right;
-		manager.spawnPoint = spawn.transform;
-		manager.prefab = prefab;
-		manager.deltaPerSecond = 0.5f;
-		var iterator = manager.ProjectileRoutineTo(target.transform);
-		var states = new List<bool>();
-
-		while (iterator.MoveNext());
-
-		manager.ProjectileRoutineTo(target.transform).MoveNext();
-
-		Assert.AreEqual(1, manager.Projectiles.Count());
-	}
-
-	[Test]
-	public void ReusedProjectileActive()
-	{
-		var spawn = new GameObject("self");
-		var target = new GameObject("target");
-		var prefab = new GameObject("prefab");
-		var manager = new ProjectileManager();
-
-		target.transform.position = Vector3.right;
-		manager.spawnPoint = spawn.transform;
-		manager.prefab = prefab;
-		manager.deltaPerSecond = 0.5f;
-		var iterator = manager.ProjectileRoutineTo(target.transform);
-		var states = new List<bool>();
-
-		while (iterator.MoveNext());
-
-		target.transform.position += Vector3.one;
-		manager.ProjectileRoutineTo(target.transform).MoveNext();
-
-		Assert.True(manager.Projectiles.First().gameObject.activeSelf);
-	}
-
-	[Test]
-	public void ReusedProjectileAtSpawnPosition()
-	{
-		var spawn = new GameObject("self");
-		var target = new GameObject("target");
-		var prefab = new GameObject("prefab");
-		var manager = new ProjectileManager();
-
-		target.transform.position = Vector3.right;
-		manager.spawnPoint = spawn.transform;
-		manager.prefab = prefab;
-		manager.deltaPerSecond = 0.5f;
-		var iterator = manager.ProjectileRoutineTo(target.transform);
-		var states = new List<bool>();
-
-		while (iterator.MoveNext());
-
-		spawn.transform.position = Vector3.left;
-		target.transform.position = Vector3.left;
-		manager.ProjectileRoutineTo(target.transform).MoveNext();
-
-		Assert.AreEqual(Vector3.left, manager.Projectiles.First().position);
-	}
-
-	[Test]
-	public void UseNewProjectile()
-	{
-		var spawn = new GameObject("self");
-		var target = new GameObject("target");
-		var prefab = new GameObject("prefab");
-		var manager = new ProjectileManager();
-
-		target.transform.position = Vector3.right;
-		manager.spawnPoint = spawn.transform;
-		manager.prefab = prefab;
-		manager.deltaPerSecond = 0.5f;
-		manager.ProjectileRoutineTo(target.transform).MoveNext();
-		manager.ProjectileRoutineTo(target.transform).MoveNext();
-
-		Assert.AreEqual(2, manager.Projectiles.Count());
+		Assert.False(magazine.Projectile.gameObject.activeSelf);
 	}
 
 	[Test]
 	public void ProjectileLookAtTarget()
 	{
-		var spawn = new GameObject("self");
+		var spawn = new GameObject("spawn");
 		var target = new GameObject("target");
-		var prefab = new GameObject("prefab");
+		var magazine = new GameObject("magazine").AddComponent<MockMagazineMB>();
 		var manager = new ProjectileManager();
 
 		target.transform.position = Vector3.up;
 		manager.spawnPoint = spawn.transform;
-		manager.prefab = prefab;
+		manager.magazine = magazine;
 		manager.deltaPerSecond = 1;
 		var iterator = manager.ProjectileRoutineTo(target.transform);
 
@@ -271,7 +122,7 @@ public class ProjectileManagerTests : TestCollection
 
 		Tools.AssertEqual(
 			expected.eulerAngles,
-			manager.Projectiles.First().transform.rotation.eulerAngles
+			magazine.Projectile.transform.rotation.eulerAngles
 		);
 	}
 }
