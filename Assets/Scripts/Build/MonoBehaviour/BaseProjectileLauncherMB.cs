@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BaseProjectileLauncherMB<TProjectilePathing> : BaseItemMB
+public abstract class BaseProjectileLauncherMB<TProjectilePathing> : BaseItemMB
 	where TProjectilePathing: IProjectilePathing, new()
 {
 	public TProjectilePathing projectilePathing;
@@ -35,7 +35,7 @@ public class BaseProjectileLauncherMB<TProjectilePathing> : BaseItemMB
 		return this.projectilePathing.ProjectileRoutineTo(target.transform);
 	}
 
-	private void Awake()
+	protected virtual void Awake()
 	{
 		if (this.projectilePathing == null) {
 			this.projectilePathing = new TProjectilePathing();
