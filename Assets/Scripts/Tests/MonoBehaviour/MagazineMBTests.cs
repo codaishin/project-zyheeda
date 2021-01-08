@@ -12,9 +12,9 @@ public class MagazineMBTests : TestCollection
 	public void InstantiateProjectile()
 	{
 		var magazine = new GameObject("magazine").AddComponent<MagazineMB>();
-		var prefab = new GameObject("prefab");
+		var prefab = new GameObject("prefab").AddComponent<ProjectileMB>();
 
-		magazine.prefab = prefab;
+		magazine.projectilePrefab = prefab;
 
 		Assert.NotNull(magazine.GetOrMakeProjectile());
 	}
@@ -23,9 +23,11 @@ public class MagazineMBTests : TestCollection
 	public void InstantiatePrefab()
 	{
 		var magazine = new GameObject("magazine").AddComponent<MagazineMB>();
-		var prefab = new GameObject("prefab").AddComponent<MockComponent>();
+		var prefab = new GameObject("prefab")
+			.AddComponent<MockComponent>().gameObject
+			.AddComponent<ProjectileMB>();
 
-		magazine.prefab = prefab.gameObject;
+		magazine.projectilePrefab = prefab;
 
 		var projectile = magazine.GetOrMakeProjectile();
 
@@ -36,5 +38,17 @@ public class MagazineMBTests : TestCollection
 				projectile.TryGetComponent(out MockComponent _),
 			}
 		);
+	}
+
+	[Test]
+	public void SetProjectileMagazine()
+	{
+		var magazine = new GameObject("magazine").AddComponent<MagazineMB>();
+		var prefab = new GameObject("prefab").AddComponent<ProjectileMB>();
+
+		magazine.projectilePrefab = prefab;
+
+		var projectile = magazine.GetOrMakeProjectile();
+		Assert.AreSame(magazine, projectile.Magazine);
 	}
 }

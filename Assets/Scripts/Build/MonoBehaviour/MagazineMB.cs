@@ -5,14 +5,16 @@ using UnityEngine.Events;
 
 public class MagazineMB : MonoBehaviour
 {
-	public GameObject prefab;
+	public ProjectileMB projectilePrefab;
 
-	private Transform MakeProjectile()
+	private ProjectileMB MakeProjectile()
 	{
-		return GameObject.Instantiate(this.prefab).transform;
+		ProjectileMB projectile = GameObject.Instantiate(this.projectilePrefab);
+		projectile.Magazine = this;
+		return projectile;
 	}
 
-	public Transform GetOrMakeProjectile()
+	public ProjectileMB GetOrMakeProjectile()
 	{
 		return this.MakeProjectile();
 	}
