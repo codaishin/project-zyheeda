@@ -25,11 +25,10 @@ public class BaseProjectileLauncherMB<TProjectilePathing> : BaseItemMB
 		return this.projectilePathing.ProjectileRoutineTo(target.transform);
 	}
 
-	protected override void Awake()
+	private void Awake()
 	{
 		if (this.projectilePathing == null) {
 			this.projectilePathing = new TProjectilePathing();
 		}
-		base.Awake();
 	}
 }
