@@ -7,17 +7,17 @@ public abstract class BaseEffectMB : MonoBehaviour
 
 	public abstract void Apply(in SkillMB skill, in GameObject target);
 
-	private void Awake()
+	protected virtual void Awake()
 	{
 		this.Item = this.GetComponent<BaseItemMB>();
 	}
 
-	private void OnEnable()
+	protected virtual void OnEnable()
 	{
 		this.Item.Effects.Add(this.GetInstanceID(), this);
 	}
 
-	private void OnDisable()
+	protected virtual void OnDisable()
 	{
 		this.Item.Effects.Remove(this.GetInstanceID());
 	}
