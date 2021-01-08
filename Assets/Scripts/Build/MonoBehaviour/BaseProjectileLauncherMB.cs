@@ -15,15 +15,18 @@ public class BaseProjectileLauncherMB<TProjectilePathing> : BaseItemMB
 			while (iterator.MoveNext()) {
 				yield return iterator.Current;
 			}
-			hitable.TryHit(skill.data.offense);
+			if (hitable.TryHit(skill.data.offense)) {
+				this.Effects.Values.ForEach(e => e.Apply(skill, target));
+			}
 		}
 	}
 
 	private IEnumerator<WaitForFixedUpdate> GetIterator(in GameObject target) =>
 		this.projectilePathing.ProjectileRoutineTo(target.transform);
 
-	private void Awake()
+	protected override void Awake()
 	{
+		base.Awake();
 		this.projectilePathing = new TProjectilePathing();
 	}
 }
