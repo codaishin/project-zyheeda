@@ -4,7 +4,7 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-public class ProjectileManagerTests : TestCollection
+public class ProjectilePathingTests : TestCollection
 {
 	private class MockMagazineMB : BaseMagazineMB
 	{
@@ -27,13 +27,13 @@ public class ProjectileManagerTests : TestCollection
 		var spawn = new GameObject("spawn");
 		var target = new GameObject("target");
 		var magazine = new GameObject("magazine").AddComponent<MockMagazineMB>();
-		var manager = new ProjectileManager();
+		var pathing = new ProjectilePathing();
 
 		target.transform.position = Vector3.right;
-		manager.spawnPoint = spawn.transform;
-		manager.magazine = magazine;
-		manager.deltaPerSecond = 1;
-		var iterator = manager.ProjectileRoutineTo(target.transform);
+		pathing.spawnPoint = spawn.transform;
+		pathing.magazine = magazine;
+		pathing.deltaPerSecond = 1;
+		var iterator = pathing.ProjectileRoutineTo(target.transform);
 
 		iterator.MoveNext();
 
@@ -49,14 +49,14 @@ public class ProjectileManagerTests : TestCollection
 		var spawn = new GameObject("spawn");
 		var target = new GameObject("target");
 		var magazine = new GameObject("magazine").AddComponent<MockMagazineMB>();
-		var manager = new ProjectileManager();
+		var pathing = new ProjectilePathing();
 
 		target.transform.position = Vector3.back;
-		manager.spawnPoint = spawn.transform;
-		manager.magazine = magazine;
+		pathing.spawnPoint = spawn.transform;
+		pathing.magazine = magazine;
 		spawn.transform.position = Vector3.back;
 
-		manager.ProjectileRoutineTo(target.transform).MoveNext();
+		pathing.ProjectileRoutineTo(target.transform).MoveNext();
 
 		Assert.AreEqual(Vector3.back, magazine.Projectile.transform.position);
 	}
@@ -67,13 +67,13 @@ public class ProjectileManagerTests : TestCollection
 		var spawn = new GameObject("spawn");
 		var target = new GameObject("target");
 		var magazine = new GameObject("magazine").AddComponent<MockMagazineMB>();
-		var manager = new ProjectileManager();
+		var pathing = new ProjectilePathing();
 
 		target.transform.position = Vector3.right;
-		manager.spawnPoint = spawn.transform;
-		manager.magazine = magazine;
-		manager.deltaPerSecond = 0.5f;
-		var iterator = manager.ProjectileRoutineTo(target.transform);
+		pathing.spawnPoint = spawn.transform;
+		pathing.magazine = magazine;
+		pathing.deltaPerSecond = 0.5f;
+		var iterator = pathing.ProjectileRoutineTo(target.transform);
 
 		while (iterator.MoveNext());
 
@@ -89,13 +89,13 @@ public class ProjectileManagerTests : TestCollection
 		var spawn = new GameObject("spawn");
 		var target = new GameObject("target");
 		var magazine = new GameObject("magazine").AddComponent<MockMagazineMB>();
-		var manager = new ProjectileManager();
+		var pathing = new ProjectilePathing();
 
 		target.transform.position = Vector3.right;
-		manager.spawnPoint = spawn.transform;
-		manager.magazine = magazine;
-		manager.deltaPerSecond = 0.5f;
-		var iterator = manager.ProjectileRoutineTo(target.transform);
+		pathing.spawnPoint = spawn.transform;
+		pathing.magazine = magazine;
+		pathing.deltaPerSecond = 0.5f;
+		var iterator = pathing.ProjectileRoutineTo(target.transform);
 
 		while (iterator.MoveNext());
 
@@ -108,13 +108,13 @@ public class ProjectileManagerTests : TestCollection
 		var spawn = new GameObject("spawn");
 		var target = new GameObject("target");
 		var magazine = new GameObject("magazine").AddComponent<MockMagazineMB>();
-		var manager = new ProjectileManager();
+		var pathing = new ProjectilePathing();
 
 		target.transform.position = Vector3.up;
-		manager.spawnPoint = spawn.transform;
-		manager.magazine = magazine;
-		manager.deltaPerSecond = 1;
-		var iterator = manager.ProjectileRoutineTo(target.transform);
+		pathing.spawnPoint = spawn.transform;
+		pathing.magazine = magazine;
+		pathing.deltaPerSecond = 1;
+		var iterator = pathing.ProjectileRoutineTo(target.transform);
 
 		iterator.MoveNext();
 
