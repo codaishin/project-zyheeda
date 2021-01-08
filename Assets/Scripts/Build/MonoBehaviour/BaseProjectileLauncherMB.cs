@@ -27,7 +27,9 @@ public class BaseProjectileLauncherMB<TProjectilePathing> : BaseItemMB
 
 	protected override void Awake()
 	{
+		if (this.projectilePathing == null) {
+			this.projectilePathing = new TProjectilePathing();
+		}
 		base.Awake();
-		this.projectilePathing = new TProjectilePathing();
 	}
 }
