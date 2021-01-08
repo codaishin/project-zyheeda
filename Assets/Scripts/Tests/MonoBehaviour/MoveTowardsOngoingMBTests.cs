@@ -133,4 +133,11 @@ public class MoveTowardsOngoingMBTests : TestCollection
 			agent.transform.position
 		);
 	}
+
+	[Test]
+	public void PauseNotNull()
+	{
+		var move = new GameObject("move").AddComponent<MoveTowardsOngoingMB>();
+		Assert.NotNull(move.Pause);
+	}
 }
