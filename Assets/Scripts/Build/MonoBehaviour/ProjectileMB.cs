@@ -6,10 +6,9 @@ public class ProjectileMB : MonoBehaviour
 {
 	public MagazineMB Magazine { get; set; }
 
-	private void OnDisable()
+	public void Store()
 	{
-		if (this.Magazine) {
-			this.transform.parent = Magazine.transform;
-		}
+		this.transform.SetParent(this.Magazine.transform);
+		this.gameObject.SetActive(false);
 	}
 }
