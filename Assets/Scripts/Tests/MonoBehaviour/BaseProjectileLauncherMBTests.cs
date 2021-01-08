@@ -4,7 +4,7 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-public class ProjectileLauncherMBTests
+public class BaseProjectileLauncherMBTests
 {
 
 }
