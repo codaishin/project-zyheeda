@@ -20,8 +20,10 @@ public class BaseProjectileLauncherMB<TProjectilePathing> : BaseItemMB
 		}
 	}
 
-	private IEnumerator<WaitForFixedUpdate> GetIterator(in GameObject target) =>
-		this.projectilePathing.ProjectileRoutineTo(target.transform);
+	private IEnumerator<WaitForFixedUpdate> GetIterator(in GameObject target)
+	{
+		return this.projectilePathing.ProjectileRoutineTo(target.transform);
+	}
 
 	protected override void Awake()
 	{
