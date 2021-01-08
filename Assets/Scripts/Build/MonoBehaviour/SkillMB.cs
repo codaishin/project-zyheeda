@@ -11,7 +11,7 @@ public class SkillMB : MonoBehaviour, IPausable<WaitForFixedUpdate>
 	public Skill data;
 
 	public bool Paused { get; set; }
-	public WaitForFixedUpdate Pause => default;
+	public WaitForFixedUpdate Pause => new WaitForFixedUpdate();
 
 	private float CalculateCooldown() => this.data.speedPerSecond == default
 		? default
@@ -19,11 +19,16 @@ public class SkillMB : MonoBehaviour, IPausable<WaitForFixedUpdate>
 
 	private IEnumerator<WaitForFixedUpdate> ApplyTo(GameObject target)
 	{
-		IEnumerator<WaitForFixedUpdate> iterator = this.item.Apply(this, target);
-		this.coolDown = this.CalculateCooldown();
-		while (iterator.MoveNext()) {
-			yield return iterator.Current;
-			this.coolDown -= Time.fixedDeltaTime;
+		if (this.item.Apply(this, target, out IEnumerator<WaitForFixedUpdate> routine)) {
+			this.coolDown = this.CalculateCooldown();
+			while (routine.MoveNext()) {
+				yield return routine.Current;
+				this.coolDown -= Time.fixedDeltaTime;
+			}
+			while (this.coolDown > 0) {
+				yield return new WaitForFixedUpdate();
+				this.coolDown -= Time.fixedDeltaTime;
+			}
 		}
 	}
 

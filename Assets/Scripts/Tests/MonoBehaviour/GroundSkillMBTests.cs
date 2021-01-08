@@ -10,13 +10,18 @@ public class GroundSkillMBTests : TestCollection
 	{
 		public SkillMB skill;
 		public GameObject target;
+		public bool valid;
 
 		public override
-		IEnumerator<WaitForFixedUpdate> Apply(SkillMB skill, GameObject target)
+		bool Apply(SkillMB skill, GameObject target, out IEnumerator<WaitForFixedUpdate> routine)
 		{
+			IEnumerator<WaitForFixedUpdate> empty() {
+				yield break;
+			}
 			this.target = target;
 			this.skill = skill;
-			yield break;
+			routine = empty();
+			return this.valid;
 		}
 	}
 
