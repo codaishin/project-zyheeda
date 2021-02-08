@@ -13,8 +13,8 @@ public class OnMouseOverMBTests
 		yield return new WaitForEndOfFrame();
 
 		CollectionAssert.AreEqual(
-			new object[] { true, true },
-			new object[] {
+			new bool[] { true, true },
+			new bool[] {
 				onMouseOver.onMouseEnter != null,
 				onMouseOver.onMouseExit != null
 			}
@@ -26,8 +26,11 @@ public class OnMouseOverMBTests
 	{
 		var onMouseOver = new GameObject("obj").AddComponent<OnMouseOverMB>();
 		CollectionAssert.AreEqual(
-			new object[] {null, null},
-			new object[] { onMouseOver.onMouseEnter, onMouseOver.onMouseExit }
+			new bool[] { false, false },
+			new bool[] {
+				onMouseOver.onMouseEnter != null,
+				onMouseOver.onMouseExit != null
+			}
 		);
 	}
 
