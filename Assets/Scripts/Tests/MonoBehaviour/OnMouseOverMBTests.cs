@@ -6,7 +6,7 @@ using UnityEngine.TestTools;
 public class OnMouseOverMBTests
 {
 	[UnityTest]
-	public IEnumerator NotNull()
+	public IEnumerator CallbacksNotNull()
 	{
 		var onMouseOver = new GameObject("obj").AddComponent<OnMouseOverMB>();
 
@@ -22,7 +22,7 @@ public class OnMouseOverMBTests
 	}
 
 	[Test]
-	public void CallbacksNull()
+	public void CallbacksNullBeforeStart()
 	{
 		var onMouseOver = new GameObject("obj").AddComponent<OnMouseOverMB>();
 		CollectionAssert.AreEqual(
