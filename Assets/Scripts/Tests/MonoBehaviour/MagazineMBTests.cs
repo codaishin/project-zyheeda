@@ -12,7 +12,7 @@ public class MagazineMBTests : TestCollection
 	public void InstantiateProjectile()
 	{
 		var magazine = new GameObject("magazine").AddComponent<MagazineMB>();
-		var prefab = new GameObject("prefab").AddComponent<ProjectileMB>();
+		var prefab = new GameObject("prefab");
 
 		magazine.projectilePrefab = prefab;
 
@@ -23,11 +23,9 @@ public class MagazineMBTests : TestCollection
 	public void InstantiatePrefab()
 	{
 		var magazine = new GameObject("magazine").AddComponent<MagazineMB>();
-		var prefab = new GameObject("prefab")
-			.AddComponent<MockComponent>().gameObject
-			.AddComponent<ProjectileMB>();
+		var prefab = new GameObject("prefab").AddComponent<MockComponent>();
 
-		magazine.projectilePrefab = prefab;
+		magazine.projectilePrefab = prefab.gameObject;
 
 		var projectile = magazine.GetOrMakeProjectile();
 
@@ -44,7 +42,7 @@ public class MagazineMBTests : TestCollection
 	public void SetProjectileMagazine()
 	{
 		var magazine = new GameObject("magazine").AddComponent<MagazineMB>();
-		var prefab = new GameObject("prefab").AddComponent<ProjectileMB>();
+		var prefab = new GameObject("prefab");
 
 		magazine.projectilePrefab = prefab;
 
@@ -56,11 +54,9 @@ public class MagazineMBTests : TestCollection
 	public IEnumerator OnlyOneProjectile()
 	{
 		var magazine = new GameObject("magazine").AddComponent<MagazineMB>();
-		var prefab = new GameObject("prefab")
-			.AddComponent<MockComponent>().gameObject
-			.AddComponent<ProjectileMB>();
+		var prefab = new GameObject("prefab").AddComponent<MockComponent>();
 
-		magazine.projectilePrefab = prefab;
+		magazine.projectilePrefab = prefab.gameObject;
 
 		var projectileA = magazine.GetOrMakeProjectile();
 
@@ -79,11 +75,9 @@ public class MagazineMBTests : TestCollection
 	public void TwoProjectile()
 	{
 		var magazine = new GameObject("magazine").AddComponent<MagazineMB>();
-		var prefab = new GameObject("prefab")
-			.AddComponent<MockComponent>().gameObject
-			.AddComponent<ProjectileMB>();
+		var prefab = new GameObject("prefab").AddComponent<MockComponent>();
 
-		magazine.projectilePrefab = prefab;
+		magazine.projectilePrefab = prefab.gameObject;
 
 		var projectileA = magazine.GetOrMakeProjectile();
 		var projectileB = magazine.GetOrMakeProjectile();
@@ -95,11 +89,9 @@ public class MagazineMBTests : TestCollection
 	public IEnumerator ProjectileActive()
 	{
 		var magazine = new GameObject("magazine").AddComponent<MagazineMB>();
-		var prefab = new GameObject("prefab")
-			.AddComponent<MockComponent>().gameObject
-			.AddComponent<ProjectileMB>();
+		var prefab = new GameObject("prefab").AddComponent<MockComponent>();
 
-		magazine.projectilePrefab = prefab;
+		magazine.projectilePrefab = prefab.gameObject;
 
 		var projectile = magazine.GetOrMakeProjectile();
 
@@ -118,11 +110,9 @@ public class MagazineMBTests : TestCollection
 	public IEnumerator ProjectileNoParent()
 	{
 		var magazine = new GameObject("magazine").AddComponent<MagazineMB>();
-		var prefab = new GameObject("prefab")
-			.AddComponent<MockComponent>().gameObject
-			.AddComponent<ProjectileMB>();
+		var prefab = new GameObject("prefab").AddComponent<MockComponent>();
 
-		magazine.projectilePrefab = prefab;
+		magazine.projectilePrefab = prefab.gameObject;
 
 		var projectile = magazine.GetOrMakeProjectile();
 

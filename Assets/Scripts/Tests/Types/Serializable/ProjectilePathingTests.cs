@@ -17,7 +17,7 @@ public class ProjectilePathingTests : TestCollection
 		private void Awake()
 		{
 			this.projectile = new GameObject("projectile")
-				.AddComponent<ProjectileMB>();
+				.AddComponent<ProjectileMB>(magazine: this);
 		}
 	}
 

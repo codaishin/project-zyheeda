@@ -1,10 +1,23 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+
+public static class ProjectileMBExtensions
+{
+	public static TProjectile AddComponent<TProjectile>(this GameObject gameObject, in BaseMagazineMB magazine)
+		where TProjectile: ProjectileMB => ProjectileMB.Init<TProjectile>(gameObject, magazine);
+}
 
 public class ProjectileMB : MonoBehaviour
 {
-	public BaseMagazineMB Magazine { get; set; }
+	public BaseMagazineMB Magazine { get; private set; }
+
+	public static
+	TProjectile Init<TProjectile>(in GameObject gameObject, in BaseMagazineMB magazine)
+		where TProjectile: ProjectileMB
+	{
+		TProjectile projectile = gameObject.AddComponent<TProjectile>();
+		projectile.Magazine = magazine;
+		return projectile;
+	}
 
 	public void Store()
 	{
