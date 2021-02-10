@@ -20,7 +20,6 @@ public class ProjectilePathing : IProjectilePathing
 	{
 		ProjectileMB projectile = this.magazine.GetOrMakeProjectile();
 		projectile.transform.position = this.spawnPoint.position;
-		projectile.Magazine = this.magazine;
 		while (projectile.transform.position != target.position) {
 			projectile.transform.position = this.Interpolate(
 				projectile.transform,
