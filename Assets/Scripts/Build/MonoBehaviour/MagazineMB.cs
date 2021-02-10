@@ -12,7 +12,7 @@ public class MagazineMB : BaseMagazineMB
 	{
 		ProjectileMB projectile = GameObject
 			.Instantiate(this.projectilePrefab)
-			.AddComponent<ProjectileMB>(this);
+			.AddComponent<ProjectileMB>(magazine: this);
 		this.projectiles.Add(projectile);
 		return projectile;
 	}
