@@ -1,4 +1,4 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
@@ -7,12 +7,19 @@ using UnityEngine.TestTools;
 public class ProjectileMBTests : TestCollection
 {
 	[Test]
+	public void Init()
+	{
+		var magazine = new GameObject("magazine").AddComponent<MagazineMB>();
+		var projectile = ProjectileMB.Init<ProjectileMB>(new GameObject("projectile"), magazine);
+
+		Assert.AreSame(magazine, projectile.Magazine);
+	}
+
+	[Test]
 	public void StoreInMagazineTransform()
 	{
 		var magazine = new GameObject("magazine").AddComponent<MagazineMB>();
-		var projectile = new GameObject("projectile").AddComponent<ProjectileMB>();
-
-		projectile.Magazine = magazine;
+		var projectile = new GameObject("projectile").AddComponent<ProjectileMB>(magazine);
 
 		projectile.Store();
 
@@ -23,9 +30,7 @@ public class ProjectileMBTests : TestCollection
 	public void StoreInMagazineInactive()
 	{
 		var magazine = new GameObject("magazine").AddComponent<MagazineMB>();
-		var projectile = new GameObject("projectile").AddComponent<ProjectileMB>();
-
-		projectile.Magazine = magazine;
+		var projectile = new GameObject("projectile").AddComponent<ProjectileMB>(magazine);
 
 		projectile.Store();
 
