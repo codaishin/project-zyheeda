@@ -6,7 +6,7 @@ using UnityEngine.TestTools;
 
 public class BaseItemMBTests : TestCollection
 {
-	private class MockItemMB : BaseItemMB
+	private class MockItemMB : BaseItemBehaviourMB
 	{
 		public override
 		bool Apply(SkillMB skill, GameObject target, out IEnumerator<WaitForFixedUpdate> routine)
@@ -15,7 +15,7 @@ public class BaseItemMBTests : TestCollection
 		}
 	}
 
-	private class MockEffectMB : BaseEffectMB
+	private class MockEffectMB : BaseEffectSO
 	{
 		public override void Apply(in SkillMB skill, in GameObject target)
 		{
@@ -23,10 +23,13 @@ public class BaseItemMBTests : TestCollection
 		}
 	}
 
-	[Test]
-	public void EffectsNotNull()
+	[UnityTest]
+	public IEnumerator EffectsNotNull()
 	{
 		var item = new GameObject("item").AddComponent<MockItemMB>();
-		Assert.NotNull(item.Effects);
+
+		yield return new WaitForEndOfFrame();
+
+		Assert.NotNull(item.effects);
 	}
 }

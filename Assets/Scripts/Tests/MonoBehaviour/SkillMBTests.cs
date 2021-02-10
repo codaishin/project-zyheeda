@@ -6,7 +6,7 @@ using UnityEngine.TestTools;
 
 public class SkillMBTests : TestCollection
 {
-	private class MockItemMB : BaseItemMB
+	private class MockItemMB : BaseItemBehaviourMB
 	{
 		public SkillMB skill;
 		public GameObject target;

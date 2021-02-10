@@ -35,7 +35,7 @@ public class BaseProjectileLauncherMBTests
 		}
 	}
 
-	private class MockEffectMB : BaseEffectMB
+	private class MockEffectSO : BaseEffectSO
 	{
 		public SkillMB skill;
 		public GameObject target;
@@ -132,12 +132,13 @@ public class BaseProjectileLauncherMBTests
 		var launcher = new GameObject("launcher").AddComponent<MockLauncherMB>();
 		var skill = new GameObject("skill").AddComponent<SkillMB>();
 		var target = new GameObject("target").AddComponent<MockHitableMB>();
-		var effects = new MockEffectMB[] {
-			launcher.gameObject.AddComponent<MockEffectMB>(),
-			launcher.gameObject.AddComponent<MockEffectMB>(),
+		var effects = new MockEffectSO[] {
+			ScriptableObject.CreateInstance<MockEffectSO>(),
+			ScriptableObject.CreateInstance<MockEffectSO>(),
 		};
 
 		target.hit = true;
+		launcher.effects = effects;
 		launcher.Apply(skill, target.gameObject, out var routine);
 		routine.MoveNext();
 
@@ -156,11 +157,12 @@ public class BaseProjectileLauncherMBTests
 		var launcher = new GameObject("launcher").AddComponent<MockLauncherMB>();
 		var skill = new GameObject("skill").AddComponent<SkillMB>();
 		var target = new GameObject("target").AddComponent<MockHitableMB>();
-		var effects = new MockEffectMB[] {
-			launcher.gameObject.AddComponent<MockEffectMB>(),
-			launcher.gameObject.AddComponent<MockEffectMB>(),
+		var effects = new MockEffectSO[] {
+			ScriptableObject.CreateInstance<MockEffectSO>(),
+			ScriptableObject.CreateInstance<MockEffectSO>(),
 		};
 
+		launcher.effects = effects;
 		launcher.Apply(skill, target.gameObject, out var routine);
 		routine.MoveNext();
 
@@ -173,13 +175,14 @@ public class BaseProjectileLauncherMBTests
 		var launcher = new GameObject("launcher").AddComponent<MockLauncherMB>();
 		var skill = new GameObject("skill").AddComponent<SkillMB>();
 		var target = new GameObject("target").AddComponent<MockHitableMB>();
-		var effects = new MockEffectMB[] {
-			launcher.gameObject.AddComponent<MockEffectMB>(),
-			launcher.gameObject.AddComponent<MockEffectMB>(),
+		var effects = new MockEffectSO[] {
+			ScriptableObject.CreateInstance<MockEffectSO>(),
+			ScriptableObject.CreateInstance<MockEffectSO>(),
 		};
 		var applied = new List<bool>();
 
 		target.hit = true;
+		launcher.effects = effects;
 		launcher.projectilePathing.iterations = 2;
 		launcher.Apply(skill, target.gameObject, out var routine);
 		while (routine.MoveNext()) {

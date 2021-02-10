@@ -7,7 +7,7 @@ public class SkillMB : MonoBehaviour, IPausable<WaitForFixedUpdate>
 	private List<IEnumerator> runningRoutines = new List<IEnumerator>();
 	private float coolDown;
 
-	public BaseItemMB item;
+	public BaseItemBehaviourMB item;
 	public Skill data;
 
 	public bool Paused { get; set; }

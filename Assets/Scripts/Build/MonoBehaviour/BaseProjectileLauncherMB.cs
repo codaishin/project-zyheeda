@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class BaseProjectileLauncherMB<TProjectilePathing> : BaseItemMB
+public abstract class BaseProjectileLauncherMB<TProjectilePathing> : BaseItemBehaviourMB
 	where TProjectilePathing: IProjectilePathing, new()
 {
 	public TProjectilePathing projectilePathing;
@@ -25,7 +25,7 @@ public abstract class BaseProjectileLauncherMB<TProjectilePathing> : BaseItemMB
 			yield return projectilePath.Current;
 		}
 		if (hitable.TryHit(skill.data.offense)) {
-			this.Effects.Values.ForEach(e => e.Apply(skill, target));
+			this.effects.ForEach(e => e.Apply(skill, target));
 		}
 	}
 
