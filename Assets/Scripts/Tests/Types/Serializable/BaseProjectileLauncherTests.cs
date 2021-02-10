@@ -62,7 +62,7 @@ public class BaseProjectileLauncherTests
 		var skill = new GameObject("skill").AddComponent<MockSkillMB>();
 		var target = new GameObject("target").AddComponent<MockHitableMB>();
 
-		skill.data.offense = 42;
+		skill.modifiers.offense = 42;
 		launcher.Apply(skill, target.gameObject, out var routine);
 		routine.MoveNext();
 
@@ -76,7 +76,7 @@ public class BaseProjectileLauncherTests
 		var skill = new GameObject("skill").AddComponent<MockSkillMB>();
 		var target = new GameObject("target").AddComponent<MockHitableMB>();
 
-		skill.data.offense = 42;
+		skill.modifiers.offense = 42;
 		var valid = launcher.Apply(skill, target.gameObject, out var routine);
 		routine.MoveNext();
 
@@ -139,7 +139,7 @@ public class BaseProjectileLauncherTests
 		};
 
 		target.hit = true;
-		launcher.effects = effects;
+		skill.effects = effects;
 		launcher.Apply(skill, target.gameObject, out var routine);
 		routine.MoveNext();
 
@@ -163,7 +163,7 @@ public class BaseProjectileLauncherTests
 			ScriptableObject.CreateInstance<MockEffectSO>(),
 		};
 
-		launcher.effects = effects;
+		skill.effects = effects;
 		launcher.Apply(skill, target.gameObject, out var routine);
 		routine.MoveNext();
 
@@ -183,7 +183,7 @@ public class BaseProjectileLauncherTests
 		var applied = new List<bool>();
 
 		target.hit = true;
-		launcher.effects = effects;
+		skill.effects = effects;
 		launcher.projectilePathing.iterations = 2;
 		launcher.Apply(skill, target.gameObject, out var routine);
 		while (routine.MoveNext()) {

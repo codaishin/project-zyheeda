@@ -4,7 +4,8 @@ using UnityEngine;
 
 public abstract class BaseSkillMB : MonoBehaviour, IPausable<WaitForFixedUpdate>
 {
-	public Skill data;
+	public Skill modifiers;
+	public BaseEffectSO[] effects;
 
 	public bool Paused { get; set; }
 	public WaitForFixedUpdate Pause => new WaitForFixedUpdate();
@@ -14,16 +15,16 @@ public abstract class BaseSkillMB : MonoBehaviour, IPausable<WaitForFixedUpdate>
 }
 
 public abstract class BaseSkillMB<T> : BaseSkillMB
-	where T: BaseItemBehaviour, new()
+	where T: IItemBehaviour, new()
 {
 	private List<IEnumerator> runningRoutines = new List<IEnumerator>();
 	private float coolDown;
 
 	public T behaviour = new T();
 
-	private float CalculateCooldown() => this.data.speedPerSecond == default
+	private float CalculateCooldown() => this.modifiers.speedPerSecond == default
 		? default
-		: 1f / this.data.speedPerSecond;
+		: 1f / this.modifiers.speedPerSecond;
 
 	private IEnumerator<WaitForFixedUpdate> ApplyTo(GameObject target)
 	{

@@ -6,11 +6,11 @@ using UnityEngine.TestTools;
 
 public class GroundSkillMBTests : TestCollection
 {
-	private class MockItemBehaviour : BaseItemBehaviour
+	private class MockItemBehaviour : IItemBehaviour
 	{
 		public GameObject target;
 
-		public override
+		public
 		bool Apply(BaseSkillMB skill, GameObject target, out IEnumerator<WaitForFixedUpdate> routine)
 		{
 			IEnumerator<WaitForFixedUpdate> empty() {

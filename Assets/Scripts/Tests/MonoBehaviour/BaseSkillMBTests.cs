@@ -6,7 +6,7 @@ using UnityEngine.TestTools;
 
 public class BaseSkillMBTests : TestCollection
 {
-	private class MockItemBehaviour : BaseItemBehaviour
+	private class MockItemBehaviour : IItemBehaviour
 	{
 		public BaseSkillMB skill;
 		public GameObject target;
@@ -14,7 +14,7 @@ public class BaseSkillMBTests : TestCollection
 		public int applied;
 		public bool valid = true;
 
-		public override
+		public
 		bool Apply(BaseSkillMB skill, GameObject target, out IEnumerator<WaitForFixedUpdate> routine)
 		{
 			IEnumerator<WaitForFixedUpdate> iterate() {
@@ -152,7 +152,7 @@ public class BaseSkillMBTests : TestCollection
 		var skill = new GameObject("skill").AddComponent<MockSkillMB>();
 		var target = new GameObject("target");
 
-		skill.data.speedPerSecond = 10;
+		skill.modifiers.speedPerSecond = 10;
 
 		yield return new WaitForEndOfFrame();
 
@@ -168,7 +168,7 @@ public class BaseSkillMBTests : TestCollection
 		var skill = new GameObject("skill").AddComponent<MockSkillMB>();
 		var target = new GameObject("target");
 
-		skill.data.speedPerSecond = 10;
+		skill.modifiers.speedPerSecond = 10;
 
 		yield return new WaitForEndOfFrame();
 
@@ -187,7 +187,7 @@ public class BaseSkillMBTests : TestCollection
 		var skill = new GameObject("skill").AddComponent<MockSkillMB>();
 		var target = new GameObject("target");
 
-		skill.data.speedPerSecond = 0.1f;
+		skill.modifiers.speedPerSecond = 0.1f;
 		skill.behaviour.valid = false;
 
 		yield return new WaitForEndOfFrame();
@@ -207,7 +207,7 @@ public class BaseSkillMBTests : TestCollection
 		var skill = new GameObject("skill").AddComponent<MockSkillMB>();
 		var target = new GameObject("target");
 
-		skill.data.speedPerSecond = 10f;
+		skill.modifiers.speedPerSecond = 10f;
 		skill.behaviour.iterationsDone = 9; // 9 out of 10 iterations done
 
 		yield return new WaitForEndOfFrame();
@@ -227,7 +227,7 @@ public class BaseSkillMBTests : TestCollection
 		var skill = new GameObject("skill").AddComponent<MockSkillMB>();
 		var target = new GameObject("target");
 
-		skill.data.speedPerSecond = 10;
+		skill.modifiers.speedPerSecond = 10;
 
 		yield return new WaitForEndOfFrame();
 

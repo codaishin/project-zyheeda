@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class BaseProjectileLauncher<TProjectilePathing> : BaseItemBehaviour
+public abstract class BaseProjectileLauncher<TProjectilePathing> : IItemBehaviour
 	where TProjectilePathing: IProjectilePathing, new()
 {
 	public TProjectilePathing projectilePathing = new TProjectilePathing();
 
-	public override
+	public
 	bool Apply(BaseSkillMB skill, GameObject target, out IEnumerator<WaitForFixedUpdate> routine)
 	{
 		if (target.TryGetComponent(out BaseHitableMB hitable)) {
@@ -24,8 +24,8 @@ public abstract class BaseProjectileLauncher<TProjectilePathing> : BaseItemBehav
 		while (projectilePath.MoveNext()) {
 			yield return projectilePath.Current;
 		}
-		if (hitable.TryHit(skill.data.offense)) {
-			this.effects.ForEach(e => e.Apply(skill, target));
+		if (hitable.TryHit(skill.modifiers.offense)) {
+			skill.effects.ForEach(e => e.Apply(skill, target));
 		}
 	}
 
