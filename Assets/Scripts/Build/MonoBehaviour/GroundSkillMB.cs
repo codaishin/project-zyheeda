@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class GroundSkillMB : MonoBehaviour
 {
-	public SkillMB skill;
+	public BaseSkillMB skill;
 	public GameObject selector;
 
 

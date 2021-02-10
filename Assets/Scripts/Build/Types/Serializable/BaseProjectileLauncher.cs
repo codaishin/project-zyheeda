@@ -1,13 +1,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class BaseProjectileLauncherMB<TProjectilePathing> : BaseItemBehaviourMB
+public abstract class BaseProjectileLauncher<TProjectilePathing> : BaseItemBehaviour
 	where TProjectilePathing: IProjectilePathing, new()
 {
-	public TProjectilePathing projectilePathing;
+	public TProjectilePathing projectilePathing = new TProjectilePathing();
 
 	public override
-	bool Apply(SkillMB skill, GameObject target, out IEnumerator<WaitForFixedUpdate> routine)
+	bool Apply(BaseSkillMB skill, GameObject target, out IEnumerator<WaitForFixedUpdate> routine)
 	{
 		if (target.TryGetComponent(out BaseHitableMB hitable)) {
 			routine = this.Apply(target, skill, hitable);
@@ -18,7 +18,7 @@ public abstract class BaseProjectileLauncherMB<TProjectilePathing> : BaseItemBeh
 	}
 
 	private
-	IEnumerator<WaitForFixedUpdate> Apply(GameObject target, SkillMB skill, BaseHitableMB hitable)
+	IEnumerator<WaitForFixedUpdate> Apply(GameObject target, BaseSkillMB skill, BaseHitableMB hitable)
 	{
 		IEnumerator<WaitForFixedUpdate> projectilePath = this.GetProjectilePathTo(target);
 		while (projectilePath.MoveNext()) {
@@ -33,12 +33,5 @@ public abstract class BaseProjectileLauncherMB<TProjectilePathing> : BaseItemBeh
 	IEnumerator<WaitForFixedUpdate> GetProjectilePathTo(in GameObject target)
 	{
 		return this.projectilePathing.ProjectileRoutineTo(target.transform);
-	}
-
-	protected virtual void Awake()
-	{
-		if (this.projectilePathing == null) {
-			this.projectilePathing = new TProjectilePathing();
-		}
 	}
 }

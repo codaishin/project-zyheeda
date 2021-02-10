@@ -2,16 +2,24 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SkillMB : MonoBehaviour, IPausable<WaitForFixedUpdate>
+public abstract class BaseSkillMB : MonoBehaviour, IPausable<WaitForFixedUpdate>
 {
-	private List<IEnumerator> runningRoutines = new List<IEnumerator>();
-	private float coolDown;
-
-	public BaseItemBehaviourMB item;
 	public Skill data;
 
 	public bool Paused { get; set; }
 	public WaitForFixedUpdate Pause => new WaitForFixedUpdate();
+
+	public abstract void Begin(GameObject target);
+	public abstract void End();
+}
+
+public abstract class BaseSkillMB<T> : BaseSkillMB
+	where T: BaseItemBehaviour, new()
+{
+	private List<IEnumerator> runningRoutines = new List<IEnumerator>();
+	private float coolDown;
+
+	public T behaviour = new T();
 
 	private float CalculateCooldown() => this.data.speedPerSecond == default
 		? default
@@ -19,7 +27,7 @@ public class SkillMB : MonoBehaviour, IPausable<WaitForFixedUpdate>
 
 	private IEnumerator<WaitForFixedUpdate> ApplyTo(GameObject target)
 	{
-		if (this.item.Apply(this, target, out IEnumerator<WaitForFixedUpdate> routine)) {
+		if (this.behaviour.Apply(this, target, out IEnumerator<WaitForFixedUpdate> routine)) {
 			this.coolDown = this.CalculateCooldown();
 			while (routine.MoveNext()) {
 				yield return routine.Current;
@@ -32,7 +40,7 @@ public class SkillMB : MonoBehaviour, IPausable<WaitForFixedUpdate>
 		}
 	}
 
-	public void Begin(GameObject target)
+	public override void Begin(GameObject target)
 	{
 		if (this.coolDown <= 0) {
 			IEnumerator routine = this.Manage(this.ApplyTo(target));
@@ -41,7 +49,7 @@ public class SkillMB : MonoBehaviour, IPausable<WaitForFixedUpdate>
 		}
 	}
 
-	public void End()
+	public override void End()
 	{
 		this.runningRoutines.ForEach(this.StopCoroutine);
 		this.runningRoutines.Clear();

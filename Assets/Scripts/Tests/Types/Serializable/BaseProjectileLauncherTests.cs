@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
 
-public class BaseProjectileLauncherMBTests
+public class BaseProjectileLauncherTests
 {
 	private class MockProjectilePathing : IProjectilePathing
 	{
@@ -20,8 +20,9 @@ public class BaseProjectileLauncherMBTests
 		}
 	}
 
-	private class MockLauncherMB :
-		BaseProjectileLauncherMB<MockProjectilePathing> { }
+	private class MockLauncherBehaviour : BaseProjectileLauncher<MockProjectilePathing> { }
+
+	private class MockSkillMB : BaseSkillMB<MockLauncherBehaviour> {}
 
 	private class MockHitableMB : BaseHitableMB
 	{
@@ -37,10 +38,10 @@ public class BaseProjectileLauncherMBTests
 
 	private class MockEffectSO : BaseEffectSO
 	{
-		public SkillMB skill;
+		public BaseSkillMB skill;
 		public GameObject target;
 
-		public override void Apply(in SkillMB skill, in GameObject target)
+		public override void Apply(in BaseSkillMB skill, in GameObject target)
 		{
 			this.skill = skill;
 			this.target = target;
@@ -50,15 +51,15 @@ public class BaseProjectileLauncherMBTests
 	[Test]
 	public void InitProjectilePath()
 	{
-		var launcher = new GameObject("launcher").AddComponent<MockLauncherMB>();
+		var launcher = new MockLauncherBehaviour();
 		Assert.NotNull(launcher.projectilePathing);
 	}
 
 	[Test]
 	public void CallTryHit()
 	{
-		var launcher = new GameObject("launcher").AddComponent<MockLauncherMB>();
-		var skill = new GameObject("skill").AddComponent<SkillMB>();
+		var launcher = new MockLauncherBehaviour();
+		var skill = new GameObject("skill").AddComponent<MockSkillMB>();
 		var target = new GameObject("target").AddComponent<MockHitableMB>();
 
 		skill.data.offense = 42;
@@ -71,8 +72,8 @@ public class BaseProjectileLauncherMBTests
 	[Test]
 	public void CallTryHitValid()
 	{
-		var launcher = new GameObject("launcher").AddComponent<MockLauncherMB>();
-		var skill = new GameObject("skill").AddComponent<SkillMB>();
+		var launcher = new MockLauncherBehaviour();
+		var skill = new GameObject("skill").AddComponent<MockSkillMB>();
 		var target = new GameObject("target").AddComponent<MockHitableMB>();
 
 		skill.data.offense = 42;
@@ -85,8 +86,8 @@ public class BaseProjectileLauncherMBTests
 	[Test]
 	public void UseProjectilePathing()
 	{
-		var launcher = new GameObject("launcher").AddComponent<MockLauncherMB>();
-		var skill = new GameObject("skill").AddComponent<SkillMB>();
+		var launcher = new MockLauncherBehaviour();
+		var skill = new GameObject("skill").AddComponent<MockSkillMB>();
 		var target = new GameObject("target").AddComponent<MockHitableMB>();
 
 		launcher.projectilePathing.iterations = 5;
@@ -101,8 +102,8 @@ public class BaseProjectileLauncherMBTests
 	[Test]
 	public void UseProjectilePathingToTarget()
 	{
-		var launcher = new GameObject("launcher").AddComponent<MockLauncherMB>();
-		var skill = new GameObject("skill").AddComponent<SkillMB>();
+		var launcher = new MockLauncherBehaviour();
+		var skill = new GameObject("skill").AddComponent<MockSkillMB>();
 		var target = new GameObject("target").AddComponent<MockHitableMB>();
 
 		launcher.Apply(skill, target.gameObject, out var routine);
@@ -114,8 +115,8 @@ public class BaseProjectileLauncherMBTests
 	[Test]
 	public void NoProjectilePathing()
 	{
-		var launcher = new GameObject("launcher").AddComponent<MockLauncherMB>();
-		var skill = new GameObject("skill").AddComponent<SkillMB>();
+		var launcher = new MockLauncherBehaviour();
+		var skill = new GameObject("skill").AddComponent<MockSkillMB>();
 		var target = new GameObject("target");
 
 		launcher.projectilePathing.iterations = 5;
@@ -129,8 +130,8 @@ public class BaseProjectileLauncherMBTests
 	[Test]
 	public void ApplyEffects()
 	{
-		var launcher = new GameObject("launcher").AddComponent<MockLauncherMB>();
-		var skill = new GameObject("skill").AddComponent<SkillMB>();
+		var launcher = new MockLauncherBehaviour();
+		var skill = new GameObject("skill").AddComponent<MockSkillMB>();
 		var target = new GameObject("target").AddComponent<MockHitableMB>();
 		var effects = new MockEffectSO[] {
 			ScriptableObject.CreateInstance<MockEffectSO>(),
@@ -143,7 +144,7 @@ public class BaseProjectileLauncherMBTests
 		routine.MoveNext();
 
 		CollectionAssert.AreEqual(
-			new (SkillMB, GameObject)[] {
+			new (BaseSkillMB, GameObject)[] {
 				(skill, target.gameObject),
 				(skill, target.gameObject),
 			},
@@ -154,8 +155,8 @@ public class BaseProjectileLauncherMBTests
 	[Test]
 	public void DontApplyEffects()
 	{
-		var launcher = new GameObject("launcher").AddComponent<MockLauncherMB>();
-		var skill = new GameObject("skill").AddComponent<SkillMB>();
+		var launcher = new MockLauncherBehaviour();
+		var skill = new GameObject("skill").AddComponent<MockSkillMB>();
 		var target = new GameObject("target").AddComponent<MockHitableMB>();
 		var effects = new MockEffectSO[] {
 			ScriptableObject.CreateInstance<MockEffectSO>(),
@@ -172,8 +173,8 @@ public class BaseProjectileLauncherMBTests
 	[Test]
 	public void ApplyEffectsOnlyAfterProjectileHit()
 	{
-		var launcher = new GameObject("launcher").AddComponent<MockLauncherMB>();
-		var skill = new GameObject("skill").AddComponent<SkillMB>();
+		var launcher = new MockLauncherBehaviour();
+		var skill = new GameObject("skill").AddComponent<MockSkillMB>();
 		var target = new GameObject("target").AddComponent<MockHitableMB>();
 		var effects = new MockEffectSO[] {
 			ScriptableObject.CreateInstance<MockEffectSO>(),
