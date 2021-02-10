@@ -6,18 +6,16 @@ public class MagazineMB : BaseMagazineMB
 {
 	private List<ProjectileMB> projectiles = new List<ProjectileMB>();
 
-	public ProjectileMB projectilePrefab;
+	public GameObject projectilePrefab;
 
-	private ProjectileMB InstantiateCoupled(in ProjectileMB projectilePrefab)
+	private ProjectileMB MakeProjectile()
 	{
-		ProjectileMB projectile = GameObject.Instantiate(projectilePrefab);
-		projectile.Magazine = this;
+		ProjectileMB projectile = GameObject
+			.Instantiate(this.projectilePrefab)
+			.AddComponent<ProjectileMB>(this);
 		this.projectiles.Add(projectile);
 		return projectile;
 	}
-
-	private ProjectileMB MakeProjectile() =>
-		this.InstantiateCoupled(this.projectilePrefab);
 
 	private bool GetProjectile(out ProjectileMB projectile) =>
 		projectile = this.projectiles
