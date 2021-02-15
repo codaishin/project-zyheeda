@@ -46,24 +46,6 @@ public class ProjectileLauncherSOTests : TestCollection
 	}
 
 	[Test]
-	public void CallTryHit()
-	{
-		var target = new GameObject("target").AddComponent<MockHitableMB>();
-		var behaviour = ScriptableObject.CreateInstance<ProjectileLauncherSO>();
-		var skill = this.MockSkill();
-		IEnumerator<WaitForFixedUpdate> yieldNone(Transform _, Transform __, float ___) {
-			yield break;
-		};
-
-		skill.modifiers.offense = 42;
-		behaviour.projectileRoutine = yieldNone;
-		behaviour.Apply(skill, target.gameObject, out var routine);
-		routine.MoveNext();
-
-		Assert.AreEqual(42, target.usedOffense);
-	}
-
-	[Test]
 	public void CallTryHitValid()
 	{
 		var target = new GameObject("target").AddComponent<MockHitableMB>();
@@ -139,84 +121,5 @@ public class ProjectileLauncherSOTests : TestCollection
 			(null as IEnumerator<WaitForFixedUpdate>, false),
 			(routine, valid)
 		);
-	}
-
-	[Test]
-	public void ApplyEffects()
-	{
-		var target = new GameObject("target").AddComponent<MockHitableMB>();
-		var effects = new MockEffectSO[] {
-			ScriptableObject.CreateInstance<MockEffectSO>(),
-			ScriptableObject.CreateInstance<MockEffectSO>(),
-		};
-		var behaviour = ScriptableObject.CreateInstance<ProjectileLauncherSO>();
-		var skill = this.MockSkill();
-		IEnumerator<WaitForFixedUpdate> yieldNone(Transform _, Transform __, float ___) {
-			yield break;
-		};
-
-		target.hit = true;
-		skill.effects = effects;
-		behaviour.projectileRoutine = yieldNone;
-		behaviour.Apply(skill, target.gameObject, out var routine);
-		routine.MoveNext();
-
-		CollectionAssert.AreEqual(
-			new (SkillMB, GameObject)[] {
-				(skill, target.gameObject),
-				(skill, target.gameObject),
-			},
-			effects.Select(e => (e.skill, e.target))
-		);
-	}
-
-	[Test]
-	public void DontApplyEffects()
-	{
-		var target = new GameObject("target").AddComponent<MockHitableMB>();
-		var effects = new MockEffectSO[] {
-			ScriptableObject.CreateInstance<MockEffectSO>(),
-			ScriptableObject.CreateInstance<MockEffectSO>(),
-		};
-		var behaviour = ScriptableObject.CreateInstance<ProjectileLauncherSO>();
-		var skill = this.MockSkill();
-		IEnumerator<WaitForFixedUpdate> yieldNone(Transform _, Transform __, float ___) {
-			yield break;
-		};
-
-		skill.effects = effects;
-		behaviour.projectileRoutine = yieldNone;
-		behaviour.Apply(skill, target.gameObject, out var routine);
-		routine.MoveNext();
-
-		Assert.True(effects.All(e => !e.skill && !e.target));
-	}
-
-	[Test]
-	public void ApplyEffectsOnlyAfterProjectileHit()
-	{
-		var target = new GameObject("target").AddComponent<MockHitableMB>();
-		var effects = new MockEffectSO[] {
-			ScriptableObject.CreateInstance<MockEffectSO>(),
-			ScriptableObject.CreateInstance<MockEffectSO>(),
-		};
-		var applied = new List<bool>();
-		var behaviour = ScriptableObject.CreateInstance<ProjectileLauncherSO>();
-		var skill = this.MockSkill();
-		IEnumerator<WaitForFixedUpdate> yieldTwo(Transform _, Transform __, float ___) {
-			yield return new WaitForFixedUpdate();
-			yield return new WaitForFixedUpdate();
-		};
-
-		target.hit = true;
-		skill.effects = effects;
-		behaviour.projectileRoutine = yieldTwo;
-		behaviour.Apply(skill, target.gameObject, out var routine);
-		while (routine.MoveNext()) {
-			applied.Add(effects.All(e => e.skill || e.target));
-		}
-		applied.Add(effects.All(e => e.skill || e.target));
-
-		CollectionAssert.AreEqual(new bool[] { false, false, true }, applied);
 	}
 }

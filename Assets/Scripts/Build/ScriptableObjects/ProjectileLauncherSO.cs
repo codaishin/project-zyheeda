@@ -29,8 +29,5 @@ public class ProjectileLauncherSO : BaseItemBehaviourSO
 		while (projectilePath.MoveNext()) {
 			yield return projectilePath.Current;
 		}
-		if (hitable.TryHit(skill.modifiers.offense)) {
-			skill.effects.ForEach(e => e.Apply(skill, target));
-		}
 	}
 }
