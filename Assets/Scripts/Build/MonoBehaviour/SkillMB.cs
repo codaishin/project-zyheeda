@@ -13,6 +13,7 @@ public class SkillMB : MonoBehaviour, IPausable<WaitForFixedUpdate>
 
 	public bool Paused { get; set; }
 	public WaitForFixedUpdate Pause => new WaitForFixedUpdate();
+	public GameObject Item => this.transform.parent.gameObject;
 
 	private float FullCooldown => this.modifiers.speedPerSecond == default
 		? default

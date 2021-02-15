@@ -287,4 +287,14 @@ public class SkillMBTests : TestCollection
 		var skill = new GameObject("skill").AddComponent<SkillMB>();
 		Assert.NotNull(skill.Pause);
 	}
+
+	[Test]
+	public void ParentIsItem()
+	{
+		var skill = new GameObject("skill").AddComponent<SkillMB>();
+		var item = new GameObject("item");
+		skill.transform.SetParent(item.transform);
+
+		Assert.AreSame(item, skill.Item);
+	}
 }
