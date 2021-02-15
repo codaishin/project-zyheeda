@@ -6,7 +6,7 @@ public static class ProjectileRoutine
 	public static
 	IEnumerator<WaitForFixedUpdate> Create(Transform from, Transform to, float deltaPerSecond)
 	{
-		ProjectileLauncherMB launcher = from.gameObject.RequireComponent<ProjectileLauncherMB>();
+		ProjectileLauncherMB launcher = from.RequireComponent<ProjectileLauncherMB>();
 		ProjectileMB projectile = launcher.Magazine.GetOrMakeProjectile();
 		projectile.transform.position = launcher.spawnProjectilesAt.position;
 		while (projectile.transform.position != to.position) {
