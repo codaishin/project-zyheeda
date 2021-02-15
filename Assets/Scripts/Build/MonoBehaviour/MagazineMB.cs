@@ -2,7 +2,7 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MagazineMB : BaseMagazineMB
+public class MagazineMB : MonoBehaviour
 {
 	private List<ProjectileMB> projectiles = new List<ProjectileMB>();
 
@@ -24,7 +24,7 @@ public class MagazineMB : BaseMagazineMB
 			.Where(p => !p.gameObject.activeSelf)
 			.FirstOrDefault();
 
-	public override ProjectileMB GetOrMakeProjectile()
+	public ProjectileMB GetOrMakeProjectile()
 	{
 		if (!this.GetProjectile(out ProjectileMB projectile)) {
 			projectile = this.MakeProjectile();

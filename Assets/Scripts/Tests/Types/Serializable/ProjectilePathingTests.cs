@@ -6,29 +6,15 @@ using UnityEngine.TestTools;
 
 public class ProjectilePathingTests : TestCollection
 {
-	private class MockMagazineMB : BaseMagazineMB
-	{
-		private ProjectileMB projectile;
-
-		public ProjectileMB Projectile => this.projectile;
-
-		public override ProjectileMB GetOrMakeProjectile() => this.projectile;
-
-		private void Awake()
-		{
-			this.projectile = new GameObject("projectile")
-				.AddComponent<ProjectileMB>(magazine: this);
-		}
-	}
-
 	[Test]
 	public void MoveProjectileToTarget()
 	{
 		var spawn = new GameObject("spawn");
 		var target = new GameObject("target");
-		var magazine = new GameObject("magazine").AddComponent<MockMagazineMB>();
+		var magazine = new GameObject("magazine").AddComponent<MagazineMB>();
 		var pathing = new ProjectilePathing();
 
+		magazine.projectilePrefab = new GameObject("projectile");
 		target.transform.position = Vector3.right;
 		pathing.spawnPoint = spawn.transform;
 		pathing.magazine = magazine;
@@ -39,7 +25,7 @@ public class ProjectilePathingTests : TestCollection
 
 		Tools.AssertEqual(
 			Vector3.right * Time.fixedDeltaTime,
-			magazine.Projectile.transform.position
+			magazine.Projectiles.First().transform.position
 		);
 	}
 
@@ -48,9 +34,10 @@ public class ProjectilePathingTests : TestCollection
 	{
 		var spawn = new GameObject("spawn");
 		var target = new GameObject("target");
-		var magazine = new GameObject("magazine").AddComponent<MockMagazineMB>();
+		var magazine = new GameObject("magazine").AddComponent<MagazineMB>();
 		var pathing = new ProjectilePathing();
 
+		magazine.projectilePrefab = new GameObject("projectile");
 		target.transform.position = Vector3.back;
 		pathing.spawnPoint = spawn.transform;
 		pathing.magazine = magazine;
@@ -58,7 +45,7 @@ public class ProjectilePathingTests : TestCollection
 
 		pathing.ProjectileRoutine(null, target.transform).MoveNext();
 
-		Assert.AreEqual(Vector3.back, magazine.Projectile.transform.position);
+		Assert.AreEqual(Vector3.back, magazine.Projectiles.First().transform.position);
 	}
 
 	[Test]
@@ -66,9 +53,10 @@ public class ProjectilePathingTests : TestCollection
 	{
 		var spawn = new GameObject("spawn");
 		var target = new GameObject("target");
-		var magazine = new GameObject("magazine").AddComponent<MockMagazineMB>();
+		var magazine = new GameObject("magazine").AddComponent<MagazineMB>();
 		var pathing = new ProjectilePathing();
 
+		magazine.projectilePrefab = new GameObject("projectile");
 		target.transform.position = Vector3.right;
 		pathing.spawnPoint = spawn.transform;
 		pathing.magazine = magazine;
@@ -79,7 +67,7 @@ public class ProjectilePathingTests : TestCollection
 
 		Tools.AssertEqual(
 			target.transform.position,
-			magazine.Projectile.transform.position
+			magazine.Projectiles.First().transform.position
 		);
 	}
 
@@ -88,9 +76,10 @@ public class ProjectilePathingTests : TestCollection
 	{
 		var spawn = new GameObject("spawn");
 		var target = new GameObject("target");
-		var magazine = new GameObject("magazine").AddComponent<MockMagazineMB>();
+		var magazine = new GameObject("magazine").AddComponent<MagazineMB>();
 		var pathing = new ProjectilePathing();
 
+		magazine.projectilePrefab = new GameObject("projectile");
 		target.transform.position = Vector3.right;
 		pathing.spawnPoint = spawn.transform;
 		pathing.magazine = magazine;
@@ -99,9 +88,11 @@ public class ProjectilePathingTests : TestCollection
 
 		while (iterator.MoveNext());
 
+		var projectile = magazine.Projectiles.First();
+
 		Assert.AreEqual(
 			(true, true),
-			(!magazine.Projectile.isActiveAndEnabled, magazine.Projectile.transform.parent == magazine.transform)
+			(!projectile.isActiveAndEnabled, projectile.transform.parent == magazine.transform)
 		);
 	}
 
@@ -110,9 +101,10 @@ public class ProjectilePathingTests : TestCollection
 	{
 		var spawn = new GameObject("spawn");
 		var target = new GameObject("target");
-		var magazine = new GameObject("magazine").AddComponent<MockMagazineMB>();
+		var magazine = new GameObject("magazine").AddComponent<MagazineMB>();
 		var pathing = new ProjectilePathing();
 
+		magazine.projectilePrefab = new GameObject("projectile");
 		target.transform.position = Vector3.up;
 		pathing.spawnPoint = spawn.transform;
 		pathing.magazine = magazine;
@@ -125,7 +117,7 @@ public class ProjectilePathingTests : TestCollection
 
 		Tools.AssertEqual(
 			expected.eulerAngles,
-			magazine.Projectile.transform.rotation.eulerAngles
+			magazine.Projectiles.First().transform.rotation.eulerAngles
 		);
 	}
 }

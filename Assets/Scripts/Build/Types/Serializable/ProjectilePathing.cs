@@ -6,7 +6,7 @@ using UnityEngine;
 public class ProjectilePathing : IProjectilePathing
 {
 	public Transform spawnPoint;
-	public BaseMagazineMB magazine;
+	public MagazineMB magazine;
 	public float deltaPerSecond;
 
 	private Vector3 Interpolate(in Transform current, in Transform target) =>
