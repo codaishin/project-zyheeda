@@ -25,18 +25,6 @@ public class ProjectileLauncherSOTests : TestCollection
 		return skill;
 	}
 
-	private class MockEffectSO : BaseEffectSO
-	{
-		public SkillMB skill;
-		public GameObject target;
-
-		public override void Apply(in SkillMB skill, in GameObject target)
-		{
-			this.skill = skill;
-			this.target = target;
-		}
-	}
-
 	[Test]
 	public void BaseProjectileRoutine()
 	{
