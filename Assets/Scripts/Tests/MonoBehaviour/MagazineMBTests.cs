@@ -126,4 +126,20 @@ public class MagazineMBTests : TestCollection
 
 		Assert.Null(projectile.transform.parent);
 	}
+
+	[Test]
+	public void Projectiles()
+	{
+		var magazine = new GameObject("magazine").AddComponent<MagazineMB>();
+		var prefab = new GameObject("prefab");
+
+		magazine.projectilePrefab = prefab;
+
+		var projectiles = new ProjectileMB[] {
+			magazine.GetOrMakeProjectile(),
+			magazine.GetOrMakeProjectile(),
+		};
+
+		CollectionAssert.AreEqual(projectiles, magazine.Projectiles);
+	}
 }

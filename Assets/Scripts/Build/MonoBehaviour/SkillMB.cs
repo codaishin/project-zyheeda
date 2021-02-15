@@ -7,27 +7,51 @@ public class SkillMB : MonoBehaviour, IPausable<WaitForFixedUpdate>
 	private List<IEnumerator> runningRoutines = new List<IEnumerator>();
 	private float coolDown;
 
-	public BaseItemMB item;
-	public Skill data;
+	public Skill modifiers;
+	public BaseEffectSO[] effects = new BaseEffectSO[0];
+	public BaseItemBehaviourSO behaviour;
 
 	public bool Paused { get; set; }
 	public WaitForFixedUpdate Pause => new WaitForFixedUpdate();
+	public GameObject Item => this.transform.parent.gameObject;
 
-	private float CalculateCooldown() => this.data.speedPerSecond == default
+	private float FullCooldown => this.modifiers.speedPerSecond == default
 		? default
-		: 1f / this.data.speedPerSecond;
+		: 1f / this.modifiers.speedPerSecond;
+
+	private IEnumerable<WaitForFixedUpdate> Cast(IEnumerator<WaitForFixedUpdate> routine)
+	{
+		this.coolDown = this.FullCooldown;
+		while (routine.MoveNext()) {
+			yield return routine.Current;
+			this.coolDown -= Time.fixedDeltaTime;
+		}
+	}
+
+	private void ApplyEffects(GameObject target)
+	{
+		if (target.TryGetComponent(out BaseHitableMB hitable) && hitable.TryHit(this.modifiers.offense)) {
+			this.effects.ForEach(e => e.Apply(this, target));
+		}
+	}
+
+	private IEnumerable<WaitForFixedUpdate> AfterCast()
+	{
+		while (this.coolDown > 0) {
+			yield return new WaitForFixedUpdate();
+			this.coolDown -= Time.fixedDeltaTime;
+		}
+	}
 
 	private IEnumerator<WaitForFixedUpdate> ApplyTo(GameObject target)
 	{
-		if (this.item.Apply(this, target, out IEnumerator<WaitForFixedUpdate> routine)) {
-			this.coolDown = this.CalculateCooldown();
-			while (routine.MoveNext()) {
-				yield return routine.Current;
-				this.coolDown -= Time.fixedDeltaTime;
+		if (this.behaviour.Apply(this, target, out IEnumerator<WaitForFixedUpdate> routine)) {
+			foreach (WaitForFixedUpdate yield in this.Cast(routine)) {
+				yield return yield;
 			}
-			while (this.coolDown > 0) {
-				yield return new WaitForFixedUpdate();
-				this.coolDown -= Time.fixedDeltaTime;
+			this.ApplyEffects(target);
+			foreach (WaitForFixedUpdate yield in this.AfterCast()) {
+				yield return yield;
 			}
 		}
 	}

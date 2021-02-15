@@ -6,11 +6,9 @@ using UnityEngine.TestTools;
 
 public class GroundSkillMBTests : TestCollection
 {
-	private class MockItemMB : BaseItemMB
+	private class MockSkillBehaviourSO : BaseItemBehaviourSO
 	{
-		public SkillMB skill;
 		public GameObject target;
-		public bool valid;
 
 		public override
 		bool Apply(SkillMB skill, GameObject target, out IEnumerator<WaitForFixedUpdate> routine)
@@ -19,9 +17,8 @@ public class GroundSkillMBTests : TestCollection
 				yield break;
 			}
 			this.target = target;
-			this.skill = skill;
 			routine = empty();
-			return this.valid;
+			return default;
 		}
 	}
 
@@ -30,9 +27,9 @@ public class GroundSkillMBTests : TestCollection
 	{
 		var groundSkill = new GameObject("groundSkill").AddComponent<GroundSkillMB>();
 		var skill = new GameObject("skill").AddComponent<SkillMB>();
-		var item = new GameObject("agent").AddComponent<MockItemMB>();
+		var behaviour = ScriptableObject.CreateInstance<MockSkillBehaviourSO>();
 
-		skill.item = item;
+		skill.behaviour = behaviour;
 		groundSkill.skill = skill;
 		groundSkill.selector = new GameObject("selector");
 
@@ -40,7 +37,7 @@ public class GroundSkillMBTests : TestCollection
 
 		groundSkill.Begin(default);
 
-		Assert.AreSame(groundSkill.selector, item.target);
+		Assert.AreSame(groundSkill.selector, behaviour.target);
 	}
 
 	[UnityTest]
@@ -48,8 +45,9 @@ public class GroundSkillMBTests : TestCollection
 	{
 		var groundSkill = new GameObject("groundSkill").AddComponent<GroundSkillMB>();
 		var skill = new GameObject("skill").AddComponent<SkillMB>();
+		var behaviour = ScriptableObject.CreateInstance<MockSkillBehaviourSO>();
 
-		skill.item = new GameObject("agent").AddComponent<MockItemMB>();
+		skill.behaviour = behaviour;
 		groundSkill.skill = skill;
 		groundSkill.selector = new GameObject("selector");
 
