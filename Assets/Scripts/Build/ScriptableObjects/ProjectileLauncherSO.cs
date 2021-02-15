@@ -3,6 +3,7 @@ using UnityEngine;
 
 public delegate IEnumerator<WaitForFixedUpdate> ProjectileRoutineFunc(Transform from, Transform to, float deltaPerSecond);
 
+[CreateAssetMenu(menuName="ScriptableObjects/ItemBehaviour/ProjectileLauncher")]
 public class ProjectileLauncherSO : BaseItemBehaviourSO
 {
 	public ProjectileRoutineFunc projectileRoutine = ProjectileRoutine.Create;
