@@ -5,7 +5,7 @@ public delegate IEnumerator<WaitForFixedUpdate> ProjectileRoutineFunc(Transform 
 
 public class ProjectileLauncherSO : BaseItemBehaviourSO
 {
-	public ProjectileRoutineFunc projectileRoutine;
+	public ProjectileRoutineFunc projectileRoutine = ProjectileRoutine.Create;
 
 	public float deltaPerSecond;
 

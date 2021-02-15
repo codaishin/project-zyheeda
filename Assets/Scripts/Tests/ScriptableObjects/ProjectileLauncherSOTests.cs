@@ -38,10 +38,11 @@ public class ProjectileLauncherSOTests : TestCollection
 	}
 
 	[Test]
-	public void BaseProjectilePath()
+	public void BaseProjectileRoutine()
 	{
 		var behaviour = ScriptableObject.CreateInstance<ProjectileLauncherSO>();
-		Assert.Fail();
+		var routine = (ProjectileRoutineFunc)ProjectileRoutine.Create;
+		Assert.AreEqual(routine, behaviour.projectileRoutine);
 	}
 
 	[Test]
