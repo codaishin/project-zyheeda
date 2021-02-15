@@ -1,17 +1,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public delegate IEnumerator<WaitForFixedUpdate> ProjectileRoutine(Transform agent, Transform to);
+public delegate IEnumerator<WaitForFixedUpdate> ProjectileRoutineFunc(Transform from, Transform to, float deltaPerSecond);
 
 public class ProjectileLauncherSO : BaseItemBehaviourSO
 {
-	public ProjectileRoutine projectileRoutine;
+	public ProjectileRoutineFunc projectileRoutine;
+
+	public float deltaPerSecond;
 
 	public override
 	bool Apply(SkillMB skill, GameObject target, out IEnumerator<WaitForFixedUpdate> routine)
 	{
 		if (target.TryGetComponent(out BaseHitableMB hitable)) {
-			routine = this.Apply(target, skill, hitable);
+			routine = this.Apply(skill, target, hitable);
 			return true;
 		}
 		routine = default;
@@ -19,9 +21,10 @@ public class ProjectileLauncherSO : BaseItemBehaviourSO
 	}
 
 	private
-	IEnumerator<WaitForFixedUpdate> Apply(GameObject target, SkillMB skill, BaseHitableMB hitable)
+	IEnumerator<WaitForFixedUpdate> Apply(SkillMB skill, GameObject target, BaseHitableMB hitable)
 	{
-		IEnumerator<WaitForFixedUpdate> projectilePath = this.projectileRoutine(null, target.transform);
+		IEnumerator<WaitForFixedUpdate> projectilePath = this
+			.projectileRoutine(skill.Item.transform, target.transform, this.deltaPerSecond);
 		while (projectilePath.MoveNext()) {
 			yield return projectilePath.Current;
 		}

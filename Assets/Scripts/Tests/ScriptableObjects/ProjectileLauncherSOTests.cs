@@ -5,21 +5,6 @@ using UnityEngine;
 
 public class ProjectileLauncherSOTests : TestCollection
 {
-	private class Mock
-	{
-		public int iterations;
-		public Transform Target {get; private set; }
-
-		public
-		IEnumerator<WaitForFixedUpdate> ProjectileRoutine(Transform agent, Transform target)
-		{
-			this.Target = target;
-			for (int i = 0; i < this.iterations; ++i) {
-				yield return new WaitForFixedUpdate();
-			}
-		}
-	}
-
 	private class MockHitableMB : BaseHitableMB
 	{
 		public int usedOffense;
@@ -30,6 +15,14 @@ public class ProjectileLauncherSOTests : TestCollection
 			this.usedOffense = offense;
 			return this.hit;
 		}
+	}
+
+	private SkillMB MockSkill()
+	{
+		var skill = new GameObject("skill").AddComponent<SkillMB>();
+		var item = new GameObject("item");
+		skill.transform.SetParent(item.transform);
+		return skill;
 	}
 
 	private class MockEffectSO : BaseEffectSO
@@ -54,15 +47,15 @@ public class ProjectileLauncherSOTests : TestCollection
 	[Test]
 	public void CallTryHit()
 	{
-		var skill = new GameObject("skill").AddComponent<SkillMB>();
 		var target = new GameObject("target").AddComponent<MockHitableMB>();
 		var behaviour = ScriptableObject.CreateInstance<ProjectileLauncherSO>();
-		IEnumerator<WaitForFixedUpdate> yieldNone(Transform _, Transform __) {
+		var skill = this.MockSkill();
+		IEnumerator<WaitForFixedUpdate> yieldNone(Transform _, Transform __, float ___) {
 			yield break;
 		};
 
-		behaviour.projectileRoutine = yieldNone;
 		skill.modifiers.offense = 42;
+		behaviour.projectileRoutine = yieldNone;
 		behaviour.Apply(skill, target.gameObject, out var routine);
 		routine.MoveNext();
 
@@ -72,10 +65,10 @@ public class ProjectileLauncherSOTests : TestCollection
 	[Test]
 	public void CallTryHitValid()
 	{
-		var skill = new GameObject("skill").AddComponent<SkillMB>();
 		var target = new GameObject("target").AddComponent<MockHitableMB>();
 		var behaviour = ScriptableObject.CreateInstance<ProjectileLauncherSO>();
-		IEnumerator<WaitForFixedUpdate> yieldNone(Transform _, Transform __) {
+		var skill = this.MockSkill();
+		IEnumerator<WaitForFixedUpdate> yieldNone(Transform _, Transform __, float ___) {
 			yield break;
 		};
 
@@ -90,10 +83,10 @@ public class ProjectileLauncherSOTests : TestCollection
 	public void UseProjectilePathing()
 	{
 		var count = 0;
-		var skill = new GameObject("skill").AddComponent<SkillMB>();
 		var target = new GameObject("target").AddComponent<MockHitableMB>();
 		var behaviour = ScriptableObject.CreateInstance<ProjectileLauncherSO>();
-		IEnumerator<WaitForFixedUpdate> yieldFive(Transform _, Transform __) {
+		var skill = this.MockSkill();
+		IEnumerator<WaitForFixedUpdate> yieldFive(Transform _, Transform __, float ___) {
 			yield return new WaitForFixedUpdate();
 			yield return new WaitForFixedUpdate();
 			yield return new WaitForFixedUpdate();
@@ -110,31 +103,32 @@ public class ProjectileLauncherSOTests : TestCollection
 	}
 
 	[Test]
-	public void UseProjectilePathingToTarget()
+	public void Parameters()
 	{
-		var got = null as Transform;
-		var skill = new GameObject("skill").AddComponent<SkillMB>();
+		var got = (null as Transform, null as Transform, 0f);
 		var target = new GameObject("target").AddComponent<MockHitableMB>();
 		var behaviour = ScriptableObject.CreateInstance<ProjectileLauncherSO>();
-		IEnumerator<WaitForFixedUpdate> yieldNone(Transform _, Transform t) {
-			got = t;
+		var skill = this.MockSkill();
+		IEnumerator<WaitForFixedUpdate> yieldNone(Transform f, Transform t, float d) {
+			got = (f, t, d);
 			yield break;
 		};
 
+		behaviour.deltaPerSecond = 10f;
 		behaviour.projectileRoutine = yieldNone;
 		behaviour.Apply(skill, target.gameObject, out var routine);
 		routine.MoveNext();
 
-		Assert.AreSame(target.transform, got);
+		Assert.AreEqual((skill.Item.transform, target.transform, 10f), got);
 	}
 
 	[Test]
 	public void NoProjectilePathing()
 	{
-		var skill = new GameObject("skill").AddComponent<SkillMB>();
 		var target = new GameObject("target");
 		var behaviour = ScriptableObject.CreateInstance<ProjectileLauncherSO>();
-		IEnumerator<WaitForFixedUpdate> yieldNone(Transform _, Transform __) {
+		var skill = this.MockSkill();
+		IEnumerator<WaitForFixedUpdate> yieldNone(Transform _, Transform __, float ___) {
 			yield break;
 		};
 
@@ -149,14 +143,14 @@ public class ProjectileLauncherSOTests : TestCollection
 	[Test]
 	public void ApplyEffects()
 	{
-		var skill = new GameObject("skill").AddComponent<SkillMB>();
 		var target = new GameObject("target").AddComponent<MockHitableMB>();
 		var effects = new MockEffectSO[] {
 			ScriptableObject.CreateInstance<MockEffectSO>(),
 			ScriptableObject.CreateInstance<MockEffectSO>(),
 		};
 		var behaviour = ScriptableObject.CreateInstance<ProjectileLauncherSO>();
-		IEnumerator<WaitForFixedUpdate> yieldNone(Transform _, Transform __) {
+		var skill = this.MockSkill();
+		IEnumerator<WaitForFixedUpdate> yieldNone(Transform _, Transform __, float ___) {
 			yield break;
 		};
 
@@ -178,14 +172,14 @@ public class ProjectileLauncherSOTests : TestCollection
 	[Test]
 	public void DontApplyEffects()
 	{
-		var skill = new GameObject("skill").AddComponent<SkillMB>();
 		var target = new GameObject("target").AddComponent<MockHitableMB>();
 		var effects = new MockEffectSO[] {
 			ScriptableObject.CreateInstance<MockEffectSO>(),
 			ScriptableObject.CreateInstance<MockEffectSO>(),
 		};
 		var behaviour = ScriptableObject.CreateInstance<ProjectileLauncherSO>();
-		IEnumerator<WaitForFixedUpdate> yieldNone(Transform _, Transform __) {
+		var skill = this.MockSkill();
+		IEnumerator<WaitForFixedUpdate> yieldNone(Transform _, Transform __, float ___) {
 			yield break;
 		};
 
@@ -200,7 +194,6 @@ public class ProjectileLauncherSOTests : TestCollection
 	[Test]
 	public void ApplyEffectsOnlyAfterProjectileHit()
 	{
-		var skill = new GameObject("skill").AddComponent<SkillMB>();
 		var target = new GameObject("target").AddComponent<MockHitableMB>();
 		var effects = new MockEffectSO[] {
 			ScriptableObject.CreateInstance<MockEffectSO>(),
@@ -208,7 +201,8 @@ public class ProjectileLauncherSOTests : TestCollection
 		};
 		var applied = new List<bool>();
 		var behaviour = ScriptableObject.CreateInstance<ProjectileLauncherSO>();
-		IEnumerator<WaitForFixedUpdate> yieldTwo(Transform _, Transform __) {
+		var skill = this.MockSkill();
+		IEnumerator<WaitForFixedUpdate> yieldTwo(Transform _, Transform __, float ___) {
 			yield return new WaitForFixedUpdate();
 			yield return new WaitForFixedUpdate();
 		};
