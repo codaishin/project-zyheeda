@@ -8,6 +8,8 @@ public class MagazineMB : BaseMagazineMB
 
 	public GameObject projectilePrefab;
 
+	public IEnumerable<ProjectileMB> Projectiles => this.projectiles;
+
 	private ProjectileMB MakeProjectile()
 	{
 		ProjectileMB projectile = GameObject
