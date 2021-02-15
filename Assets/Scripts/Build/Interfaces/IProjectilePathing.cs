@@ -4,5 +4,5 @@ using UnityEngine;
 
 public interface IProjectilePathing
 {
-	IEnumerator<WaitForFixedUpdate> ProjectileRoutineTo(Transform target);
+	IEnumerator<WaitForFixedUpdate> ProjectileRoutine(Transform agent, Transform to);
 }

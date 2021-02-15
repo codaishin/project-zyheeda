@@ -33,7 +33,7 @@ public class ProjectilePathingTests : TestCollection
 		pathing.spawnPoint = spawn.transform;
 		pathing.magazine = magazine;
 		pathing.deltaPerSecond = 1;
-		var iterator = pathing.ProjectileRoutineTo(target.transform);
+		var iterator = pathing.ProjectileRoutine(null, target.transform);
 
 		iterator.MoveNext();
 
@@ -56,7 +56,7 @@ public class ProjectilePathingTests : TestCollection
 		pathing.magazine = magazine;
 		spawn.transform.position = Vector3.back;
 
-		pathing.ProjectileRoutineTo(target.transform).MoveNext();
+		pathing.ProjectileRoutine(null, target.transform).MoveNext();
 
 		Assert.AreEqual(Vector3.back, magazine.Projectile.transform.position);
 	}
@@ -73,7 +73,7 @@ public class ProjectilePathingTests : TestCollection
 		pathing.spawnPoint = spawn.transform;
 		pathing.magazine = magazine;
 		pathing.deltaPerSecond = 0.5f;
-		var iterator = pathing.ProjectileRoutineTo(target.transform);
+		var iterator = pathing.ProjectileRoutine(null, target.transform);
 
 		while (iterator.MoveNext());
 
@@ -95,7 +95,7 @@ public class ProjectilePathingTests : TestCollection
 		pathing.spawnPoint = spawn.transform;
 		pathing.magazine = magazine;
 		pathing.deltaPerSecond = 0.5f;
-		var iterator = pathing.ProjectileRoutineTo(target.transform);
+		var iterator = pathing.ProjectileRoutine(null, target.transform);
 
 		while (iterator.MoveNext());
 
@@ -117,7 +117,7 @@ public class ProjectilePathingTests : TestCollection
 		pathing.spawnPoint = spawn.transform;
 		pathing.magazine = magazine;
 		pathing.deltaPerSecond = 1;
-		var iterator = pathing.ProjectileRoutineTo(target.transform);
+		var iterator = pathing.ProjectileRoutine(null, target.transform);
 
 		iterator.MoveNext();
 

@@ -16,7 +16,7 @@ public class ProjectilePathing : IProjectilePathing
 			this.deltaPerSecond * Time.fixedDeltaTime
 		);
 
-	public IEnumerator<WaitForFixedUpdate> ProjectileRoutineTo(Transform target)
+	public IEnumerator<WaitForFixedUpdate> ProjectileRoutine(Transform agent, Transform target)
 	{
 		ProjectileMB projectile = this.magazine.GetOrMakeProjectile();
 		projectile.transform.position = this.spawnPoint.position;

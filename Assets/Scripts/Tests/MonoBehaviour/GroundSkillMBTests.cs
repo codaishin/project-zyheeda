@@ -6,12 +6,12 @@ using UnityEngine.TestTools;
 
 public class GroundSkillMBTests : TestCollection
 {
-	private class MockItemBehaviour : IItemBehaviour
+	private class MockSkillBehaviourSO : BaseItemBehaviourSO
 	{
 		public GameObject target;
 
-		public
-		bool Apply(BaseSkillMB skill, GameObject target, out IEnumerator<WaitForFixedUpdate> routine)
+		public override
+		bool Apply(SkillMB skill, GameObject target, out IEnumerator<WaitForFixedUpdate> routine)
 		{
 			IEnumerator<WaitForFixedUpdate> empty() {
 				yield break;
@@ -22,14 +22,14 @@ public class GroundSkillMBTests : TestCollection
 		}
 	}
 
-	private class MockSkillMB : BaseSkillMB<MockItemBehaviour> {}
-
 	[UnityTest]
 	public IEnumerator CallSelector()
 	{
 		var groundSkill = new GameObject("groundSkill").AddComponent<GroundSkillMB>();
-		var skill = new GameObject("skill").AddComponent<MockSkillMB>();
+		var skill = new GameObject("skill").AddComponent<SkillMB>();
+		var behaviour = ScriptableObject.CreateInstance<MockSkillBehaviourSO>();
 
+		skill.behaviour = behaviour;
 		groundSkill.skill = skill;
 		groundSkill.selector = new GameObject("selector");
 
@@ -37,15 +37,17 @@ public class GroundSkillMBTests : TestCollection
 
 		groundSkill.Begin(default);
 
-		Assert.AreSame(groundSkill.selector, skill.behaviour.target);
+		Assert.AreSame(groundSkill.selector, behaviour.target);
 	}
 
 	[UnityTest]
 	public IEnumerator UpdateSelectorPosition()
 	{
 		var groundSkill = new GameObject("groundSkill").AddComponent<GroundSkillMB>();
-		var skill = new GameObject("skill").AddComponent<MockSkillMB>();
+		var skill = new GameObject("skill").AddComponent<SkillMB>();
+		var behaviour = ScriptableObject.CreateInstance<MockSkillBehaviourSO>();
 
+		skill.behaviour = behaviour;
 		groundSkill.skill = skill;
 		groundSkill.selector = new GameObject("selector");
 

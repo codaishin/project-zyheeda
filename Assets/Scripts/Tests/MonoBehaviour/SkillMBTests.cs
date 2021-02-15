@@ -4,18 +4,18 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-public class BaseSkillMBTests : TestCollection
+public class SkillMBTests : TestCollection
 {
-	private class MockItemBehaviour : IItemBehaviour
+	private class MockItemBehaviourSO : BaseItemBehaviourSO
 	{
-		public BaseSkillMB skill;
+		public SkillMB skill;
 		public GameObject target;
 		public int iterationsDone;
 		public int applied;
 		public bool valid = true;
 
-		public
-		bool Apply(BaseSkillMB skill, GameObject target, out IEnumerator<WaitForFixedUpdate> routine)
+		public override
+		bool Apply(SkillMB skill, GameObject target, out IEnumerator<WaitForFixedUpdate> routine)
 		{
 			IEnumerator<WaitForFixedUpdate> iterate() {
 				while (this.valid && this.iterationsDone < 10) {
@@ -31,49 +31,53 @@ public class BaseSkillMBTests : TestCollection
 		}
 	}
 
-	private class MockSkillMB : BaseSkillMB<MockItemBehaviour> {}
-
 	[UnityTest]
 	public IEnumerator CallsCorrectTarget()
 	{
-		var skill = new GameObject("skill").AddComponent<MockSkillMB>();
+		var skill = new GameObject("skill").AddComponent<SkillMB>();
 		var target = new GameObject("target");
+		var behaviour = ScriptableObject.CreateInstance<MockItemBehaviourSO>();
+		skill.behaviour = behaviour;
 
 		yield return new WaitForEndOfFrame();
 
 		skill.Begin(target);
 
-		Assert.AreSame(target, skill.behaviour.target);
+		Assert.AreSame(target, behaviour.target);
 	}
 
 	[UnityTest]
 	public IEnumerator CallsCorrectSkill()
 	{
-		var skill = new GameObject("skill").AddComponent<MockSkillMB>();
+		var skill = new GameObject("skill").AddComponent<SkillMB>();
 		var target = new GameObject("target");
+		var behaviour = ScriptableObject.CreateInstance<MockItemBehaviourSO>();
+		skill.behaviour = behaviour;
 
 		yield return new WaitForEndOfFrame();
 
 		skill.Begin(target);
 
-		Assert.AreSame(skill, skill.behaviour.skill);
+		Assert.AreSame(skill, behaviour.skill);
 	}
 
 	[UnityTest]
 	public IEnumerator BehaviourRunsAsCoroutine()
 	{
-		var skill = new GameObject("skill").AddComponent<MockSkillMB>();
+		var skill = new GameObject("skill").AddComponent<SkillMB>();
 		var target = new GameObject("target");
+		var behaviour = ScriptableObject.CreateInstance<MockItemBehaviourSO>();
 		var ran = new int[2];
+		skill.behaviour = behaviour;
 
 		yield return new WaitForEndOfFrame();
 
 		skill.Begin(target);
-		ran[0] = skill.behaviour.iterationsDone;
+		ran[0] = behaviour.iterationsDone;
 
 		yield return new WaitForFixedUpdate();
 
-		ran[1] = skill.behaviour.iterationsDone;
+		ran[1] = behaviour.iterationsDone;
 
 		CollectionAssert.AreEqual(new int[] { 1, 2 }, ran);
 	}
@@ -81,19 +85,21 @@ public class BaseSkillMBTests : TestCollection
 	[UnityTest]
 	public IEnumerator StopCoroutine()
 	{
-		var skill = new GameObject("skill").AddComponent<MockSkillMB>();
+		var skill = new GameObject("skill").AddComponent<SkillMB>();
 		var target = new GameObject("target");
+		var behaviour = ScriptableObject.CreateInstance<MockItemBehaviourSO>();
 		var ran = new int[2];
+		skill.behaviour = behaviour;
 
 		yield return new WaitForEndOfFrame();
 
 		skill.Begin(target);
-		ran[0] = skill.behaviour.iterationsDone;
+		ran[0] = behaviour.iterationsDone;
 		skill.End();
 
 		yield return new WaitForFixedUpdate();
 
-		ran[1] = skill.behaviour.iterationsDone;
+		ran[1] = behaviour.iterationsDone;
 
 		CollectionAssert.AreEqual(new int[] { 1, 1 }, ran);
 	}
@@ -101,7 +107,7 @@ public class BaseSkillMBTests : TestCollection
 	[Test]
 	public void ImplementesIPausableWithFixedUpdateYield()
 	{
-		var skill = new GameObject("skill").AddComponent<MockSkillMB>();
+		var skill = new GameObject("skill").AddComponent<SkillMB>();
 
 		Assert.True(skill is IPausable<WaitForFixedUpdate>);
 	}
@@ -109,8 +115,10 @@ public class BaseSkillMBTests : TestCollection
 	[UnityTest]
 	public IEnumerator IsPausable()
 	{
-		var skill = new GameObject("skill").AddComponent<MockSkillMB>();
+		var skill = new GameObject("skill").AddComponent<SkillMB>();
 		var target = new GameObject("target");
+		var behaviour = ScriptableObject.CreateInstance<MockItemBehaviourSO>();
+		skill.behaviour = behaviour;
 
 		yield return new WaitForEndOfFrame();
 
@@ -120,14 +128,16 @@ public class BaseSkillMBTests : TestCollection
 
 		yield return new WaitForFixedUpdate();
 
-		Assert.AreEqual(1, skill.behaviour.iterationsDone);
+		Assert.AreEqual(1, behaviour.iterationsDone);
 	}
 
 	[UnityTest]
 	public IEnumerator CanBeUnPaused()
 	{
-		var skill = new GameObject("skill").AddComponent<MockSkillMB>();
+		var skill = new GameObject("skill").AddComponent<SkillMB>();
 		var target = new GameObject("target");
+		var behaviour = ScriptableObject.CreateInstance<MockItemBehaviourSO>();
+		skill.behaviour = behaviour;
 
 		yield return new WaitForEndOfFrame();
 
@@ -143,14 +153,16 @@ public class BaseSkillMBTests : TestCollection
 		yield return new WaitForFixedUpdate();
 		yield return new WaitForFixedUpdate();
 
-		Assert.Greater(skill.behaviour.iterationsDone, 1);
+		Assert.Greater(behaviour.iterationsDone, 1);
 	}
 
 	[UnityTest]
 	public IEnumerator NoApplyDuringCooldown()
 	{
-		var skill = new GameObject("skill").AddComponent<MockSkillMB>();
+		var skill = new GameObject("skill").AddComponent<SkillMB>();
 		var target = new GameObject("target");
+		var behaviour = ScriptableObject.CreateInstance<MockItemBehaviourSO>();
+		skill.behaviour = behaviour;
 
 		skill.modifiers.speedPerSecond = 10;
 
@@ -159,14 +171,16 @@ public class BaseSkillMBTests : TestCollection
 		skill.Begin(target);
 		skill.Begin(target);
 
-		Assert.AreEqual(1, skill.behaviour.applied);
+		Assert.AreEqual(1, behaviour.applied);
 	}
 
 	[UnityTest]
 	public IEnumerator CanApplyAfterCooldown()
 	{
-		var skill = new GameObject("skill").AddComponent<MockSkillMB>();
+		var skill = new GameObject("skill").AddComponent<SkillMB>();
 		var target = new GameObject("target");
+		var behaviour = ScriptableObject.CreateInstance<MockItemBehaviourSO>();
+		skill.behaviour = behaviour;
 
 		skill.modifiers.speedPerSecond = 10;
 
@@ -178,17 +192,19 @@ public class BaseSkillMBTests : TestCollection
 
 		skill.Begin(target);
 
-		Assert.AreEqual(2, skill.behaviour.applied);
+		Assert.AreEqual(2, behaviour.applied);
 	}
 
 	[UnityTest]
 	public IEnumerator CanAttemptToApplyAgainAfterInvalid()
 	{
-		var skill = new GameObject("skill").AddComponent<MockSkillMB>();
+		var skill = new GameObject("skill").AddComponent<SkillMB>();
 		var target = new GameObject("target");
+		var behaviour = ScriptableObject.CreateInstance<MockItemBehaviourSO>();
+		skill.behaviour = behaviour;
 
 		skill.modifiers.speedPerSecond = 0.1f;
-		skill.behaviour.valid = false;
+		behaviour.valid = false;
 
 		yield return new WaitForEndOfFrame();
 
@@ -198,17 +214,19 @@ public class BaseSkillMBTests : TestCollection
 
 		skill.Begin(target);
 
-		Assert.AreEqual(2, skill.behaviour.applied);
+		Assert.AreEqual(2, behaviour.applied);
 	}
 
 	[UnityTest]
 	public IEnumerator CanAttemptToApplyAgainAfterCooldownLongerThanSkill()
 	{
-		var skill = new GameObject("skill").AddComponent<MockSkillMB>();
+		var skill = new GameObject("skill").AddComponent<SkillMB>();
 		var target = new GameObject("target");
+		var behaviour = ScriptableObject.CreateInstance<MockItemBehaviourSO>();
+		skill.behaviour = behaviour;
 
 		skill.modifiers.speedPerSecond = 10f;
-		skill.behaviour.iterationsDone = 9; // 9 out of 10 iterations done
+		behaviour.iterationsDone = 9; // 9 out of 10 iterations done
 
 		yield return new WaitForEndOfFrame();
 
@@ -218,14 +236,16 @@ public class BaseSkillMBTests : TestCollection
 
 		skill.Begin(target);
 
-		Assert.AreEqual(2, skill.behaviour.applied);
+		Assert.AreEqual(2, behaviour.applied);
 	}
 
 	[UnityTest]
 	public IEnumerator NoApplyDuringCooldownWhenPaused()
 	{
-		var skill = new GameObject("skill").AddComponent<MockSkillMB>();
+		var skill = new GameObject("skill").AddComponent<SkillMB>();
 		var target = new GameObject("target");
+		var behaviour = ScriptableObject.CreateInstance<MockItemBehaviourSO>();
+		skill.behaviour = behaviour;
 
 		skill.modifiers.speedPerSecond = 10;
 
@@ -239,14 +259,16 @@ public class BaseSkillMBTests : TestCollection
 		skill.Paused = false;
 		skill.Begin(target);
 
-		Assert.AreEqual(1, skill.behaviour.applied);
+		Assert.AreEqual(1, behaviour.applied);
 	}
 
 	[UnityTest]
 	public IEnumerator ApplyEndToAllCoroutines()
 	{
-		var skill = new GameObject("skill").AddComponent<MockSkillMB>();
+		var skill = new GameObject("skill").AddComponent<SkillMB>();
 		var target = new GameObject("target");
+		var behaviour = ScriptableObject.CreateInstance<MockItemBehaviourSO>();
+		skill.behaviour = behaviour;
 
 		yield return new WaitForEndOfFrame();
 
@@ -256,13 +278,13 @@ public class BaseSkillMBTests : TestCollection
 
 		yield return new WaitForFixedUpdate();
 
-		Assert.AreEqual(2, skill.behaviour.iterationsDone);
+		Assert.AreEqual(2, behaviour.iterationsDone);
 	}
 
 	[Test]
 	public void PauseNotNull()
 	{
-		var skill = new GameObject("skill").AddComponent<MockSkillMB>();
+		var skill = new GameObject("skill").AddComponent<SkillMB>();
 		Assert.NotNull(skill.Pause);
 	}
 }
