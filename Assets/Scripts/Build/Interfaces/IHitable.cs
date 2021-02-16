@@ -1,4 +1,4 @@
 public interface IHitable
 {
-	bool TryHit(in int mind);
+	bool TryHit(in Attributes attributes);
 }
