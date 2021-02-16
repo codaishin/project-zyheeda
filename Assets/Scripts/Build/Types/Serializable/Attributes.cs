@@ -12,4 +12,6 @@ public struct Attributes
 		mind = a.mind + b.mind,
 		spirit = a.spirit + b.spirit,
 	};
+
+	public override string ToString() => $"(body: {this.body}, mind: {this.mind}, spirit: {this.spirit})";
 }

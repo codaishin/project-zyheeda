@@ -18,4 +18,12 @@ public class AttributesTests : TestCollection
 			(c.body, c.mind, c.spirit)
 		);
 	}
+
+	[Test]
+	public void String()
+	{
+		var a = new Attributes { body = 10, mind = 20, spirit = 44 };
+
+		Assert.AreEqual("(body: 10, mind: 20, spirit: 44)", a.ToString());
+	}
 }
