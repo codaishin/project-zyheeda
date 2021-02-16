@@ -4,13 +4,13 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-public class StatsTests : TestCollection
+public class AttributesTests : TestCollection
 {
 	[Test]
 	public void Add()
 	{
-		var a = new Stats { body = 10, mind = 20, spirit = 44 };
-		var b = new Stats { body = 11, mind = -5, spirit = 42 };
+		var a = new Attributes { body = 10, mind = 20, spirit = 44 };
+		var b = new Attributes { body = 11, mind = -5, spirit = 42 };
 		var c = a + b;
 
 		Assert.AreEqual(
