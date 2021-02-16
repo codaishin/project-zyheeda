@@ -20,9 +20,10 @@ public static class IPausableExtensions
 	}
 
 	public static
-	IEnumerator Manage<TPauseYield>(this IPausable<TPauseYield> pausable,
-	                                IEnumerator enumerator)
-	{
+	IEnumerator Manage<TPauseYield>(
+		this IPausable<TPauseYield> pausable,
+	  IEnumerator enumerator
+	) {
 		while (pausable.PausedOrNextOf(enumerator, out object value)) {
 			yield return value;
 		};
