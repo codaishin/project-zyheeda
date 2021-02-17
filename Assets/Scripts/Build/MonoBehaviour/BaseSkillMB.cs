@@ -15,20 +15,20 @@ public abstract class BaseSkillMB<TEffect, TCast> : MonoBehaviour
 
 	public IAttributes Sheet { get; private set; }
 
-	private IEnumerable<WaitForFixedUpdate> Cast(GameObject target)
+	private IEnumerable<WaitForFixedUpdate> Cast(IHitable target)
 	{
-		IEnumerator<WaitForFixedUpdate> routine = this.cast.Apply(target);
+		IEnumerator<WaitForFixedUpdate> routine = this.cast.Apply(target.gameObject);
 		while (routine.MoveNext()) {
 			yield return routine.Current;
 			this.cooldown -= Time.fixedDeltaTime;
 		}
 	}
 
-	private void ApplyEffect(in GameObject target, in IHitable hitable)
+	private void ApplyEffect(in IHitable target)
 	{
 		Attributes combined = this.Sheet.Attributes + this.modifiers;
-		if (hitable.TryHit(combined)) {
-			this.effect.Apply(target, combined);
+		if (target.TryHit(combined)) {
+			this.effect.Apply(target.gameObject, combined);
 		}
 	}
 
@@ -40,12 +40,12 @@ public abstract class BaseSkillMB<TEffect, TCast> : MonoBehaviour
 		}
 	}
 
-	private IEnumerator<WaitForFixedUpdate> Apply(GameObject target, IHitable hitable)
+	private IEnumerator<WaitForFixedUpdate> Apply(IHitable target)
 	{
 		foreach (WaitForFixedUpdate yield in this.Cast(target)) {
 			yield return yield;
 		}
-		this.ApplyEffect(target, hitable);
+		this.ApplyEffect(target);
 		foreach (WaitForFixedUpdate yield in this.AfterCast()) {
 			yield return yield;
 		}
@@ -55,7 +55,7 @@ public abstract class BaseSkillMB<TEffect, TCast> : MonoBehaviour
 	{
 		if (target.TryGetComponent(out IHitable hitable) && this.cooldown <= 0) {
 			this.cooldown = this.applyPerSecond > 0 ? 1f / this.applyPerSecond : 0;
-			this.StartCoroutine(this.Apply(target, hitable));
+			this.StartCoroutine(this.Apply(hitable));
 		}
 	}
 
