@@ -67,7 +67,13 @@ public abstract class BaseSkillMB<TEffect, TCast> : BaseSkillMB
 	private void Awake()
 	{
 		this.Sheet = this.RequireComponent<IAttributes>();
-		this.cast = new TCast { gameObject = this.gameObject };
-		this.effect = new TEffect { gameObject = this.gameObject };
+		if (this.cast == null) {
+			this.cast = new TCast();
+		}
+		if (this.effect == null) {
+			this.effect = new TEffect();
+		}
+		this.cast.gameObject = this.gameObject;
+		this.effect.gameObject = this.gameObject;
 	}
 }
