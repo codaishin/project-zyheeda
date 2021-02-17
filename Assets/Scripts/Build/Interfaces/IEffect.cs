@@ -1,6 +1,8 @@
 using UnityEngine;
 
+public delegate void EffectFunc(in Attributes attributes);
+
 public interface IEffect
 {
-	void Apply(in GameObject target, in Attributes attributes);
+	bool GetEffect(GameObject target, out EffectFunc effectHandle);
 }

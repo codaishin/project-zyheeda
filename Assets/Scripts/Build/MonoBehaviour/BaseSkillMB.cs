@@ -20,20 +20,12 @@ public abstract class BaseSkillMB<TEffect, TCast> : BaseSkillMB
 
 	public IAttributes Sheet { get; private set; }
 
-	private IEnumerable<WaitForFixedUpdate> Cast(IHitable target)
+	private IEnumerable<WaitForFixedUpdate> Cast(GameObject target)
 	{
-		IEnumerator<WaitForFixedUpdate> routine = this.cast.Apply(target.gameObject);
+		IEnumerator<WaitForFixedUpdate> routine = this.cast.Apply(target);
 		while (routine.MoveNext()) {
 			yield return routine.Current;
 			this.cooldown -= Time.fixedDeltaTime;
-		}
-	}
-
-	private void ApplyEffect(in IHitable target)
-	{
-		Attributes combined = this.Sheet.Attributes + this.modifiers;
-		if (target.TryHit(combined)) {
-			this.effect.Apply(target.gameObject, combined);
 		}
 	}
 
@@ -45,12 +37,12 @@ public abstract class BaseSkillMB<TEffect, TCast> : BaseSkillMB
 		}
 	}
 
-	private IEnumerator<WaitForFixedUpdate> Apply(IHitable target)
+	private IEnumerator<WaitForFixedUpdate> Apply(GameObject target, EffectFunc effect)
 	{
 		foreach (WaitForFixedUpdate yield in this.Cast(target)) {
 			yield return yield;
 		}
-		this.ApplyEffect(target);
+		effect(this.Sheet.Attributes + this.modifiers);
 		foreach (WaitForFixedUpdate yield in this.AfterCast()) {
 			yield return yield;
 		}
@@ -58,9 +50,9 @@ public abstract class BaseSkillMB<TEffect, TCast> : BaseSkillMB
 
 	public override void Begin(GameObject target)
 	{
-		if (target.TryGetComponent(out IHitable hitable) && this.cooldown <= 0) {
+		if (this.effect.GetEffect(target, out EffectFunc effect) && this.cooldown <= 0) {
 			this.cooldown = this.applyPerSecond > 0 ? 1f / this.applyPerSecond : 0;
-			this.StartCoroutine(this.Apply(hitable));
+			this.StartCoroutine(this.Apply(target, effect));
 		}
 	}
 
