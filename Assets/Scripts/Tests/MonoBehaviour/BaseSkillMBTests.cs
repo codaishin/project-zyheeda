@@ -6,11 +6,13 @@ using UnityEngine.TestTools;
 
 public class BaseSkillMBTests : TestCollection
 {
-	private class MockCast : ICast
+	private class MockCast : ICast, ISetGameObject
 	{
 		public delegate IEnumerator<WaitForFixedUpdate> ApplyFunc(GameObject t);
 
 		public ApplyFunc apply = MockCast.BaseApply;
+
+		public GameObject gameObject { get; set; }
 
 		private static IEnumerator<WaitForFixedUpdate> BaseApply(GameObject _) { yield break; }
 
@@ -18,11 +20,13 @@ public class BaseSkillMBTests : TestCollection
 			this.apply(target);
 	}
 
-	private class MockEffect : IEffect
+	private class MockEffect : IEffect, ISetGameObject
 	{
 		public delegate void ApplyAction(in GameObject t, in Attributes a);
 
 		public ApplyAction apply = MockEffect.BaseApply;
+
+		public GameObject gameObject { get; set; }
 
 		private static void BaseApply(in GameObject _, in Attributes __) {}
 
@@ -58,6 +62,24 @@ public class BaseSkillMBTests : TestCollection
 		var skill = sheet.gameObject.AddComponent<MockSkillMB>();
 
 		Assert.AreSame(sheet, skill.Sheet);
+	}
+
+	[Test]
+	public void SetCastGameObject()
+	{
+		var sheet = new GameObject("item").AddComponent<MockSheetMB>();
+		var skill = sheet.gameObject.AddComponent<MockSkillMB>();
+
+		Assert.AreSame(skill.gameObject, skill.cast.gameObject);
+	}
+
+	[Test]
+	public void SetEffectGameObject()
+	{
+		var sheet = new GameObject("item").AddComponent<MockSheetMB>();
+		var skill = sheet.gameObject.AddComponent<MockSkillMB>();
+
+		Assert.AreSame(skill.gameObject, skill.effect.gameObject);
 	}
 
 	[UnityTest]

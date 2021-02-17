@@ -3,15 +3,15 @@ using UnityEngine;
 
 [RequireComponent(typeof(IAttributes))]
 public abstract class BaseSkillMB<TEffect, TCast> : MonoBehaviour
-	where TEffect : IEffect, new()
-	where TCast : ICast, new()
+	where TEffect : IEffect, ISetGameObject, new()
+	where TCast : ICast, ISetGameObject, new()
 {
 	private float cooldown;
 
 	public float applyPerSecond;
 	public Attributes modifiers;
-	public TEffect effect = new TEffect();
-	public TCast cast = new TCast();
+	public TEffect effect;
+	public TCast cast;
 
 	public IAttributes Sheet { get; private set; }
 
@@ -62,5 +62,7 @@ public abstract class BaseSkillMB<TEffect, TCast> : MonoBehaviour
 	private void Awake()
 	{
 		this.Sheet = this.RequireComponent<IAttributes>();
+		this.cast = new TCast { gameObject = this.gameObject };
+		this.effect = new TEffect { gameObject = this.gameObject };
 	}
 }
