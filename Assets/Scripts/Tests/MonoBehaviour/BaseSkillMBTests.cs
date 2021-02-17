@@ -35,7 +35,7 @@ public class BaseSkillMBTests : TestCollection
 			this.apply(target, attributes);
 	}
 
-	private class MockItemMB : MonoBehaviour, IItem
+	private class MockItemMB : MonoBehaviour, IAttributes
 	{
 		public Attributes attributes;
 

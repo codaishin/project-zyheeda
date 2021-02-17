@@ -1,8 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public interface IItem
+public interface IAttributes
 {
 	Attributes Attributes { get; }
 	GameObject gameObject { get; }

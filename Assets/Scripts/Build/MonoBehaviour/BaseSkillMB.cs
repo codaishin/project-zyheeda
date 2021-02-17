@@ -6,7 +6,7 @@ public abstract class BaseSkillMB<TEffect, TCast> : MonoBehaviour
 	where TEffect : IEffect, new()
 	where TCast : ICast, new()
 {
-	private IItem item;
+	private IAttributes item;
 	private float cooldown;
 
 	public float applyPerSecond;
@@ -60,6 +60,6 @@ public abstract class BaseSkillMB<TEffect, TCast> : MonoBehaviour
 
 	private void Start()
 	{
-		this.item = this.transform.parent.RequireComponent<IItem>();
+		this.item = this.transform.parent.RequireComponent<IAttributes>();
 	}
 }
