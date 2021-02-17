@@ -2,7 +2,7 @@ using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
 
-public class ProjectileRoutineTests : TestCollection
+public class CastProjectileTests : TestCollection
 {
 	[Test]
 	public void MoveProjectileToTarget()
@@ -10,11 +10,12 @@ public class ProjectileRoutineTests : TestCollection
 		var spawn = new GameObject("spawn");
 		var target = new GameObject("target");
 		var launcher = new GameObject("launcher").AddComponent<ProjectileLauncherMB>();
+		var cast = new CastProjectile{ gameObject = launcher.gameObject };
+		cast.projectileSpeed = 1;
 		launcher.spawnProjectilesAt = spawn.transform;
-
 		launcher.Magazine.projectilePrefab = new GameObject("projectile");
 		target.transform.position = Vector3.right;
-		var iterator = ProjectileRoutine.Create(launcher.transform, target.transform, 1);
+		var iterator = cast.Apply(target);
 
 		iterator.MoveNext();
 
@@ -30,13 +31,14 @@ public class ProjectileRoutineTests : TestCollection
 		var spawn = new GameObject("spawn");
 		var target = new GameObject("target");
 		var launcher = new GameObject("launcher").AddComponent<ProjectileLauncherMB>();
+		var cast = new CastProjectile{ gameObject = launcher.gameObject };
+		cast.projectileSpeed = 1;
 		launcher.spawnProjectilesAt = spawn.transform;
-
 		launcher.Magazine.projectilePrefab = new GameObject("projectile");
 		target.transform.position = Vector3.back;
 		spawn.transform.position = Vector3.back;
 
-		ProjectileRoutine.Create(launcher.transform, target.transform, 1).MoveNext();
+		cast.Apply(target).MoveNext();
 
 		Assert.AreEqual(Vector3.back, launcher.Magazine.Projectiles.First().transform.position);
 	}
@@ -47,11 +49,12 @@ public class ProjectileRoutineTests : TestCollection
 		var spawn = new GameObject("spawn");
 		var target = new GameObject("target");
 		var launcher = new GameObject("launcher").AddComponent<ProjectileLauncherMB>();
+		var cast = new CastProjectile{ gameObject = launcher.gameObject };
+		cast.projectileSpeed = 0.5f;
 		launcher.spawnProjectilesAt = spawn.transform;
-
 		launcher.Magazine.projectilePrefab = new GameObject("projectile");
 		target.transform.position = Vector3.right;
-		var iterator = ProjectileRoutine.Create(launcher.transform, target.transform, 0.5f);
+		var iterator = cast.Apply(target);
 
 		while (iterator.MoveNext());
 
@@ -67,11 +70,12 @@ public class ProjectileRoutineTests : TestCollection
 		var spawn = new GameObject("spawn");
 		var target = new GameObject("target");
 		var launcher = new GameObject("launcher").AddComponent<ProjectileLauncherMB>();
+		var cast = new CastProjectile{ gameObject = launcher.gameObject };
+		cast.projectileSpeed = 0.5f;
 		launcher.spawnProjectilesAt = spawn.transform;
-
 		launcher.Magazine.projectilePrefab = new GameObject("projectile");
 		target.transform.position = Vector3.right;
-		var iterator = ProjectileRoutine.Create(launcher.transform, target.transform, 0.5f);
+		var iterator = cast.Apply(target);
 
 		while (iterator.MoveNext());
 
@@ -89,11 +93,12 @@ public class ProjectileRoutineTests : TestCollection
 		var spawn = new GameObject("spawn");
 		var target = new GameObject("target");
 		var launcher = new GameObject("launcher").AddComponent<ProjectileLauncherMB>();
+		var cast = new CastProjectile{ gameObject = launcher.gameObject };
+		cast.projectileSpeed = 1;
 		launcher.spawnProjectilesAt = spawn.transform;
-
 		launcher.Magazine.projectilePrefab = new GameObject("projectile");
 		target.transform.position = Vector3.up;
-		var iterator = ProjectileRoutine.Create(launcher.transform, target.transform, 1);
+		var iterator = cast.Apply(target);
 
 		iterator.MoveNext();
 
