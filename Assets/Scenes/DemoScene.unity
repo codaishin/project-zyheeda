@@ -1642,7 +1642,7 @@ MonoBehaviour:
     mind: 4
     spirit: 4
   cast:
-    deltaPerSecond: 5
+    projectileSpeed: 10
 --- !u!114 &1453732933
 MonoBehaviour:
   m_ObjectHideFlags: 0

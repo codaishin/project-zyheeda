@@ -11,7 +11,7 @@ public class CastProjectileTests : TestCollection
 		var target = new GameObject("target");
 		var launcher = new GameObject("launcher").AddComponent<ProjectileLauncherMB>();
 		var cast = new CastProjectile{ gameObject = launcher.gameObject };
-		cast.deltaPerSecond = 1;
+		cast.projectileSpeed = 1;
 		launcher.spawnProjectilesAt = spawn.transform;
 		launcher.Magazine.projectilePrefab = new GameObject("projectile");
 		target.transform.position = Vector3.right;
@@ -32,7 +32,7 @@ public class CastProjectileTests : TestCollection
 		var target = new GameObject("target");
 		var launcher = new GameObject("launcher").AddComponent<ProjectileLauncherMB>();
 		var cast = new CastProjectile{ gameObject = launcher.gameObject };
-		cast.deltaPerSecond = 1;
+		cast.projectileSpeed = 1;
 		launcher.spawnProjectilesAt = spawn.transform;
 		launcher.Magazine.projectilePrefab = new GameObject("projectile");
 		target.transform.position = Vector3.back;
@@ -50,7 +50,7 @@ public class CastProjectileTests : TestCollection
 		var target = new GameObject("target");
 		var launcher = new GameObject("launcher").AddComponent<ProjectileLauncherMB>();
 		var cast = new CastProjectile{ gameObject = launcher.gameObject };
-		cast.deltaPerSecond = 0.5f;
+		cast.projectileSpeed = 0.5f;
 		launcher.spawnProjectilesAt = spawn.transform;
 		launcher.Magazine.projectilePrefab = new GameObject("projectile");
 		target.transform.position = Vector3.right;
@@ -71,7 +71,7 @@ public class CastProjectileTests : TestCollection
 		var target = new GameObject("target");
 		var launcher = new GameObject("launcher").AddComponent<ProjectileLauncherMB>();
 		var cast = new CastProjectile{ gameObject = launcher.gameObject };
-		cast.deltaPerSecond = 0.5f;
+		cast.projectileSpeed = 0.5f;
 		launcher.spawnProjectilesAt = spawn.transform;
 		launcher.Magazine.projectilePrefab = new GameObject("projectile");
 		target.transform.position = Vector3.right;
@@ -94,7 +94,7 @@ public class CastProjectileTests : TestCollection
 		var target = new GameObject("target");
 		var launcher = new GameObject("launcher").AddComponent<ProjectileLauncherMB>();
 		var cast = new CastProjectile{ gameObject = launcher.gameObject };
-		cast.deltaPerSecond = 1;
+		cast.projectileSpeed = 1;
 		launcher.spawnProjectilesAt = spawn.transform;
 		launcher.Magazine.projectilePrefab = new GameObject("projectile");
 		target.transform.position = Vector3.up;

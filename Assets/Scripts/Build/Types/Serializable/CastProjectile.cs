@@ -6,7 +6,7 @@ using UnityEngine;
 public class CastProjectile : ICast, ISetGameObject, IGetGameObject
 {
 	private ProjectileLauncherMB launcher;
-	public float deltaPerSecond;
+	public float projectileSpeed;
 
 	public GameObject gameObject {
 		get => this.launcher.gameObject;
@@ -21,7 +21,7 @@ public class CastProjectile : ICast, ISetGameObject, IGetGameObject
 			projectile.transform.position = Vector3.MoveTowards(
 				projectile.transform.position,
 				target.transform.position,
-				this.deltaPerSecond * Time.fixedDeltaTime
+				this.projectileSpeed * Time.fixedDeltaTime
 			);
 			projectile.transform.LookAt(target.transform);
 			yield return new WaitForFixedUpdate();
