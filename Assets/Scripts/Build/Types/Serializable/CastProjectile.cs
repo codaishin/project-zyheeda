@@ -21,7 +21,7 @@ public class CastProjectile : ICast, ISetGameObject, IGetGameObject
 			projectile.transform.position = Vector3.MoveTowards(
 				projectile.transform.position,
 				target.transform.position,
-				deltaPerSecond * Time.fixedDeltaTime
+				this.deltaPerSecond * Time.fixedDeltaTime
 			);
 			projectile.transform.LookAt(target.transform);
 			yield return new WaitForFixedUpdate();
