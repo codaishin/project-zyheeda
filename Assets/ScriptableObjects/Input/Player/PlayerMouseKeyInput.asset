@@ -18,3 +18,7 @@ MonoBehaviour:
     keyCode: 323
     keyState: 1
     eventSO: {fileID: 11400000, guid: b30b2baa09a76a541b7c2e5ff360d901, type: 2}
+  - name: Shoot
+    keyCode: 324
+    keyState: 1
+    eventSO: {fileID: 11400000, guid: f7a9ef2da0c91ea43afcda8b6ac99a1e, type: 2}
