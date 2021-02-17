@@ -1,18 +1,19 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(IAttributes))]
 public abstract class BaseSkillMB<TEffect, TCast> : MonoBehaviour
 	where TEffect : IEffect, new()
 	where TCast : ICast, new()
 {
-	private IAttributes item;
 	private float cooldown;
 
 	public float applyPerSecond;
 	public Attributes modifiers;
 	public TEffect effect = new TEffect();
 	public TCast cast = new TCast();
+
+	public IAttributes Sheet { get; private set; }
 
 	private IEnumerable<WaitForFixedUpdate> Cast(GameObject target)
 	{
@@ -25,7 +26,7 @@ public abstract class BaseSkillMB<TEffect, TCast> : MonoBehaviour
 
 	private void ApplyEffect(in GameObject target, in IHitable hitable)
 	{
-		Attributes combined = this.item.Attributes + this.modifiers;
+		Attributes combined = this.Sheet.Attributes + this.modifiers;
 		if (hitable.TryHit(combined)) {
 			this.effect.Apply(target, combined);
 		}
@@ -58,8 +59,8 @@ public abstract class BaseSkillMB<TEffect, TCast> : MonoBehaviour
 		}
 	}
 
-	private void Start()
+	private void Awake()
 	{
-		this.item = this.transform.parent.RequireComponent<IAttributes>();
+		this.Sheet = this.RequireComponent<IAttributes>();
 	}
 }

@@ -32,7 +32,7 @@ public class BaseSkillMBTests : TestCollection
 			this.apply(target, attributes);
 	}
 
-	private class MockItemMB : MonoBehaviour, IAttributes
+	private class MockSheetMB : MonoBehaviour, IAttributes
 	{
 		public Attributes attributes;
 
@@ -53,20 +53,28 @@ public class BaseSkillMBTests : TestCollection
 
 	private class MockSkillMB : BaseSkillMB<MockEffect, MockCast> {}
 
+	[Test]
+	public void Attributes()
+	{
+		var sheet = new GameObject("item").AddComponent<MockSheetMB>();
+		var skill = sheet.gameObject.AddComponent<MockSkillMB>();
+
+		Assert.AreSame(sheet, skill.Sheet);
+	}
+
 	[UnityTest]
 	public IEnumerator Begin()
 	{
 		var applied = false;
 		var target = new GameObject("target").AddComponent<MockHitableMB>();
-		var skill = new GameObject("skill").AddComponent<MockSkillMB>();
-		var item = new GameObject("item").AddComponent<MockItemMB>();
+		var sheet = new GameObject("item").AddComponent<MockSheetMB>();
+		var skill = sheet.gameObject.AddComponent<MockSkillMB>();
 
 		IEnumerator<WaitForFixedUpdate> applyCast(GameObject _) {
 			applied = true;
 			yield break;
 		}
 
-		skill.transform.SetParent(item.transform);
 		skill.cast.apply = applyCast;
 
 		yield return new WaitForEndOfFrame();
@@ -81,15 +89,14 @@ public class BaseSkillMBTests : TestCollection
 	{
 		var applied = false;
 		var target = new GameObject("target");
-		var skill = new GameObject("skill").AddComponent<MockSkillMB>();
-		var item = new GameObject("item").AddComponent<MockItemMB>();
+		var sheet = new GameObject("item").AddComponent<MockSheetMB>();
+		var skill = sheet.gameObject.AddComponent<MockSkillMB>();
 
 		IEnumerator<WaitForFixedUpdate> applyCast(GameObject _) {
 			applied = true;
 			yield break;
 		}
 
-		skill.transform.SetParent(item.transform);
 		skill.cast.apply = applyCast;
 
 		yield return new WaitForEndOfFrame();
@@ -104,23 +111,22 @@ public class BaseSkillMBTests : TestCollection
 	{
 		var got = (default(GameObject), 0, 0, 0);
 		var target = new GameObject("target").AddComponent<MockHitableMB>();
-		var skill = new GameObject("skill").AddComponent<MockSkillMB>();
-		var item = new GameObject("item").AddComponent<MockItemMB>();
+		var sheet = new GameObject("item").AddComponent<MockSheetMB>();
+		var skill = sheet.gameObject.AddComponent<MockSkillMB>();
 
 		void applyEffect(in GameObject t, in Attributes a) {
 			got = (t, a.body, a.mind, a.spirit);
 		}
 
-		skill.transform.SetParent(item.transform);
 		skill.effect.apply = applyEffect;
-		item.attributes = new Attributes { body = 1, mind = 2, spirit = 3 };
+		sheet.attributes = new Attributes { body = 1, mind = 2, spirit = 3 };
 
 		yield return new WaitForEndOfFrame();
 
 		skill.Begin(target.gameObject);
 
 		Assert.AreEqual(
-			(target.gameObject, item.attributes.body, item.attributes.mind, item.attributes.spirit),
+			(target.gameObject, sheet.attributes.body, sheet.attributes.mind, sheet.attributes.spirit),
 			got
 		);
 	}
@@ -130,16 +136,15 @@ public class BaseSkillMBTests : TestCollection
 	{
 		var got = (default(GameObject), 0, 0, 0);
 		var target = new GameObject("target");
-		var skill = new GameObject("skill").AddComponent<MockSkillMB>();
-		var item = new GameObject("item").AddComponent<MockItemMB>();
+		var sheet = new GameObject("item").AddComponent<MockSheetMB>();
+		var skill = sheet.gameObject.AddComponent<MockSkillMB>();
 
 		void applyEffect(in GameObject t, in Attributes a) {
 			got = (t, a.body, a.mind, a.spirit);
 		}
 
-		skill.transform.SetParent(item.transform);
 		skill.effect.apply = applyEffect;
-		item.attributes = new Attributes { body = 1, mind = 2, spirit = 3 };
+		sheet.attributes = new Attributes { body = 1, mind = 2, spirit = 3 };
 
 		yield return new WaitForEndOfFrame();
 
@@ -153,18 +158,17 @@ public class BaseSkillMBTests : TestCollection
 	{
 		var got = (default(GameObject), 0, 0, 0);
 		var target = new GameObject("target").AddComponent<MockHitableMB>();
-		var skill = new GameObject("skill").AddComponent<MockSkillMB>();
-		var item = new GameObject("item").AddComponent<MockItemMB>();
+		var sheet = new GameObject("item").AddComponent<MockSheetMB>();
+		var skill = sheet.gameObject.AddComponent<MockSkillMB>();
 
 		void applyEffect(in GameObject t, in Attributes a) {
 			got = (t, a.body, a.mind, a.spirit);
 		}
 		bool tryHit(in Attributes _) => false;
 
-		skill.transform.SetParent(item.transform);
 		skill.effect.apply = applyEffect;
 		target.tryHit = tryHit;
-		item.attributes = new Attributes { body = 1, mind = 2, spirit = 3 };
+		sheet.attributes = new Attributes { body = 1, mind = 2, spirit = 3 };
 
 		yield return new WaitForEndOfFrame();
 
@@ -178,8 +182,8 @@ public class BaseSkillMBTests : TestCollection
 	{
 		var got = new List<(GameObject, int, int, int)>();
 		var target = new GameObject("target").AddComponent<MockHitableMB>();
-		var skill = new GameObject("skill").AddComponent<MockSkillMB>();
-		var item = new GameObject("item").AddComponent<MockItemMB>();
+		var sheet = new GameObject("item").AddComponent<MockSheetMB>();
+		var skill = sheet.gameObject.AddComponent<MockSkillMB>();
 
 		IEnumerator<WaitForFixedUpdate> applyCast(GameObject t) {
 			got.Add((t, 0, 0, 0));
@@ -191,10 +195,9 @@ public class BaseSkillMBTests : TestCollection
 			got.Add((t, a.body, a.mind, a.spirit));
 		}
 
-		skill.transform.SetParent(item.transform);
 		skill.cast.apply = applyCast;
 		skill.effect.apply = applyEffect;
-		item.attributes = new Attributes { body = 1, mind = 2, spirit = 3 };
+		sheet.attributes = new Attributes { body = 1, mind = 2, spirit = 3 };
 
 		yield return new WaitForEndOfFrame();
 
@@ -218,15 +221,14 @@ public class BaseSkillMBTests : TestCollection
 	{
 		var applied = 0;
 		var target = new GameObject("target").AddComponent<MockHitableMB>();
-		var skill = new GameObject("skill").AddComponent<MockSkillMB>();
-		var item = new GameObject("item").AddComponent<MockItemMB>();
+		var sheet = new GameObject("item").AddComponent<MockSheetMB>();
+		var skill = sheet.gameObject.AddComponent<MockSkillMB>();
 
 		IEnumerator<WaitForFixedUpdate> applyCast(GameObject _) {
 			++applied;
 			yield break;
 		}
 
-		skill.transform.SetParent(item.transform);
 		skill.cast.apply = applyCast;
 		skill.applyPerSecond = 1;
 
@@ -243,15 +245,14 @@ public class BaseSkillMBTests : TestCollection
 	{
 		var applied = 0;
 		var target = new GameObject("target").AddComponent<MockHitableMB>();
-		var skill = new GameObject("skill").AddComponent<MockSkillMB>();
-		var item = new GameObject("item").AddComponent<MockItemMB>();
+		var sheet = new GameObject("item").AddComponent<MockSheetMB>();
+		var skill = sheet.gameObject.AddComponent<MockSkillMB>();
 
 		IEnumerator<WaitForFixedUpdate> applyCast(GameObject _) {
 			++applied;
 			yield break;
 		}
 
-		skill.transform.SetParent(item.transform);
 		skill.cast.apply = applyCast;
 		skill.applyPerSecond = 10;
 
@@ -271,15 +272,14 @@ public class BaseSkillMBTests : TestCollection
 	{
 		var applied = 0;
 		var target = new GameObject("target").AddComponent<MockHitableMB>();
-		var skill = new GameObject("skill").AddComponent<MockSkillMB>();
-		var item = new GameObject("item").AddComponent<MockItemMB>();
+		var sheet = new GameObject("item").AddComponent<MockSheetMB>();
+		var skill = sheet.gameObject.AddComponent<MockSkillMB>();
 
 		IEnumerator<WaitForFixedUpdate> applyCast(GameObject _) {
 			++applied;
 			yield break;
 		}
 
-		skill.transform.SetParent(item.transform);
 		skill.cast.apply = applyCast;
 
 		yield return new WaitForEndOfFrame();
@@ -295,14 +295,13 @@ public class BaseSkillMBTests : TestCollection
 	{
 		var got = default(Attributes);
 		var target = new GameObject("target").AddComponent<MockHitableMB>();
-		var skill = new GameObject("skill").AddComponent<MockSkillMB>();
-		var item = new GameObject("item").AddComponent<MockItemMB>();
+		var sheet = new GameObject("item").AddComponent<MockSheetMB>();
+		var skill = sheet.gameObject.AddComponent<MockSkillMB>();
 
 		bool tryHit(in Attributes a) { got = a; return false; }
 
-		skill.transform.SetParent(item.transform);
 		skill.modifiers = new Attributes { body = 1, mind = 2, spirit = 3 };
-		item.attributes = new Attributes { body = 41, mind = 40, spirit = 39 };
+		sheet.attributes = new Attributes { body = 41, mind = 40, spirit = 39 };
 		target.tryHit = tryHit;
 
 		yield return new WaitForEndOfFrame();
@@ -317,15 +316,14 @@ public class BaseSkillMBTests : TestCollection
 	{
 		var got = default(Attributes);
 		var target = new GameObject("target").AddComponent<MockHitableMB>();
-		var skill = new GameObject("skill").AddComponent<MockSkillMB>();
-		var item = new GameObject("item").AddComponent<MockItemMB>();
+		var sheet = new GameObject("item").AddComponent<MockSheetMB>();
+		var skill = sheet.gameObject.AddComponent<MockSkillMB>();
 
 		void applyEffect(in GameObject _, in Attributes a) { got = a; }
 
-		skill.transform.SetParent(item.transform);
 		skill.effect.apply = applyEffect;
 		skill.modifiers = new Attributes { body = 1, mind = 2, spirit = 3 };
-		item.attributes = new Attributes { body = 41, mind = 40, spirit = 39 };
+		sheet.attributes = new Attributes { body = 41, mind = 40, spirit = 39 };
 
 		yield return new WaitForEndOfFrame();
 
