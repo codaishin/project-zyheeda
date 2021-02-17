@@ -1,7 +1,6 @@
 using UnityEngine;
 
-public interface IHitable
+public interface IHitable : IGetGameObject
 {
 	bool TryHit(in Attributes attributes);
-	GameObject gameObject { get; }
 }

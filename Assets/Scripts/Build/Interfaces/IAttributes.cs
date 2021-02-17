@@ -1,7 +1,6 @@
 using UnityEngine;
 
-public interface IAttributes
+public interface IAttributes : IGetGameObject
 {
 	Attributes Attributes { get; }
-	GameObject gameObject { get; }
 }
