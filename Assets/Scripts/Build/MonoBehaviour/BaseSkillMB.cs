@@ -1,8 +1,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public abstract class BaseSkillMB : MonoBehaviour
+{
+	public abstract void Begin(GameObject target);
+}
+
 [RequireComponent(typeof(IAttributes))]
-public abstract class BaseSkillMB<TEffect, TCast> : MonoBehaviour
+public abstract class BaseSkillMB<TEffect, TCast> : BaseSkillMB
 	where TEffect : IEffect, ISetGameObject, new()
 	where TCast : ICast, ISetGameObject, new()
 {
@@ -51,7 +56,7 @@ public abstract class BaseSkillMB<TEffect, TCast> : MonoBehaviour
 		}
 	}
 
-	public void Begin(GameObject target)
+	public override void Begin(GameObject target)
 	{
 		if (target.TryGetComponent(out IHitable hitable) && this.cooldown <= 0) {
 			this.cooldown = this.applyPerSecond > 0 ? 1f / this.applyPerSecond : 0;
