@@ -99,11 +99,17 @@ public class BaseSkillMBTests : TestCollection
 	[UnityTest]
 	public IEnumerator DontBeginWhenGetEffectFalse()
 	{
-		var got = (default(GameObject), 0, 0, 0);
+		var got = default(GameObject);
 		var target = new GameObject("target");
 		var sheet = new GameObject("item").AddComponent<MockSheetMB>();
 		var skill = sheet.gameObject.AddComponent<MockSkillMB>();
 
+		IEnumerator<WaitForFixedUpdate> applyCast(GameObject t) {
+			got = t;
+			yield break;
+		}
+
+		skill.cast.apply = applyCast;
 		skill.effect.getEffect = (GameObject t, out EffectFunc effect) => {
 			effect = (in Attributes a) => {};
 			return false;
@@ -114,7 +120,7 @@ public class BaseSkillMBTests : TestCollection
 
 		skill.Begin(target.gameObject);
 
-		Assert.AreEqual((default(GameObject), 0, 0, 0), got);
+		Assert.Null(got);
 	}
 
 	[UnityTest]
