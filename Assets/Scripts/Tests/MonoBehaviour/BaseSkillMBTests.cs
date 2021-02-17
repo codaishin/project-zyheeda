@@ -56,7 +56,7 @@ public class BaseSkillMBTests : TestCollection
 	private class MockSkillMB : BaseSkillMB<MockEffect, MockCast> {}
 
 	[Test]
-	public void Attributes()
+	public void Sheet()
 	{
 		var sheet = new GameObject("item").AddComponent<MockSheetMB>();
 		var skill = sheet.gameObject.AddComponent<MockSkillMB>();
@@ -105,7 +105,7 @@ public class BaseSkillMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator DontBeginWhenNotValid()
+	public IEnumerator DontBeginWhenTargetNotHitable()
 	{
 		var applied = false;
 		var target = new GameObject("target");
@@ -152,7 +152,7 @@ public class BaseSkillMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator DontApplyEffectWhenNotValid()
+	public IEnumerator DontApplyEffectWhenTargetNotHitable()
 	{
 		var got = (default(GameObject), 0, 0, 0);
 		var target = new GameObject("target");
