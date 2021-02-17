@@ -16,8 +16,6 @@ public class BaseSkillMBTests : TestCollection
 
 		public IEnumerator<WaitForFixedUpdate> Apply(GameObject target) =>
 			this.apply(target);
-		public bool Valid(in GameObject target, out IHitable hitable) =>
-			target.TryGetComponent(out hitable);
 	}
 
 	private class MockEffect : IEffect

@@ -53,7 +53,7 @@ public abstract class BaseSkillMB<TEffect, TCast> : MonoBehaviour
 
 	public void Begin(GameObject target)
 	{
-		if (this.cast.Valid(target, out IHitable hitable) && this.cooldown <= 0) {
+		if (target.TryGetComponent(out IHitable hitable) && this.cooldown <= 0) {
 			this.cooldown = this.applyPerSecond > 0 ? 1f / this.applyPerSecond : 0;
 			this.StartCoroutine(this.Apply(target, hitable));
 		}
