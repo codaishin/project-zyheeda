@@ -1,5 +1,5 @@
+using System;
 using System.Collections;
-using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
@@ -7,17 +7,6 @@ using UnityEngine.TestTools;
 public class MagazineMBTests : TestCollection
 {
 	private class MockComponent : MonoBehaviour {}
-
-	[Test]
-	public void InstantiateProjectile()
-	{
-		var magazine = new GameObject("magazine").AddComponent<MagazineMB>();
-		var prefab = new GameObject("prefab");
-
-		magazine.projectilePrefab = prefab;
-
-		Assert.NotNull(magazine.GetOrMakeProjectile());
-	}
 
 	[Test]
 	public void InstantiatePrefab()
@@ -32,22 +21,38 @@ public class MagazineMBTests : TestCollection
 		CollectionAssert.AreEqual(
 			new bool[] { true, true },
 			new bool[] {
-				projectile.gameObject != prefab.gameObject,
-				projectile.TryGetComponent(out MockComponent _),
+				projectile.Value != prefab.gameObject,
+				projectile.Value.TryGetComponent(out MockComponent _),
 			}
 		);
 	}
 
 	[Test]
-	public void SetProjectileMagazine()
+	public void StoreInMagazineTransform()
 	{
 		var magazine = new GameObject("magazine").AddComponent<MagazineMB>();
-		var prefab = new GameObject("prefab");
+		var prefab = new GameObject("prefab").AddComponent<MockComponent>();
 
-		magazine.projectilePrefab = prefab;
+		magazine.projectilePrefab = prefab.gameObject;
 
 		var projectile = magazine.GetOrMakeProjectile();
-		Assert.AreSame(magazine, projectile.Magazine);
+		projectile.Dispose();
+
+		Assert.AreSame(magazine.transform, projectile.Value.transform.parent);
+	}
+
+	[Test]
+	public void StoreInMagazineInactive()
+	{
+		var magazine = new GameObject("magazine").AddComponent<MagazineMB>();
+		var prefab = new GameObject("prefab").AddComponent<MockComponent>();
+
+		magazine.projectilePrefab = prefab.gameObject;
+
+		var projectile = magazine.GetOrMakeProjectile();
+		projectile.Dispose();
+
+		Assert.False(projectile.Value.activeSelf);
 	}
 
 	[UnityTest]
@@ -62,13 +67,13 @@ public class MagazineMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		projectileA.Store();
+		projectileA.Dispose();
 
 		yield return new WaitForEndOfFrame();
 
 		var projectileB = magazine.GetOrMakeProjectile();
 
-		Assert.AreSame(projectileA, projectileB);
+		Assert.AreSame(projectileA.Value, projectileB.Value);
 	}
 
 	[Test]
@@ -82,7 +87,7 @@ public class MagazineMBTests : TestCollection
 		var projectileA = magazine.GetOrMakeProjectile();
 		var projectileB = magazine.GetOrMakeProjectile();
 
-		Assert.AreNotSame(projectileA, projectileB);
+		Assert.AreNotSame(projectileA.Value, projectileB.Value);
 	}
 
 	[UnityTest]
@@ -97,13 +102,13 @@ public class MagazineMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		projectile.Store();
+		projectile.Dispose();
 
 		yield return new WaitForEndOfFrame();
 
 		magazine.GetOrMakeProjectile();
 
-		Assert.True(projectile.gameObject.activeSelf);
+		Assert.True(projectile.Value.activeSelf);
 	}
 
 	[UnityTest]
@@ -118,13 +123,13 @@ public class MagazineMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		projectile.Store();
+		projectile.Dispose();
 
 		yield return new WaitForEndOfFrame();
 
 		magazine.GetOrMakeProjectile();
 
-		Assert.Null(projectile.transform.parent);
+		Assert.Null(projectile.Value.transform.parent);
 	}
 
 	[Test]
@@ -135,9 +140,9 @@ public class MagazineMBTests : TestCollection
 
 		magazine.projectilePrefab = prefab;
 
-		var projectiles = new ProjectileMB[] {
-			magazine.GetOrMakeProjectile(),
-			magazine.GetOrMakeProjectile(),
+		var projectiles = new GameObject[] {
+			magazine.GetOrMakeProjectile().Value,
+			magazine.GetOrMakeProjectile().Value,
 		};
 
 		CollectionAssert.AreEqual(projectiles, magazine.Projectiles);

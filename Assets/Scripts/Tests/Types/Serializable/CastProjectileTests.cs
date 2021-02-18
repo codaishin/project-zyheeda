@@ -83,7 +83,7 @@ public class CastProjectileTests : TestCollection
 
 		Assert.AreEqual(
 			(true, true),
-			(!projectile.isActiveAndEnabled, projectile.transform.parent == launcher.Magazine.transform)
+			(!projectile.activeSelf, projectile.transform.parent == launcher.Magazine.transform)
 		);
 	}
 
