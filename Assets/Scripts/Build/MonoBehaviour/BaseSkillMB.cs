@@ -6,7 +6,7 @@ public abstract class BaseSkillMB : MonoBehaviour
 	public abstract void Begin(GameObject target);
 }
 
-[RequireComponent(typeof(IAttributes))]
+[RequireComponent(typeof(ISheet))]
 public abstract class BaseSkillMB<TEffect, TCast> : BaseSkillMB
 	where TEffect : IEffect, ISetGameObject, new()
 	where TCast : ICast, ISetGameObject, new()
@@ -18,7 +18,7 @@ public abstract class BaseSkillMB<TEffect, TCast> : BaseSkillMB
 	public TEffect effect;
 	public TCast cast;
 
-	public IAttributes Sheet { get; private set; }
+	public ISheet Sheet { get; private set; }
 
 	private IEnumerable<WaitForFixedUpdate> Cast(GameObject target)
 	{
@@ -58,7 +58,7 @@ public abstract class BaseSkillMB<TEffect, TCast> : BaseSkillMB
 
 	private void Awake()
 	{
-		this.Sheet = this.RequireComponent<IAttributes>();
+		this.Sheet = this.RequireComponent<ISheet>();
 		if (this.cast == null) {
 			this.cast = new TCast();
 		}
