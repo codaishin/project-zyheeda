@@ -5,6 +5,25 @@ using UnityEngine;
 
 public class MagazineMB : MonoBehaviour
 {
+	public class Handle : IGetGameObject, IDisposable
+	{
+		private readonly GameObject wrapee;
+		private readonly Action store;
+
+		public GameObject gameObject => this.wrapee;
+
+		public Handle(in GameObject wrapee, in Action store)
+		{
+			this.wrapee = wrapee;
+			this.store = store;
+		}
+
+		public void Dispose()
+		{
+			this.store();
+		}
+	}
+
 	private List<GameObject> projectiles = new List<GameObject>();
 
 	public GameObject projectilePrefab;
@@ -25,18 +44,17 @@ public class MagazineMB : MonoBehaviour
 
 	private void StoreProjectile(in GameObject projectile)
 	{
-		projectile.gameObject.SetActive(false);
+		projectile.SetActive(false);
 		projectile.transform.SetParent(this.transform);
 	}
 
-	public GameObject GetOrMakeProjectile(out Action storeHandle)
+	public Handle UseProjectile()
 	{
 		if (!this.GetProjectile(out GameObject projectile)) {
 			projectile = this.MakeProjectile();
 		}
-		projectile.gameObject.SetActive(true);
+		projectile.SetActive(true);
 		projectile.transform.SetParent(null);
-		storeHandle = () => this.StoreProjectile(projectile);
-		return projectile;
+		return new Handle(projectile, () => this.StoreProjectile(projectile));
 	}
 }

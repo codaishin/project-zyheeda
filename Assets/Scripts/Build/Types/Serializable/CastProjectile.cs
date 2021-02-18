@@ -15,17 +15,18 @@ public class CastProjectile : ICast, ISetGameObject, IGetGameObject
 
 	public IEnumerator<WaitForFixedUpdate> Apply(GameObject target)
 	{
-		GameObject projectile = this.launcher.Magazine.GetOrMakeProjectile(out Action store);
-		projectile.transform.position = launcher.spawnProjectilesAt.position;
-		while (projectile.transform.position != target.transform.position) {
-			projectile.transform.position = Vector3.MoveTowards(
-				projectile.transform.position,
-				target.transform.position,
-				this.projectileSpeed * Time.fixedDeltaTime
-			);
-			projectile.transform.LookAt(target.transform);
-			yield return new WaitForFixedUpdate();
+		using (MagazineMB.Handle handle = this.launcher.Magazine.UseProjectile()) {
+			GameObject projectile = handle.gameObject;
+			projectile.transform.position = launcher.spawnProjectilesAt.position;
+			while (projectile.transform.position != target.transform.position) {
+				projectile.transform.position = Vector3.MoveTowards(
+					projectile.transform.position,
+					target.transform.position,
+					this.projectileSpeed * Time.fixedDeltaTime
+				);
+				projectile.transform.LookAt(target.transform);
+				yield return new WaitForFixedUpdate();
+			}
 		}
-		store();
 	}
 }
