@@ -1,13 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using NUnit.Framework;
-using UnityEngine;
-using UnityEngine.TestTools;
 
 public class DisposableTests : TestCollection
 {
 	[Test]
-	public void Dispose()
+	public void OnDispose()
 	{
 		var called = 0;
 		var disposable = new Disposable<int>(42, (in int v) => called = v);
