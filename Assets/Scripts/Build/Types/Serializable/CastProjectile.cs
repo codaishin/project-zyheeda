@@ -15,8 +15,7 @@ public class CastProjectile : ICast, ISetGameObject, IGetGameObject
 
 	public IEnumerator<WaitForFixedUpdate> Apply(GameObject target)
 	{
-		using (MagazineMB.Handle handle = this.launcher.Magazine.UseProjectile()) {
-			GameObject projectile = handle.gameObject;
+		using (this.launcher.Magazine.GetOrMakeProjectile().Use(out GameObject projectile)) {
 			projectile.transform.position = launcher.spawnProjectilesAt.position;
 			while (projectile.transform.position != target.transform.position) {
 				projectile.transform.position = Vector3.MoveTowards(
