@@ -38,11 +38,13 @@ public class BaseSkillMBTests : TestCollection
 			this.getEffect(target, out effect);
 	}
 
-	private class MockSheetMB : MonoBehaviour, IAttributes
+	private class MockSheetMB : MonoBehaviour, ISheet
 	{
 		public Attributes attributes;
 
 		public Attributes Attributes => this.attributes;
+
+		public int Hp { get; set; }
 	}
 
 	private class MockSkillMB : BaseSkillMB<MockEffect, MockCast> {}

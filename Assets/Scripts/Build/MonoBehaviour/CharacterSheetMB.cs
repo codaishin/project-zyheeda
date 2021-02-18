@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CharacterSheetMB : MonoBehaviour, IAttributes, IHp
+public class CharacterSheetMB : MonoBehaviour, ISheet
 {
 	public Attributes attributes;
 	public int hp;
