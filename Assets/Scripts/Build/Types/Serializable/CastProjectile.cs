@@ -15,7 +15,7 @@ public class CastProjectile : ICast, ISetGameObject, IGetGameObject
 
 	public IEnumerator<WaitForFixedUpdate> Apply(GameObject target)
 	{
-		ProjectileMB projectile = this.launcher.Magazine.GetOrMakeProjectile();
+		GameObject projectile = this.launcher.Magazine.GetOrMakeProjectile(out Action store);
 		projectile.transform.position = launcher.spawnProjectilesAt.position;
 		while (projectile.transform.position != target.transform.position) {
 			projectile.transform.position = Vector3.MoveTowards(
@@ -26,7 +26,6 @@ public class CastProjectile : ICast, ISetGameObject, IGetGameObject
 			projectile.transform.LookAt(target.transform);
 			yield return new WaitForFixedUpdate();
 		}
-		projectile.Store();
-		yield break;
+		store();
 	}
 }
