@@ -45,15 +45,6 @@ public class BaseSkillMBTests : TestCollection
 
 	private class MockSkillMB : BaseSkillMB<MockEffect, MockCast> {}
 
-	[Test]
-	public void Sheet()
-	{
-		var sheet = new GameObject("item").AddComponent<MockSheetMB>();
-		var skill = sheet.gameObject.AddComponent<MockSkillMB>();
-
-		Assert.AreSame(sheet, skill.Sheet);
-	}
-
 	[UnityTest]
 	public IEnumerator Begin()
 	{
