@@ -1552,7 +1552,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1453732929}
   - component: {fileID: 1453732935}
-  - component: {fileID: 1453732934}
   - component: {fileID: 1453732933}
   - component: {fileID: 1453732932}
   - component: {fileID: 1453732931}
@@ -1660,6 +1659,8 @@ MonoBehaviour:
     mind: 4
     spirit: 4
   cast:
+    projectileSpawn: {fileID: 7728212569146213376}
+    magazine: {fileID: 1453732935}
     projectileSpeed: 10
 --- !u!114 &1453732933
 MonoBehaviour:
@@ -1677,19 +1678,6 @@ MonoBehaviour:
     body: 2
     mind: 3
     spirit: 9
---- !u!114 &1453732934
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1453732928}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d24edd06d1bd6f043ad159a3600b08a7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  spawnProjectilesAt: {fileID: 7728212569146213376}
 --- !u!114 &1453732935
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2054,9 +2042,9 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf447ba10ce81fc409c8597b6aa35a6e, type: 3}
---- !u!4 &7728212569146213376 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 7728212569196843799, guid: bf447ba10ce81fc409c8597b6aa35a6e, type: 3}
+--- !u!1 &7728212569146213376 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7728212569196843803, guid: bf447ba10ce81fc409c8597b6aa35a6e, type: 3}
   m_PrefabInstance: {fileID: 7728212569146213375}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &7841215412951489895
