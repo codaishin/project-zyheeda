@@ -1420,7 +1420,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1154642172}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.7020845, y: 1, z: 0.46644562}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1453732929}
@@ -1536,7 +1536,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1320382539}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -5.8920846, y: 0.36, z: 2.3035543}
+  m_LocalPosition: {x: -3.62, y: 0.88, z: 3.29}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1154642173}
@@ -1551,7 +1551,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1453732929}
-  - component: {fileID: 1453732935}
   - component: {fileID: 1453732933}
   - component: {fileID: 1453732932}
   - component: {fileID: 1453732931}
@@ -1571,7 +1570,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1453732928}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -2.7020845, y: -1, z: -0.46644562}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1154642173}
@@ -1660,7 +1659,9 @@ MonoBehaviour:
     spirit: 4
   cast:
     projectileSpawn: {fileID: 7728212569146213376}
-    magazine: {fileID: 1453732935}
+    magazine:
+      projectilePrefab: {fileID: 8992679554399984682}
+      projectileStorage: {fileID: 1453732929}
     projectileSpeed: 10
 --- !u!114 &1453732933
 MonoBehaviour:
@@ -1678,19 +1679,6 @@ MonoBehaviour:
     body: 2
     mind: 3
     spirit: 9
---- !u!114 &1453732935
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1453732928}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6b9ed10cf1d634d40beaa12b6b4aaa43, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  projectilePrefab: {fileID: 8992679554399984682}
 --- !u!1 &1457652737
 GameObject:
   m_ObjectHideFlags: 0
@@ -1901,7 +1889,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8992679554399984682}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -2.7020845, y: -1, z: -0.46644562}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
   m_Children: []
   m_Father: {fileID: 1154642173}
@@ -2042,9 +2030,9 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf447ba10ce81fc409c8597b6aa35a6e, type: 3}
---- !u!1 &7728212569146213376 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7728212569196843803, guid: bf447ba10ce81fc409c8597b6aa35a6e, type: 3}
+--- !u!4 &7728212569146213376 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7728212569196843799, guid: bf447ba10ce81fc409c8597b6aa35a6e, type: 3}
   m_PrefabInstance: {fileID: 7728212569146213375}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &7841215412951489895
