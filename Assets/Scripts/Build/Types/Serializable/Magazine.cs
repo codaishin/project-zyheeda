@@ -1,14 +1,15 @@
+using System;
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MagazineMB : MonoBehaviour
+[Serializable]
+public class Magazine : IMagazine
 {
 	private List<GameObject> projectiles = new List<GameObject>();
 
 	public GameObject projectilePrefab;
-
-	public IEnumerable<GameObject> Projectiles => this.projectiles;
+	public Transform projectileStorage;
 
 	private GameObject MakeProjectile()
 	{
@@ -25,7 +26,7 @@ public class MagazineMB : MonoBehaviour
 	private void StoreProjectile(in GameObject projectile)
 	{
 		projectile.SetActive(false);
-		projectile.transform.SetParent(this.transform);
+		projectile.transform.SetParent(this.projectileStorage);
 	}
 
 	public Disposable<GameObject> GetOrMakeProjectile()
