@@ -2,10 +2,8 @@ using System;
 using UnityEngine;
 
 [Serializable]
-public class LogEffect : IEffect, ISetGameObject, IGetGameObject
+public class LogEffect : IEffect
 {
-	public GameObject gameObject { get; set; }
-
 	private static void Log(in GameObject target, in Attributes attributes)
 	{
 		Debug.Log($"Applied to {target} with: {attributes}");

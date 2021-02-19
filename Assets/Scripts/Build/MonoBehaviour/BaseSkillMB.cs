@@ -8,8 +8,8 @@ public abstract class BaseSkillMB : MonoBehaviour
 
 [RequireComponent(typeof(ISheet))]
 public abstract class BaseSkillMB<TEffect, TCast> : BaseSkillMB
-	where TEffect : IEffect, ISetGameObject, new()
-	where TCast : ICast, ISetGameObject, new()
+	where TEffect : IEffect, new()
+	where TCast : ICast, new()
 {
 	private float cooldown;
 
@@ -65,7 +65,5 @@ public abstract class BaseSkillMB<TEffect, TCast> : BaseSkillMB
 		if (this.effect == null) {
 			this.effect = new TEffect();
 		}
-		this.cast.gameObject = this.gameObject;
-		this.effect.gameObject = this.gameObject;
 	}
 }
