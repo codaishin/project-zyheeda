@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public interface ISheet : IGetGameObject
+public interface ISheet
 {
 	Attributes Attributes { get; }
 

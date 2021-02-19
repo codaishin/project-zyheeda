@@ -4,17 +4,16 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-public class MagazineMBTests : TestCollection
+public class MagazineTests : TestCollection
 {
 	private class MockComponent : MonoBehaviour {}
 
 	[Test]
 	public void InstantiatePrefab()
 	{
-		var magazine = new GameObject("magazine").AddComponent<MagazineMB>();
+		var transform = new GameObject("transform").transform;
 		var prefab = new GameObject("prefab").AddComponent<MockComponent>();
-
-		magazine.projectilePrefab = prefab.gameObject;
+		var magazine = new Magazine { projectileStorage = transform, projectilePrefab = prefab.gameObject };
 
 		var projectile = magazine.GetOrMakeProjectile();
 
@@ -30,24 +29,22 @@ public class MagazineMBTests : TestCollection
 	[Test]
 	public void StoreInMagazineTransform()
 	{
-		var magazine = new GameObject("magazine").AddComponent<MagazineMB>();
-		var prefab = new GameObject("prefab").AddComponent<MockComponent>();
-
-		magazine.projectilePrefab = prefab.gameObject;
+		var transform = new GameObject("transform").transform;
+		var prefab = new GameObject("prefab");
+		var magazine = new Magazine { projectileStorage = transform, projectilePrefab = prefab };
 
 		var projectile = magazine.GetOrMakeProjectile();
 		projectile.Dispose();
 
-		Assert.AreSame(magazine.transform, projectile.Value.transform.parent);
+		Assert.AreSame(magazine.projectileStorage, projectile.Value.transform.parent);
 	}
 
 	[Test]
 	public void StoreInMagazineInactive()
 	{
-		var magazine = new GameObject("magazine").AddComponent<MagazineMB>();
-		var prefab = new GameObject("prefab").AddComponent<MockComponent>();
-
-		magazine.projectilePrefab = prefab.gameObject;
+		var transform = new GameObject("transform").transform;
+		var prefab = new GameObject("prefab");
+		var magazine = new Magazine { projectileStorage = transform, projectilePrefab = prefab };
 
 		var projectile = magazine.GetOrMakeProjectile();
 		projectile.Dispose();
@@ -58,10 +55,9 @@ public class MagazineMBTests : TestCollection
 	[UnityTest]
 	public IEnumerator OnlyOneProjectile()
 	{
-		var magazine = new GameObject("magazine").AddComponent<MagazineMB>();
-		var prefab = new GameObject("prefab").AddComponent<MockComponent>();
-
-		magazine.projectilePrefab = prefab.gameObject;
+		var transform = new GameObject("transform").transform;
+		var prefab = new GameObject("prefab");
+		var magazine = new Magazine { projectileStorage = transform, projectilePrefab = prefab };
 
 		var projectileA = magazine.GetOrMakeProjectile();
 
@@ -79,10 +75,9 @@ public class MagazineMBTests : TestCollection
 	[Test]
 	public void TwoProjectile()
 	{
-		var magazine = new GameObject("magazine").AddComponent<MagazineMB>();
-		var prefab = new GameObject("prefab").AddComponent<MockComponent>();
-
-		magazine.projectilePrefab = prefab.gameObject;
+		var transform = new GameObject("transform").transform;
+		var prefab = new GameObject("prefab");
+		var magazine = new Magazine { projectileStorage = transform, projectilePrefab = prefab };
 
 		var projectileA = magazine.GetOrMakeProjectile();
 		var projectileB = magazine.GetOrMakeProjectile();
@@ -93,10 +88,9 @@ public class MagazineMBTests : TestCollection
 	[UnityTest]
 	public IEnumerator ProjectileActive()
 	{
-		var magazine = new GameObject("magazine").AddComponent<MagazineMB>();
-		var prefab = new GameObject("prefab").AddComponent<MockComponent>();
-
-		magazine.projectilePrefab = prefab.gameObject;
+		var transform = new GameObject("transform").transform;
+		var prefab = new GameObject("prefab");
+		var magazine = new Magazine { projectileStorage = transform, projectilePrefab = prefab };
 
 		var projectile = magazine.GetOrMakeProjectile();
 
@@ -114,10 +108,9 @@ public class MagazineMBTests : TestCollection
 	[UnityTest]
 	public IEnumerator ProjectileNoParent()
 	{
-		var magazine = new GameObject("magazine").AddComponent<MagazineMB>();
-		var prefab = new GameObject("prefab").AddComponent<MockComponent>();
-
-		magazine.projectilePrefab = prefab.gameObject;
+		var transform = new GameObject("transform").transform;
+		var prefab = new GameObject("prefab");
+		var magazine = new Magazine { projectileStorage = transform, projectilePrefab = prefab };
 
 		var projectile = magazine.GetOrMakeProjectile();
 
@@ -130,21 +123,5 @@ public class MagazineMBTests : TestCollection
 		magazine.GetOrMakeProjectile();
 
 		Assert.Null(projectile.Value.transform.parent);
-	}
-
-	[Test]
-	public void Projectiles()
-	{
-		var magazine = new GameObject("magazine").AddComponent<MagazineMB>();
-		var prefab = new GameObject("prefab");
-
-		magazine.projectilePrefab = prefab;
-
-		var projectiles = new GameObject[] {
-			magazine.GetOrMakeProjectile().Value,
-			magazine.GetOrMakeProjectile().Value,
-		};
-
-		CollectionAssert.AreEqual(projectiles, magazine.Projectiles);
 	}
 }
