@@ -85,7 +85,7 @@ public class MovementTowardsTests : TestCollection
 	}
 
 	[Test]
-	public void MovementTowardsOperations()
+	public void MovementTowardsPostUpdateCalled()
 	{
 		var calledWith = new List<(Transform, Vector3)>();
 		var obj = new GameObject("obj");
@@ -99,5 +99,18 @@ public class MovementTowardsTests : TestCollection
 			new (Transform, Vector3)[] { (obj.transform, Vector3.right), (obj.transform, Vector3.right) },
 			calledWith
 		);
+	}
+
+	[Test]
+	public void MovementTowardsPostUpdateAfterPositionUpdate()
+	{
+		var called = default(Vector3);
+		var obj = new GameObject("obj");
+		var moveTo = Movement.Towards<Vector3>(v => v, () => 1, (tr, __) => called = tr.position);
+		var r = moveTo(obj.transform, Vector3.right, 0.2f);
+
+		r.MoveNext();
+
+		Assert.AreEqual(new Vector3(0.2f, 0, 0), called);
 	}
 }

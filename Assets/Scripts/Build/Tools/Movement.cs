@@ -18,7 +18,7 @@ public static class Movement
 	public static TowardsFunc<TTarget> Towards<TTarget>(
 		Func<TTarget, Vector3> getPosition,
 		Func<float> getTimeDelta,
-		params Action<Transform, TTarget>[] frameOperations
+		params Action<Transform, TTarget>[] postUpdate
 	) {
 		IEnumerator<WaitForFixedUpdate> towards(Transform transform, TTarget targetObject, float deltaPerSecond) {
 			bool notOnTarget(out Vector3 target) {
@@ -29,7 +29,7 @@ public static class Movement
 
 			while (notOnTarget(out Vector3 target)) {
 				transform.position = Vector3.MoveTowards(transform.position, target, delta);
-				frameOperations.ForEach(op => op(transform, targetObject));
+				postUpdate.ForEach(update => update(transform, targetObject));
 				yield return new WaitForFixedUpdate();
 			}
 		}
