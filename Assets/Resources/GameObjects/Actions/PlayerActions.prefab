@@ -244,7 +244,7 @@ GameObject:
   - component: {fileID: 2986458861660030729}
   - component: {fileID: 2948324260406941809}
   - component: {fileID: 2332192185001488973}
-  - component: {fileID: 1614020682736831649}
+  - component: {fileID: 1656181589147222510}
   m_Layer: 0
   m_Name: Walk
   m_TagString: Untagged
@@ -318,9 +318,9 @@ MonoBehaviour:
   onHitPoint:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1614020682736831649}
-        m_TargetAssemblyTypeName: MoveTowardsOngoingMB, Build
-        m_MethodName: BeginMoveTo
+      - m_Target: {fileID: 1656181589147222510}
+        m_TargetAssemblyTypeName: BaseApproachMB, Build
+        m_MethodName: Apply
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -330,7 +330,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &1614020682736831649
+--- !u!114 &1656181589147222510
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -339,7 +339,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8810766115449542013}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d934d63e44a16ff4789b2f67033de255, type: 3}
+  m_Script: {fileID: 11500000, guid: bd72b2738eef8b444a80d2e3f996f96a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   agent:

@@ -10,18 +10,23 @@ public abstract class BaseCastProjectile<TMagazine> : ICast
 	public TMagazine magazine = new TMagazine();
 	public float projectileSpeed;
 
+	protected abstract Movement.ApproachFunc<GameObject> Approach { get; }
+
+	private IEnumerable<WaitForFixedUpdate> Apply(Transform projectile, GameObject target)
+	{
+		projectile.transform.position = this.projectileSpawn.position;
+		using (IEnumerator<WaitForFixedUpdate> iterator = this.Approach(projectile, target, this.projectileSpeed)) {
+			while (iterator.MoveNext()) {
+				yield return iterator.Current;
+			}
+		}
+	}
+
 	public IEnumerator<WaitForFixedUpdate> Apply(GameObject target)
 	{
-		using (this.magazine.GetOrMakeProjectile().Use(out GameObject projectile)) {
-			projectile.transform.position = this.projectileSpawn.position;
-			while (projectile.transform.position != target.transform.position) {
-				projectile.transform.position = Vector3.MoveTowards(
-					projectile.transform.position,
-					target.transform.position,
-					this.projectileSpeed * Time.fixedDeltaTime
-				);
-				projectile.transform.LookAt(target.transform);
-				yield return new WaitForFixedUpdate();
+		using (Disposable<GameObject> projectile = this.magazine.GetOrMakeProjectile()) {
+			foreach (WaitForFixedUpdate yield in this.Apply(projectile.Value.transform, target)) {
+				yield return yield;
 			}
 		}
 	}
