@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
 
@@ -16,24 +17,37 @@ public class BaseCastProjectileTests : TestCollection
 		}
 	}
 
-	private class MockCastProjectile : BaseCastProjectile<MockMagazine> {}
+	private class MockCastProjectile : BaseCastProjectile<MockMagazine>
+	{
+		public Movement.ApproachFunc<GameObject> approach = MockCastProjectile.DefaultApproach;
+
+		protected override Movement.ApproachFunc<GameObject> Approach => this.approach;
+
+		private static IEnumerator<WaitForFixedUpdate> DefaultApproach(
+			Transform _,
+			GameObject __,
+			float ___
+		) { yield break; }
+	}
 
 	[Test]
-	public void MoveProjectileToTarget()
+	public void ApproachArgs()
 	{
+		var called = default((Transform, GameObject, float));
 		var spawn = new GameObject("spawn");
 		var target = new GameObject("target");
 		var cast = new MockCastProjectile{ projectileSpawn = spawn.transform };
 		cast.projectileSpeed = 1;
-		target.transform.position = Vector3.right;
-		var iterator = cast.Apply(target);
 
-		iterator.MoveNext();
+		IEnumerator<WaitForFixedUpdate> approach(Transform projectile, GameObject target, float speed) {
+			called = (projectile, target, speed);
+			yield break;
+		}
+		cast.approach = approach;
 
-		Tools.AssertEqual(
-			Vector3.right * Time.fixedDeltaTime,
-			cast.magazine.Projectile.transform.position
-		);
+		cast.Apply(target).MoveNext();
+
+		Assert.AreEqual((cast.magazine.Projectile.transform, target, 1f), called);
 	}
 
 	[Test]
@@ -42,8 +56,6 @@ public class BaseCastProjectileTests : TestCollection
 		var spawn = new GameObject("spawn");
 		var target = new GameObject("target");
 		var cast = new MockCastProjectile{ projectileSpawn = spawn.transform };
-		cast.projectileSpeed = 1;
-		target.transform.position = Vector3.back;
 		spawn.transform.position = Vector3.back;
 
 		cast.Apply(target).MoveNext();
@@ -52,57 +64,35 @@ public class BaseCastProjectileTests : TestCollection
 	}
 
 	[Test]
-	public void MoveProjectileFullyToTarget()
-	{
-		var spawn = new GameObject("spawn");
-		var target = new GameObject("target");
-		var cast = new MockCastProjectile{ projectileSpawn = spawn.transform };
-		cast.projectileSpeed = 0.5f;
-		target.transform.position = Vector3.right;
-		var iterator = cast.Apply(target);
-
-		while (iterator.MoveNext());
-
-		Tools.AssertEqual(
-			target.transform.position,
-			cast.magazine.Projectile.transform.position
-		);
-	}
-
-	[Test]
-	public void DisposeProjectileWhenTargetReached()
+	public void DisposeProjectileWhenRoutineDone()
 	{
 		var disposed = null as GameObject;
 		var spawn = new GameObject("spawn");
 		var target = new GameObject("target");
 		var cast = new MockCastProjectile{ projectileSpawn = spawn.transform };
-		cast.projectileSpeed = 0.5f;
 		cast.magazine.onDispose = (in GameObject o) => disposed = o;
-		target.transform.position = Vector3.right;
-		var iterator = cast.Apply(target);
 
-		while (iterator.MoveNext());
+		cast.Apply(target).MoveNext();
 
 		Assert.AreSame(cast.magazine.Projectile, disposed);
 	}
 
-	[Test]
-	public void ProjectileLookAtTarget()
+		[Test]
+	public void DontDisposeProjectileWhenRoutineNotDone()
 	{
+		var disposed = false;
 		var spawn = new GameObject("spawn");
 		var target = new GameObject("target");
 		var cast = new MockCastProjectile{ projectileSpawn = spawn.transform };
-		cast.projectileSpeed = 1;
-		target.transform.position = Vector3.up;
-		var iterator = cast.Apply(target);
+		cast.magazine.onDispose = (in GameObject _) => disposed = true;
 
-		iterator.MoveNext();
+		IEnumerator<WaitForFixedUpdate> approach(Transform _, GameObject __, float ___) {
+			yield return new WaitForFixedUpdate();
+		}
+		cast.approach = approach;
 
-		var expected = Quaternion.LookRotation(Vector3.up);
+		cast.Apply(target).MoveNext();
 
-		Tools.AssertEqual(
-			expected.eulerAngles,
-			cast.magazine.Projectile.transform.rotation.eulerAngles
-		);
+		Assert.False(disposed);
 	}
 }

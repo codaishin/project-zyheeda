@@ -23,21 +23,4 @@ public class DisposableExtensionsTests : TestCollection
 		disposable.Dispose();
 		Assert.AreSame(value, called);
 	}
-
-	[Test]
-	public void UseValue()
-	{
-		var disposable = "Hello".AsDisposable(default);
-		disposable.Use(out string value);
-
-		Assert.AreSame(disposable.Value, value);
-	}
-
-	[Test]
-	public void UseReturn()
-	{
-		var disposable = "Hello".AsDisposable(default);
-
-		Assert.AreSame(disposable, disposable.Use(out string _));
-	}
 }
