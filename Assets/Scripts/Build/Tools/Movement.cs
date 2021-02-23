@@ -4,23 +4,18 @@ using UnityEngine;
 
 public static class Movement
 {
-	public delegate IEnumerator<WaitForFixedUpdate> TowardsFunc<TTarget>(
+	public delegate IEnumerator<WaitForFixedUpdate> ApproachFunc<TTarget>(
 		Transform transform,
 		TTarget target,
 		float deltaPerSecond
 	);
 
-	public delegate TowardsFunc<TTarget> GetTowardsFunc<TTarget>(
-		Func<TTarget, Vector3> getPosition,
-		Func<float> getTimeDelta
-	);
-
-	public static TowardsFunc<TTarget> Towards<TTarget>(
+	public static ApproachFunc<TTarget> GetApproach<TTarget>(
 		Func<TTarget, Vector3> getPosition,
 		Func<float> getTimeDelta,
 		params Action<Transform, TTarget>[] postUpdate
 	) {
-		IEnumerator<WaitForFixedUpdate> towards(Transform transform, TTarget targetObject, float deltaPerSecond) {
+		IEnumerator<WaitForFixedUpdate> approach(Transform transform, TTarget targetObject, float deltaPerSecond) {
 			bool notOnTarget(out Vector3 target) {
 				target = getPosition(targetObject);
 				return transform.position != target;
@@ -33,6 +28,6 @@ public static class Movement
 				yield return new WaitForFixedUpdate();
 			}
 		}
-		return towards;
+		return approach;
 	}
 }

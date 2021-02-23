@@ -4,13 +4,13 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-public class MovementTowardsTests : TestCollection
+public class MovementTests : TestCollection
 {
 	[Test]
-	public void MovementTowards()
+	public void GetApproach()
 	{
 		var obj = new GameObject("obj");
-		var moveTo = Movement.Towards<Vector3>(v => v, () => 1);
+		var moveTo = Movement.GetApproach<Vector3>(v => v, () => 1);
 
 		moveTo(obj.transform, Vector3.right, 0f).MoveNext();
 
@@ -18,10 +18,10 @@ public class MovementTowardsTests : TestCollection
 	}
 
 	[Test]
-	public void MovementTowardsDeltaPerSecond()
+	public void GetApproachDeltaPerSecond()
 	{
 		var obj = new GameObject("obj");
-		var moveTo = Movement.Towards<Vector3>(v => v, () => 1);
+		var moveTo = Movement.GetApproach<Vector3>(v => v, () => 1);
 
 		moveTo(obj.transform, Vector3.right, 0.1f).MoveNext();
 
@@ -29,10 +29,10 @@ public class MovementTowardsTests : TestCollection
 	}
 
 	[Test]
-	public void MovementTowardsDeltaPerSecondFromOffset()
+	public void GetApproachDeltaPerSecondFromOffset()
 	{
 		var obj = new GameObject("obj");
-		var moveTo = Movement.Towards<Vector3>(v => v, () => 1);
+		var moveTo = Movement.GetApproach<Vector3>(v => v, () => 1);
 
 		obj.transform.position = Vector3.left;
 
@@ -42,10 +42,10 @@ public class MovementTowardsTests : TestCollection
 	}
 
 	[Test]
-	public void MovementTowardsTimeDelta()
+	public void GetApproachTimeDelta()
 	{
 		var obj = new GameObject("obj");
-		var moveTo = Movement.Towards<Vector3>(v => v, () => 0.3f);
+		var moveTo = Movement.GetApproach<Vector3>(v => v, () => 0.3f);
 
 		moveTo(obj.transform, Vector3.right, 1).MoveNext();
 
@@ -53,11 +53,11 @@ public class MovementTowardsTests : TestCollection
 	}
 
 	[Test]
-	public void MovementTowardsMultipleFrames()
+	public void GetApproachMultipleFrames()
 	{
 		var positions = new List<Vector3>();
 		var obj = new GameObject("obj");
-		var moveTo = Movement.Towards<Vector3>(v => v, () => 1);
+		var moveTo = Movement.GetApproach<Vector3>(v => v, () => 1);
 		var routine = moveTo(obj.transform, Vector3.right, 0.1f);
 
 		routine.MoveNext();
@@ -75,21 +75,21 @@ public class MovementTowardsTests : TestCollection
 	}
 
 	[Test]
-	public void MovementTowardsTerminates()
+	public void GetApproachTerminates()
 	{
 		var obj = new GameObject("obj");
-		var moveTo = Movement.Towards<Vector3>(v => v, () => 1);
+		var moveTo = Movement.GetApproach<Vector3>(v => v, () => 1);
 		var r = moveTo(obj.transform, Vector3.right, 0.51f);
 
 		Assert.AreEqual((true, true, false), (r.MoveNext(), r.MoveNext(), r.MoveNext()));
 	}
 
 	[Test]
-	public void MovementTowardsPostUpdateCalled()
+	public void GetApproachPostUpdateCalled()
 	{
 		var calledWith = new List<(Transform, Vector3)>();
 		var obj = new GameObject("obj");
-		var moveTo = Movement.Towards<Vector3>(v => v, () => 1, (tr, ta) => calledWith.Add((tr, ta)));
+		var moveTo = Movement.GetApproach<Vector3>(v => v, () => 1, (tr, ta) => calledWith.Add((tr, ta)));
 		var r = moveTo(obj.transform, Vector3.right, 0.2f);
 
 		r.MoveNext();
@@ -102,11 +102,11 @@ public class MovementTowardsTests : TestCollection
 	}
 
 	[Test]
-	public void MovementTowardsPostUpdateAfterPositionUpdate()
+	public void GetApproachPostUpdateAfterPositionUpdate()
 	{
 		var called = default(Vector3);
 		var obj = new GameObject("obj");
-		var moveTo = Movement.Towards<Vector3>(v => v, () => 1, (tr, __) => called = tr.position);
+		var moveTo = Movement.GetApproach<Vector3>(v => v, () => 1, (tr, __) => called = tr.position);
 		var r = moveTo(obj.transform, Vector3.right, 0.2f);
 
 		r.MoveNext();
