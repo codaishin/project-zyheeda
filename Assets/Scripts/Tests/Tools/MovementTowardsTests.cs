@@ -83,4 +83,21 @@ public class MovementTowardsTests : TestCollection
 
 		Assert.AreEqual((true, true, false), (r.MoveNext(), r.MoveNext(), r.MoveNext()));
 	}
+
+	[Test]
+	public void MovementTowardsOperations()
+	{
+		var calledWith = new List<(Transform, Vector3)>();
+		var obj = new GameObject("obj");
+		var moveTo = Movement.Towards<Vector3>(v => v, () => 1, (tr, ta) => calledWith.Add((tr, ta)));
+		var r = moveTo(obj.transform, Vector3.right, 0.2f);
+
+		r.MoveNext();
+		r.MoveNext();
+
+		CollectionAssert.AreEqual(
+			new (Transform, Vector3)[] { (obj.transform, Vector3.right), (obj.transform, Vector3.right) },
+			calledWith
+		);
+	}
 }

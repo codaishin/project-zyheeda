@@ -15,30 +15,24 @@ public static class Movement
 		Func<float> getTimeDelta
 	);
 
-	private static
-	IEnumerator<WaitForFixedUpdate> Towards<TTarget>(
-		Func<TTarget, Vector3> getPosition,
-		Func<float> getTimeDelta,
-		Transform transform,
-		TTarget targetObject,
-		float deltaPerSecond
-	) {
-		bool notOnTarget(out Vector3 target) {
-			target = getPosition(targetObject);
-			return transform.position != target;
-		}
-
-		float delta = (deltaPerSecond > 0f ? deltaPerSecond : float.PositiveInfinity) * getTimeDelta();
-
-		while (notOnTarget(out Vector3 target)) {
-			transform.position = Vector3.MoveTowards(transform.position, target, delta);
-			yield return new WaitForFixedUpdate();
-		}
-	}
-
 	public static TowardsFunc<TTarget> Towards<TTarget>(
 		Func<TTarget, Vector3> getPosition,
-		Func<float> getTimeDelta
-	) => (transform, target, deltaPerSecond) => Movement
-		.Towards(getPosition, getTimeDelta, transform, target, deltaPerSecond);
+		Func<float> getTimeDelta,
+		params Action<Transform, TTarget>[] frameOperations
+	) {
+		IEnumerator<WaitForFixedUpdate> towards(Transform transform, TTarget targetObject, float deltaPerSecond) {
+			bool notOnTarget(out Vector3 target) {
+				target = getPosition(targetObject);
+				return transform.position != target;
+			}
+			float delta = (deltaPerSecond > 0f ? deltaPerSecond : float.PositiveInfinity) * getTimeDelta();
+
+			while (notOnTarget(out Vector3 target)) {
+				transform.position = Vector3.MoveTowards(transform.position, target, delta);
+				frameOperations.ForEach(op => op(transform, targetObject));
+				yield return new WaitForFixedUpdate();
+			}
+		}
+		return towards;
+	}
 }
