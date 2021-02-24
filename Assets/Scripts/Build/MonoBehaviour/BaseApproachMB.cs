@@ -1,19 +1,19 @@
 using UnityEngine;
 
-public abstract class BaseApproachMB : MonoBehaviour
+public abstract class BaseApproachMB<TAppraoch> : MonoBehaviour
+	where TAppraoch: IApproach<Vector3>, new()
 {
 	private Transform agentTransform;
 
 	public Reference agent;
 	public float deltaPerSecond;
-
-	protected abstract Movement.ApproachFunc<Vector3> Approach { get; }
+	public TAppraoch appraoch = new TAppraoch();
 
 	private void Start() => this.agentTransform = this.agent.GameObject.transform;
 
 	public void Apply(Vector3 position)
 	{
 		this.StopAllCoroutines();
-		this.StartCoroutine(this.Approach(this.agentTransform, position, this.deltaPerSecond));
+		this.StartCoroutine(this.appraoch.Apply(this.agentTransform, position, this.deltaPerSecond));
 	}
 }

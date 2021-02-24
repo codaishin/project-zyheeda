@@ -1,10 +1,12 @@
 using UnityEngine;
 
-public class ApproachMB : BaseApproachMB
+public class Approach : BaseApproach<Vector3>
 {
-	protected override
-	Movement.ApproachFunc<Vector3> Approach { get; } = Movement.GetApproach(
-		getPosition: (Vector3 position) => position,
-		getTimeDelta: () => Time.fixedDeltaTime
-	);
+	public override Vector3 GetPosition(in Vector3 target) => target;
+
+	public override float GetTimeDelta() => Time.fixedDeltaTime;
+
+	public override void PostUpdate(in Transform transform, in Vector3 target) {}
 }
+
+public class ApproachMB : BaseApproachMB<Approach> { }

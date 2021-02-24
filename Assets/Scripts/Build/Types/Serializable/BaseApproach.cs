@@ -8,7 +8,7 @@ public abstract class BaseApproach<TTarget> : IApproach<TTarget>
 	public abstract float GetTimeDelta();
 	public abstract void PostUpdate(in Transform transform, in TTarget target);
 
-	public IEnumerator<WaitForFixedUpdate> Approach(Transform transform, TTarget target, float speed)
+	public IEnumerator<WaitForFixedUpdate> Apply(Transform transform, TTarget target, float speed)
 	{
 		bool notOnTarget(out Vector3 targetPosition) {
 			targetPosition = this.GetPosition(target);

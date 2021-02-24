@@ -23,7 +23,7 @@ public class BaseApproachTests
 		var obj = new GameObject("obj");
 		var approach = new MockApproach();
 
-		approach.Approach(obj.transform, Vector3.right, 0f).MoveNext();
+		approach.Apply(obj.transform, Vector3.right, 0f).MoveNext();
 
 		Assert.AreEqual(Vector3.right, obj.transform.position);
 	}
@@ -35,7 +35,7 @@ public class BaseApproachTests
 		var obj = new GameObject("obj");
 		var approach = new MockApproach();
 
-		approach.Approach(obj.transform, Vector3.right, 0.1f).MoveNext();
+		approach.Apply(obj.transform, Vector3.right, 0.1f).MoveNext();
 
 		Assert.AreEqual(Vector3.right * 0.1f, obj.transform.position);
 	}
@@ -48,7 +48,7 @@ public class BaseApproachTests
 
 		obj.transform.position = Vector3.left;
 
-		approach.Approach(obj.transform, Vector3.right, 0.1f).MoveNext();
+		approach.Apply(obj.transform, Vector3.right, 0.1f).MoveNext();
 
 		Assert.AreEqual(Vector3.left + Vector3.right * 0.1f, obj.transform.position);
 	}
@@ -59,7 +59,7 @@ public class BaseApproachTests
 		var obj = new GameObject("obj");
 		var approach = new MockApproach{ timeDelta = 0.3f };
 
-		approach.Approach(obj.transform, Vector3.right, 1).MoveNext();
+		approach.Apply(obj.transform, Vector3.right, 1).MoveNext();
 
 		Assert.AreEqual(Vector3.right * 0.3f, obj.transform.position);
 	}
@@ -70,7 +70,7 @@ public class BaseApproachTests
 		var positions = new List<Vector3>();
 		var obj = new GameObject("obj");
 		var approach = new MockApproach();
-		var routine = approach.Approach(obj.transform, Vector3.right, 0.1f);
+		var routine = approach.Apply(obj.transform, Vector3.right, 0.1f);
 
 		routine.MoveNext();
 
@@ -91,7 +91,7 @@ public class BaseApproachTests
 	{
 		var obj = new GameObject("obj");
 		var approach = new MockApproach();
-		var r = approach.Approach(obj.transform, Vector3.right, 0.51f);
+		var r = approach.Apply(obj.transform, Vector3.right, 0.51f);
 
 		Assert.AreEqual((true, true, false), (r.MoveNext(), r.MoveNext(), r.MoveNext()));
 	}
@@ -102,7 +102,7 @@ public class BaseApproachTests
 		var calledWith = new List<(Transform, Vector3)>();
 		var obj = new GameObject("obj");
 		var approach = new MockApproach();
-		var r = approach.Approach(obj.transform, Vector3.right, 0.2f);
+		var r = approach.Apply(obj.transform, Vector3.right, 0.2f);
 
 		approach.postUpdate = (in Transform t, in Vector3 v) => calledWith.Add((t, v));
 
@@ -121,7 +121,7 @@ public class BaseApproachTests
 		var called = default(Vector3);
 		var obj = new GameObject("obj");
 		var approach = new MockApproach();
-		var r = approach.Approach(obj.transform, Vector3.right, 0.2f);
+		var r = approach.Apply(obj.transform, Vector3.right, 0.2f);
 
 		approach.postUpdate = (in Transform t, in Vector3 _) => called = t.position;
 

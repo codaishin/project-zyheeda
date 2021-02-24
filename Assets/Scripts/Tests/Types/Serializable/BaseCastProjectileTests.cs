@@ -12,7 +12,7 @@ public class BaseCastProjectileTests : TestCollection
 			MockApproach.DefaultApproach;
 
 		public
-		IEnumerator<WaitForFixedUpdate> Approach(Transform transform, GameObject target, float speed) =>
+		IEnumerator<WaitForFixedUpdate> Apply(Transform transform, GameObject target, float speed) =>
 			this.approach(transform, target, speed);
 
 		private static
