@@ -8,12 +8,12 @@ public class BaseCastProjectileTests : TestCollection
 	private class MockApproach : IApproach<GameObject>
 	{
 		public
-		Func<Transform, GameObject, float, IEnumerator<WaitForFixedUpdate>> approach =
+		Func<Transform, GameObject, float, IEnumerator<WaitForFixedUpdate>> apply =
 			MockApproach.DefaultApproach;
 
 		public
 		IEnumerator<WaitForFixedUpdate> Apply(Transform transform, GameObject target, float speed) =>
-			this.approach(transform, target, speed);
+			this.apply(transform, target, speed);
 
 		private static
 		IEnumerator<WaitForFixedUpdate> DefaultApproach(Transform _, GameObject __, float ___)
@@ -49,7 +49,7 @@ public class BaseCastProjectileTests : TestCollection
 			called = (projectile, target, speed);
 			yield break;
 		}
-		cast.approach.approach = approach;
+		cast.approach.apply = approach;
 
 		cast.Apply(target).MoveNext();
 
@@ -95,7 +95,7 @@ public class BaseCastProjectileTests : TestCollection
 		IEnumerator<WaitForFixedUpdate> approach(Transform _, GameObject __, float ___) {
 			yield return new WaitForFixedUpdate();
 		}
-		cast.approach.approach = approach;
+		cast.approach.apply = approach;
 
 		cast.Apply(target).MoveNext();
 
