@@ -1,9 +1,7 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
-using UnityEngine.TestTools;
 
 public class BaseApproachTests
 {
@@ -11,8 +9,8 @@ public class BaseApproachTests
 	{
 		public float timeDelta = 1f;
 
-		protected override Vector3 GetPosition(in Vector3 target) => target;
-		protected override float GetTimeDelta() => this.timeDelta;
+		public override Vector3 GetPosition(in Vector3 target) => target;
+		public override float GetTimeDelta() => this.timeDelta;
 	}
 
 	[Test]

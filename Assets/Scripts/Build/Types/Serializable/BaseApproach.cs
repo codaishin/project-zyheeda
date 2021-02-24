@@ -6,8 +6,8 @@ public abstract class BaseApproach<TTarget> : IApproach<TTarget>
 {
 	public Action<Transform, TTarget>[] postUpdate = new Action<Transform, TTarget>[0];
 
-	protected abstract Vector3 GetPosition(in TTarget target);
-	protected abstract float GetTimeDelta();
+	public abstract Vector3 GetPosition(in TTarget target);
+	public abstract float GetTimeDelta();
 
 	public IEnumerator<WaitForFixedUpdate> Approach(Transform transform, TTarget target, float speed)
 	{
