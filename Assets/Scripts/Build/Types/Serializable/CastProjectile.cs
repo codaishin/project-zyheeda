@@ -1,13 +1,16 @@
 using System;
+using System.Linq;
 using UnityEngine;
 
-[Serializable]
-public class CastProjectile : BaseCastProjectile<Magazine>
+public class CastProjectileApproach : BaseApproach<GameObject>
 {
-	protected override
-	Movement.ApproachFunc<GameObject> Approach { get; } = Movement.GetApproach(
-		getPosition: (GameObject target) => target.transform.position,
-		getTimeDelta: () => Time.fixedDeltaTime,
-		postUpdate: (projectile, target) => projectile.transform.LookAt(target.transform)
-	);
+	public override Vector3 GetPosition(in GameObject target) =>
+		target.transform.position;
+	public override float GetTimeDelta() =>
+		Time.fixedDeltaTime;
+	public override void PostUpdate(in Transform transform, in GameObject target) =>
+		transform.LookAt(target.transform);
 }
+
+[Serializable]
+public class CastProjectile : BaseCastProjectile<Magazine, CastProjectileApproach> {}

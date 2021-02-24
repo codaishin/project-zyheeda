@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
@@ -6,12 +7,18 @@ using UnityEngine.TestTools;
 
 public class BaseApproachMBTests : TestCollection
 {
-	private class MockApproachMB : BaseApproachMB
+	private class MockApproach : IApproach<Vector3>
 	{
-		public Movement.ApproachFunc<Vector3> approach;
+		public Func<Transform, Vector3, float, IEnumerator<WaitForFixedUpdate>> apply =
+			MockApproach.DefaultApproach;
 
-		protected override Movement.ApproachFunc<Vector3> Approach => this.approach;
+		public IEnumerator<WaitForFixedUpdate> Apply(Transform transform, Vector3 target, float speed) =>
+			this.apply(transform, target, speed);
+
+		private static IEnumerator<WaitForFixedUpdate> DefaultApproach(Transform t, Vector3 v, float f) { yield break; }
 	}
+
+	private class MockApproachMB : BaseApproachMB<MockApproach> {}
 
 	[UnityTest]
 	public IEnumerator CallApproach()
@@ -26,7 +33,7 @@ public class BaseApproachMBTests : TestCollection
 			called = (transform, target, speed);
 			yield break;
 		}
-		mover.approach = approach;
+		mover.appraoch.apply = approach;
 
 		yield return new WaitForEndOfFrame();
 		yield return new WaitForEndOfFrame();
@@ -50,14 +57,13 @@ public class BaseApproachMBTests : TestCollection
 			++called;
 			yield return new WaitForFixedUpdate();
 		}
-		mover.approach = approach;
+		mover.appraoch.apply = approach;
 
 		yield return new WaitForEndOfFrame();
 
 		mover.Apply(Vector3.right);
 
-		yield return new WaitForEndOfFrame();
-		yield return new WaitForEndOfFrame();
+		yield return new WaitForSeconds(0.5f);
 
 		Assert.AreEqual(2, called);
 	}
@@ -76,15 +82,14 @@ public class BaseApproachMBTests : TestCollection
 			called.Add(target);
 			yield return new WaitForFixedUpdate();
 		}
-		mover.approach = approach;
+		mover.appraoch.apply = approach;
 
 		yield return new WaitForEndOfFrame();
 
 		mover.Apply(Vector3.right);
 		mover.Apply(Vector3.left);
 
-		yield return new WaitForEndOfFrame();
-		yield return new WaitForEndOfFrame();
+		yield return new WaitForSeconds(0.5f);
 
 		CollectionAssert.AreEqual(
 			new Vector3[] { Vector3.right, Vector3.left, Vector3.left },

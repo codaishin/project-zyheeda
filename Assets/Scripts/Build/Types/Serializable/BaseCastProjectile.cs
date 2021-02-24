@@ -3,21 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
-public abstract class BaseCastProjectile<TMagazine> : ICast
+public abstract class BaseCastProjectile<TMagazine, TApproach> : ICast
 	where TMagazine: IMagazine, new()
+	where TApproach: IApproach<GameObject>, new()
 {
-	public Transform projectileSpawn;
 	public TMagazine magazine = new TMagazine();
+	public TApproach approach = new TApproach();
+	public Transform projectileSpawn;
 	public float projectileSpeed;
-
-	protected abstract Movement.ApproachFunc<GameObject> Approach { get; }
 
 	private IEnumerable<WaitForFixedUpdate> Apply(Transform projectile, GameObject target)
 	{
 		projectile.transform.position = this.projectileSpawn.position;
-		using (IEnumerator<WaitForFixedUpdate> iterator = this.Approach(projectile, target, this.projectileSpeed)) {
-			while (iterator.MoveNext()) {
-				yield return iterator.Current;
+		using (IEnumerator<WaitForFixedUpdate> it = this.approach.Apply(projectile, target, this.projectileSpeed)) {
+			while (it.MoveNext()) {
+				yield return it.Current;
 			}
 		}
 	}

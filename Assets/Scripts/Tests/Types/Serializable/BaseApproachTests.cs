@@ -1,29 +1,41 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
-using UnityEngine.TestTools;
 
-public class MovementTests : TestCollection
+public class BaseApproachTests : TestCollection
 {
+	private class MockApproach : BaseApproach<Vector3>
+	{
+		public delegate void PostUpdateFunc(in Transform t, in Vector3 v);
+
+		public float timeDelta = 1f;
+		public PostUpdateFunc postUpdate = (in Transform _, in Vector3 __) => {};
+
+		public override Vector3 GetPosition(in Vector3 target) => target;
+		public override float GetTimeDelta() => this.timeDelta;
+		public override void PostUpdate(in Transform transform, in Vector3 target) => this.postUpdate(transform, target);
+	}
+
 	[Test]
 	public void GetApproach()
 	{
 		var obj = new GameObject("obj");
-		var moveTo = Movement.GetApproach<Vector3>(v => v, () => 1);
+		var approach = new MockApproach();
 
-		moveTo(obj.transform, Vector3.right, 0f).MoveNext();
+		approach.Apply(obj.transform, Vector3.right, 0f).MoveNext();
 
 		Assert.AreEqual(Vector3.right, obj.transform.position);
 	}
+
 
 	[Test]
 	public void GetApproachDeltaPerSecond()
 	{
 		var obj = new GameObject("obj");
-		var moveTo = Movement.GetApproach<Vector3>(v => v, () => 1);
+		var approach = new MockApproach();
 
-		moveTo(obj.transform, Vector3.right, 0.1f).MoveNext();
+		approach.Apply(obj.transform, Vector3.right, 0.1f).MoveNext();
 
 		Assert.AreEqual(Vector3.right * 0.1f, obj.transform.position);
 	}
@@ -32,11 +44,11 @@ public class MovementTests : TestCollection
 	public void GetApproachDeltaPerSecondFromOffset()
 	{
 		var obj = new GameObject("obj");
-		var moveTo = Movement.GetApproach<Vector3>(v => v, () => 1);
+		var approach = new MockApproach();
 
 		obj.transform.position = Vector3.left;
 
-		moveTo(obj.transform, Vector3.right, 0.1f).MoveNext();
+		approach.Apply(obj.transform, Vector3.right, 0.1f).MoveNext();
 
 		Assert.AreEqual(Vector3.left + Vector3.right * 0.1f, obj.transform.position);
 	}
@@ -45,9 +57,9 @@ public class MovementTests : TestCollection
 	public void GetApproachTimeDelta()
 	{
 		var obj = new GameObject("obj");
-		var moveTo = Movement.GetApproach<Vector3>(v => v, () => 0.3f);
+		var approach = new MockApproach{ timeDelta = 0.3f };
 
-		moveTo(obj.transform, Vector3.right, 1).MoveNext();
+		approach.Apply(obj.transform, Vector3.right, 1).MoveNext();
 
 		Assert.AreEqual(Vector3.right * 0.3f, obj.transform.position);
 	}
@@ -57,8 +69,8 @@ public class MovementTests : TestCollection
 	{
 		var positions = new List<Vector3>();
 		var obj = new GameObject("obj");
-		var moveTo = Movement.GetApproach<Vector3>(v => v, () => 1);
-		var routine = moveTo(obj.transform, Vector3.right, 0.1f);
+		var approach = new MockApproach();
+		var routine = approach.Apply(obj.transform, Vector3.right, 0.1f);
 
 		routine.MoveNext();
 
@@ -78,8 +90,8 @@ public class MovementTests : TestCollection
 	public void GetApproachTerminates()
 	{
 		var obj = new GameObject("obj");
-		var moveTo = Movement.GetApproach<Vector3>(v => v, () => 1);
-		var r = moveTo(obj.transform, Vector3.right, 0.51f);
+		var approach = new MockApproach();
+		var r = approach.Apply(obj.transform, Vector3.right, 0.51f);
 
 		Assert.AreEqual((true, true, false), (r.MoveNext(), r.MoveNext(), r.MoveNext()));
 	}
@@ -89,8 +101,10 @@ public class MovementTests : TestCollection
 	{
 		var calledWith = new List<(Transform, Vector3)>();
 		var obj = new GameObject("obj");
-		var moveTo = Movement.GetApproach<Vector3>(v => v, () => 1, (tr, ta) => calledWith.Add((tr, ta)));
-		var r = moveTo(obj.transform, Vector3.right, 0.2f);
+		var approach = new MockApproach();
+		var r = approach.Apply(obj.transform, Vector3.right, 0.2f);
+
+		approach.postUpdate = (in Transform t, in Vector3 v) => calledWith.Add((t, v));
 
 		r.MoveNext();
 		r.MoveNext();
@@ -106,8 +120,10 @@ public class MovementTests : TestCollection
 	{
 		var called = default(Vector3);
 		var obj = new GameObject("obj");
-		var moveTo = Movement.GetApproach<Vector3>(v => v, () => 1, (tr, __) => called = tr.position);
-		var r = moveTo(obj.transform, Vector3.right, 0.2f);
+		var approach = new MockApproach();
+		var r = approach.Apply(obj.transform, Vector3.right, 0.2f);
+
+		approach.postUpdate = (in Transform t, in Vector3 _) => called = t.position;
 
 		r.MoveNext();
 
