@@ -4,10 +4,9 @@ using UnityEngine;
 
 public abstract class BaseApproach<TTarget> : IApproach<TTarget>
 {
-	public Action<Transform, TTarget>[] postUpdate = new Action<Transform, TTarget>[0];
-
 	public abstract Vector3 GetPosition(in TTarget target);
 	public abstract float GetTimeDelta();
+	public abstract void PostUpdate(in Transform transform, in TTarget target);
 
 	public IEnumerator<WaitForFixedUpdate> Approach(Transform transform, TTarget target, float speed)
 	{
@@ -19,7 +18,7 @@ public abstract class BaseApproach<TTarget> : IApproach<TTarget>
 
 		while (notOnTarget(out Vector3 targetPosition)) {
 			transform.position = Vector3.MoveTowards(transform.position, targetPosition, delta);
-			this.postUpdate.ForEach(cb => cb(transform, target));
+			this.PostUpdate(transform, target);
 			yield return new WaitForFixedUpdate();
 		}
 	}

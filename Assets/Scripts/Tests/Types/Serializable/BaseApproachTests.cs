@@ -7,10 +7,14 @@ public class BaseApproachTests
 {
 	private class MockApproach : BaseApproach<Vector3>
 	{
+		public delegate void PostUpdateFunc(in Transform t, in Vector3 v);
+
 		public float timeDelta = 1f;
+		public PostUpdateFunc postUpdate = (in Transform _, in Vector3 __) => {};
 
 		public override Vector3 GetPosition(in Vector3 target) => target;
 		public override float GetTimeDelta() => this.timeDelta;
+		public override void PostUpdate(in Transform transform, in Vector3 target) => this.postUpdate(transform, target);
 	}
 
 	[Test]
@@ -100,9 +104,7 @@ public class BaseApproachTests
 		var approach = new MockApproach();
 		var r = approach.Approach(obj.transform, Vector3.right, 0.2f);
 
-		approach.postUpdate = new Action<Transform, Vector3> [] {
-			(tr, ta) => calledWith.Add((tr, ta)),
-		};
+		approach.postUpdate = (in Transform t, in Vector3 v) => calledWith.Add((t, v));
 
 		r.MoveNext();
 		r.MoveNext();
@@ -121,9 +123,7 @@ public class BaseApproachTests
 		var approach = new MockApproach();
 		var r = approach.Approach(obj.transform, Vector3.right, 0.2f);
 
-		approach.postUpdate = new Action<Transform, Vector3>[] {
-			(tr, __) => called = tr.position,
-		};
+		approach.postUpdate = (in Transform t, in Vector3 _) => called = t.position;
 
 		r.MoveNext();
 
