@@ -1,10 +1,27 @@
-using System.Linq;
+using System;
 using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
 
 public class BaseCastProjectileTests : TestCollection
 {
+	private class MockApproach : IApproach<GameObject>
+	{
+		public
+		Func<Transform, GameObject, float, IEnumerator<WaitForFixedUpdate>> approach =
+			MockApproach.DefaultApproach;
+
+		public
+		IEnumerator<WaitForFixedUpdate> Approach(Transform transform, GameObject target, float speed) =>
+			this.approach(transform, target, speed);
+
+		private static
+		IEnumerator<WaitForFixedUpdate> DefaultApproach(Transform _, GameObject __, float ___)
+		{
+			yield break;
+		}
+	}
+
 	private class MockMagazine : IMagazine
 	{
 		public OnDisposeFunc<GameObject> onDispose = (in GameObject o) => {};
@@ -17,18 +34,7 @@ public class BaseCastProjectileTests : TestCollection
 		}
 	}
 
-	private class MockCastProjectile : BaseCastProjectile<MockMagazine>
-	{
-		public Movement.ApproachFunc<GameObject> approach = MockCastProjectile.DefaultApproach;
-
-		protected override Movement.ApproachFunc<GameObject> Approach => this.approach;
-
-		private static IEnumerator<WaitForFixedUpdate> DefaultApproach(
-			Transform _,
-			GameObject __,
-			float ___
-		) { yield break; }
-	}
+	private class MockCastProjectile : BaseCastProjectile<MockMagazine, MockApproach> { }
 
 	[Test]
 	public void ApproachArgs()
@@ -43,7 +49,7 @@ public class BaseCastProjectileTests : TestCollection
 			called = (projectile, target, speed);
 			yield break;
 		}
-		cast.approach = approach;
+		cast.approach.approach = approach;
 
 		cast.Apply(target).MoveNext();
 
@@ -89,7 +95,7 @@ public class BaseCastProjectileTests : TestCollection
 		IEnumerator<WaitForFixedUpdate> approach(Transform _, GameObject __, float ___) {
 			yield return new WaitForFixedUpdate();
 		}
-		cast.approach = approach;
+		cast.approach.approach = approach;
 
 		cast.Apply(target).MoveNext();
 
