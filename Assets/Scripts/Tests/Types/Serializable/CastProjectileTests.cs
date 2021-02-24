@@ -19,9 +19,7 @@ public class CastProjectileTests : TestCollection
 	[UnityTest]
 	public IEnumerator GetTimeDelta()
 	{
-		var obj = new GameObject("obj");
 		var appraoch = new CastProjectileApproach();
-		obj.transform.position = Vector3.down;
 
 		yield return new WaitForFixedUpdate();
 
