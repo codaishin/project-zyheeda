@@ -6,7 +6,7 @@ using UnityEngine.TestTools;
 
 public class CastProjectileTests : TestCollection
 {
-  [Test]
+	[Test]
 	public void GetPosition()
 	{
 		var obj = new GameObject("obj");
