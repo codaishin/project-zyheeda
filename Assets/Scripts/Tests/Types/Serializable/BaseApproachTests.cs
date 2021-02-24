@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
 
-public class BaseApproachTests
+public class BaseApproachTests : TestCollection
 {
 	private class MockApproach : BaseApproach<Vector3>
 	{
