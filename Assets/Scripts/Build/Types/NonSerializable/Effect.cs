@@ -5,6 +5,9 @@ using UnityEngine;
 
 public class Effect
 {
+	private enum State { Idle = default, Active }
+
+	private State state;
 	public float duration;
 
 	public event Action OnApply;
@@ -13,17 +16,24 @@ public class Effect
 
 	public void Apply()
 	{
-		this.OnApply?.Invoke();
+		if (this.state == State.Idle) {
+			this.OnApply?.Invoke();
+			this.state = State.Active;
+		}
 	}
 
 	public void Maintain(float delta)
 	{
-		this.duration -= delta;
-		this.OnMaintain?.Invoke(delta);
+		if (this.state == State.Active) {
+			this.duration -= delta;
+			this.OnMaintain?.Invoke(delta);
+		}
 	}
 
 	public void Revert()
 	{
-		this.OnRevert?.Invoke();
+		if (this.state == State.Active) {
+			this.OnRevert?.Invoke();
+		}
 	}
 }
