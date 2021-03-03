@@ -2,16 +2,16 @@ using System;
 using UnityEngine;
 
 [Serializable]
-public class LogEffect : IEffect
+public class LogEffect : IEffectCollection
 {
 	private static void Log(in GameObject target, in Attributes attributes)
 	{
 		Debug.Log($"Applied to {target} with: {attributes}");
 	}
 
-	public bool GetEffect(GameObject target, out EffectFunc effect)
+	public bool GetHandle(GameObject target, out Action<Attributes> handle)
 	{
-		effect = (in Attributes attributes) => LogEffect.Log(target, attributes);
+		handle = attributes => LogEffect.Log(target, attributes);
 		return true;
 	}
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
@@ -18,20 +19,20 @@ public class BaseSkillMBTests : TestCollection
 			this.apply(target);
 	}
 
-	private class MockEffect : IEffect
+	private class MockEffect : IEffectCollection
 	{
-		public delegate bool GetEffectFunc(GameObject t, out EffectFunc e);
+		public delegate bool GetEffectFunc(GameObject t, out Action<Attributes> h);
 
 		public GetEffectFunc getEffect = MockEffect.BaseGetEffectFor;
 
-		private static bool BaseGetEffectFor(GameObject _, out EffectFunc e)
+		private static bool BaseGetEffectFor(GameObject _, out Action<Attributes> h)
 		{
-			e = (in Attributes _) => {};
+			h = _ => {};
 			return true;
 		}
 
-		public bool GetEffect(GameObject target, out EffectFunc effect) =>
-			this.getEffect(target, out effect);
+		public bool GetHandle(GameObject target, out Action<Attributes> handle) =>
+			this.getEffect(target, out handle);
 	}
 
 	private class MockSheetMB : MonoBehaviour, ISheet
@@ -81,8 +82,8 @@ public class BaseSkillMBTests : TestCollection
 		}
 
 		skill.cast.apply = applyCast;
-		skill.effect.getEffect = (GameObject t, out EffectFunc effect) => {
-			effect = (in Attributes a) => {};
+		skill.effectCollection.getEffect = (GameObject t, out Action<Attributes> effect) => {
+			effect = a => {};
 			return false;
 		};
 		sheet.attributes = new Attributes { body = 1, mind = 2, spirit = 3 };
@@ -102,8 +103,8 @@ public class BaseSkillMBTests : TestCollection
 		var sheet = new GameObject("item").AddComponent<MockSheetMB>();
 		var skill = sheet.gameObject.AddComponent<MockSkillMB>();
 
-		skill.effect.getEffect = (GameObject t, out EffectFunc effect) => {
-			effect = (in Attributes a) => got = (t, a.body, a.mind, a.spirit);
+		skill.effectCollection.getEffect = (GameObject t, out Action<Attributes> effect) => {
+			effect = a => got = (t, a.body, a.mind, a.spirit);
 			return true;
 		};
 		sheet.attributes = new Attributes { body = 1, mind = 2, spirit = 3 };
@@ -126,8 +127,8 @@ public class BaseSkillMBTests : TestCollection
 		var sheet = new GameObject("item").AddComponent<MockSheetMB>();
 		var skill = sheet.gameObject.AddComponent<MockSkillMB>();
 
-		skill.effect.getEffect = (GameObject t, out EffectFunc effect) => {
-			effect = (in Attributes a) => got = (t, a.body, a.mind, a.spirit);
+		skill.effectCollection.getEffect = (GameObject t, out Action<Attributes> effect) => {
+			effect = a => got = (t, a.body, a.mind, a.spirit);
 			return false;
 		};
 		sheet.attributes = new Attributes { body = 1, mind = 2, spirit = 3 };
@@ -155,8 +156,8 @@ public class BaseSkillMBTests : TestCollection
 		}
 
 		skill.cast.apply = applyCast;
-		skill.effect.getEffect = (GameObject t, out EffectFunc effect) => {
-			effect = (in Attributes a) => got.Add((t, a.body, a.mind, a.spirit));
+		skill.effectCollection.getEffect = (GameObject t, out Action<Attributes> effect) => {
+			effect = a => got.Add((t, a.body, a.mind, a.spirit));
 			return true;
 		};
 		sheet.attributes = new Attributes { body = 1, mind = 2, spirit = 3 };
@@ -260,8 +261,8 @@ public class BaseSkillMBTests : TestCollection
 		var sheet = new GameObject("item").AddComponent<MockSheetMB>();
 		var skill = sheet.gameObject.AddComponent<MockSkillMB>();
 
-		skill.effect.getEffect = (GameObject _, out EffectFunc effect) => {
-			effect = (in Attributes a) => got = a;
+		skill.effectCollection.getEffect = (GameObject _, out Action<Attributes> effect) => {
+			effect = a => got = a;
 			return true;
 		};
 		skill.modifiers = new Attributes { body = 1, mind = 2, spirit = 3 };
