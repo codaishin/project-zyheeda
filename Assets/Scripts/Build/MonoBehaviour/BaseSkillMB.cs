@@ -7,16 +7,15 @@ public abstract class BaseSkillMB : MonoBehaviour
 	public abstract void Begin(GameObject target);
 }
 
-[RequireComponent(typeof(ISheet))]
-public abstract class BaseSkillMB<TEffectCollection, TCast> : BaseSkillMB
-	where TEffectCollection : IEffectCollection, new()
+public abstract class BaseSkillMB<TEffectCollection, TCast, TSheet> : BaseSkillMB
+	where TEffectCollection : IEffectCollection<TSheet>, new()
 	where TCast : ICast, new()
+	where TSheet : ISheet
 {
-	private ISheet sheet;
 	private float cooldown;
 
+	public TSheet sheet;
 	public float applyPerSecond;
-	public Attributes modifiers;
 	public TEffectCollection effectCollection;
 	public TCast cast;
 
@@ -37,12 +36,12 @@ public abstract class BaseSkillMB<TEffectCollection, TCast> : BaseSkillMB
 		}
 	}
 
-	private IEnumerator<WaitForFixedUpdate> Apply(GameObject target, Action<Attributes> handle)
+	private IEnumerator<WaitForFixedUpdate> Apply(GameObject target, Action<TSheet> handle)
 	{
 		foreach (WaitForFixedUpdate yield in this.Cast(target)) {
 			yield return yield;
 		}
-		handle(this.sheet.Attributes + this.modifiers);
+		handle(this.sheet);
 		foreach (WaitForFixedUpdate yield in this.AfterCast()) {
 			yield return yield;
 		}
@@ -50,7 +49,7 @@ public abstract class BaseSkillMB<TEffectCollection, TCast> : BaseSkillMB
 
 	public override void Begin(GameObject target)
 	{
-		if (this.effectCollection.GetHandle(target, out Action<Attributes> effect) && this.cooldown <= 0) {
+		if (this.effectCollection.GetHandle(target, out Action<TSheet> effect) && this.cooldown <= 0) {
 			this.cooldown = this.applyPerSecond > 0 ? 1f / this.applyPerSecond : 0;
 			this.StartCoroutine(this.Apply(target, effect));
 		}
@@ -58,7 +57,6 @@ public abstract class BaseSkillMB<TEffectCollection, TCast> : BaseSkillMB
 
 	private void Awake()
 	{
-		this.sheet = this.RequireComponent<ISheet>();
 		if (this.cast == null) {
 			this.cast = new TCast();
 		}
