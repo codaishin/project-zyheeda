@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,17 +7,16 @@ public abstract class BaseSkillMB : MonoBehaviour
 	public abstract void Begin(GameObject target);
 }
 
-[RequireComponent(typeof(ISheet))]
-public abstract class BaseSkillMB<TEffect, TCast> : BaseSkillMB
-	where TEffect : IEffect, new()
+public abstract class BaseSkillMB<TEffectCollection, TCast, TSheet> : BaseSkillMB
+	where TEffectCollection : IEffectCollection<TSheet>, new()
 	where TCast : ICast, new()
+	where TSheet : ISheet
 {
-	private ISheet sheet;
 	private float cooldown;
 
+	public TSheet sheet;
 	public float applyPerSecond;
-	public Attributes modifiers;
-	public TEffect effect;
+	public TEffectCollection effectCollection;
 	public TCast cast;
 
 	private IEnumerable<WaitForFixedUpdate> Cast(GameObject target)
@@ -36,12 +36,12 @@ public abstract class BaseSkillMB<TEffect, TCast> : BaseSkillMB
 		}
 	}
 
-	private IEnumerator<WaitForFixedUpdate> Apply(GameObject target, EffectFunc effect)
+	private IEnumerator<WaitForFixedUpdate> Apply(GameObject target, Action<TSheet> handle)
 	{
 		foreach (WaitForFixedUpdate yield in this.Cast(target)) {
 			yield return yield;
 		}
-		effect(this.sheet.Attributes + this.modifiers);
+		handle(this.sheet);
 		foreach (WaitForFixedUpdate yield in this.AfterCast()) {
 			yield return yield;
 		}
@@ -49,7 +49,7 @@ public abstract class BaseSkillMB<TEffect, TCast> : BaseSkillMB
 
 	public override void Begin(GameObject target)
 	{
-		if (this.effect.GetEffect(target, out EffectFunc effect) && this.cooldown <= 0) {
+		if (this.effectCollection.GetHandle(target, out Action<TSheet> effect) && this.cooldown <= 0) {
 			this.cooldown = this.applyPerSecond > 0 ? 1f / this.applyPerSecond : 0;
 			this.StartCoroutine(this.Apply(target, effect));
 		}
@@ -57,12 +57,11 @@ public abstract class BaseSkillMB<TEffect, TCast> : BaseSkillMB
 
 	private void Awake()
 	{
-		this.sheet = this.RequireComponent<ISheet>();
 		if (this.cast == null) {
 			this.cast = new TCast();
 		}
-		if (this.effect == null) {
-			this.effect = new TEffect();
+		if (this.effectCollection == null) {
+			this.effectCollection = new TEffectCollection();
 		}
 	}
 }

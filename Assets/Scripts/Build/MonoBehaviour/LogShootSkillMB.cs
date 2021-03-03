@@ -1,1 +1,1 @@
-public class LogShootSkillMB : BaseSkillMB<LogEffect, CastProjectile> { }
+public class LogShootSkillMB : BaseSkillMB<LogEffect, CastProjectile, CharacterSheetMB> { }
