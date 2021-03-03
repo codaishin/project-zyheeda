@@ -11,7 +11,7 @@ public class EffectExtensionsTests : TestCollection
 	{
 		var called = false;
 		var effect = new Effect();
-		var routine = effect.AsTimedRoutine(0);
+		var routine = effect.AsDisposable(e => {}).AsTimedRoutine(0);
 
 		effect.OnApply += () => called = true;
 
@@ -25,7 +25,7 @@ public class EffectExtensionsTests : TestCollection
 	{
 		var called = 0f;
 		var effect = new Effect();
-		var routine = effect.AsTimedRoutine(3f);
+		var routine = effect.AsDisposable(e => {}).AsTimedRoutine(3f);
 
 		effect.duration = 10f;
 		effect.OnMaintain += d => called = d;
@@ -41,7 +41,7 @@ public class EffectExtensionsTests : TestCollection
 	{
 		var called = false;
 		var effect = new Effect();
-		var routine = effect.AsTimedRoutine(3f);
+		var routine = effect.AsDisposable(e => {}).AsTimedRoutine(3f);
 
 		effect.OnMaintain += _ => called = true;
 
@@ -55,7 +55,7 @@ public class EffectExtensionsTests : TestCollection
 	{
 		var called = new List<float>();
 		var effect = new Effect();
-		var routine = effect.AsTimedRoutine(2f);
+		var routine = effect.AsDisposable(e => {}).AsTimedRoutine(2f);
 
 		effect.OnMaintain += d => called.Add(d);
 		effect.duration = 5f;
@@ -72,7 +72,7 @@ public class EffectExtensionsTests : TestCollection
 	public IEnumerator AsTimedRoutineWaitForIntervalDelta()
 	{
 		var effect = new Effect();
-		var routine = effect.AsTimedRoutine(0.3f);
+		var routine = effect.AsDisposable(e => {}).AsTimedRoutine(0.3f);
 
 		effect.duration = 10f;
 		routine.MoveNext();
@@ -90,7 +90,7 @@ public class EffectExtensionsTests : TestCollection
 	public IEnumerator AsTimedRoutineWaitForRemainingCooldown()
 	{
 		var effect = new Effect();
-		var routine = effect.AsTimedRoutine(0.3f);
+		var routine = effect.AsDisposable(e => {}).AsTimedRoutine(0.3f);
 
 		effect.duration = 0.4f;
 		routine.MoveNext();
@@ -110,7 +110,7 @@ public class EffectExtensionsTests : TestCollection
 	{
 		var called = false;
 		var effect = new Effect();
-		var routine = effect.AsTimedRoutine(0);
+		var routine = effect.AsDisposable(e => {}).AsTimedRoutine(0);
 
 		effect.OnRevert += () => called = true;
 
@@ -125,7 +125,7 @@ public class EffectExtensionsTests : TestCollection
 		var called = false;
 		var calledTrack = new List<bool>();
 		var effect = new Effect();
-		var routine = effect.AsTimedRoutine(42f);
+		var routine = effect.AsDisposable(e => {}).AsTimedRoutine(42f);
 
 		effect.duration = 42f;
 		effect.OnRevert += () => called = true;
@@ -136,5 +136,37 @@ public class EffectExtensionsTests : TestCollection
 		calledTrack.Add(called);
 
 		CollectionAssert.AreEqual(new bool[] { false, true }, calledTrack);
+	}
+
+	[Test]
+	public void AsTimedRoutineOnDispose()
+	{
+		var called = default(Effect);
+		var effect = new Effect();
+		var routine = effect.AsDisposable(e => called = e).AsTimedRoutine(42f);
+
+		routine.MoveNext();
+
+		Assert.AreEqual(effect, called);
+	}
+
+	[Test]
+	public void AsTimedRoutineOnDisposeOnlyWhenDone()
+	{
+		var called = default(Effect);
+		var calledTrack = new List<Effect>();
+		var effect = new Effect();
+		var routine = effect.AsDisposable(e => called = e).AsTimedRoutine(1);
+
+		effect.duration = 2;
+
+		routine.MoveNext();
+		calledTrack.Add(called);
+		routine.MoveNext();
+		calledTrack.Add(called);
+		routine.MoveNext();
+		calledTrack.Add(called);
+
+		CollectionAssert.AreEqual(new Effect[] { default, default, effect }, calledTrack);
 	}
 }

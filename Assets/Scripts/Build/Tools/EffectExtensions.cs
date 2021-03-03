@@ -5,14 +5,19 @@ using UnityEngine;
 public static class EffectExtensions
 {
 	public static
-	IEnumerator<WaitForSeconds> AsTimedRoutine(this Effect effect, float intervalDelta)
+	IEnumerator<WaitForSeconds> AsTimedRoutine(this Disposable<Effect> dEffect, float intervalDelta)
 	{
-		effect.Apply();
-		while (effect.duration > 0) {
-			if (effect.duration < intervalDelta) intervalDelta = effect.duration;
-			yield return new WaitForSeconds(intervalDelta);
-			effect.Maintain(intervalDelta);
+		using (dEffect) {
+			Effect effect = dEffect.Value;
+			effect.Apply();
+			while (effect.duration > 0) {
+				if (effect.duration < intervalDelta) {
+					intervalDelta = effect.duration;
+				}
+				yield return new WaitForSeconds(intervalDelta);
+				effect.Maintain(intervalDelta);
+			}
+			effect.Revert();
 		}
-		effect.Revert();
 	}
 }
