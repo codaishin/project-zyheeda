@@ -19,7 +19,7 @@ public class DisposableExtensionsTests : TestCollection
 	{
 		var called = string.Empty;
 		var value = "Hello";
-		var disposable = value.AsDisposable((in string v) => called = v);
+		var disposable = value.AsDisposable(v => called = v);
 		disposable.Dispose();
 		Assert.AreSame(value, called);
 	}

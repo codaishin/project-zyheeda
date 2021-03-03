@@ -24,7 +24,7 @@ public class BaseCastProjectileTests : TestCollection
 
 	private class MockMagazine : IMagazine
 	{
-		public OnDisposeFunc<GameObject> onDispose = (in GameObject o) => {};
+		public Action<GameObject> onDispose = _ => {};
 
 		public GameObject Projectile { get; } = new GameObject("projectile");
 
@@ -76,7 +76,7 @@ public class BaseCastProjectileTests : TestCollection
 		var spawn = new GameObject("spawn");
 		var target = new GameObject("target");
 		var cast = new MockCastProjectile{ projectileSpawn = spawn.transform };
-		cast.magazine.onDispose = (in GameObject o) => disposed = o;
+		cast.magazine.onDispose =o => disposed = o;
 
 		cast.Apply(target).MoveNext();
 
@@ -90,7 +90,7 @@ public class BaseCastProjectileTests : TestCollection
 		var spawn = new GameObject("spawn");
 		var target = new GameObject("target");
 		var cast = new MockCastProjectile{ projectileSpawn = spawn.transform };
-		cast.magazine.onDispose = (in GameObject _) => disposed = true;
+		cast.magazine.onDispose = _ => disposed = true;
 
 		IEnumerator<WaitForFixedUpdate> approach(Transform _, GameObject __, float ___) {
 			yield return new WaitForFixedUpdate();

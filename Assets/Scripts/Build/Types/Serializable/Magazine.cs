@@ -23,7 +23,7 @@ public class Magazine : IMagazine
 			.Where(p => !p.gameObject.activeSelf)
 			.FirstOrDefault();
 
-	private void StoreProjectile(in GameObject projectile)
+	private void StoreProjectile(GameObject projectile)
 	{
 		projectile.SetActive(false);
 		projectile.transform.SetParent(this.projectileStorage);
