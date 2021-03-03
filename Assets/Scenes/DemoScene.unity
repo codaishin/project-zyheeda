@@ -1652,11 +1652,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc8b6a24e392a584591cc4c1c4b3609f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sheet: {fileID: 1453732933}
   applyPerSecond: 0
-  modifiers:
-    body: 4
-    mind: 4
-    spirit: 4
   cast:
     magazine:
       projectilePrefab: {fileID: 8992679554399984682}
