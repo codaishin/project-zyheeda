@@ -1551,10 +1551,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1453732929}
-  - component: {fileID: 1453732933}
   - component: {fileID: 1453732932}
   - component: {fileID: 1453732931}
   - component: {fileID: 1453732930}
+  - component: {fileID: 1453732933}
   m_Layer: 0
   m_Name: Shoot
   m_TagString: Untagged
@@ -1658,10 +1658,10 @@ MonoBehaviour:
     mind: 4
     spirit: 4
   cast:
-    projectileSpawn: {fileID: 7728212569146213376}
     magazine:
       projectilePrefab: {fileID: 8992679554399984682}
       projectileStorage: {fileID: 1453732929}
+    projectileSpawn: {fileID: 7728212569146213376}
     projectileSpeed: 10
 --- !u!114 &1453732933
 MonoBehaviour:
@@ -1672,13 +1672,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 1453732928}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5e317e0638722b24cb0fc0700e0beb12, type: 3}
+  m_Script: {fileID: 11500000, guid: ff6b4c13011f29d4bbbc4d7a81a22fd0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   attributes:
-    body: 2
-    mind: 3
-    spirit: 9
+    body: 0
+    mind: 0
+    spirit: 0
+  hp: 0
 --- !u!1 &1457652737
 GameObject:
   m_ObjectHideFlags: 0
