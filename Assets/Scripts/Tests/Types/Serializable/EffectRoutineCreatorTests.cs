@@ -4,14 +4,14 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-public class EffectExtensionsTests : TestCollection
+public class EffectRoutineCreatorTests : TestCollection
 {
 	[Test]
-	public void AsTimedRoutineApply()
+	public void CreateAndApply()
 	{
 		var called = false;
 		var effect = new Effect();
-		var routine = effect.AsDisposable(e => {}).AsTimedRoutine(0);
+		var routine = new EffectRoutineCreator{ intervalDelta = 0f }.Create(effect);
 
 		effect.OnApply += () => called = true;
 
@@ -21,11 +21,11 @@ public class EffectExtensionsTests : TestCollection
 	}
 
 	[Test]
-	public void AsTimedRoutineMaintain()
+	public void CreateAndMaintain()
 	{
 		var called = 0f;
 		var effect = new Effect();
-		var routine = effect.AsDisposable(e => {}).AsTimedRoutine(3f);
+		var routine = new EffectRoutineCreator{ intervalDelta = 3f }.Create(effect);
 
 		effect.duration = 10f;
 		effect.OnMaintain += d => called = d;
@@ -37,11 +37,11 @@ public class EffectExtensionsTests : TestCollection
 	}
 
 	[Test]
-	public void AsTimedRoutineNoMaintain()
+	public void CreateAndNoMaintain()
 	{
 		var called = false;
 		var effect = new Effect();
-		var routine = effect.AsDisposable(e => {}).AsTimedRoutine(3f);
+		var routine = new EffectRoutineCreator{ intervalDelta = 3f }.Create(effect);
 
 		effect.OnMaintain += _ => called = true;
 
@@ -51,11 +51,11 @@ public class EffectExtensionsTests : TestCollection
 	}
 
 	[Test]
-	public void AsTimedRoutineMaintainForDuration()
+	public void CreateAndMaintainForDuration()
 	{
 		var called = new List<float>();
 		var effect = new Effect();
-		var routine = effect.AsDisposable(e => {}).AsTimedRoutine(2f);
+		var routine = new EffectRoutineCreator{ intervalDelta = 2f }.Create(effect);
 
 		effect.OnMaintain += d => called.Add(d);
 		effect.duration = 5f;
@@ -69,10 +69,10 @@ public class EffectExtensionsTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator AsTimedRoutineWaitForIntervalDelta()
+	public IEnumerator CreateAndWaitForIntervalDelta()
 	{
 		var effect = new Effect();
-		var routine = effect.AsDisposable(e => {}).AsTimedRoutine(0.3f);
+		var routine = new EffectRoutineCreator{ intervalDelta = 0.3f }.Create(effect);
 
 		effect.duration = 10f;
 		routine.MoveNext();
@@ -87,10 +87,10 @@ public class EffectExtensionsTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator AsTimedRoutineWaitForRemainingCooldown()
+	public IEnumerator CreateAndWaitForRemainingCooldown()
 	{
 		var effect = new Effect();
-		var routine = effect.AsDisposable(e => {}).AsTimedRoutine(0.3f);
+		var routine = new EffectRoutineCreator{ intervalDelta = 0.3f }.Create(effect);
 
 		effect.duration = 0.4f;
 		routine.MoveNext();
@@ -106,11 +106,11 @@ public class EffectExtensionsTests : TestCollection
 	}
 
 	[Test]
-	public void AsTimedRoutineRevert()
+	public void CreateAndRevert()
 	{
 		var called = false;
 		var effect = new Effect();
-		var routine = effect.AsDisposable(e => {}).AsTimedRoutine(0);
+		var routine = new EffectRoutineCreator{ intervalDelta = 0f }.Create(effect);
 
 		effect.OnRevert += () => called = true;
 
@@ -120,12 +120,12 @@ public class EffectExtensionsTests : TestCollection
 	}
 
 	[Test]
-	public void AsTimedRoutineRevertOnlyAtEnd()
+	public void CreateAndRevertOnlyAtEnd()
 	{
 		var called = false;
 		var calledTrack = new List<bool>();
 		var effect = new Effect();
-		var routine = effect.AsDisposable(e => {}).AsTimedRoutine(42f);
+		var routine = new EffectRoutineCreator{ intervalDelta = 42f }.Create(effect);
 
 		effect.duration = 42f;
 		effect.OnRevert += () => called = true;
@@ -136,37 +136,5 @@ public class EffectExtensionsTests : TestCollection
 		calledTrack.Add(called);
 
 		CollectionAssert.AreEqual(new bool[] { false, true }, calledTrack);
-	}
-
-	[Test]
-	public void AsTimedRoutineOnDispose()
-	{
-		var called = default(Effect);
-		var effect = new Effect();
-		var routine = effect.AsDisposable(e => called = e).AsTimedRoutine(42f);
-
-		routine.MoveNext();
-
-		Assert.AreEqual(effect, called);
-	}
-
-	[Test]
-	public void AsTimedRoutineOnDisposeOnlyWhenDone()
-	{
-		var called = default(Effect);
-		var calledTrack = new List<Effect>();
-		var effect = new Effect();
-		var routine = effect.AsDisposable(e => called = e).AsTimedRoutine(1);
-
-		effect.duration = 2;
-
-		routine.MoveNext();
-		calledTrack.Add(called);
-		routine.MoveNext();
-		calledTrack.Add(called);
-		routine.MoveNext();
-		calledTrack.Add(called);
-
-		CollectionAssert.AreEqual(new Effect[] { default, default, effect }, calledTrack);
 	}
 }
