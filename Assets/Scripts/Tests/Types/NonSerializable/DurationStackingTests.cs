@@ -70,4 +70,29 @@ public class DurationStackingTests
 
 		Assert.AreEqual("fs", called);
 	}
+
+	[Test]
+	public void FinalizeOrder()
+	{
+		var called = string.Empty;
+		IEnumerator get() {
+			yield return null;
+		}
+		var routines = new List<Finalizable>();
+		var routineA = new Finalizable{ wrapped = get() };
+		var routineB = new Finalizable{ wrapped = get() };
+		var stacking = new DurationStacking();
+
+		stacking.Add(routineA, routines, a => a.OnFinalize += () => called += "wr");
+		stacking.Add(routineB, routines, a => a.OnFinalize += () => called += "wr");
+		routineA.OnFinalize += () => called += "a";
+		routineB.OnFinalize += () => called += "b";
+
+		var concat = routines[0];
+		concat.MoveNext();
+		concat.MoveNext();
+		concat.MoveNext();
+
+		Assert.AreEqual("abwr", called);
+	}
 }
