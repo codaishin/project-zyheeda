@@ -33,6 +33,7 @@ public class EffectTests : TestCollection
 		var effect = new Effect();
 		effect.OnMaintain += d => called = d;
 
+		effect.Apply();
 		effect.Maintain(0.4f);
 
 		Assert.AreEqual(0.4f, called);
@@ -43,6 +44,7 @@ public class EffectTests : TestCollection
 	{
 		var effect = new Effect();
 
+		effect.Apply();
 		Assert.DoesNotThrow(() => effect.Maintain(0.4f));
 	}
 
@@ -52,6 +54,7 @@ public class EffectTests : TestCollection
 		var effect = new Effect();
 		effect.duration = 5f;
 
+		effect.Apply();
 		effect.Maintain(3f);
 
 		Assert.AreEqual(2f, effect.duration);
@@ -64,6 +67,7 @@ public class EffectTests : TestCollection
 		var effect = new Effect();
 		effect.OnRevert += () => called = true;
 
+		effect.Apply();
 		effect.Revert();
 
 		Assert.True(called);
@@ -74,6 +78,45 @@ public class EffectTests : TestCollection
 	{
 		var effect = new Effect();
 
+		effect.Apply();
 		Assert.DoesNotThrow(() => effect.Revert());
+	}
+
+	[Test]
+	public void NoRevertWhenNoApply()
+	{
+		var called = false;
+		var effect = new Effect();
+		effect.OnRevert += () => called = true;
+
+		effect.Revert();
+
+		Assert.False(called);
+	}
+
+	[Test]
+	public void NoMaintainWhenNoApply()
+	{
+		var called = false;
+		var effect = new Effect();
+		effect.OnMaintain += d => called = true;
+
+		effect.Maintain(2);
+
+		Assert.False(called);
+	}
+
+	[Test]
+	public void NoApplyWhenReverted()
+	{
+		var called = false;
+		var effect = new Effect();
+
+		effect.Apply();
+		effect.Revert();
+		effect.OnApply += () => called = true;
+		effect.Apply();
+
+		Assert.False(called);
 	}
 }
