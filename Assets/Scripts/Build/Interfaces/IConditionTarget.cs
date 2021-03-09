@@ -2,10 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IConditionTarget<TStackIntensity, TStackDuration>
-	where TStackIntensity : IConditionManager
-	where TStackDuration : IConditionManager
+public interface IConditionTarget
 {
-	TStackIntensity StackIntensity { get; }
-	TStackDuration StackDuration { get; }
+	void Add(Effect effect, EffectTag tag, bool stackDuration);
 }

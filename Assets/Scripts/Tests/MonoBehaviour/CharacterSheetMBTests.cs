@@ -23,18 +23,30 @@ public class CharacterSheetMBTests : TestCollection
 	}
 
 	[Test]
-	public void IntensityStack()
+	public void StackIntensity()
 	{
 		var sheet = new GameObject("obj").AddComponent<CharacterSheetMB>();
+		var effect = new Effect{ duration = 1f };
 
-		Assert.AreSame(sheet.GetComponent<IntensityManagerMB>(), sheet.StackIntensity);
+		sheet.Add(effect, EffectTag.Heat, false);
+
+		CollectionAssert.AreEqual(
+			new Effect[] { effect },
+			sheet.GetComponent<IntensityManagerMB>().GetEffects(EffectTag.Heat)
+		);
 	}
 
 	[Test]
 	public void DurationStack()
 	{
 		var sheet = new GameObject("obj").AddComponent<CharacterSheetMB>();
+		var effect = new Effect{ duration = 1f };
 
-		Assert.AreSame(sheet.GetComponent<DurationManagerMB>(), sheet.StackDuration);
+		sheet.Add(effect, EffectTag.Heat, true);
+
+		CollectionAssert.AreEqual(
+			new Effect[] { effect },
+			sheet.GetComponent<DurationManagerMB>().GetEffects(EffectTag.Heat)
+		);
 	}
 }
