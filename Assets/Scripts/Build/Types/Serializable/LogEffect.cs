@@ -4,14 +4,14 @@ using UnityEngine;
 [Serializable]
 public class LogEffect : IEffectCollection<CharacterSheetMB>
 {
-	private static void Log(in GameObject target, in CharacterSheetMB source)
+	private static void Log(CharacterSheetMB source, GameObject target)
 	{
 		Debug.Log($"{source.name} hit {target.name}");
 	}
 
-	public bool GetHandle(GameObject target, out Action<CharacterSheetMB> handle)
+	public bool GetApplyEffects(CharacterSheetMB source, GameObject target, out Action handle)
 	{
-		handle = attributes => LogEffect.Log(target, attributes);
+		handle = () => LogEffect.Log(source, target);
 		return true;
 	}
 }

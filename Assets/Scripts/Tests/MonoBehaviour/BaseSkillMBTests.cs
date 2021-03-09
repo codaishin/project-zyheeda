@@ -21,18 +21,18 @@ public class BaseSkillMBTests : TestCollection
 
 	private class MockEffect : IEffectCollection<MockSheet>
 	{
-		public delegate bool GetEffectFunc(GameObject t, out Action<MockSheet> h);
+		public delegate bool GetEffectFunc(MockSheet s, GameObject t, out Action a);
 
-		public GetEffectFunc getEffect = MockEffect.BaseGetEffectFor;
+		public GetEffectFunc getApplyEffects = MockEffect.BaseGetEffectFor;
 
-		private static bool BaseGetEffectFor(GameObject _, out Action<MockSheet> h)
+		private static bool BaseGetEffectFor(MockSheet _, GameObject __, out Action a)
 		{
-			h = _ => {};
+			a = () => {};
 			return true;
 		}
 
-		public bool GetHandle(GameObject target, out Action<MockSheet> handle) =>
-			this.getEffect(target, out handle);
+		public bool GetApplyEffects(MockSheet source, GameObject target, out Action applyEffects) =>
+			this.getApplyEffects(source, target, out applyEffects);
 	}
 
 	private class MockSheet : ISheet
@@ -82,8 +82,8 @@ public class BaseSkillMBTests : TestCollection
 		}
 
 		skill.cast.apply = applyCast;
-		skill.effectCollection.getEffect = (GameObject t, out Action<MockSheet> effect) => {
-			effect = a => {};
+		skill.effectCollection.getApplyEffects = (MockSheet s, GameObject t, out Action applyEffects) => {
+			applyEffects = () => {};
 			return false;
 		};
 
@@ -97,13 +97,13 @@ public class BaseSkillMBTests : TestCollection
 	[UnityTest]
 	public IEnumerator ApplyEffect()
 	{
-		var got = (default(GameObject), default(MockSheet));
+		var got = (default(MockSheet), default(GameObject));
 		var target = new GameObject("target");
 		var skill = new GameObject("item").AddComponent<MockSkillMB>();
 		skill.sheet = new MockSheet();
 
-		skill.effectCollection.getEffect = (GameObject t, out Action<MockSheet> handle) => {
-			handle = s => got = (t, s);
+		skill.effectCollection.getApplyEffects = (MockSheet s, GameObject t, out Action applyEffects) => {
+			applyEffects = () => got = (s, t);
 			return true;
 		};
 
@@ -111,19 +111,19 @@ public class BaseSkillMBTests : TestCollection
 
 		skill.Begin(target.gameObject);
 
-		Assert.AreEqual((target.gameObject, skill.sheet), got);
+		Assert.AreEqual((skill.sheet, target.gameObject), got);
 	}
 
 	[UnityTest]
 	public IEnumerator DontApplyEffectWhenGetEffectFalse()
 	{
-		var got = (default(GameObject), default(MockSheet));
+		var got = (default(MockSheet), default(GameObject));
 		var target = new GameObject("target");
 		var skill = new GameObject("item").AddComponent<MockSkillMB>();
 		skill.sheet = new MockSheet();
 
-		skill.effectCollection.getEffect = (GameObject t, out Action<MockSheet> effect) => {
-			effect = s => got = (t, s);
+		skill.effectCollection.getApplyEffects = (MockSheet s, GameObject t, out Action applyEffects) => {
+			applyEffects = () => got = (s, t);
 			return false;
 		};
 
@@ -131,27 +131,27 @@ public class BaseSkillMBTests : TestCollection
 
 		skill.Begin(target.gameObject);
 
-		Assert.AreEqual((default(GameObject), default(MockSheet)), got);
+		Assert.AreEqual((default(MockSheet), default(GameObject)), got);
 	}
 
 	[UnityTest]
 	public IEnumerator ApplyEffectAfterCast()
 	{
-		var got = new List<(GameObject, MockSheet)>();
+		var got = new List<(MockSheet, GameObject)>();
 		var target = new GameObject("target");
 		var skill = new GameObject("item").AddComponent<MockSkillMB>();
 		skill.sheet = new MockSheet();
 
 		IEnumerator<WaitForFixedUpdate> applyCast(GameObject t) {
-			got.Add((t, default));
+			got.Add((default, t));
 			yield return new WaitForFixedUpdate();
-			got.Add((t, default));
+			got.Add((default, t));
 			yield return new WaitForFixedUpdate();
 		}
 
 		skill.cast.apply = applyCast;
-		skill.effectCollection.getEffect = (GameObject t, out Action<MockSheet> effect) => {
-			effect = s => got.Add((t, s));
+		skill.effectCollection.getApplyEffects = (MockSheet s, GameObject t, out Action applyEffects) => {
+			applyEffects = () => got.Add((s, t));
 			return true;
 		};
 
@@ -163,10 +163,10 @@ public class BaseSkillMBTests : TestCollection
 		yield return new WaitForFixedUpdate();
 
 		CollectionAssert.AreEqual(
-			new (GameObject, MockSheet)[] {
-				(target.gameObject, default),
-				(target.gameObject, default),
-				(target.gameObject, skill.sheet),
+			new (MockSheet, GameObject)[] {
+				(default, target.gameObject),
+				(default, target.gameObject),
+				(skill.sheet, target.gameObject),
 			},
 			got
 		);

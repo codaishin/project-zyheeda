@@ -31,12 +31,12 @@ public abstract class BaseSkillMB<TEffectCollection, TCast, TSheet> : MonoBehavi
 		}
 	}
 
-	private IEnumerator<WaitForFixedUpdate> Apply(GameObject target, Action<TSheet> handle)
+	private IEnumerator<WaitForFixedUpdate> Apply(GameObject target, Action applyEffects)
 	{
 		foreach (WaitForFixedUpdate yield in this.Cast(target)) {
 			yield return yield;
 		}
-		handle(this.sheet);
+		applyEffects();
 		foreach (WaitForFixedUpdate yield in this.AfterCast()) {
 			yield return yield;
 		}
@@ -44,9 +44,9 @@ public abstract class BaseSkillMB<TEffectCollection, TCast, TSheet> : MonoBehavi
 
 	public void Begin(GameObject target)
 	{
-		if (this.effectCollection.GetHandle(target, out Action<TSheet> effect) && this.cooldown <= 0) {
+		if (this.effectCollection.GetApplyEffects(this.sheet, target, out Action applyEffects) && this.cooldown <= 0) {
 			this.cooldown = this.applyPerSecond > 0 ? 1f / this.applyPerSecond : 0;
-			this.StartCoroutine(this.Apply(target, effect));
+			this.StartCoroutine(this.Apply(target, applyEffects));
 		}
 	}
 
