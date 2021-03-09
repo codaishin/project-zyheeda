@@ -1,9 +1,11 @@
 public class EffectData : IEffectCreator<CharacterSheetMB>
 {
 	public EffectTag effectTag;
+	public bool stackDuration;
 	public BaseEffectBehaviourSO effectBehaviour;
 
 	public EffectTag EffectTag => this.effectTag;
+	public bool StackDuration => this.stackDuration;
 
 	public Effect Create(CharacterSheetMB source, CharacterSheetMB target)
 	{

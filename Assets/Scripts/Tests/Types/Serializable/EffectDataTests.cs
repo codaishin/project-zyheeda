@@ -77,4 +77,13 @@ public class EffectDataTests : TestCollection
 
 		Assert.AreEqual(EffectTag.Heat, data.EffectTag);
 	}
+
+	[Test]
+	public void StackDurationProperty()
+	{
+		var data = new EffectData();
+		data.stackDuration = true;
+
+		Assert.True(data.StackDuration);
+	}
 }
