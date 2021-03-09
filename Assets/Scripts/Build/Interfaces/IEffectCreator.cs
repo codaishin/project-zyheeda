@@ -2,8 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IEffectCreator
+public interface IEffectCreator<TSheet>
+	where TSheet : ISheet
 {
 	EffectTag EffectTag { get; }
-	Effect Create(CharacterSheetMB source, CharacterSheetMB target);
+	Effect Create(TSheet source, TSheet target);
 }

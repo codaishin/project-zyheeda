@@ -1,4 +1,4 @@
-public class EffectData : IEffectCreator
+public class EffectData : IEffectCreator<CharacterSheetMB>
 {
 	public EffectTag effectTag;
 	public BaseEffectBehaviourSO effectBehaviour;
