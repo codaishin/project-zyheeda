@@ -1,24 +1,21 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
-using UnityEngine.TestTools;
 
 public class EffectDataTests : TestCollection
 {
 	private class MockEffectBehaviourSO : BaseEffectBehaviourSO
 	{
-		public Action<CharacterSheetMB, CharacterSheetMB> onApply = (s, t) => { };
-		public Action<CharacterSheetMB, CharacterSheetMB, float> onMaintain = (s, t, d) => { };
-		public Action<CharacterSheetMB, CharacterSheetMB> onRevert = (s, t) => { };
+		public Action<CharacterSheetMB, CharacterSheetMB> apply = (s, t) => { };
+		public Action<CharacterSheetMB, CharacterSheetMB, float> maintain = (s, t, d) => { };
+		public Action<CharacterSheetMB, CharacterSheetMB> revert = (s, t) => { };
 
 		public override void Apply(CharacterSheetMB source, CharacterSheetMB target) =>
-			this.onApply(source, target);
+			this.apply(source, target);
 		public override void Maintain(CharacterSheetMB source, CharacterSheetMB target, float intervalDelta) =>
-			this.onMaintain(source, target, intervalDelta);
+			this.maintain(source, target, intervalDelta);
 		public override void Revert(CharacterSheetMB source, CharacterSheetMB target) =>
-			this.onRevert(source, target);
+			this.revert(source, target);
 	}
 
 	[Test]
@@ -29,7 +26,7 @@ public class EffectDataTests : TestCollection
 		var target = new GameObject("target").AddComponent<CharacterSheetMB>();
 		var behaviour = ScriptableObject.CreateInstance<MockEffectBehaviourSO>();
 		var data = new EffectData { effectBehaviour = behaviour };
-		behaviour.onApply = (s, t) => called = (s, t);
+		behaviour.apply = (s, t) => called = (s, t);
 
 		var effect = data.Create(source, target);
 		effect.Apply();
@@ -45,7 +42,7 @@ public class EffectDataTests : TestCollection
 		var target = new GameObject("target").AddComponent<CharacterSheetMB>();
 		var behaviour = ScriptableObject.CreateInstance<MockEffectBehaviourSO>();
 		var data = new EffectData { effectBehaviour = behaviour };
-		behaviour.onMaintain = (s, t, d) => called = (s, t, d);
+		behaviour.maintain = (s, t, d) => called = (s, t, d);
 
 		var effect = data.Create(source, target);
 		effect.duration = 1f;
@@ -63,7 +60,7 @@ public class EffectDataTests : TestCollection
 		var target = new GameObject("target").AddComponent<CharacterSheetMB>();
 		var behaviour = ScriptableObject.CreateInstance<MockEffectBehaviourSO>();
 		var data = new EffectData { effectBehaviour = behaviour };
-		behaviour.onRevert = (s, t) => called = (s, t);
+		behaviour.revert = (s, t) => called = (s, t);
 
 		var effect = data.Create(source, target);
 		effect.Apply();
