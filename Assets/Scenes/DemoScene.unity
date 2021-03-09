@@ -1441,6 +1441,8 @@ GameObject:
   - component: {fileID: 1320382543}
   - component: {fileID: 1320382542}
   - component: {fileID: 1320382541}
+  - component: {fileID: 1320382546}
+  - component: {fileID: 1320382545}
   - component: {fileID: 1320382540}
   m_Layer: 0
   m_Name: Cube
@@ -1461,11 +1463,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff6b4c13011f29d4bbbc4d7a81a22fd0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attributes:
-    body: 10
-    mind: 10
-    spirit: 10
-  hp: 100
 --- !u!65 &1320382541
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1542,6 +1539,34 @@ Transform:
   m_Father: {fileID: 1154642173}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1320382545
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1320382539}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8d22fe5b5379b448ae8e78fc429e675, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  effectRoutineCreator:
+    intervalDelta: 1
+--- !u!114 &1320382546
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1320382539}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 65f5e777396704644961138457e39c21, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  effectRoutineCreator:
+    intervalDelta: 1
 --- !u!1 &1453732928
 GameObject:
   m_ObjectHideFlags: 0
@@ -1554,6 +1579,8 @@ GameObject:
   - component: {fileID: 1453732932}
   - component: {fileID: 1453732931}
   - component: {fileID: 1453732930}
+  - component: {fileID: 1453732935}
+  - component: {fileID: 1453732934}
   - component: {fileID: 1453732933}
   m_Layer: 0
   m_Name: Shoot
@@ -1652,7 +1679,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc8b6a24e392a584591cc4c1c4b3609f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sheet: {fileID: 1453732933}
+  sheet: {fileID: 0}
   applyPerSecond: 0
   cast:
     magazine:
@@ -1672,11 +1699,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff6b4c13011f29d4bbbc4d7a81a22fd0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attributes:
-    body: 0
-    mind: 0
-    spirit: 0
-  hp: 0
+--- !u!114 &1453732934
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1453732928}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8d22fe5b5379b448ae8e78fc429e675, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  effectRoutineCreator:
+    intervalDelta: 1
+--- !u!114 &1453732935
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1453732928}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 65f5e777396704644961138457e39c21, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  effectRoutineCreator:
+    intervalDelta: 1
 --- !u!1 &1457652737
 GameObject:
   m_ObjectHideFlags: 0

@@ -35,14 +35,7 @@ public class BaseSkillMBTests : TestCollection
 			this.getApplyEffects(source, target, out applyEffects);
 	}
 
-	private class MockSheet : ISheet
-	{
-		public Attributes attributes;
-
-		public Attributes Attributes => this.attributes;
-
-		public int Hp { get; set; }
-	}
+	private class MockSheet { }
 
 	private class MockSkillMB : BaseSkillMB<MockEffect, MockCast, MockSheet> {}
 

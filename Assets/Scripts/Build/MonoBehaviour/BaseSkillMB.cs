@@ -5,7 +5,6 @@ using UnityEngine;
 public abstract class BaseSkillMB<TEffectCollection, TCast, TSheet> : MonoBehaviour
 	where TEffectCollection : IEffectCollection<TSheet>, new()
 	where TCast : ICast, new()
-	where TSheet : ISheet
 {
 	private float cooldown;
 

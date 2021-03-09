@@ -137,4 +137,11 @@ public class EffectRoutineCreatorTests : TestCollection
 
 		CollectionAssert.AreEqual(new bool[] { false, true }, calledTrack);
 	}
+
+	[Test]
+	public void IntervalDeltaDefaultToOne()
+	{
+		var routine = new EffectRoutineCreator();
+		Assert.AreEqual(1f, routine.intervalDelta);
+	}
 }

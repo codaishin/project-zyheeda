@@ -1,15 +1,14 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class CharacterSheetMB : MonoBehaviour, ISheet
+[RequireComponent(typeof(IntensityManagerMB), typeof(DurationManagerMB))]
+public class CharacterSheetMB : MonoBehaviour, IConditionTarget<IntensityManagerMB, DurationManagerMB>
 {
-	public Attributes attributes;
-	public int hp;
+	public IntensityManagerMB StackIntensity { get; private set; }
+	public DurationManagerMB StackDuration { get; private set; }
 
-	public Attributes Attributes => this.attributes;
-	public int Hp {
-		get => this.hp;
-		set => this.hp = value;
+	private void Awake()
+	{
+		this.StackIntensity = this.GetComponent<IntensityManagerMB>();
+		this.StackDuration = this.GetComponent<DurationManagerMB>();
 	}
 }
