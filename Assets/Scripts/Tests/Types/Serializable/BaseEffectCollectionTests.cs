@@ -16,7 +16,7 @@ public class BaseEffectCollectionTests : TestCollection
 	{
 		public Func<MockSheetMB, MockSheetMB, Effect> create = (s, t) => new Effect();
 
-		public EffectTag EffectTag { get; set; }
+		public EffectTag Tag { get; set; }
 		public bool StackDuration { get; set; }
 
 		public Effect Create(MockSheetMB source, MockSheetMB target) =>
@@ -103,7 +103,7 @@ public class BaseEffectCollectionTests : TestCollection
 			new MockEffectCreator {
 				create = (_, __) => effect,
 				StackDuration = false,
-				EffectTag = EffectTag.Heat
+				Tag = EffectTag.Heat
 			},
 		};
 		coll.GetApplyEffects(source, target.gameObject, out var apply);
@@ -126,7 +126,7 @@ public class BaseEffectCollectionTests : TestCollection
 			new MockEffectCreator {
 				create = (_, __) => effect,
 				StackDuration = true,
-				EffectTag = EffectTag.Heat
+				Tag = EffectTag.Heat
 			},
 		};
 		coll.GetApplyEffects(source, target.gameObject, out var apply);

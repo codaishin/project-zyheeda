@@ -25,7 +25,7 @@ public class EffectDataTests : TestCollection
 		var source = new GameObject("source").AddComponent<CharacterSheetMB>();
 		var target = new GameObject("target").AddComponent<CharacterSheetMB>();
 		var behaviour = ScriptableObject.CreateInstance<MockEffectBehaviourSO>();
-		var data = new EffectData { effectBehaviour = behaviour };
+		var data = new EffectData { behaviour = behaviour };
 		behaviour.apply = (s, t) => called = (s, t);
 
 		var effect = data.Create(source, target);
@@ -41,7 +41,7 @@ public class EffectDataTests : TestCollection
 		var source = new GameObject("source").AddComponent<CharacterSheetMB>();
 		var target = new GameObject("target").AddComponent<CharacterSheetMB>();
 		var behaviour = ScriptableObject.CreateInstance<MockEffectBehaviourSO>();
-		var data = new EffectData { effectBehaviour = behaviour };
+		var data = new EffectData { behaviour = behaviour };
 		behaviour.maintain = (s, t, d) => called = (s, t, d);
 
 		var effect = data.Create(source, target);
@@ -59,7 +59,7 @@ public class EffectDataTests : TestCollection
 		var source = new GameObject("source").AddComponent<CharacterSheetMB>();
 		var target = new GameObject("target").AddComponent<CharacterSheetMB>();
 		var behaviour = ScriptableObject.CreateInstance<MockEffectBehaviourSO>();
-		var data = new EffectData { effectBehaviour = behaviour };
+		var data = new EffectData { behaviour = behaviour };
 		behaviour.revert = (s, t) => called = (s, t);
 
 		var effect = data.Create(source, target);
@@ -73,16 +73,16 @@ public class EffectDataTests : TestCollection
 	public void EffectTagProperty()
 	{
 		var data = new EffectData();
-		data.effectTag = EffectTag.Heat;
+		data.tag = EffectTag.Heat;
 
-		Assert.AreEqual(EffectTag.Heat, data.EffectTag);
+		Assert.AreEqual(EffectTag.Heat, data.Tag);
 	}
 
 	[Test]
 	public void StackDurationProperty()
 	{
 		var data = new EffectData();
-		data.stackDuration = true;
+		data.stack = ConditionStacking.Duration;
 
 		Assert.True(data.StackDuration);
 	}

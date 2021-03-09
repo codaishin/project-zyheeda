@@ -1,6 +1,6 @@
 public interface IEffectCreator<TSheet>
 {
-	EffectTag EffectTag { get; }
+	EffectTag Tag { get; }
 
 	bool StackDuration { get; }
 	Effect Create(TSheet source, TSheet target);
