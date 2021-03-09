@@ -13,9 +13,9 @@ public class EffectData : IEffectCreator<CharacterSheetMB>
 	public Effect Create(CharacterSheetMB source, CharacterSheetMB target)
 	{
 		Effect effect = new Effect();
-		effect.OnApply += () => behaviour.Apply(source, target);
-		effect.OnMaintain += d => behaviour.Maintain(source, target, d);
-		effect.OnRevert += () => behaviour.Revert(source, target);
+		effect.OnApply += () => this.behaviour.Apply(source, target);
+		effect.OnMaintain += d => this.behaviour.Maintain(source, target, d);
+		effect.OnRevert += () => this.behaviour.Revert(source, target);
 		return effect;
 	}
 }
