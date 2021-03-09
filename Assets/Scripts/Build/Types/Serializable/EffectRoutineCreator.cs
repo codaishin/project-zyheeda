@@ -6,7 +6,7 @@ using UnityEngine;
 [Serializable]
 public class EffectRoutineCreator : IEffectRoutineCreator
 {
-	public float intervalDelta;
+	public float intervalDelta = 1f;
 
 	private IEnumerator PureRoutine(Effect effect)
 	{
