@@ -2,12 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class BaseSkillMB : MonoBehaviour
-{
-	public abstract void Begin(GameObject target);
-}
-
-public abstract class BaseSkillMB<TEffectCollection, TCast, TSheet> : BaseSkillMB
+public abstract class BaseSkillMB<TEffectCollection, TCast, TSheet> : MonoBehaviour
 	where TEffectCollection : IEffectCollection<TSheet>, new()
 	where TCast : ICast, new()
 	where TSheet : ISheet
@@ -47,7 +42,7 @@ public abstract class BaseSkillMB<TEffectCollection, TCast, TSheet> : BaseSkillM
 		}
 	}
 
-	public override void Begin(GameObject target)
+	public void Begin(GameObject target)
 	{
 		if (this.effectCollection.GetHandle(target, out Action<TSheet> effect) && this.cooldown <= 0) {
 			this.cooldown = this.applyPerSecond > 0 ? 1f / this.applyPerSecond : 0;
