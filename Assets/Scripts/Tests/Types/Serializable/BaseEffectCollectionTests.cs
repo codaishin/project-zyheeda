@@ -1,17 +1,10 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
-using UnityEngine.TestTools;
 
 public class BaseEffectCollectionTests : TestCollection
 {
-	private class MockSheetMB : MonoBehaviour, ISheet
-	{
-		public Attributes Attributes { get; set; }
-		public int Hp { get; set; }
-	}
+	private class MockSheetMB : MonoBehaviour { }
 
 	private class MockEffectCreator : IEffectCreator<MockSheetMB>
 	{
