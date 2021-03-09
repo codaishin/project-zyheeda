@@ -1,16 +1,21 @@
+using System;
+
+[Serializable]
 public class EffectData : IEffectCreator<CharacterSheetMB>
 {
-	public EffectTag effectTag;
-	public BaseEffectBehaviourSO effectBehaviour;
+	public EffectTag tag;
+	public ConditionStacking stack;
+	public BaseEffectBehaviourSO behaviour;
 
-	public EffectTag EffectTag => this.effectTag;
+	public EffectTag Tag => this.tag;
+	public bool StackDuration => this.stack == ConditionStacking.Duration;
 
 	public Effect Create(CharacterSheetMB source, CharacterSheetMB target)
 	{
 		Effect effect = new Effect();
-		effect.OnApply += () => effectBehaviour.Apply(source, target);
-		effect.OnMaintain += d => effectBehaviour.Maintain(source, target, d);
-		effect.OnRevert += () => effectBehaviour.Revert(source, target);
+		effect.OnApply += () => this.behaviour.Apply(source, target);
+		effect.OnMaintain += d => this.behaviour.Maintain(source, target, d);
+		effect.OnRevert += () => this.behaviour.Revert(source, target);
 		return effect;
 	}
 }

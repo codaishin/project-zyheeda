@@ -1,14 +1,23 @@
 using UnityEngine;
 
 [RequireComponent(typeof(IntensityManagerMB), typeof(DurationManagerMB))]
-public class CharacterSheetMB : MonoBehaviour, IConditionTarget<IntensityManagerMB, DurationManagerMB>
+public class CharacterSheetMB : MonoBehaviour, IConditionTarget
 {
-	public IntensityManagerMB StackIntensity { get; private set; }
-	public DurationManagerMB StackDuration { get; private set; }
+	private IntensityManagerMB stackIntensity;
+	private DurationManagerMB stackDuration;
+
+	public void Add(Effect effect, EffectTag tag, bool stackDuration)
+	{
+		if (stackDuration) {
+			this.stackDuration.Add(effect, tag);
+		} else {
+			this.stackIntensity.Add(effect, tag);
+		}
+	}
 
 	private void Awake()
 	{
-		this.StackIntensity = this.GetComponent<IntensityManagerMB>();
-		this.StackDuration = this.GetComponent<DurationManagerMB>();
+		this.stackIntensity = this.GetComponent<IntensityManagerMB>();
+		this.stackDuration = this.GetComponent<DurationManagerMB>();
 	}
 }
