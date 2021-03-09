@@ -1,10 +1,7 @@
-using System;
-using System.Linq;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class BaseEffectManagerMB<TCreator, TStacking> : MonoBehaviour
+public abstract class BaseConditionManagerMB<TCreator, TStacking> : MonoBehaviour, IConditionManager
 	where TCreator: IEffectRoutineCreator, new()
 	where TStacking : IEffectRoutineStacking, new()
 {

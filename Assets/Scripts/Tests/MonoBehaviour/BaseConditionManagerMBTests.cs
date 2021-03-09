@@ -1,12 +1,11 @@
 using System;
-using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-public class BaseEffectManagerMBTests : TestCollection
+public class BaseConditionManagerMBTests : TestCollection
 {
 	private class MockEffectRoutineCreator : IEffectRoutineCreator
 	{
@@ -29,14 +28,14 @@ public class BaseEffectManagerMBTests : TestCollection
 			this.add(effect, stackRoutines, onAdd);
 	}
 
-	private class MockEffectManagerMB : BaseEffectManagerMB<MockEffectRoutineCreator, MockStacking> {}
+	private class MockConditionManagerMB : BaseConditionManagerMB<MockEffectRoutineCreator, MockStacking> {}
 
 	[UnityTest]
 	public IEnumerator StackFromCreatedRoutine()
 	{
 		IEnumerator get() { yield return new WaitForFixedUpdate(); }
 		var called = default(Finalizable);
-		var manager = new GameObject("obj").AddComponent<MockEffectManagerMB>();
+		var manager = new GameObject("obj").AddComponent<MockConditionManagerMB>();
 		var effect = new Effect();
 		var routine = new Finalizable { wrapped = get() };
 
@@ -54,7 +53,7 @@ public class BaseEffectManagerMBTests : TestCollection
 	public IEnumerator RoutineListNotNull()
 	{
 		var called = default(List<Finalizable>);
-		var manager = new GameObject("obj").AddComponent<MockEffectManagerMB>();
+		var manager = new GameObject("obj").AddComponent<MockConditionManagerMB>();
 		var effect = new Effect();
 
 		yield return new WaitForEndOfFrame();
@@ -71,7 +70,7 @@ public class BaseEffectManagerMBTests : TestCollection
 	{
 		var calledA = default(List<Finalizable>);
 		var calledB = default(List<Finalizable>);
-		var manager = new GameObject("obj").AddComponent<MockEffectManagerMB>();
+		var manager = new GameObject("obj").AddComponent<MockConditionManagerMB>();
 		var effect = new Effect();
 
 		yield return new WaitForEndOfFrame();
@@ -92,7 +91,7 @@ public class BaseEffectManagerMBTests : TestCollection
 	{
 		var calledA = default(List<Finalizable>);
 		var calledB = default(List<Finalizable>);
-		var manager = new GameObject("obj").AddComponent<MockEffectManagerMB>();
+		var manager = new GameObject("obj").AddComponent<MockConditionManagerMB>();
 		var effect = new Effect();
 
 		yield return new WaitForEndOfFrame();
@@ -112,7 +111,7 @@ public class BaseEffectManagerMBTests : TestCollection
 	public IEnumerator RunNewRoutine()
 	{
 		var called = 0;
-		var manager = new GameObject("obj").AddComponent<MockEffectManagerMB>();
+		var manager = new GameObject("obj").AddComponent<MockConditionManagerMB>();
 		var effect = new Effect();
 		IEnumerator get() {
 			yield return new WaitForFixedUpdate();
@@ -138,7 +137,7 @@ public class BaseEffectManagerMBTests : TestCollection
 	public IEnumerator RunOnlyNewRoutine()
 	{
 		var called = 0;
-		var manager = new GameObject("obj").AddComponent<MockEffectManagerMB>();
+		var manager = new GameObject("obj").AddComponent<MockConditionManagerMB>();
 		var effect = new Effect();
 		IEnumerator get() {
 			while (true) {
@@ -168,7 +167,7 @@ public class BaseEffectManagerMBTests : TestCollection
 	public IEnumerator RemoveFinishedCoroutine()
 	{
 		var routines = default(List<Finalizable>);
-		var manager = new GameObject("obj").AddComponent<MockEffectManagerMB>();
+		var manager = new GameObject("obj").AddComponent<MockConditionManagerMB>();
 		var effect = new Effect();
 		IEnumerator get() {
 			yield return new WaitForFixedUpdate();
@@ -195,7 +194,7 @@ public class BaseEffectManagerMBTests : TestCollection
 	public IEnumerator CancelCoroutines()
 	{
 		var called = 0;
-		var manager = new GameObject("obj").AddComponent<MockEffectManagerMB>();
+		var manager = new GameObject("obj").AddComponent<MockConditionManagerMB>();
 		IEnumerator get() {
 			while (true) {
 				yield return new WaitForFixedUpdate();
@@ -226,7 +225,7 @@ public class BaseEffectManagerMBTests : TestCollection
 	public IEnumerator CancelCoroutinesTagSpecific()
 	{
 		var called = 0;
-		var manager = new GameObject("obj").AddComponent<MockEffectManagerMB>();
+		var manager = new GameObject("obj").AddComponent<MockConditionManagerMB>();
 		IEnumerator get() {
 			while (true) {
 				yield return new WaitForFixedUpdate();
@@ -258,7 +257,7 @@ public class BaseEffectManagerMBTests : TestCollection
 	public IEnumerator CancelRemovesCoroutines()
 	{
 		var routines = default(List<Finalizable>);
-		var manager = new GameObject("obj").AddComponent<MockEffectManagerMB>();
+		var manager = new GameObject("obj").AddComponent<MockConditionManagerMB>();
 		IEnumerator get() {
 			while (true) {
 				yield return new WaitForFixedUpdate();
@@ -284,7 +283,7 @@ public class BaseEffectManagerMBTests : TestCollection
 	[UnityTest]
 	public IEnumerator GetEffects()
 	{
-		var manager = new GameObject("obj").AddComponent<MockEffectManagerMB>();
+		var manager = new GameObject("obj").AddComponent<MockConditionManagerMB>();
 		var effectA = new Effect();
 		var effectB = new Effect();
 		var effectC = new Effect();
@@ -304,7 +303,7 @@ public class BaseEffectManagerMBTests : TestCollection
 	[UnityTest]
 	public IEnumerator RemoveEffectAfterEffect()
 	{
-		var manager = new GameObject("obj").AddComponent<MockEffectManagerMB>();
+		var manager = new GameObject("obj").AddComponent<MockConditionManagerMB>();
 		var effect = new Effect();
 		IEnumerator get() {
 			yield return new WaitForFixedUpdate();
@@ -331,7 +330,7 @@ public class BaseEffectManagerMBTests : TestCollection
 	public IEnumerator CancelRevertsEffects()
 	{
 		var called = false;
-		var manager = new GameObject("obj").AddComponent<MockEffectManagerMB>();
+		var manager = new GameObject("obj").AddComponent<MockConditionManagerMB>();
 		var effect = new Effect();
 		effect.OnRevert += () => called = true;
 		effect.Apply();
@@ -348,7 +347,7 @@ public class BaseEffectManagerMBTests : TestCollection
 	[UnityTest]
 	public IEnumerator CancelRemovesEffects()
 	{
-		var manager = new GameObject("obj").AddComponent<MockEffectManagerMB>();
+		var manager = new GameObject("obj").AddComponent<MockConditionManagerMB>();
 		var effect = new Effect();
 
 		yield return new WaitForEndOfFrame();
@@ -364,7 +363,7 @@ public class BaseEffectManagerMBTests : TestCollection
 	public IEnumerator RunProperRoutine()
 	{
 		var called = 0;
-		var manager = new GameObject("obj").AddComponent<MockEffectManagerMB>();
+		var manager = new GameObject("obj").AddComponent<MockConditionManagerMB>();
 		var effect = new Effect();
 		IEnumerator get(int count) {
 			for (int i = 0; i < count; ++i) {
@@ -390,7 +389,7 @@ public class BaseEffectManagerMBTests : TestCollection
 	public IEnumerator RemoveProperRoutine()
 	{
 		var routines = default(List<Finalizable>);
-		var manager = new GameObject("obj").AddComponent<MockEffectManagerMB>();
+		var manager = new GameObject("obj").AddComponent<MockConditionManagerMB>();
 		var effect = new Effect();
 		IEnumerator get(int count) {
 			for (int i = 0; i < count; ++i) {
