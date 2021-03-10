@@ -13,9 +13,11 @@ public class EffectDataTests : TestCollection
 		public override
 		void Apply(CharacterSheetMB source, CharacterSheetMB target, int intensity) =>
 			this.apply(source, target, intensity);
+
 		public override
 		void Maintain(CharacterSheetMB source, CharacterSheetMB target, int intensity, float intervalDelta) =>
 			this.maintain(source, target, intensity, intervalDelta);
+
 		public override
 		void Revert(CharacterSheetMB source, CharacterSheetMB target, int intensity) =>
 			this.revert(source, target, intensity);
