@@ -102,4 +102,26 @@ public class EffectDataTests : TestCollection
 
 		Assert.AreEqual(42f, effect.duration);
 	}
+
+	[Test]
+	public void UseIntensity()
+	{
+		var called = (a: 0, m: 0, r: 0);
+		var source = new GameObject("source").AddComponent<CharacterSheetMB>();
+		var target = new GameObject("target").AddComponent<CharacterSheetMB>();
+		var behaviour = ScriptableObject.CreateInstance<MockEffectBehaviourSO>();
+		var data = new EffectData { behaviour = behaviour, duration = 1, intensity = 7 };
+
+		behaviour.apply = (_, __, i) => called.a = i;
+		behaviour.maintain = (_, __, i, ___) => called.m = i;
+		behaviour.revert = (_, __, i) => called.r = i;
+
+		var effect = data.Create(source, target);
+
+		effect.Apply();
+		effect.Maintain(5f);
+		effect.Revert();
+
+		Assert.AreEqual((7, 7, 7), called);
+	}
 }
