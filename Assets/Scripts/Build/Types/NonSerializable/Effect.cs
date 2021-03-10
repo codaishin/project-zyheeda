@@ -1,7 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
 public class Effect
 {
@@ -9,6 +6,8 @@ public class Effect
 
 	private State state;
 	public float duration;
+	public EffectTag tag;
+	public ConditionStacking stacking;
 
 	public event Action OnApply;
 	public event Action<float> OnMaintain;

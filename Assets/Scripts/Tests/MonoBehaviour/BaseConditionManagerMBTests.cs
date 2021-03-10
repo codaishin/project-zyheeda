@@ -44,7 +44,7 @@ public class BaseConditionManagerMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		manager.Add(effect, EffectTag.Default);
+		manager.Add(effect);
 
 		Assert.AreSame(routine, called);
 	}
@@ -60,7 +60,7 @@ public class BaseConditionManagerMBTests : TestCollection
 
 		manager.effectRoutineStacking.add = (_, l, __) => called = l;
 
-		manager.Add(effect, EffectTag.Default);
+		manager.Add(effect);
 
 		Assert.NotNull(called);
 	}
@@ -77,11 +77,11 @@ public class BaseConditionManagerMBTests : TestCollection
 
 		manager.effectRoutineStacking.add = (_, l, __) => calledA = l;
 
-		manager.Add(effect, EffectTag.Default);
+		manager.Add(effect);
 
 		manager.effectRoutineStacking.add = (_, l, __) => calledB = l;
 
-		manager.Add(effect, EffectTag.Default);
+		manager.Add(effect);
 
 		Assert.AreSame(calledA, calledB);
 	}
@@ -98,11 +98,12 @@ public class BaseConditionManagerMBTests : TestCollection
 
 		manager.effectRoutineStacking.add = (_, l, __) => calledA = l;
 
-		manager.Add(effect, EffectTag.Default);
+		manager.Add(effect);
 
 		manager.effectRoutineStacking.add = (_, l, __) => calledB = l;
 
-		manager.Add(effect, EffectTag.Heat);
+		effect.tag = EffectTag.Heat;
+		manager.Add(effect);
 
 		Assert.AreNotSame(calledA, calledB);
 	}
@@ -125,7 +126,7 @@ public class BaseConditionManagerMBTests : TestCollection
 		manager.effectRoutineCreator.create = _ => new Finalizable { wrapped = get() };
 		manager.effectRoutineStacking.add = (r, __, run) => run(r);
 
-		manager.Add(effect, EffectTag.Default);
+		manager.Add(effect);
 
 		yield return new WaitForFixedUpdate();
 		yield return new WaitForFixedUpdate();
@@ -151,11 +152,11 @@ public class BaseConditionManagerMBTests : TestCollection
 		manager.effectRoutineCreator.create = _ => new Finalizable { wrapped = get() };
 		manager.effectRoutineStacking.add = (r, __, run) => run(r);
 
-		manager.Add(effect, EffectTag.Default);
+		manager.Add(effect);
 
 		manager.effectRoutineStacking.add = (_, __, ___) => { };
 
-		manager.Add(effect, EffectTag.Default);
+		manager.Add(effect);
 
 		yield return new WaitForFixedUpdate();
 		yield return new WaitForFixedUpdate();
@@ -182,7 +183,7 @@ public class BaseConditionManagerMBTests : TestCollection
 			run(r);
 		};
 
-		manager.Add(effect, EffectTag.Default);
+		manager.Add(effect);
 
 		yield return new WaitForFixedUpdate();
 		yield return new WaitForFixedUpdate();
@@ -210,7 +211,7 @@ public class BaseConditionManagerMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		manager.Add(new Effect(), EffectTag.Default);
+		manager.Add(new Effect());
 
 		yield return new WaitForFixedUpdate();
 
@@ -241,8 +242,8 @@ public class BaseConditionManagerMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		manager.Add(new Effect(), EffectTag.Default);
-		manager.Add(new Effect(), EffectTag.Heat);
+		manager.Add(new Effect{ tag = EffectTag.Default });
+		manager.Add(new Effect{ tag = EffectTag.Heat });
 
 		yield return new WaitForFixedUpdate();
 
@@ -273,7 +274,7 @@ public class BaseConditionManagerMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		manager.Add(new Effect(), EffectTag.Default);
+		manager.Add(new Effect());
 
 		manager.Cancel(EffectTag.Default);
 
@@ -286,13 +287,13 @@ public class BaseConditionManagerMBTests : TestCollection
 		var manager = new GameObject("obj").AddComponent<MockConditionManagerMB>();
 		var effectA = new Effect();
 		var effectB = new Effect();
-		var effectC = new Effect();
+		var effectC = new Effect{ tag = EffectTag.Heat };
 
 		yield return new WaitForFixedUpdate();
 
-		manager.Add(effectA, EffectTag.Default);
-		manager.Add(effectB, EffectTag.Default);
-		manager.Add(effectC, EffectTag.Heat);
+		manager.Add(effectA);
+		manager.Add(effectB);
+		manager.Add(effectC);
 
 		CollectionAssert.AreEqual(
 			new Effect[] { effectA, effectB },
@@ -317,7 +318,7 @@ public class BaseConditionManagerMBTests : TestCollection
 			run(r);
 		};
 
-		manager.Add(effect, EffectTag.Default);
+		manager.Add(effect);
 
 		yield return new WaitForFixedUpdate();
 		yield return new WaitForFixedUpdate();
@@ -337,7 +338,7 @@ public class BaseConditionManagerMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		manager.Add(effect, EffectTag.Default);
+		manager.Add(effect);
 
 		manager.Cancel(EffectTag.Default);
 
@@ -352,7 +353,7 @@ public class BaseConditionManagerMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		manager.Add(effect, EffectTag.Default);
+		manager.Add(effect);
 
 		manager.Cancel(EffectTag.Default);
 
@@ -377,7 +378,7 @@ public class BaseConditionManagerMBTests : TestCollection
 		manager.effectRoutineCreator.create = _ => new Finalizable { wrapped = get(0) };
 		manager.effectRoutineStacking.add = (_, __, run) => run(new Finalizable{ wrapped = get(2) });
 
-		manager.Add(effect, EffectTag.Default);
+		manager.Add(effect);
 
 		yield return new WaitForFixedUpdate();
 		yield return new WaitForFixedUpdate();
@@ -407,7 +408,7 @@ public class BaseConditionManagerMBTests : TestCollection
 			routines = l;
 		};
 
-		manager.Add(effect, EffectTag.Default);
+		manager.Add(effect);
 
 		yield return new WaitForFixedUpdate();
 		yield return new WaitForFixedUpdate();

@@ -1679,7 +1679,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc8b6a24e392a584591cc4c1c4b3609f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sheet: {fileID: 0}
+  sheet: {fileID: 1453732933}
   applyPerSecond: 0
   cast:
     magazine:

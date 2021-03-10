@@ -4,20 +4,16 @@ using UnityEngine;
 
 public class BaseEffectCollectionTests : TestCollection
 {
-	private class MockSheetMB : MonoBehaviour, IConditionTarget
+	private class MockSheetMB : MonoBehaviour, IConditionManager
 	{
-		public Action<Effect, EffectTag, bool> add = (e, t, d) => { };
+		public Action<Effect> add = (_) => { };
 
-		public void Add(Effect effect, EffectTag tag, bool stackDuration) =>
-			this.add(effect, tag, stackDuration);
+		public void Add(Effect effect) => this.add(effect);
 	}
 
 	private class MockEffectCreator : IEffectCreator<MockSheetMB>
 	{
 		public Func<MockSheetMB, MockSheetMB, Effect> create = (s, t) => new Effect();
-
-		public EffectTag Tag { get; set; }
-		public bool StackDuration { get; set; }
 
 		public Effect Create(MockSheetMB source, MockSheetMB target) =>
 			this.create(source, target);
@@ -87,51 +83,5 @@ public class BaseEffectCollectionTests : TestCollection
 		apply();
 
 		Assert.AreEqual((source, target), called);
-	}
-
-	[Test]
-	public void GetApplyEffectsStackIntensity()
-	{
-		var called = (default(Effect), default(EffectTag), true);
-		var coll = new MockEffectCollection();
-		var source = new GameObject("source").AddComponent<MockSheetMB>();
-		var target = new GameObject("target").AddComponent<MockSheetMB>();
-		var effect = new Effect{ duration = 1f };
-
-		target.add = (e, t, d) => called = (e, t, d);
-		coll.effectData = new MockEffectCreator[] {
-			new MockEffectCreator {
-				create = (_, __) => effect,
-				StackDuration = false,
-				Tag = EffectTag.Heat
-			},
-		};
-		coll.GetApplyEffects(source, target.gameObject, out var apply);
-		apply();
-
-		Assert.AreEqual((effect, EffectTag.Heat, false), called);
-	}
-
-	[Test]
-	public void GetApplyEffectsStackDuration()
-	{
-		var called = (default(Effect), default(EffectTag), false);
-		var coll = new MockEffectCollection();
-		var source = new GameObject("source").AddComponent<MockSheetMB>();
-		var target = new GameObject("target").AddComponent<MockSheetMB>();
-		var effect = new Effect{ duration = 1f };
-
-		target.add = (e, t, d) => called = (e, t, d);
-		coll.effectData = new MockEffectCreator[] {
-			new MockEffectCreator {
-				create = (_, __) => effect,
-				StackDuration = true,
-				Tag = EffectTag.Heat
-			},
-		};
-		coll.GetApplyEffects(source, target.gameObject, out var apply);
-		apply();
-
-		Assert.AreEqual((effect, EffectTag.Heat, true), called);
 	}
 }

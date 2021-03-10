@@ -5,7 +5,7 @@ using UnityEngine;
 
 [Serializable]
 public class BaseEffectCollection<TEffectCreator, TSheet> : IEffectCollection<TSheet>
-	where TSheet : IConditionTarget
+	where TSheet : IConditionManager
 	where TEffectCreator : IEffectCreator<TSheet>
 {
 	public TEffectCreator[] effectData;
@@ -18,7 +18,7 @@ public class BaseEffectCollection<TEffectCreator, TSheet> : IEffectCollection<TS
 				effect.Apply();
 				effect.Revert();
 			} else {
-				target.Add(effect, creator.Tag, creator.StackDuration);
+				target.Add(effect);
 			}
 		}
 	}

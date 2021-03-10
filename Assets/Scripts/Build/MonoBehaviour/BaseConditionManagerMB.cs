@@ -42,9 +42,9 @@ public abstract class BaseConditionManagerMB<TCreator, TStacking> : MonoBehaviou
 		});
 	}
 
-	public void Add(Effect effect, EffectTag tag)
+	public void Add(Effect effect)
 	{
-		EffectStack stack = this.GetOrCreateStack(tag);
+		EffectStack stack = this.GetOrCreateStack(effect.tag);
 		Finalizable effectRoutine = this.effectRoutineCreator.Create(effect);
 
 		this.StoreEffect(effect, effectRoutine, stack);

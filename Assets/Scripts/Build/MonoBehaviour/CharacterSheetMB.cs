@@ -1,18 +1,20 @@
+using System;
 using UnityEngine;
 
 [RequireComponent(typeof(IntensityManagerMB), typeof(DurationManagerMB))]
-public class CharacterSheetMB : MonoBehaviour, IConditionTarget
+public class CharacterSheetMB : MonoBehaviour, IConditionManager
 {
 	private IntensityManagerMB stackIntensity;
 	private DurationManagerMB stackDuration;
 
-	public void Add(Effect effect, EffectTag tag, bool stackDuration)
+	public void Add(Effect condition)
 	{
-		if (stackDuration) {
-			this.stackDuration.Add(effect, tag);
-		} else {
-			this.stackIntensity.Add(effect, tag);
-		}
+		IConditionManager stack = condition.stacking switch {
+			ConditionStacking.Duration => this.stackDuration,
+			ConditionStacking.Intensity => this.stackIntensity,
+			_ => throw new ArgumentException($"Invalid stacking {condition.stacking} for {this.name} (CharacterSheetMB)"),
+		};
+		stack.Add(condition);
 	}
 
 	private void Awake()
