@@ -6,16 +6,21 @@ public class EffectDataTests : TestCollection
 {
 	private class MockEffectBehaviourSO : BaseEffectBehaviourSO
 	{
-		public Action<CharacterSheetMB, CharacterSheetMB> apply = (s, t) => { };
-		public Action<CharacterSheetMB, CharacterSheetMB, float> maintain = (s, t, d) => { };
-		public Action<CharacterSheetMB, CharacterSheetMB> revert = (s, t) => { };
+		public Action<CharacterSheetMB, CharacterSheetMB, int> apply = (s, t, i) => { };
+		public Action<CharacterSheetMB, CharacterSheetMB, int, float> maintain = (s, t, i, d) => { };
+		public Action<CharacterSheetMB, CharacterSheetMB, int> revert = (s, t, i) => { };
 
-		public override void Apply(CharacterSheetMB source, CharacterSheetMB target) =>
-			this.apply(source, target);
-		public override void Maintain(CharacterSheetMB source, CharacterSheetMB target, float intervalDelta) =>
-			this.maintain(source, target, intervalDelta);
-		public override void Revert(CharacterSheetMB source, CharacterSheetMB target) =>
-			this.revert(source, target);
+		public override
+		void Apply(CharacterSheetMB source, CharacterSheetMB target, int intensity) =>
+			this.apply(source, target, intensity);
+
+		public override
+		void Maintain(CharacterSheetMB source, CharacterSheetMB target, int intensity, float intervalDelta) =>
+			this.maintain(source, target, intensity, intervalDelta);
+
+		public override
+		void Revert(CharacterSheetMB source, CharacterSheetMB target, int intensity) =>
+			this.revert(source, target, intensity);
 	}
 
 	[Test]
@@ -26,7 +31,7 @@ public class EffectDataTests : TestCollection
 		var target = new GameObject("target").AddComponent<CharacterSheetMB>();
 		var behaviour = ScriptableObject.CreateInstance<MockEffectBehaviourSO>();
 		var data = new EffectData { behaviour = behaviour };
-		behaviour.apply = (s, t) => called = (s, t);
+		behaviour.apply = (s, t, _) => called = (s, t);
 
 		var effect = data.Create(source, target);
 		effect.Apply();
@@ -42,7 +47,7 @@ public class EffectDataTests : TestCollection
 		var target = new GameObject("target").AddComponent<CharacterSheetMB>();
 		var behaviour = ScriptableObject.CreateInstance<MockEffectBehaviourSO>();
 		var data = new EffectData { behaviour = behaviour };
-		behaviour.maintain = (s, t, d) => called = (s, t, d);
+		behaviour.maintain = (s, t, _, d) => called = (s, t, d);
 
 		var effect = data.Create(source, target);
 		effect.duration = 1f;
@@ -60,7 +65,7 @@ public class EffectDataTests : TestCollection
 		var target = new GameObject("target").AddComponent<CharacterSheetMB>();
 		var behaviour = ScriptableObject.CreateInstance<MockEffectBehaviourSO>();
 		var data = new EffectData { behaviour = behaviour };
-		behaviour.revert = (s, t) => called = (s, t);
+		behaviour.revert = (s, t, _) => called = (s, t);
 
 		var effect = data.Create(source, target);
 		effect.Apply();
@@ -85,5 +90,40 @@ public class EffectDataTests : TestCollection
 		data.stack = ConditionStacking.Duration;
 
 		Assert.True(data.StackDuration);
+	}
+
+	[Test]
+	public void SetDuration()
+	{
+		var source = new GameObject("source").AddComponent<CharacterSheetMB>();
+		var target = new GameObject("target").AddComponent<CharacterSheetMB>();
+		var behaviour = ScriptableObject.CreateInstance<MockEffectBehaviourSO>();
+		var data = new EffectData { behaviour = behaviour, duration = 42f };
+
+		var effect = data.Create(source, target);
+
+		Assert.AreEqual(42f, effect.duration);
+	}
+
+	[Test]
+	public void UseIntensity()
+	{
+		var called = (a: 0, m: 0, r: 0);
+		var source = new GameObject("source").AddComponent<CharacterSheetMB>();
+		var target = new GameObject("target").AddComponent<CharacterSheetMB>();
+		var behaviour = ScriptableObject.CreateInstance<MockEffectBehaviourSO>();
+		var data = new EffectData { behaviour = behaviour, duration = 1, intensity = 7 };
+
+		behaviour.apply = (_, __, i) => called.a = i;
+		behaviour.maintain = (_, __, i, ___) => called.m = i;
+		behaviour.revert = (_, __, i) => called.r = i;
+
+		var effect = data.Create(source, target);
+
+		effect.Apply();
+		effect.Maintain(5f);
+		effect.Revert();
+
+		Assert.AreEqual((7, 7, 7), called);
 	}
 }
