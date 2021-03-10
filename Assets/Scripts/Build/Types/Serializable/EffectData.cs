@@ -5,12 +5,7 @@ public class EffectData : IEffectCreator<CharacterSheetMB>
 {
 	public int intensity;
 	public float duration;
-	public EffectTag tag;
-	public ConditionStacking stack;
 	public BaseEffectBehaviourSO behaviour;
-
-	public EffectTag Tag => this.tag;
-	public bool StackDuration => this.stack == ConditionStacking.Duration;
 
 	public Effect Create(CharacterSheetMB source, CharacterSheetMB target)
 	{

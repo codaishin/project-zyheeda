@@ -75,24 +75,6 @@ public class EffectDataTests : TestCollection
 	}
 
 	[Test]
-	public void EffectTagProperty()
-	{
-		var data = new EffectData();
-		data.tag = EffectTag.Heat;
-
-		Assert.AreEqual(EffectTag.Heat, data.Tag);
-	}
-
-	[Test]
-	public void StackDurationProperty()
-	{
-		var data = new EffectData();
-		data.stack = ConditionStacking.Duration;
-
-		Assert.True(data.StackDuration);
-	}
-
-	[Test]
 	public void SetDuration()
 	{
 		var source = new GameObject("source").AddComponent<CharacterSheetMB>();

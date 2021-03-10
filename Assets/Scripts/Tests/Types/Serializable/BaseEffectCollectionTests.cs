@@ -16,9 +16,6 @@ public class BaseEffectCollectionTests : TestCollection
 	{
 		public Func<MockSheetMB, MockSheetMB, Effect> create = (s, t) => new Effect();
 
-		public EffectTag Tag { get; set; }
-		public bool StackDuration { get; set; }
-
 		public Effect Create(MockSheetMB source, MockSheetMB target) =>
 			this.create(source, target);
 	}
@@ -96,15 +93,11 @@ public class BaseEffectCollectionTests : TestCollection
 		var coll = new MockEffectCollection();
 		var source = new GameObject("source").AddComponent<MockSheetMB>();
 		var target = new GameObject("target").AddComponent<MockSheetMB>();
-		var effect = new Effect{ duration = 1f };
+		var effect = new Effect{ duration = 1f, tag = EffectTag.Heat };
 
 		target.add = (e, t, d) => called = (e, t, d);
 		coll.effectData = new MockEffectCreator[] {
-			new MockEffectCreator {
-				create = (_, __) => effect,
-				StackDuration = false,
-				Tag = EffectTag.Heat
-			},
+			new MockEffectCreator { create = (_, __) => effect },
 		};
 		coll.GetApplyEffects(source, target.gameObject, out var apply);
 		apply();
@@ -119,19 +112,15 @@ public class BaseEffectCollectionTests : TestCollection
 		var coll = new MockEffectCollection();
 		var source = new GameObject("source").AddComponent<MockSheetMB>();
 		var target = new GameObject("target").AddComponent<MockSheetMB>();
-		var effect = new Effect{ duration = 1f };
+		var effect = new Effect{ duration = 1f, stacking = ConditionStacking.Duration };
 
 		target.add = (e, t, d) => called = (e, t, d);
 		coll.effectData = new MockEffectCreator[] {
-			new MockEffectCreator {
-				create = (_, __) => effect,
-				StackDuration = true,
-				Tag = EffectTag.Heat
-			},
+			new MockEffectCreator { create = (_, __) => effect },
 		};
 		coll.GetApplyEffects(source, target.gameObject, out var apply);
 		apply();
 
-		Assert.AreEqual((effect, EffectTag.Heat, true), called);
+		Assert.AreEqual((effect, EffectTag.Default, true), called);
 	}
 }
