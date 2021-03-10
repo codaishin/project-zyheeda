@@ -24,9 +24,9 @@ public class CharacterSheetMBTests : TestCollection
 	public void StackIntensity()
 	{
 		var sheet = new GameObject("obj").AddComponent<CharacterSheetMB>();
-		var effect = new Effect{ duration = 1f };
+		var effect = new Effect{ duration = 1f, tag = EffectTag.Heat, stacking = ConditionStacking.Intensity };
 
-		sheet.Add(effect, EffectTag.Heat, ConditionStacking.Intensity);
+		sheet.Add(effect);
 
 		CollectionAssert.AreEqual(
 			new Effect[] { effect },
@@ -38,9 +38,9 @@ public class CharacterSheetMBTests : TestCollection
 	public void DurationStack()
 	{
 		var sheet = new GameObject("obj").AddComponent<CharacterSheetMB>();
-		var effect = new Effect{ duration = 1f };
+		var effect = new Effect{ duration = 1f, tag = EffectTag.Heat, stacking = ConditionStacking.Duration  };
 
-		sheet.Add(effect, EffectTag.Heat, ConditionStacking.Duration);
+		sheet.Add(effect);
 
 		CollectionAssert.AreEqual(
 			new Effect[] { effect },
@@ -52,21 +52,19 @@ public class CharacterSheetMBTests : TestCollection
 	public void InvalidStacking()
 	{
 		var sheet = new GameObject("obj").AddComponent<CharacterSheetMB>();
-		var effect = new Effect();
+		var effect = new Effect{ stacking = (ConditionStacking)(-1) };
 
-		Assert.Throws<ArgumentException>(
-			() => sheet.Add(effect, EffectTag.Heat, (ConditionStacking)(-1))
-		);
+		Assert.Throws<ArgumentException>(() => sheet.Add(effect));
 	}
 
 	[Test]
 	public void InvalidStackingMessage()
 	{
 		var sheet = new GameObject("obj").AddComponent<CharacterSheetMB>();
-		var effect = new Effect();
+		var effect = new Effect{ stacking = (ConditionStacking)(-1) };
 
 		try {
-			sheet.Add(effect, EffectTag.Heat, (ConditionStacking)(-1));
+			sheet.Add(effect);
 		} catch (ArgumentException e) {
 			Assert.AreEqual("Invalid stacking -1 for obj (CharacterSheetMB)", e.Message);
 		}
