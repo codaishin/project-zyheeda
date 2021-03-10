@@ -1,8 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using NUnit.Framework;
 using UnityEngine;
-using UnityEngine.TestTools;
 
 public class CharacterSheetMBTests : TestCollection
 {
@@ -28,7 +26,7 @@ public class CharacterSheetMBTests : TestCollection
 		var sheet = new GameObject("obj").AddComponent<CharacterSheetMB>();
 		var effect = new Effect{ duration = 1f };
 
-		sheet.Add(effect, EffectTag.Heat, false);
+		sheet.Add(effect, EffectTag.Heat, ConditionStacking.Intensity);
 
 		CollectionAssert.AreEqual(
 			new Effect[] { effect },
@@ -42,11 +40,35 @@ public class CharacterSheetMBTests : TestCollection
 		var sheet = new GameObject("obj").AddComponent<CharacterSheetMB>();
 		var effect = new Effect{ duration = 1f };
 
-		sheet.Add(effect, EffectTag.Heat, true);
+		sheet.Add(effect, EffectTag.Heat, ConditionStacking.Duration);
 
 		CollectionAssert.AreEqual(
 			new Effect[] { effect },
 			sheet.GetComponent<DurationManagerMB>().GetEffects(EffectTag.Heat)
 		);
+	}
+
+	[Test]
+	public void InvalidStacking()
+	{
+		var sheet = new GameObject("obj").AddComponent<CharacterSheetMB>();
+		var effect = new Effect();
+
+		Assert.Throws<ArgumentException>(
+			() => sheet.Add(effect, EffectTag.Heat, (ConditionStacking)(-1))
+		);
+	}
+
+	[Test]
+	public void InvalidStackingMessage()
+	{
+		var sheet = new GameObject("obj").AddComponent<CharacterSheetMB>();
+		var effect = new Effect();
+
+		try {
+			sheet.Add(effect, EffectTag.Heat, (ConditionStacking)(-1));
+		} catch (ArgumentException e) {
+			Assert.AreEqual("Invalid stacking -1 for obj (CharacterSheetMB)", e.Message);
+		}
 	}
 }

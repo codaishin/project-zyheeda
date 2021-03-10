@@ -4,5 +4,5 @@ using UnityEngine;
 
 public interface IConditionTarget
 {
-	void Add(Effect effect, EffectTag tag, bool stackDuration);
+	void Add(Effect effect, EffectTag tag, ConditionStacking stacking);
 }

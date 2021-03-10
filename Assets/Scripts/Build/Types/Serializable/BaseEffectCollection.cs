@@ -18,7 +18,7 @@ public class BaseEffectCollection<TEffectCreator, TSheet> : IEffectCollection<TS
 				effect.Apply();
 				effect.Revert();
 			} else {
-				target.Add(effect, effect.tag, effect.stacking == ConditionStacking.Duration);
+				target.Add(effect, effect.tag, effect.stacking);
 			}
 		}
 	}
