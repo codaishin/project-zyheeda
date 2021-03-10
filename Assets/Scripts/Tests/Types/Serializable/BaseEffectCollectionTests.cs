@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BaseEffectCollectionTests : TestCollection
 {
-	private class MockSheetMB : MonoBehaviour, IConditionTarget
+	private class MockSheetMB : MonoBehaviour, IConditionManager
 	{
 		public Action<Effect> add = (_) => { };
 
