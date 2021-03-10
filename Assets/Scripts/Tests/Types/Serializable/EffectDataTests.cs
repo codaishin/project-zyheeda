@@ -86,4 +86,17 @@ public class EffectDataTests : TestCollection
 
 		Assert.True(data.StackDuration);
 	}
+
+	[Test]
+	public void SetDuration()
+	{
+		var source = new GameObject("source").AddComponent<CharacterSheetMB>();
+		var target = new GameObject("target").AddComponent<CharacterSheetMB>();
+		var behaviour = ScriptableObject.CreateInstance<MockEffectBehaviourSO>();
+		var data = new EffectData { behaviour = behaviour, duration = 42f };
+
+		var effect = data.Create(source, target);
+
+		Assert.AreEqual(42f, effect.duration);
+	}
 }
