@@ -7,14 +7,14 @@ public class CharacterSheetMB : MonoBehaviour, IConditionManager
 	private IntensityManagerMB stackIntensity;
 	private DurationManagerMB stackDuration;
 
-	public void Add(Effect effect)
+	public void Add(Effect condition)
 	{
-		IConditionManager manager = effect.stacking switch {
+		IConditionManager stack = condition.stacking switch {
 			ConditionStacking.Duration => this.stackDuration,
 			ConditionStacking.Intensity => this.stackIntensity,
-			_ => throw new ArgumentException($"Invalid stacking {effect.stacking} for {this.name} (CharacterSheetMB)"),
+			_ => throw new ArgumentException($"Invalid stacking {condition.stacking} for {this.name} (CharacterSheetMB)"),
 		};
-		manager.Add(effect);
+		stack.Add(condition);
 	}
 
 	private void Awake()
