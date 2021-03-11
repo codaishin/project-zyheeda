@@ -69,4 +69,46 @@ public class CharacterSheetMBTests : TestCollection
 			Assert.AreEqual("Invalid stacking -1 for obj (CharacterSheetMB)", e.Message);
 		}
 	}
+
+	private class MockClass {}
+
+	[Test]
+	public void UseSectionRequiredFail()
+	{
+		var sheet = new GameObject("obj").AddComponent<CharacterSheetMB>();
+
+		Assert.Throws<ArgumentException>(() => sheet.UseSection<MockClass>((ref MockClass _) => {}, true));
+	}
+
+	[Test]
+	public void UseSectionRequiredFailMessage()
+	{
+		var sheet = new GameObject("obj").AddComponent<CharacterSheetMB>();
+
+		try {
+			sheet.UseSection<MockClass>((ref MockClass _) => {}, true);
+		} catch (ArgumentException e) {
+			Assert.AreEqual($"{typeof(MockClass)} is not a valid section for obj (CharacterSheetMB)", e.Message);
+		}
+	}
+
+	[Test]
+	public void UseSectionRequiredFailWithoutTrhow()
+	{
+		var sheet = new GameObject("obj").AddComponent<CharacterSheetMB>();
+
+		Assert.DoesNotThrow(() => sheet.UseSection<MockClass>((ref MockClass _) => {}, false));
+	}
+
+	[Test]
+	public void UseHealthSection()
+	{
+		var called = default(Health);
+		var sheet = new GameObject("obj").AddComponent<CharacterSheetMB>();
+		sheet.health.hp = 42;
+
+		sheet.UseSection((ref Health h) => called = h, false);
+
+		Assert.AreEqual(42, called.hp);
+	}
 }

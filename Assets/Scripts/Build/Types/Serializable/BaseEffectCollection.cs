@@ -4,16 +4,16 @@ using UnityEngine;
 
 
 [Serializable]
-public class BaseEffectCollection<TEffectCreator, TSheet> : IEffectCollection<TSheet>
+public class BaseEffectCollection<TEffectData, TSheet> : IEffectCollection<TSheet>
 	where TSheet : IConditionManager
-	where TEffectCreator : IEffectCreator<TSheet>
+	where TEffectData : IEffectData<TSheet>
 {
-	public TEffectCreator[] effectData;
+	public TEffectData[] effectData;
 
 	private void Apply(TSheet source, TSheet target)
 	{
-		foreach (TEffectCreator creator in this.effectData) {
-			Effect effect = creator.Create(source, target);
+		foreach (TEffectData creator in this.effectData) {
+			Effect effect = creator.GetEffect(source, target);
 			if (effect.duration == 0) {
 				effect.Apply();
 				effect.Revert();
