@@ -4,15 +4,14 @@ using UnityEngine;
 
 
 [Serializable]
-public class BaseEffectCollection<TEffectData, TSheet> : IEffectCollection<TSheet>
+public class BaseEffectCollection<TSheet> : IEffectCollection<TSheet>
 	where TSheet : IConditionManager, ISections
-	where TEffectData : IEffectData
 {
-	public TEffectData[] effectData;
+	public EffectData[] effectData;
 
 	private void Apply(TSheet source, TSheet target)
 	{
-		foreach (TEffectData creator in this.effectData) {
+		foreach (EffectData creator in this.effectData) {
 			Effect effect = creator.GetEffect(source, target);
 			if (effect.duration == 0) {
 				effect.Apply();

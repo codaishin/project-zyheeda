@@ -12,15 +12,27 @@ public class BaseEffectCollectionTests : TestCollection
 		public void UseSection<T>(SectionAction<T> action, bool required) {}
 	}
 
-	private class MockEffectData : IEffectData
+	private class MockEffectBehaviourSO : BaseEffectBehaviourSO
 	{
-		public Func<ISections, ISections, Effect> create = (s, t) => new Effect();
+		public Action<ISections, ISections, int> apply = (s, t, i) => { };
+		public Action<ISections, ISections, int, float> maintain = (s, t, i, d) => { };
+		public Action<ISections, ISections, int> revert = (s, t, i) => { };
 
-		public Effect GetEffect<TSheet>(TSheet source, TSheet target) where TSheet : ISections =>
-			this.create(source, target);
+		public override
+		void Apply<TSheet>(TSheet source, TSheet target, int intensity) =>
+			this.apply(source, target, intensity);
+
+		public override
+		void Maintain<TSheet>(TSheet source, TSheet target, int intensity, float intervalDelta) =>
+			this.maintain(source, target, intensity, intervalDelta);
+
+		public override
+		void Revert<TSheet>(TSheet source, TSheet target, int intensity) =>
+			this.revert(source, target, intensity);
+
 	}
 
-	private class MockEffectCollection : BaseEffectCollection<MockEffectData, MockSheetMB> {}
+	private class MockEffectCollection : BaseEffectCollection<MockSheetMB> {}
 
 	[Test]
 	public void GetApplyEffectsTrue()
@@ -28,7 +40,7 @@ public class BaseEffectCollectionTests : TestCollection
 		var coll = new MockEffectCollection();
 		var source = new GameObject("source").AddComponent<MockSheetMB>();
 		var target = new GameObject("target").AddComponent<MockSheetMB>();
-		coll.effectData = new MockEffectData[0];
+		coll.effectData = new EffectData[0];
 		Assert.True(coll.GetApplyEffects(source, target.gameObject, out _));
 	}
 
@@ -38,7 +50,7 @@ public class BaseEffectCollectionTests : TestCollection
 		var coll = new MockEffectCollection();
 		var source = new GameObject("source").AddComponent<MockSheetMB>();
 		var target = new GameObject("target");
-		coll.effectData = new MockEffectData[0];
+		coll.effectData = new EffectData[0];
 		Assert.False(coll.GetApplyEffects(source, target, out _));
 	}
 
@@ -47,16 +59,13 @@ public class BaseEffectCollectionTests : TestCollection
 	{
 		var called = (default(MockSheetMB), default(MockSheetMB));
 		var coll = new MockEffectCollection();
+		var behaviour = ScriptableObject.CreateInstance<MockEffectBehaviourSO>();
 		var source = new GameObject("source").AddComponent<MockSheetMB>();
 		var target = new GameObject("target").AddComponent<MockSheetMB>();
-		Effect create(ISections s, ISections t) {
-			Effect effect = new Effect();
-			effect.OnApply += () => called = (s as MockSheetMB, t as MockSheetMB);
-			return effect;
-		};
 
-		coll.effectData = new MockEffectData[] {
-			new MockEffectData { create = create }
+		behaviour.apply = (s, t, i) => called = (s as MockSheetMB, t as MockSheetMB);
+		coll.effectData = new EffectData[] {
+			new EffectData { behaviour = behaviour }
 		};
 		coll.GetApplyEffects(source, target.gameObject, out var apply);
 		apply();
@@ -69,16 +78,13 @@ public class BaseEffectCollectionTests : TestCollection
 	{
 		var called = (default(MockSheetMB), default(MockSheetMB));
 		var coll = new MockEffectCollection();
+		var behaviour = ScriptableObject.CreateInstance<MockEffectBehaviourSO>();
 		var source = new GameObject("source").AddComponent<MockSheetMB>();
 		var target = new GameObject("target").AddComponent<MockSheetMB>();
-		Effect create(ISections s, ISections t) {
-			Effect effect = new Effect();
-			effect.OnRevert += () => called = (s as MockSheetMB, t as MockSheetMB);
-			return effect;
-		};
 
-		coll.effectData = new MockEffectData[] {
-			new MockEffectData { create = create }
+		behaviour.apply = (s, t, i) => called = (s as MockSheetMB, t as MockSheetMB);
+		coll.effectData = new EffectData[] {
+			new EffectData { behaviour = behaviour }
 		};
 		coll.GetApplyEffects(source, target.gameObject, out var apply);
 		apply();
