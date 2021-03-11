@@ -33,7 +33,7 @@ public class EffectDataTests : TestCollection
 		var data = new EffectData { behaviour = behaviour };
 		behaviour.apply = (s, t, _) => called = (s, t);
 
-		var effect = data.Create(source, target);
+		var effect = data.GetEffect(source, target);
 		effect.Apply();
 
 		Assert.AreEqual((source, target), called);
@@ -49,7 +49,7 @@ public class EffectDataTests : TestCollection
 		var data = new EffectData { behaviour = behaviour };
 		behaviour.maintain = (s, t, _, d) => called = (s, t, d);
 
-		var effect = data.Create(source, target);
+		var effect = data.GetEffect(source, target);
 		effect.duration = 1f;
 		effect.Apply();
 		effect.Maintain(0.42f);
@@ -67,7 +67,7 @@ public class EffectDataTests : TestCollection
 		var data = new EffectData { behaviour = behaviour };
 		behaviour.revert = (s, t, _) => called = (s, t);
 
-		var effect = data.Create(source, target);
+		var effect = data.GetEffect(source, target);
 		effect.Apply();
 		effect.Revert();
 
@@ -82,7 +82,7 @@ public class EffectDataTests : TestCollection
 		var behaviour = ScriptableObject.CreateInstance<MockEffectBehaviourSO>();
 		var data = new EffectData { behaviour = behaviour, duration = 42f };
 
-		var effect = data.Create(source, target);
+		var effect = data.GetEffect(source, target);
 
 		Assert.AreEqual(42f, effect.duration);
 	}
@@ -100,7 +100,7 @@ public class EffectDataTests : TestCollection
 		behaviour.maintain = (_, __, i, ___) => called.m = i;
 		behaviour.revert = (_, __, i) => called.r = i;
 
-		var effect = data.Create(source, target);
+		var effect = data.GetEffect(source, target);
 
 		effect.Apply();
 		effect.Maintain(5f);
