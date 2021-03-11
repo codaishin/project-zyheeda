@@ -82,7 +82,7 @@ public class BaseEffectCollectionTests : TestCollection
 		var source = new GameObject("source").AddComponent<MockSheetMB>();
 		var target = new GameObject("target").AddComponent<MockSheetMB>();
 
-		behaviour.apply = (s, t, i) => called = (s as MockSheetMB, t as MockSheetMB);
+		behaviour.revert = (s, t, i) => called = (s as MockSheetMB, t as MockSheetMB);
 		coll.effectData = new EffectData[] {
 			new EffectData { behaviour = behaviour }
 		};
