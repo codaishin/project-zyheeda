@@ -1,4 +1,4 @@
 using System;
 
 [Serializable]
-public class EffectCollection : BaseEffectCollection<EffectData, CharacterSheetMB> { }
+public class EffectCollection : BaseEffectCollection<CharacterSheetMB> { }
