@@ -91,4 +91,27 @@ public class BaseEffectCollectionTests : TestCollection
 
 		Assert.AreEqual((source, target), called);
 	}
+
+	[Test]
+	public void AddsToConditions()
+	{
+		var called = (default(MockSheetMB), default(MockSheetMB), 0f);
+		var coll = new MockEffectCollection();
+		var behaviour = ScriptableObject.CreateInstance<MockEffectBehaviourSO>();
+		var source = new GameObject("source").AddComponent<MockSheetMB>();
+		var target = new GameObject("target").AddComponent<MockSheetMB>();
+
+		behaviour.maintain = (s, t, _, d) => called = (s as MockSheetMB, t as MockSheetMB, d);
+		target.add = e => {
+			e.Apply();
+			e.Maintain(42f);
+		};
+		coll.effectData = new EffectData[] {
+			new EffectData { behaviour = behaviour, duration = 1f }
+		};
+		coll.GetApplyEffects(source, target.gameObject, out var apply);
+		apply();
+
+		Assert.AreEqual((source, target, 42f), called);
+	}
 }
