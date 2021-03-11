@@ -4,18 +4,19 @@ using UnityEngine;
 
 public class BaseEffectCollectionTests : TestCollection
 {
-	private class MockSheetMB : MonoBehaviour, IConditionManager
+	private class MockSheetMB : MonoBehaviour, IConditionManager, ISections
 	{
 		public Action<Effect> add = (_) => { };
 
 		public void Add(Effect effect) => this.add(effect);
+		public void UseSection<T>(SectionAction<T> action, bool required) {}
 	}
 
-	private class MockEffectData : IEffectData<MockSheetMB>
+	private class MockEffectData : IEffectData
 	{
-		public Func<MockSheetMB, MockSheetMB, Effect> create = (s, t) => new Effect();
+		public Func<ISections, ISections, Effect> create = (s, t) => new Effect();
 
-		public Effect GetEffect(MockSheetMB source, MockSheetMB target) =>
+		public Effect GetEffect<TSheet>(TSheet source, TSheet target) where TSheet : ISections =>
 			this.create(source, target);
 	}
 
@@ -48,9 +49,9 @@ public class BaseEffectCollectionTests : TestCollection
 		var coll = new MockEffectCollection();
 		var source = new GameObject("source").AddComponent<MockSheetMB>();
 		var target = new GameObject("target").AddComponent<MockSheetMB>();
-		Effect create(MockSheetMB s, MockSheetMB t) {
+		Effect create(ISections s, ISections t) {
 			Effect effect = new Effect();
-			effect.OnApply += () => called = (s, t);
+			effect.OnApply += () => called = (s as MockSheetMB, t as MockSheetMB);
 			return effect;
 		};
 
@@ -70,9 +71,9 @@ public class BaseEffectCollectionTests : TestCollection
 		var coll = new MockEffectCollection();
 		var source = new GameObject("source").AddComponent<MockSheetMB>();
 		var target = new GameObject("target").AddComponent<MockSheetMB>();
-		Effect create(MockSheetMB s, MockSheetMB t) {
+		Effect create(ISections s, ISections t) {
 			Effect effect = new Effect();
-			effect.OnRevert += () => called = (s, t);
+			effect.OnRevert += () => called = (s as MockSheetMB, t as MockSheetMB);
 			return effect;
 		};
 

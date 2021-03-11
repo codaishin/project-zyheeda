@@ -4,34 +4,39 @@ using UnityEngine;
 
 public class EffectDataTests : TestCollection
 {
+	private class MockSheet : ISections
+	{
+		public void UseSection<TSection>(SectionAction<TSection> action, bool required) {}
+	}
+
 	private class MockEffectBehaviourSO : BaseEffectBehaviourSO
 	{
-		public Action<CharacterSheetMB, CharacterSheetMB, int> apply = (s, t, i) => { };
-		public Action<CharacterSheetMB, CharacterSheetMB, int, float> maintain = (s, t, i, d) => { };
-		public Action<CharacterSheetMB, CharacterSheetMB, int> revert = (s, t, i) => { };
+		public Action<ISections, ISections, int> apply = (s, t, i) => { };
+		public Action<ISections, ISections, int, float> maintain = (s, t, i, d) => { };
+		public Action<ISections, ISections, int> revert = (s, t, i) => { };
 
 		public override
-		void Apply(CharacterSheetMB source, CharacterSheetMB target, int intensity) =>
+		void Apply<T>(T source, T target, int intensity) =>
 			this.apply(source, target, intensity);
 
 		public override
-		void Maintain(CharacterSheetMB source, CharacterSheetMB target, int intensity, float intervalDelta) =>
+		void Maintain<T>(T source, T target, int intensity, float intervalDelta) =>
 			this.maintain(source, target, intensity, intervalDelta);
 
 		public override
-		void Revert(CharacterSheetMB source, CharacterSheetMB target, int intensity) =>
+		void Revert<T>(T source, T target, int intensity) =>
 			this.revert(source, target, intensity);
 	}
 
 	[Test]
 	public void CreateEffectApply()
 	{
-		var called = default((CharacterSheetMB, CharacterSheetMB));
-		var source = new GameObject("source").AddComponent<CharacterSheetMB>();
-		var target = new GameObject("target").AddComponent<CharacterSheetMB>();
+		var called = default((MockSheet, MockSheet));
+		var source = new MockSheet();
+		var target = new MockSheet();
 		var behaviour = ScriptableObject.CreateInstance<MockEffectBehaviourSO>();
 		var data = new EffectData { behaviour = behaviour };
-		behaviour.apply = (s, t, _) => called = (s, t);
+		behaviour.apply = (s, t, _) => called = (s as MockSheet, t as MockSheet);
 
 		var effect = data.GetEffect(source, target);
 		effect.Apply();
@@ -42,12 +47,12 @@ public class EffectDataTests : TestCollection
 	[Test]
 	public void CreateEffectMaintain()
 	{
-		var called = default((CharacterSheetMB, CharacterSheetMB, float));
-		var source = new GameObject("source").AddComponent<CharacterSheetMB>();
-		var target = new GameObject("target").AddComponent<CharacterSheetMB>();
+		var called = default((MockSheet, MockSheet, float));
+		var source = new MockSheet();
+		var target = new MockSheet();
 		var behaviour = ScriptableObject.CreateInstance<MockEffectBehaviourSO>();
 		var data = new EffectData { behaviour = behaviour };
-		behaviour.maintain = (s, t, _, d) => called = (s, t, d);
+		behaviour.maintain = (s, t, _, d) => called = (s as MockSheet, t as MockSheet, d);
 
 		var effect = data.GetEffect(source, target);
 		effect.duration = 1f;
@@ -60,12 +65,12 @@ public class EffectDataTests : TestCollection
 	[Test]
 	public void CreateEffectRevert()
 	{
-		var called = default((CharacterSheetMB, CharacterSheetMB));
-		var source = new GameObject("source").AddComponent<CharacterSheetMB>();
-		var target = new GameObject("target").AddComponent<CharacterSheetMB>();
+		var called = default((MockSheet, MockSheet));
+		var source = new MockSheet();
+		var target = new MockSheet();
 		var behaviour = ScriptableObject.CreateInstance<MockEffectBehaviourSO>();
 		var data = new EffectData { behaviour = behaviour };
-		behaviour.revert = (s, t, _) => called = (s, t);
+		behaviour.revert = (s, t, _) => called = (s as MockSheet, t as MockSheet);
 
 		var effect = data.GetEffect(source, target);
 		effect.Apply();
@@ -77,8 +82,8 @@ public class EffectDataTests : TestCollection
 	[Test]
 	public void SetDuration()
 	{
-		var source = new GameObject("source").AddComponent<CharacterSheetMB>();
-		var target = new GameObject("target").AddComponent<CharacterSheetMB>();
+		var source = new MockSheet();
+		var target = new MockSheet();
 		var behaviour = ScriptableObject.CreateInstance<MockEffectBehaviourSO>();
 		var data = new EffectData { behaviour = behaviour, duration = 42f };
 
@@ -91,8 +96,8 @@ public class EffectDataTests : TestCollection
 	public void UseIntensity()
 	{
 		var called = (a: 0, m: 0, r: 0);
-		var source = new GameObject("source").AddComponent<CharacterSheetMB>();
-		var target = new GameObject("target").AddComponent<CharacterSheetMB>();
+		var source = new MockSheet();
+		var target = new MockSheet();
 		var behaviour = ScriptableObject.CreateInstance<MockEffectBehaviourSO>();
 		var data = new EffectData { behaviour = behaviour, duration = 1, intensity = 7 };
 
