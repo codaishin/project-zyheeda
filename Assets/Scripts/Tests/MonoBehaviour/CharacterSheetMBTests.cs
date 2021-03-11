@@ -99,4 +99,16 @@ public class CharacterSheetMBTests : TestCollection
 
 		Assert.DoesNotThrow(() => sheet.UseSection<MockClass>((ref MockClass _) => {}, false));
 	}
+
+	[Test]
+	public void UseHealthSection()
+	{
+		var called = default(Health);
+		var sheet = new GameObject("obj").AddComponent<CharacterSheetMB>();
+		sheet.health.hp = 42;
+
+		sheet.UseSection((ref Health h) => called = h, false);
+
+		Assert.AreEqual(42, called.hp);
+	}
 }

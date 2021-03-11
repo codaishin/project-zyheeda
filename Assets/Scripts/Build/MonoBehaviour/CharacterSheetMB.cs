@@ -4,11 +4,13 @@ using UnityEngine;
 [RequireComponent(typeof(IntensityManagerMB), typeof(DurationManagerMB))]
 public class CharacterSheetMB : MonoBehaviour, IConditionManager, ISections
 {
-	private const string stackingExcFmt = "Invalid stacking {0} for {1}";
-	private const string requireExcFmt = "{0} is not a valid section for {1}";
+	private const string stackingErrFmt = "Invalid stacking {0} for {1}";
+	private const string sectionErrFmt = "{0} is not a valid section for {1}";
 
 	private IntensityManagerMB stackIntensity;
 	private DurationManagerMB stackDuration;
+
+	public Health health;
 
 	private ArgumentException Error<T>(string fmt, T value) => new ArgumentException(string.Format(fmt, value, this));
 
@@ -17,7 +19,7 @@ public class CharacterSheetMB : MonoBehaviour, IConditionManager, ISections
 		IConditionManager stack = condition.stacking switch {
 			ConditionStacking.Duration => this.stackDuration,
 			ConditionStacking.Intensity => this.stackIntensity,
-			_ => throw this.Error(CharacterSheetMB.stackingExcFmt, condition.stacking),
+			_ => throw this.Error(CharacterSheetMB.stackingErrFmt, condition.stacking),
 		};
 		stack.Add(condition);
 	}
@@ -25,7 +27,8 @@ public class CharacterSheetMB : MonoBehaviour, IConditionManager, ISections
 	public void UseSection<TSection>(SectionAction<TSection> action, bool required)
 	{
 		Action run = action switch {
-			_ when required => () => throw this.Error(CharacterSheetMB.requireExcFmt, typeof(TSection)),
+			SectionAction<Health> a => () => a(ref this.health),
+			_ when required => () => throw this.Error(CharacterSheetMB.sectionErrFmt, typeof(TSection)),
 			_ => () => { },
 		};
 		run();
