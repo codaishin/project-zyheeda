@@ -5,8 +5,8 @@ using UnityEngine;
 
 [Serializable]
 public class BaseEffectCollection<TEffectData, TSheet> : IEffectCollection<TSheet>
-	where TSheet : IConditionManager
-	where TEffectData : IEffectData<TSheet>
+	where TSheet : IConditionManager, ISections
+	where TEffectData : IEffectData
 {
 	public TEffectData[] effectData;
 

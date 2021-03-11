@@ -1,13 +1,14 @@
 using System;
 
 [Serializable]
-public class EffectData : IEffectData<CharacterSheetMB>
+public class EffectData : IEffectData
 {
 	public int intensity;
 	public float duration;
 	public BaseEffectBehaviourSO behaviour;
 
-	public Effect GetEffect(CharacterSheetMB source, CharacterSheetMB target)
+	public Effect GetEffect<TSheet>(TSheet source, TSheet target)
+		where TSheet : ISections
 	{
 		Effect effect = new Effect{ duration = this.duration };
 		effect.OnApply += () => this.behaviour.Apply(source, target, this.intensity);
