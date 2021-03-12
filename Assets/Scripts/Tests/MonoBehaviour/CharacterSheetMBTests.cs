@@ -73,42 +73,21 @@ public class CharacterSheetMBTests : TestCollection
 	private class MockClass {}
 
 	[Test]
-	public void UseSectionRequiredFail()
+	public void UseSectionFalse()
 	{
 		var sheet = new GameObject("obj").AddComponent<CharacterSheetMB>();
 
-		Assert.Throws<ArgumentException>(() => sheet.UseSection<MockClass>((ref MockClass _) => {}, true));
-	}
-
-	[Test]
-	public void UseSectionRequiredFailMessage()
-	{
-		var sheet = new GameObject("obj").AddComponent<CharacterSheetMB>();
-
-		try {
-			sheet.UseSection<MockClass>((ref MockClass _) => {}, true);
-		} catch (ArgumentException e) {
-			Assert.AreEqual($"{typeof(MockClass)} is not a valid section for obj (CharacterSheetMB)", e.Message);
-		}
-	}
-
-	[Test]
-	public void UseSectionRequiredFailWithoutTrhow()
-	{
-		var sheet = new GameObject("obj").AddComponent<CharacterSheetMB>();
-
-		Assert.DoesNotThrow(() => sheet.UseSection<MockClass>((ref MockClass _) => {}, false));
+		Assert.False(sheet.UseSection((ref MockClass _) => {}));
 	}
 
 	[Test]
 	public void UseHealthSection()
 	{
-		var called = default(Health);
 		var sheet = new GameObject("obj").AddComponent<CharacterSheetMB>();
 		sheet.health.hp = 42;
 
-		sheet.UseSection((ref Health h) => called = h, false);
+		bool used = sheet.UseSection((ref Health h) => h.hp = 5);
 
-		Assert.AreEqual(42, called.hp);
+		Assert.AreEqual((true, 5), (used, sheet.health.hp));
 	}
 }
