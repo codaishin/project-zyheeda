@@ -9,7 +9,7 @@ public class EffectDataExtensionsTests : TestCollection
 {
 	private class MockSheet : ISections
 	{
-		public void UseSection<TSection>(SectionAction<TSection> action, bool required) {}
+		public bool UseSection<TSection>(RefAction<TSection> action) => false;
 	}
 
 	private class MockEffectBehaviourSO : BaseEffectBehaviourSO
