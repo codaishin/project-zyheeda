@@ -5,10 +5,16 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "ScriptableObjects/EffectBehaviour/ModHp")]
 public class ModHpSO : BaseEffectBehaviourSO
 {
+	public bool invert = true;
+
 	private
 	void ModHp<TSheet>(TSheet source, TSheet target, int intensity) where TSheet : ISections
 	{
-		target.UseSection<Health>((ref Health health) => health.hp -= intensity);
+		void mod(ref Health health) => health.hp = this.invert
+			? health.hp - intensity
+			: health.hp + intensity;
+
+		target.UseSection<Health>(mod);
 	}
 
 	public override

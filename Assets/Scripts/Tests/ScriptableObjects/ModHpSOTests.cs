@@ -58,6 +58,30 @@ public class ModHpSOTests : TestCollection
 	}
 
 	[Test]
+	public void ApplyNotInverted()
+	{
+		var target = new MockSheet{ health = new Health { hp = 42 } };
+		var modHp = ScriptableObject.CreateInstance<ModHpSO>();
+
+		modHp.invert = false;
+		modHp.Apply(default, target, 4);
+
+		Assert.AreEqual(46, target.health.hp);
+	}
+
+	[Test]
+	public void MaintainDeltaNotInverted()
+	{
+		var target = new MockSheet{ health = new Health { hp = 42 } };
+		var modHp = ScriptableObject.CreateInstance<ModHpSO>();
+
+		modHp.invert = false;
+		modHp.Maintain(default, target, 4, 0.5f);
+
+		Assert.AreEqual(44, target.health.hp);
+	}
+
+	[Test]
 	public void RevertDoesNotThrow()
 	{
 		var modHp = ScriptableObject.CreateInstance<ModHpSO>();
