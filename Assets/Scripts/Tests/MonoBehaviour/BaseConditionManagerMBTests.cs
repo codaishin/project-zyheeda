@@ -215,7 +215,7 @@ public class BaseConditionManagerMBTests : TestCollection
 
 		yield return new WaitForFixedUpdate();
 
-		manager.Cancel(EffectTag.Default);
+		manager.Cancel(EffectTag.Physical);
 
 		yield return new WaitForFixedUpdate();
 
@@ -242,12 +242,12 @@ public class BaseConditionManagerMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		manager.Add(new Effect{ tag = EffectTag.Default });
+		manager.Add(new Effect{ tag = EffectTag.Physical });
 		manager.Add(new Effect{ tag = EffectTag.Heat });
 
 		yield return new WaitForFixedUpdate();
 
-		manager.Cancel(EffectTag.Default);
+		manager.Cancel(EffectTag.Physical);
 
 		yield return new WaitForFixedUpdate();
 
@@ -276,7 +276,7 @@ public class BaseConditionManagerMBTests : TestCollection
 
 		manager.Add(new Effect());
 
-		manager.Cancel(EffectTag.Default);
+		manager.Cancel(EffectTag.Physical);
 
 		Assert.IsEmpty(routines);
 	}
@@ -297,7 +297,7 @@ public class BaseConditionManagerMBTests : TestCollection
 
 		CollectionAssert.AreEqual(
 			new Effect[] { effectA, effectB },
-			manager.GetEffects(EffectTag.Default)
+			manager.GetEffects(EffectTag.Physical)
 		);
 	}
 
@@ -323,7 +323,7 @@ public class BaseConditionManagerMBTests : TestCollection
 		yield return new WaitForFixedUpdate();
 		yield return new WaitForFixedUpdate();
 
-		Assert.IsEmpty(manager.GetEffects(EffectTag.Default));
+		Assert.IsEmpty(manager.GetEffects(EffectTag.Physical));
 	}
 
 
@@ -340,7 +340,7 @@ public class BaseConditionManagerMBTests : TestCollection
 
 		manager.Add(effect);
 
-		manager.Cancel(EffectTag.Default);
+		manager.Cancel(EffectTag.Physical);
 
 		Assert.True(called);
 	}
@@ -355,9 +355,9 @@ public class BaseConditionManagerMBTests : TestCollection
 
 		manager.Add(effect);
 
-		manager.Cancel(EffectTag.Default);
+		manager.Cancel(EffectTag.Physical);
 
-		Assert.IsEmpty(manager.GetEffects(EffectTag.Default));
+		Assert.IsEmpty(manager.GetEffects(EffectTag.Physical));
 	}
 
 	[UnityTest]

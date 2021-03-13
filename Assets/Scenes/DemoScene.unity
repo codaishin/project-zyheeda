@@ -1463,6 +1463,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff6b4c13011f29d4bbbc4d7a81a22fd0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  health:
+    hp: 0
+  resistance:
+    data: []
 --- !u!65 &1320382541
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1699,6 +1703,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff6b4c13011f29d4bbbc4d7a81a22fd0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  health:
+    hp: 0
+  resistance:
+    data: []
 --- !u!114 &1453732934
 MonoBehaviour:
   m_ObjectHideFlags: 0
