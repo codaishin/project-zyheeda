@@ -8,6 +8,7 @@ public class CharacterSheetMB : MonoBehaviour, IConditionManager, ISections
 	private DurationManagerMB stackDuration;
 
 	public Health health;
+	public Resistance resistance;
 
 	public void Add(Effect condition)
 	{
@@ -24,6 +25,7 @@ public class CharacterSheetMB : MonoBehaviour, IConditionManager, ISections
 		bool success = true;
 		Action run = action switch {
 			RefAction<Health> call => () => call(ref this.health),
+			RefAction<Resistance> call => () => call(ref this.resistance),
 			_ => () => success = false,
 		};
 		run();

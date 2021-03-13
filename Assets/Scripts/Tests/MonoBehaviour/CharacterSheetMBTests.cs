@@ -90,4 +90,15 @@ public class CharacterSheetMBTests : TestCollection
 
 		Assert.AreEqual((true, 5), (used, sheet.health.hp));
 	}
+
+	[Test]
+	public void UseResistanceSection()
+	{
+		var sheet = new GameObject("obj").AddComponent<CharacterSheetMB>();
+		sheet.resistance.data = new Resistance.Data[0];
+
+		bool used = sheet.UseSection((ref Resistance r) => r.data = new Resistance.Data[10]);
+
+		Assert.AreEqual((true, 10), (used, sheet.resistance.data.Length));
+	}
 }
