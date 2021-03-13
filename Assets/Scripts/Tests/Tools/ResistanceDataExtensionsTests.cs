@@ -1,9 +1,5 @@
 using System.Linq;
-using System.Collections;
-using System.Collections.Generic;
 using NUnit.Framework;
-using UnityEngine;
-using UnityEngine.TestTools;
 
 public class ResistanceDataExtensionsTests : TestCollection
 {
@@ -12,7 +8,7 @@ public class ResistanceDataExtensionsTests : TestCollection
 	{
 		var data = new Resistance.Data[] {
 			new Resistance.Data{ tag = EffectTag.Heat, value = 0.3f },
-			new Resistance.Data{ tag = EffectTag.Default, value = 0.1f },
+			new Resistance.Data{ tag = EffectTag.Physical, value = 0.1f },
 		};
 		CollectionAssert.AreEqual(
 			data.Select(d => (d.tag, d.value)),
@@ -25,10 +21,10 @@ public class ResistanceDataExtensionsTests : TestCollection
 	{
 		var data = new Resistance.Data[] {
 			new Resistance.Data{ tag = EffectTag.Heat, value = 0.3f },
-			new Resistance.Data{ tag = EffectTag.Default, value = 0.1f },
+			new Resistance.Data{ tag = EffectTag.Physical, value = 0.1f },
 		};
 		CollectionAssert.AreEqual(
-			new string[] { "Heat", "Default" },
+			new string[] { EffectTag.Heat.ToString(), EffectTag.Physical.ToString() },
 			data.Consolidate().Select(d => d.name)
 		);
 	}
@@ -37,13 +33,13 @@ public class ResistanceDataExtensionsTests : TestCollection
 	public void ConsolidateDuplicateItem()
 	{
 		var data = new Resistance.Data[] {
-			new Resistance.Data{ tag = EffectTag.Default, value = 0.1f },
+			new Resistance.Data{ tag = EffectTag.Physical, value = 0.1f },
 			new Resistance.Data{ tag = EffectTag.Heat, value = 0.3f },
-			new Resistance.Data{ tag = EffectTag.Default, value = 0.1f },
+			new Resistance.Data{ tag = EffectTag.Physical, value = 0.1f },
 		};
 
 		CollectionAssert.AreEqual(
-			new EffectTag[] { EffectTag.Default, EffectTag.Heat, (EffectTag)(-1) },
+			new EffectTag[] { EffectTag.Physical, EffectTag.Heat, (EffectTag)(-1) },
 			data.Consolidate().Select(d => d.tag)
 		);
 	}
@@ -52,13 +48,13 @@ public class ResistanceDataExtensionsTests : TestCollection
 	public void ConsolidateDuplicateName()
 	{
 		var data = new Resistance.Data[] {
-			new Resistance.Data{ tag = EffectTag.Default, value = 0.1f },
+			new Resistance.Data{ tag = EffectTag.Physical, value = 0.1f },
 			new Resistance.Data{ tag = EffectTag.Heat, value = 0.3f },
-			new Resistance.Data{ tag = EffectTag.Default, value = 0.1f },
+			new Resistance.Data{ tag = EffectTag.Physical, value = 0.1f },
 		};
 
 		CollectionAssert.AreEqual(
-			new string[] { "Default", "Heat", "__unset__" },
+			new string[] { EffectTag.Physical.ToString(), EffectTag.Heat.ToString(), "__unset__" },
 			data.Consolidate().Select(d => d.name)
 		);
 	}

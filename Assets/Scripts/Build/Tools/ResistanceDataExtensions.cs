@@ -19,7 +19,7 @@ public static class ResistanceDataExtensions
 
 	private static Resistance.Data SetName(Resistance.Data data)
 	{
-		data.name = data.tag >= EffectTag.Default ? data.tag.ToString() : "__unset__";
+		data.name = data.tag >= EffectTag.Physical ? data.tag.ToString() : "__unset__";
 		return data;
 	}
 
