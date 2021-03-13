@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using UnityEngine;
 
 [RequireComponent(typeof(IntensityManagerMB), typeof(DurationManagerMB))]
@@ -36,5 +37,14 @@ public class CharacterSheetMB : MonoBehaviour, IConditionManager, ISections
 	{
 		this.stackIntensity = this.GetComponent<IntensityManagerMB>();
 		this.stackDuration = this.GetComponent<DurationManagerMB>();
+	}
+
+	private void OnValidate()
+	{
+		if (this.resistance.data != null) {
+			this.resistance.data = this.resistance.data
+				.Consolidate()
+				.ToArray();
+		}
 	}
 }
