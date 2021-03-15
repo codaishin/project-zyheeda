@@ -1406,7 +1406,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1154642173}
   m_Layer: 0
-  m_Name: TmpLogShoot
+  m_Name: ShowcaseShoot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1701,7 +1701,7 @@ MonoBehaviour:
       projectilePrefab: {fileID: 8992679554399984682}
       projectileStorage: {fileID: 1453732929}
     projectileSpawn: {fileID: 7728212569146213376}
-    projectileSpeed: 5
+    projectileSpeed: 10
 --- !u!114 &1453732933
 MonoBehaviour:
   m_ObjectHideFlags: 0
