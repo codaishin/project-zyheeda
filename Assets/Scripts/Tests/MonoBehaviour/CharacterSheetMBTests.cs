@@ -88,7 +88,7 @@ public class CharacterSheetMBTests : TestCollection
 
 		bool used = sheet.UseSection((ref Health h) => h.hp = 5);
 
-		Assert.AreEqual((true, 5), (used, sheet.health.hp));
+		Assert.AreEqual((true, 5f), (used, sheet.health.hp));
 	}
 
 	[Test]
