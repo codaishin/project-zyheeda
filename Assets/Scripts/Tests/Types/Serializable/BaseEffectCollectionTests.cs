@@ -14,20 +14,20 @@ public class BaseEffectCollectionTests : TestCollection
 
 	private class MockEffectBehaviourSO : BaseEffectBehaviourSO
 	{
-		public Action<ISections, ISections, int> apply = (s, t, i) => { };
-		public Action<ISections, ISections, int, float> maintain = (s, t, i, d) => { };
-		public Action<ISections, ISections, int> revert = (s, t, i) => { };
+		public Action<ISections, ISections, float> apply = (s, t, i) => { };
+		public Action<ISections, ISections, float, float> maintain = (s, t, i, d) => { };
+		public Action<ISections, ISections, float> revert = (s, t, i) => { };
 
 		public override
-		void Apply<TSheet>(TSheet source, TSheet target, int intensity) =>
+		void Apply<TSheet>(TSheet source, TSheet target, float intensity) =>
 			this.apply(source, target, intensity);
 
 		public override
-		void Maintain<TSheet>(TSheet source, TSheet target, int intensity, float intervalDelta) =>
+		void Maintain<TSheet>(TSheet source, TSheet target, float intensity, float intervalDelta) =>
 			this.maintain(source, target, intensity, intervalDelta);
 
 		public override
-		void Revert<TSheet>(TSheet source, TSheet target, int intensity) =>
+		void Revert<TSheet>(TSheet source, TSheet target, float intensity) =>
 			this.revert(source, target, intensity);
 
 	}

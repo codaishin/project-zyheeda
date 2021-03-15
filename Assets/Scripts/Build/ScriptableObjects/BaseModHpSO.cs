@@ -4,9 +4,9 @@ public class BaseModHpSO<TResistance> : BaseEffectBehaviourSO
 	public bool invert = true;
 
 	private
-	void ModHp<TSheet>(TSheet source, TSheet target, int intensity) where TSheet : ISections
+	void ModHp<TSheet>(TSheet source, TSheet target, float intensity) where TSheet : ISections
 	{
-		void modifyIntensity(ref TResistance resistance) => intensity = (int)(intensity * (1f - resistance[this.tag]));
+		void modifyIntensity(ref TResistance resistance) => intensity *= (1f - resistance[this.tag]);
 		void modifyHp(ref Health health) => health.hp = this.invert switch {
 			true => health.hp - intensity,
 			false => health.hp + intensity,
@@ -17,17 +17,17 @@ public class BaseModHpSO<TResistance> : BaseEffectBehaviourSO
 	}
 
 	public override
-	void Apply<TSheet>(TSheet source, TSheet target, int intensity)
+	void Apply<TSheet>(TSheet source, TSheet target, float intensity)
 	{
 		this.ModHp(source, target, intensity);
 	}
 
 	public override
-	void Maintain<TSheet>(TSheet source, TSheet target, int intensity, float intervalDelta)
+	void Maintain<TSheet>(TSheet source, TSheet target, float intensity, float intervalDelta)
 	{
-		this.ModHp(source, target, (int)(intensity * intervalDelta));
+		this.ModHp(source, target, intensity * intervalDelta);
 	}
 
 	public override
-	void Revert<TSheet>(TSheet source, TSheet target, int intensity) { }
+	void Revert<TSheet>(TSheet source, TSheet target, float intensity) { }
 }
