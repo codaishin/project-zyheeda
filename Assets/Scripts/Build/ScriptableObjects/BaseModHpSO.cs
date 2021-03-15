@@ -1,8 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-[CreateAssetMenu(menuName = "ScriptableObjects/EffectBehaviour/ModHp")]
 public class BaseModHpSO<TResistance> : BaseEffectBehaviourSO
 	where TResistance : IResistance
 {
