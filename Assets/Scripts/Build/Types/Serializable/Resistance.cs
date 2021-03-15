@@ -17,11 +17,11 @@ public struct Resistance
 
 	public Data[] data;
 
-	private float Get(EffectTag tag)
+	private Data Get(EffectTag tag)
 	{
 		return this.data.OrEmpty()
 			.Where(d => d.tag == tag)
-			.FirstOrDefault().value;
+			.FirstOrDefault();
 	}
 
 	private void Set(EffectTag tag, float value)
@@ -32,7 +32,7 @@ public struct Resistance
 	}
 
 	public float this[EffectTag tag] {
-		get => this.Get(tag);
+		get => this.Get(tag).value;
 		set => this.Set(tag, value);
 	}
 }
