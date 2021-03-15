@@ -17,20 +17,22 @@ public struct Resistance
 
 	public Data[] data;
 
-	public float this[EffectTag tag] {
+	private float Get(EffectTag tag)
+	{
+		return (this.data ?? new Data[0])
+			.Where(d => d.tag == tag)
+			.FirstOrDefault().value;
+	}
 
-		get => this.data != null
-			? this.data.Where(d => d.tag == tag).FirstOrDefault().value
-			: 0f;
-		set {
-			int hit = Array.FindIndex(this.data, d => d.tag == tag);
-			if (hit == -1) {
-				this.data = this.data
-					.Concat(new Data[] { new Data { name = tag.ToString(), tag = tag, value = value } })
-					.ToArray();
-			} else {
-				this.data[hit].value = value;
-			}
-		}
+	private void Set(EffectTag tag, float value)
+	{
+		this.data = (this.data ?? new Data[0])
+			.AddOrUpdate(tag, value)
+			.ToArray();
+	}
+
+	public float this[EffectTag tag] {
+		get => this.Get(tag);
+		set => this.Set(tag, value);
 	}
 }

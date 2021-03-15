@@ -58,4 +58,37 @@ public class ResistanceDataExtensionsTests : TestCollection
 			data.Consolidate().Select(d => d.name)
 		);
 	}
+
+	[Test]
+	public void AddOrUpdateUpdate()
+	{
+		var data = new Resistance.Data[] {
+			new Resistance.Data{ name = EffectTag.Physical.ToString(), tag = EffectTag.Physical, value = 0.1f }
+		};
+		CollectionAssert.AreEqual(
+			new (string, EffectTag, float)[] {
+				(EffectTag.Physical.ToString(), EffectTag.Physical, 0.2f ),
+			},
+			data
+				.AddOrUpdate(EffectTag.Physical, 0.2f)
+				.Select(d => (d.name, d.tag, d.value))
+		);
+	}
+
+	[Test]
+	public void AddOrUpdateAdd()
+	{
+		var data = new Resistance.Data[] {
+			new Resistance.Data{ name = EffectTag.Physical.ToString(), tag = EffectTag.Physical, value = 0.1f },
+		};
+		CollectionAssert.AreEqual(
+			new (string, EffectTag, float)[] {
+				(EffectTag.Physical.ToString(), EffectTag.Physical, 0.1f ),
+				(EffectTag.Heat.ToString(), EffectTag.Heat, 0.2f ),
+			},
+			data
+				.AddOrUpdate(EffectTag.Heat, 0.2f)
+				.Select(d => (d.name, d.tag, d.value))
+		);
+	}
 }
