@@ -1,9 +1,6 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
-using UnityEngine.TestTools;
 
 public class EffectDataExtensionsTests : TestCollection
 {
@@ -115,5 +112,64 @@ public class EffectDataExtensionsTests : TestCollection
 		effect.Revert();
 
 		Assert.AreEqual((7, 7, 7), called);
+	}
+
+	[Test]
+	public void ApplySilenced()
+	{
+		var called = false;
+		var source = new MockSheet();
+		var target = new MockSheet();
+		var behaviour = ScriptableObject.CreateInstance<MockEffectBehaviourSO>();
+		var data = new EffectData { behaviour = behaviour };
+
+		behaviour.apply = (_, __, ___) => called = true;
+		data.silence = SilenceTag.ApplyAndRevert;
+
+		var effect = data.GetEffect(source, target);
+
+		effect.Apply();
+
+		Assert.False(called);
+	}
+
+	[Test]
+	public void RevertSilencedWhenApplySilenced()
+	{
+		var called = false;
+		var source = new MockSheet();
+		var target = new MockSheet();
+		var behaviour = ScriptableObject.CreateInstance<MockEffectBehaviourSO>();
+		var data = new EffectData { behaviour = behaviour };
+
+		behaviour.revert = (_, __, ___) => called = true;
+		data.silence = SilenceTag.ApplyAndRevert;
+
+		var effect = data.GetEffect(source, target);
+
+		effect.Apply();
+		effect.Revert();
+
+		Assert.False(called);
+	}
+
+	[Test]
+	public void MaintainSilenced()
+	{
+		var called = false;
+		var source = new MockSheet();
+		var target = new MockSheet();
+		var behaviour = ScriptableObject.CreateInstance<MockEffectBehaviourSO>();
+		var data = new EffectData { behaviour = behaviour };
+
+		behaviour.maintain = (_, __, ___, ____) => called = true;
+		data.silence = SilenceTag.Maintain;
+
+		var effect = data.GetEffect(source, target);
+
+		effect.Apply();
+		effect.Maintain(0.1f);
+
+		Assert.False(called);
 	}
 }

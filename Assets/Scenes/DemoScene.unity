@@ -1469,7 +1469,7 @@ MonoBehaviour:
     data:
     - name: Heat
       tag: 1
-      value: 0.2
+      value: 0.1
 --- !u!65 &1320382541
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1686,15 +1686,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad376995a65d7744db54c2136c223657, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sheet: {fileID: 0}
+  sheet: {fileID: 1453732933}
   applyPerSecond: 1
   effectCollection:
     effectData:
     - intensity: 20
       duration: 0
+      silence: 2
       behaviour: {fileID: 11400000, guid: d01fac225b704db4fa3654d1c6dc48b8, type: 2}
-    - intensity: 2
-      duration: 10
+    - intensity: 10
+      duration: 3
+      silence: 1
       behaviour: {fileID: 11400000, guid: d01fac225b704db4fa3654d1c6dc48b8, type: 2}
   cast:
     magazine:
