@@ -24,4 +24,19 @@ public class IEnumerableExtensionTests : TestCollection
 			mutables.Select(m => m.value)
 		);
 	}
+
+	[Test]
+	public void OrEmptyThis()
+	{
+		CollectionAssert.AreEqual(
+			new int[] { 1, 2, 3, 4 },
+			new int[] { 1, 2, 3, 4 }.OrEmpty()
+		);
+	}
+
+	[Test]
+	public void OrEmptyNull()
+	{
+		Assert.IsEmpty((null as int[]).OrEmpty());
+	}
 }

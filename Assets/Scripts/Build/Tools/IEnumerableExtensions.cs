@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 public static class IEnumerableExtensions
@@ -9,5 +10,11 @@ public static class IEnumerableExtensions
 		foreach (T elem in enumerable) {
 			action(elem);
 		}
+	}
+
+	public static
+	IEnumerable<T> OrEmpty<T>(this IEnumerable<T> enumerable)
+	{
+		return enumerable ?? Enumerable.Empty<T>();
 	}
 }
