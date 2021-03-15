@@ -3,7 +3,7 @@ using System.Linq;
 using UnityEngine;
 
 [Serializable]
-public struct Resistance
+public struct Resistance : IResistance
 {
 	[Serializable]
 	public struct Data

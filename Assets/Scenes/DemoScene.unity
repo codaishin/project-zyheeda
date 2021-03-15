@@ -1406,7 +1406,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1154642173}
   m_Layer: 0
-  m_Name: TmpLogShoot
+  m_Name: ShowcaseShoot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1464,9 +1464,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health:
-    hp: 0
+    hp: 100
   resistance:
-    data: []
+    data:
+    - name: Heat
+      tag: 1
+      value: 0.2
 --- !u!65 &1320382541
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1657,7 +1660,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1453732932}
-        m_TargetAssemblyTypeName: BaseSkillMB`2[[LogEffect, Build
+        m_TargetAssemblyTypeName: BaseSkillMB`3[[EffectCollection, Build
         m_MethodName: Begin
         m_Mode: 0
         m_Arguments:
@@ -1680,11 +1683,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 1453732928}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bc8b6a24e392a584591cc4c1c4b3609f, type: 3}
+  m_Script: {fileID: 11500000, guid: ad376995a65d7744db54c2136c223657, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sheet: {fileID: 1453732933}
-  applyPerSecond: 0
+  sheet: {fileID: 0}
+  applyPerSecond: 1
+  effectCollection:
+    effectData:
+    - intensity: 20
+      duration: 0
+      behaviour: {fileID: 11400000, guid: d01fac225b704db4fa3654d1c6dc48b8, type: 2}
+    - intensity: 2
+      duration: 10
+      behaviour: {fileID: 11400000, guid: d01fac225b704db4fa3654d1c6dc48b8, type: 2}
   cast:
     magazine:
       projectilePrefab: {fileID: 8992679554399984682}
