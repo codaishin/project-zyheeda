@@ -34,15 +34,18 @@ public static class ResistanceDataExtensions
 	public static
 	IEnumerable<Resistance.Data> AddOrUpdate(this IEnumerable<Resistance.Data> data, EffectTag tag, float value)
 	{
-		bool hit = false;
-		foreach (Resistance.Data d in data) {
-			hit = hit || d.tag == tag;
-			yield return hit
-				? new Resistance.Data { name = d.name, value = value, tag = tag }
-				: d;
+		bool matched = false;
+		Func<EffectTag, bool> match = t => (!matched && (matched = t == tag));
+		Func<Resistance.Data> getNewElem = () => new Resistance.Data { name = tag.ToString(), tag = tag, value = value };
+
+		foreach (Resistance.Data origElem in data) {
+			yield return match(origElem.tag) switch {
+				true => getNewElem(),
+				false => origElem,
+			};
 		}
-		if (!hit) {
-			yield return new Resistance.Data { name = tag.ToString(), value = value, tag = tag };
+		if (!matched) {
+			yield return getNewElem();
 		}
 	}
 }
