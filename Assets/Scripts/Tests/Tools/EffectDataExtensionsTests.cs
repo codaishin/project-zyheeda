@@ -11,20 +11,20 @@ public class EffectDataExtensionsTests : TestCollection
 
 	private class MockEffectBehaviourSO : BaseEffectBehaviourSO
 	{
-		public Action<ISections, ISections, int> apply = (s, t, i) => { };
-		public Action<ISections, ISections, int, float> maintain = (s, t, i, d) => { };
-		public Action<ISections, ISections, int> revert = (s, t, i) => { };
+		public Action<ISections, ISections, float> apply = (s, t, i) => { };
+		public Action<ISections, ISections, float, float> maintain = (s, t, i, d) => { };
+		public Action<ISections, ISections, float> revert = (s, t, i) => { };
 
 		public override
-		void Apply<T>(T source, T target, int intensity) =>
+		void Apply<T>(T source, T target, float intensity) =>
 			this.apply(source, target, intensity);
 
 		public override
-		void Maintain<T>(T source, T target, int intensity, float intervalDelta) =>
+		void Maintain<T>(T source, T target, float intensity, float intervalDelta) =>
 			this.maintain(source, target, intensity, intervalDelta);
 
 		public override
-		void Revert<T>(T source, T target, int intensity) =>
+		void Revert<T>(T source, T target, float intensity) =>
 			this.revert(source, target, intensity);
 	}
 
@@ -95,7 +95,7 @@ public class EffectDataExtensionsTests : TestCollection
 	[Test]
 	public void UseIntensity()
 	{
-		var called = (a: 0, m: 0, r: 0);
+		var called = (a: 0f, m: 0f, r: 0f);
 		var source = new MockSheet();
 		var target = new MockSheet();
 		var behaviour = ScriptableObject.CreateInstance<MockEffectBehaviourSO>();
@@ -111,7 +111,7 @@ public class EffectDataExtensionsTests : TestCollection
 		effect.Maintain(5f);
 		effect.Revert();
 
-		Assert.AreEqual((7, 7, 7), called);
+		Assert.AreEqual((7f, 7f, 7f), called);
 	}
 
 	[Test]
