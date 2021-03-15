@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "ScriptableObjects/EffectBehaviour/ModHp")]
-public class ModHpSO : BaseEffectBehaviourSO
+public class BaseModHpSO<TResistance> : BaseEffectBehaviourSO
+	where TResistance : IResistance
 {
 	public bool invert = true;
 
