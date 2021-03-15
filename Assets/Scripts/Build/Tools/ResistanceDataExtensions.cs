@@ -30,4 +30,22 @@ public static class ResistanceDataExtensions
 			.Select(ResistanceDataExtensions.MarkDuplicates())
 			.Select(ResistanceDataExtensions.SetName);
 	}
+
+	public static
+	IEnumerable<Resistance.Data> AddOrUpdate(this IEnumerable<Resistance.Data> data, EffectTag tag, float value)
+	{
+		bool matched = false;
+		Func<EffectTag, bool> match = t => (!matched && (matched = t == tag));
+		Func<Resistance.Data> getNewElem = () => new Resistance.Data { name = tag.ToString(), tag = tag, value = value };
+
+		foreach (Resistance.Data origElem in data) {
+			yield return match(origElem.tag) switch {
+				true => getNewElem(),
+				false => origElem,
+			};
+		}
+		if (!matched) {
+			yield return getNewElem();
+		}
+	}
 }
