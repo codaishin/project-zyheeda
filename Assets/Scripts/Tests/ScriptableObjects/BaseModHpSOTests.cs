@@ -1,4 +1,4 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
@@ -22,18 +22,18 @@ public class BaseModHpSOTests : TestCollection
 	private class MockSheet : ISections
 	{
 		public Health health;
+		public MockResistance resistance = new MockResistance();
 
 		public bool UseSection<TSection>(RefAction<TSection> action)
 		{
-			bool useHealth(RefAction<Health> call) {
-				call(ref this.health);
-				return true;
-			}
-
-			return action switch {
-				RefAction<Health> call => useHealth(call),
-				_ => false,
+			bool success = true;
+			Action run = action switch {
+				RefAction<Health> call => () => call(ref this.health),
+				RefAction<MockResistance> call => () => call(ref this.resistance),
+				_ => () => success = false,
 			};
+			run();
+			return success;
 		}
 	}
 
@@ -102,5 +102,33 @@ public class BaseModHpSOTests : TestCollection
 		var modHp = ScriptableObject.CreateInstance<MockModHpSO>();
 
 		Assert.DoesNotThrow(() => modHp.Revert<MockSheet>(default, default, default));
+	}
+
+	[Test]
+	public void ApplyDamageReducedByResistance()
+	{
+		var target = new MockSheet();
+		var modHp = ScriptableObject.CreateInstance<MockModHpSO>();
+
+		target.health.hp = 42;
+		target.resistance[EffectTag.Heat] = 0.5f;
+		modHp.tag = EffectTag.Heat;
+		modHp.Apply(default, target, 4);
+
+		Assert.AreEqual(40, target.health.hp);
+	}
+
+	[Test]
+	public void MaintainDamageReducedByResistance()
+	{
+		var target = new MockSheet();
+		var modHp = ScriptableObject.CreateInstance<MockModHpSO>();
+
+		target.health.hp = 42;
+		target.resistance[EffectTag.Heat] = 0.7f;
+		modHp.tag = EffectTag.Heat;
+		modHp.Maintain(default, target, 5, 2f);
+
+		Assert.AreEqual(39, target.health.hp);
 	}
 }
