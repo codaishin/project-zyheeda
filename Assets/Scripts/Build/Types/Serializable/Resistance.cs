@@ -19,14 +19,14 @@ public struct Resistance
 
 	private float Get(EffectTag tag)
 	{
-		return (this.data ?? new Data[0])
+		return this.data.OrEmpty()
 			.Where(d => d.tag == tag)
 			.FirstOrDefault().value;
 	}
 
 	private void Set(EffectTag tag, float value)
 	{
-		this.data = (this.data ?? new Data[0])
+		this.data = this.data.OrEmpty()
 			.AddOrUpdate(tag, value)
 			.ToArray();
 	}
