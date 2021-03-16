@@ -21,16 +21,13 @@ public class CharacterSheetMB : MonoBehaviour, IConditionManager, ISections
 		stack.Add(condition);
 	}
 
-	public bool UseSection<TSection>(RefAction<TSection> action)
+	public Action UseSection<TSection>(RefAction<TSection> action, Action fallback)
 	{
-		bool success = true;
-		Action run = action switch {
-			RefAction<Health> call => () => call(ref this.health),
-			RefAction<Resistance> call => () => call(ref this.resistance),
-			_ => () => success = false,
+		return action switch {
+			RefAction<Health> use => () => use(ref this.health),
+			RefAction<Resistance> use => () => use(ref this.resistance),
+			_ => fallback,
 		};
-		run();
-		return success;
 	}
 
 	private void Awake()

@@ -76,8 +76,9 @@ public class CharacterSheetMBTests : TestCollection
 	public void UseSectionFalse()
 	{
 		var sheet = new GameObject("obj").AddComponent<CharacterSheetMB>();
+		Action fallback = () => {};
 
-		Assert.False(sheet.UseSection((ref MockClass _) => {}));
+		Assert.AreEqual(fallback, sheet.UseSection((ref MockClass _) => {}, fallback));
 	}
 
 	[Test]
@@ -86,9 +87,10 @@ public class CharacterSheetMBTests : TestCollection
 		var sheet = new GameObject("obj").AddComponent<CharacterSheetMB>();
 		sheet.health.hp = 42;
 
-		bool used = sheet.UseSection((ref Health h) => h.hp = 5);
+		var exec = sheet.UseSection((ref Health h) => h.hp = 5, default);
+		exec();
 
-		Assert.AreEqual((true, 5f), (used, sheet.health.hp));
+		Assert.AreEqual(5f, sheet.health.hp);
 	}
 
 	[Test]
@@ -97,8 +99,9 @@ public class CharacterSheetMBTests : TestCollection
 		var sheet = new GameObject("obj").AddComponent<CharacterSheetMB>();
 		sheet.resistance.data = new Resistance.Data[0];
 
-		bool used = sheet.UseSection((ref Resistance r) => r.data = new Resistance.Data[10]);
+		var exec = sheet.UseSection((ref Resistance r) => r.data = new Resistance.Data[10], default);
+		exec();
 
-		Assert.AreEqual((true, 10), (used, sheet.resistance.data.Length));
+		Assert.AreEqual(10, sheet.resistance.data.Length);
 	}
 }

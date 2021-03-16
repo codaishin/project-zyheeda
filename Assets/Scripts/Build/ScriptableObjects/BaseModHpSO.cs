@@ -12,8 +12,8 @@ public class BaseModHpSO<TResistance> : BaseEffectBehaviourSO
 			false => health.hp + intensity,
 		};
 
-		target.UseSection<TResistance>(modifyIntensity);
-		target.UseSection<Health>(modifyHp);
+		target.UseSection<TResistance>(modifyIntensity, () => {})();
+		target.UseSection<Health>(modifyHp, () => {})();
 	}
 
 	public override

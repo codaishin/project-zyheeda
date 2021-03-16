@@ -24,16 +24,13 @@ public class BaseModHpSOTests : TestCollection
 		public Health health;
 		public MockResistance resistance = new MockResistance();
 
-		public bool UseSection<TSection>(RefAction<TSection> action)
+		public Action UseSection<TSection>(RefAction<TSection> action, Action fallback)
 		{
-			bool success = true;
-			Action run = action switch {
-				RefAction<Health> call => () => call(ref this.health),
-				RefAction<MockResistance> call => () => call(ref this.resistance),
-				_ => () => success = false,
+			return action switch {
+				RefAction<Health> use => () => use(ref this.health),
+				RefAction<MockResistance> use => () => use(ref this.resistance),
+				_ => fallback,
 			};
-			run();
-			return success;
 		}
 	}
 

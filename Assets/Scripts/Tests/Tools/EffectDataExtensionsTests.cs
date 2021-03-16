@@ -6,7 +6,7 @@ public class EffectDataExtensionsTests : TestCollection
 {
 	private class MockSheet : ISections
 	{
-		public bool UseSection<TSection>(RefAction<TSection> action) => false;
+		public Action UseSection<TSection>(RefAction<TSection> action, Action fallback) => fallback;
 	}
 
 	private class MockEffectBehaviourSO : BaseEffectBehaviourSO

@@ -9,7 +9,7 @@ public class BaseEffectCollectionTests : TestCollection
 		public Action<Effect> add = (_) => { };
 
 		public void Add(Effect effect) => this.add(effect);
-		public bool UseSection<T>(RefAction<T> action) => false;
+		public Action UseSection<T>(RefAction<T> action, Action fallback) => fallback;
 	}
 
 	private class MockEffectBehaviourSO : BaseEffectBehaviourSO
