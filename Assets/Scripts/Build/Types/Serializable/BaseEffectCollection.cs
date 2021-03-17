@@ -4,18 +4,20 @@ using UnityEngine;
 
 
 [Serializable]
-public class BaseEffectCollection<TSheet> : IEffectCollection<TSheet>
+public class BaseEffectCollection<TSheet, TEffectFactory> : IEffectCollection<TSheet>
 	where TSheet : IConditionManager, ISections
+	where TEffectFactory : IEffectFactory<TSheet>
 {
-	public EffectData[] effectData;
+	public EffectData<TSheet, TEffectFactory>[] effectData;
 
 	private void Apply(TSheet source, TSheet target)
 	{
-		foreach (EffectData data in this.effectData) {
+		foreach (EffectData<TSheet, TEffectFactory> data in this.effectData) {
 			Effect effect = data.GetEffect(source, target);
 			if (effect.duration == 0) {
-				effect.Apply(out Action revert);
-				revert();
+				if (effect.Apply(out Action revert)) {
+					revert();
+				}
 			} else {
 				target.Add(effect);
 			}

@@ -12,27 +12,14 @@ public class BaseEffectCollectionTests : TestCollection
 		public Action UseSection<T>(RefAction<T> action, Action fallback) => fallback;
 	}
 
-	private class MockEffectBehaviourSO : BaseEffectBehaviourSO
+	private class MockEffectFactory : IEffectFactory<MockSheetMB>
 	{
-		public Action<ISections, ISections, float> apply = (s, t, i) => { };
-		public Action<ISections, ISections, float, float> maintain = (s, t, i, d) => { };
-		public Action<ISections, ISections, float> revert = (s, t, i) => { };
+		public Func<MockSheetMB, MockSheetMB, float, Effect> create = (_, __, ___) => new Effect();
 
-		public override
-		void Apply<TSheet>(TSheet source, TSheet target, float intensity) =>
-			this.apply(source, target, intensity);
-
-		public override
-		void Maintain<TSheet>(TSheet source, TSheet target, float intensity, float intervalDelta) =>
-			this.maintain(source, target, intensity, intervalDelta);
-
-		public override
-		void Revert<TSheet>(TSheet source, TSheet target, float intensity) =>
-			this.revert(source, target, intensity);
-
+		public Effect Create(MockSheetMB s, MockSheetMB t, float i) => this.create(s, t, i);
 	}
 
-	private class MockEffectCollection : BaseEffectCollection<MockSheetMB> {}
+	private class MockEffectCollection : BaseEffectCollection<MockSheetMB, MockEffectFactory> {}
 
 	[Test]
 	public void GetApplyEffectsTrue()
@@ -40,7 +27,7 @@ public class BaseEffectCollectionTests : TestCollection
 		var coll = new MockEffectCollection();
 		var source = new GameObject("source").AddComponent<MockSheetMB>();
 		var target = new GameObject("target").AddComponent<MockSheetMB>();
-		coll.effectData = new EffectData[0];
+		coll.effectData = new EffectData<MockSheetMB, MockEffectFactory>[0];
 		Assert.True(coll.GetApplyEffects(source, target.gameObject, out _));
 	}
 
@@ -50,68 +37,103 @@ public class BaseEffectCollectionTests : TestCollection
 		var coll = new MockEffectCollection();
 		var source = new GameObject("source").AddComponent<MockSheetMB>();
 		var target = new GameObject("target");
-		coll.effectData = new EffectData[0];
+		coll.effectData = new EffectData<MockSheetMB, MockEffectFactory>[0];
 		Assert.False(coll.GetApplyEffects(source, target, out _));
 	}
 
 	[Test]
-	public void GetApplyEffectsApply()
-	{
-		var called = (default(MockSheetMB), default(MockSheetMB));
-		var coll = new MockEffectCollection();
-		var behaviour = ScriptableObject.CreateInstance<MockEffectBehaviourSO>();
-		var source = new GameObject("source").AddComponent<MockSheetMB>();
-		var target = new GameObject("target").AddComponent<MockSheetMB>();
-
-		behaviour.apply = (s, t, i) => called = (s as MockSheetMB, t as MockSheetMB);
-		coll.effectData = new EffectData[] {
-			new EffectData { behaviour = behaviour }
-		};
-		coll.GetApplyEffects(source, target.gameObject, out var apply);
-		apply();
-
-		Assert.AreEqual((source, target), called);
-	}
-
-	[Test]
-	public void GetApplyEffectsRevert()
-	{
-		var called = (default(MockSheetMB), default(MockSheetMB));
-		var coll = new MockEffectCollection();
-		var behaviour = ScriptableObject.CreateInstance<MockEffectBehaviourSO>();
-		var source = new GameObject("source").AddComponent<MockSheetMB>();
-		var target = new GameObject("target").AddComponent<MockSheetMB>();
-
-		behaviour.revert = (s, t, i) => called = (s as MockSheetMB, t as MockSheetMB);
-		coll.effectData = new EffectData[] {
-			new EffectData { behaviour = behaviour }
-		};
-		coll.GetApplyEffects(source, target.gameObject, out var apply);
-		apply();
-
-		Assert.AreEqual((source, target), called);
-	}
-
-	[Test]
-	public void AddsToConditions()
+	public void GetApplyEffectsUsesApply()
 	{
 		var called = (default(MockSheetMB), default(MockSheetMB), 0f);
 		var coll = new MockEffectCollection();
-		var behaviour = ScriptableObject.CreateInstance<MockEffectBehaviourSO>();
+		var factory = new MockEffectFactory();
 		var source = new GameObject("source").AddComponent<MockSheetMB>();
 		var target = new GameObject("target").AddComponent<MockSheetMB>();
 
-		behaviour.maintain = (s, t, _, d) => called = (s as MockSheetMB, t as MockSheetMB, d);
-		target.add = e => {
-			e.Apply(out _);
-			e.Maintain(42f);
-		};
-		coll.effectData = new EffectData[] {
-			new EffectData { behaviour = behaviour, duration = 1f }
+		factory.create = (s, t, i) => new Effect((out Action r) => {
+			called = (s, t, i);
+			r = () => {};
+		});
+		coll.effectData = new EffectData<MockSheetMB, MockEffectFactory>[] {
+			new EffectData<MockSheetMB, MockEffectFactory> { factory = factory, intensity = 4 }
 		};
 		coll.GetApplyEffects(source, target.gameObject, out var apply);
 		apply();
 
-		Assert.AreEqual((source, target, 42f), called);
+		Assert.AreEqual((source, target, 4f), called);
+	}
+
+	[Test]
+	public void GetApplyEffectsUsesRevert()
+	{
+		var called = false;
+		var coll = new MockEffectCollection();
+		var factory = new MockEffectFactory();
+		var source = new GameObject("source").AddComponent<MockSheetMB>();
+		var target = new GameObject("target").AddComponent<MockSheetMB>();
+
+		factory.create = (s, t, i) => new Effect((out Action r) => r = () => called = true);
+		coll.effectData = new EffectData<MockSheetMB, MockEffectFactory>[] {
+			new EffectData<MockSheetMB, MockEffectFactory> { factory = factory }
+		};
+		coll.GetApplyEffects(source, target.gameObject, out var apply);
+		apply();
+
+		Assert.True(called);
+	}
+
+	[Test]
+	public void GetApplyEffectsDefaultRevertDoesNotThrow()
+	{
+		var coll = new MockEffectCollection();
+		var factory = new MockEffectFactory();
+		var source = new GameObject("source").AddComponent<MockSheetMB>();
+		var target = new GameObject("target").AddComponent<MockSheetMB>();
+
+		factory.create = (s, t, i) => new Effect((out Action r) => r = default);
+		coll.effectData = new EffectData<MockSheetMB, MockEffectFactory>[] {
+			new EffectData<MockSheetMB, MockEffectFactory> { factory = factory }
+		};
+		coll.GetApplyEffects(source, target.gameObject, out var apply);
+		Assert.DoesNotThrow(() => apply());
+	}
+
+	[Test]
+	public void UseTargetAdd()
+	{
+		var called = 0f;
+		var coll = new MockEffectCollection();
+		var factory = new MockEffectFactory();
+		var source = new GameObject("source").AddComponent<MockSheetMB>();
+		var target = new GameObject("target").AddComponent<MockSheetMB>();
+
+		factory.create = (s, t, _) => new Effect(maintain: d => called = d);
+		target.add = e => e.Maintain(42f);
+		coll.effectData = new EffectData<MockSheetMB, MockEffectFactory>[] {
+			new EffectData<MockSheetMB, MockEffectFactory> { factory = factory, duration = 1f }
+		};
+		coll.GetApplyEffects(source, target.gameObject, out var apply);
+		apply();
+
+		Assert.AreEqual(42f, called);
+	}
+
+	[Test]
+	public void DontUseTargetAddWhenApplyReturnsFalse()
+	{
+		var called = false;
+		var coll = new MockEffectCollection();
+		var factory = new MockEffectFactory();
+		var source = new GameObject("source").AddComponent<MockSheetMB>();
+		var target = new GameObject("target").AddComponent<MockSheetMB>();
+
+		target.add = _ => called = true;
+		coll.effectData = new EffectData<MockSheetMB, MockEffectFactory>[] {
+			new EffectData<MockSheetMB, MockEffectFactory> { factory = factory }
+		};
+		coll.GetApplyEffects(source, target.gameObject, out var apply);
+		apply();
+
+		Assert.False(called);
 	}
 }
