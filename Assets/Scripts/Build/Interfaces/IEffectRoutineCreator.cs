@@ -3,5 +3,5 @@ using System.Collections.Generic;
 
 public interface IEffectRoutineCreator
 {
-	Finalizable Create(Effect effect);
+	Finalizable Create(Effect effect, out Action revert);
 }
