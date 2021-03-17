@@ -1,101 +1,104 @@
+using System;
 using NUnit.Framework;
 
 public class EffectTests : TestCollection
 {
 	[Test]
-	public void OnApply()
+	public void Apply()
 	{
 		var called = false;
-		var effect = new Effect();
-		effect.OnApply += () => called = true;
+		var effect = new Effect((out Action r) => {
+			called = true;
+			r = default;
+		});
 
-		effect.Apply();
+		effect.Apply(out _);
 
 		Assert.True(called);
 	}
 
 	[Test]
-	public void OnApplyDoesNotThrow()
+	public void DefaultApplyDoesNotThrow()
 	{
 		var effect = new Effect();
 
-		Assert.DoesNotThrow(() => effect.Apply());
+		Assert.DoesNotThrow(() => effect.Apply(out _));
 	}
 
 	[Test]
-	public void OnMaintain()
+	public void Maintain()
 	{
 		var called = 0f;
-		var effect = new Effect();
-		effect.OnMaintain += d => called = d;
+		var effect = new Effect(maintain: d => called = d);
 
-		effect.Apply();
+		effect.Apply(out _);
 		effect.Maintain(0.4f);
 
 		Assert.AreEqual(0.4f, called);
 	}
 
 	[Test]
-	public void OnMaintainDoesNotThrow()
+	public void DefaultMaintainDoesNotThrow()
 	{
 		var effect = new Effect();
 
-		effect.Apply();
 		Assert.DoesNotThrow(() => effect.Maintain(0.4f));
 	}
 
 	[Test]
-	public void OnMaintainReducesDuration()
+	public void MaintainReducesDuration()
 	{
 		var effect = new Effect();
 		effect.duration = 5f;
 
-		effect.Apply();
+		effect.Apply(out _);
 		effect.Maintain(3f);
 
 		Assert.AreEqual(2f, effect.duration);
 	}
 
 	[Test]
-	public void OnRevert()
+	public void Revert()
 	{
 		var called = false;
-		var effect = new Effect();
-		effect.OnRevert += () => called = true;
+		var effect = new Effect((out Action r) => r = () => called = true);
 
-		effect.Apply();
-		effect.Revert();
+		var outed = effect.Apply(out var revert);
+		revert();
 
-		Assert.True(called);
+		Assert.AreEqual((true, true), (outed, called));
 	}
 
 	[Test]
-	public void OnRevertDoesNotThrow()
+	public void FalseApplyWhenNoRevert()
 	{
-		var effect = new Effect();
+		var effect = new Effect((out Action r) => r = default);
 
-		effect.Apply();
-		Assert.DoesNotThrow(() => effect.Revert());
+		Assert.False(effect.Apply(out _));
 	}
 
 	[Test]
-	public void NoRevertWhenNoApply()
+	public void SilenceApplyAndRevert()
 	{
 		var called = false;
-		var effect = new Effect();
-		effect.OnRevert += () => called = true;
+		var effect = new Effect((out Action r) => {
+			called = true;
+			r = () => {};
+		});
+		effect.silence = SilenceTag.ApplyAndRevert;
 
-		effect.Revert();
+		var outed = effect.Apply(out _);
 
-		Assert.False(called);
+		Assert.AreEqual((false, false), (outed, called));
 	}
 
+
 	[Test]
-	public void NoMaintainWhenNoApply()
+	public void SilenceMaintain()
 	{
 		var called = false;
-		var effect = new Effect();
-		effect.OnMaintain += d => called = true;
+		var effect = new Effect(maintain: d => called = true);
+		effect.silence = SilenceTag.Maintain;
 
 		effect.Maintain(2);
 
@@ -103,16 +106,14 @@ public class EffectTests : TestCollection
 	}
 
 	[Test]
-	public void NoApplyWhenReverted()
+	public void SilenceMaintainReduceDuration()
 	{
-		var called = false;
 		var effect = new Effect();
+		effect.silence = SilenceTag.Maintain;
+		effect.duration = 4f;
 
-		effect.Apply();
-		effect.Revert();
-		effect.OnApply += () => called = true;
-		effect.Apply();
+		effect.Maintain(2);
 
-		Assert.False(called);
+		Assert.AreEqual(4f - 2f, effect.duration);
 	}
 }

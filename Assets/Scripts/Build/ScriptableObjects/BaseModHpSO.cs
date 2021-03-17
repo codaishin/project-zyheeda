@@ -1,33 +1,44 @@
-public class BaseModHpSO<TResistance> : BaseEffectBehaviourSO
+using System;
+
+public class BaseModHpSO<TSheet, TResistance> : BaseEffectFactorySO<TSheet>
+	where TSheet : ISections
 	where TResistance : IResistance
 {
 	public bool invert = true;
 
-	private
-	void ModHp<TSheet>(TSheet source, TSheet target, float intensity) where TSheet : ISections
+	private Action<float> GetModHp(TSheet target)
 	{
-		void modifyIntensity(ref TResistance resistance) => intensity *= (1f - resistance[this.tag]);
-		void modifyHp(ref Health health) => health.hp = this.invert switch {
-			true => health.hp - intensity,
-			false => health.hp + intensity,
+		float compliance = default;
+		float modifier = default;
+
+		Action updateCompliance = target.UseSection<TResistance>(
+			(ref TResistance resistance) => compliance = 1f - resistance[this.tag],
+			() => {}
+		);
+		Action modifyHp = target.UseSection<Health>(
+			(ref Health health) => health.hp = this.invert ? health.hp - modifier : health.hp + modifier,
+			() => {}
+		);
+
+		return intensity => {
+			modifier = intensity;
+			updateCompliance();
+			modifier *= compliance;
+			modifyHp();
 		};
-
-		target.UseSection<TResistance>(modifyIntensity);
-		target.UseSection<Health>(modifyHp);
 	}
 
-	public override
-	void Apply<TSheet>(TSheet source, TSheet target, float intensity)
+	public override Effect Create(TSheet source, TSheet target, float intensity)
 	{
-		this.ModHp(source, target, intensity);
+		Action<float> modHp = this.GetModHp(target);
+		return new Effect(
+			apply: (out Action reverse) => {
+				modHp(intensity);
+				reverse = default;
+			},
+			maintain: (float intervalDelta) => {
+				modHp(intensity * intervalDelta);
+			}
+		);
 	}
-
-	public override
-	void Maintain<TSheet>(TSheet source, TSheet target, float intensity, float intervalDelta)
-	{
-		this.ModHp(source, target, intensity * intervalDelta);
-	}
-
-	public override
-	void Revert<TSheet>(TSheet source, TSheet target, float intensity) { }
 }

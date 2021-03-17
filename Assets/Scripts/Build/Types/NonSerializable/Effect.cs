@@ -1,38 +1,37 @@
 using System;
 
+public delegate void ApplyFunc(out Action revert);
+
 public class Effect
 {
-	private enum State { Idle = default, Active }
-
-	private State state;
 	public float duration;
 	public EffectTag tag;
+	public SilenceTag silence;
 	public ConditionStacking stacking;
 
-	public event Action OnApply;
-	public event Action<float> OnMaintain;
-	public event Action OnRevert;
+	private event ApplyFunc apply;
+	private event Action<float> maintain;
 
-	public void Apply()
+	public Effect(ApplyFunc apply = default, Action<float> maintain = default)
 	{
-		if (this.state == State.Idle) {
-			this.OnApply?.Invoke();
-			this.state = State.Active;
+		this.apply = apply;
+		this.maintain = maintain;
+	}
+
+	public bool Apply(out Action revert)
+	{
+		revert = default;
+		if (this.apply != null && this.silence != SilenceTag.ApplyAndRevert) {
+			this.apply(out revert);
 		}
+		return revert != default;
 	}
 
 	public void Maintain(float delta)
 	{
-		if (this.state == State.Active) {
-			this.duration -= delta;
-			this.OnMaintain?.Invoke(delta);
+		if (this.maintain != null && this.silence != SilenceTag.Maintain) {
+			this.maintain(delta);
 		}
-	}
-
-	public void Revert()
-	{
-		if (this.state == State.Active) {
-			this.OnRevert?.Invoke();
-		}
+		this.duration -= delta;
 	}
 }

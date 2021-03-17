@@ -1,1 +1,1 @@
-public class DurationManagerMB : BaseConditionManagerMB<EffectRoutineCreator, DurationStacking> { }
+public class DurationManagerMB : BaseConditionManagerMB<EffectRoutineFactory, DurationStacking> { }

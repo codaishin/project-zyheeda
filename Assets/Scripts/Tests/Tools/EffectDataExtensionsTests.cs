@@ -6,170 +6,55 @@ public class EffectDataExtensionsTests : TestCollection
 {
 	private class MockSheet : ISections
 	{
-		public bool UseSection<TSection>(RefAction<TSection> action) => false;
+		public Action UseSection<TSection>(RefAction<TSection> action, Action fallback) => fallback;
 	}
 
-	private class MockEffectBehaviourSO : BaseEffectBehaviourSO
+	private class MockEffectFactory : IEffectFactory<MockSheet>
 	{
-		public Action<ISections, ISections, float> apply = (s, t, i) => { };
-		public Action<ISections, ISections, float, float> maintain = (s, t, i, d) => { };
-		public Action<ISections, ISections, float> revert = (s, t, i) => { };
+		public Func<MockSheet, MockSheet, float, Effect> create = (_, __, ___) => new Effect();
 
-		public override
-		void Apply<T>(T source, T target, float intensity) =>
-			this.apply(source, target, intensity);
-
-		public override
-		void Maintain<T>(T source, T target, float intensity, float intervalDelta) =>
-			this.maintain(source, target, intensity, intervalDelta);
-
-		public override
-		void Revert<T>(T source, T target, float intensity) =>
-			this.revert(source, target, intensity);
+		public Effect Create(MockSheet s, MockSheet t, float i) => this.create(s, t, i);
 	}
 
 	[Test]
-	public void CreateEffectApply()
+	public void CreateEffectThroughFactory()
 	{
-		var called = default((MockSheet, MockSheet));
-		var source = new MockSheet();
-		var target = new MockSheet();
-		var behaviour = ScriptableObject.CreateInstance<MockEffectBehaviourSO>();
-		var data = new EffectData { behaviour = behaviour };
-		behaviour.apply = (s, t, _) => called = (s as MockSheet, t as MockSheet);
+		var effect = new Effect();
+		var factory = new MockEffectFactory();
+		var data = new EffectData<MockSheet, MockEffectFactory> { factory = factory };
+		factory.create = (_, __, ___) => effect;
 
-		var effect = data.GetEffect(source, target);
-		effect.Apply();
-
-		Assert.AreEqual((source, target), called);
+		Assert.AreSame(effect, data.GetEffect(default, default));
 	}
 
 	[Test]
-	public void CreateEffectMaintain()
+	public void CreateEffectWithParameters()
 	{
-		var called = default((MockSheet, MockSheet, float));
+		var called = (default(MockSheet), default(MockSheet), 0f);
+		var factory = new MockEffectFactory();
 		var source = new MockSheet();
 		var target = new MockSheet();
-		var behaviour = ScriptableObject.CreateInstance<MockEffectBehaviourSO>();
-		var data = new EffectData { behaviour = behaviour };
-		behaviour.maintain = (s, t, _, d) => called = (s as MockSheet, t as MockSheet, d);
+		var data = new EffectData<MockSheet, MockEffectFactory> { factory = factory, intensity = 4000000f };
+		factory.create = (s, t, i) => {
+			called = (s, t, i);
+			return new Effect();
+		};
 
-		var effect = data.GetEffect(source, target);
-		effect.duration = 1f;
-		effect.Apply();
-		effect.Maintain(0.42f);
+		data.GetEffect(source, target);
 
-		Assert.AreEqual((source, target, 0.42f), called);
+		Assert.AreEqual((source, target, 4000000f), called);
 	}
 
 	[Test]
-	public void CreateEffectRevert()
+	public void CreateEffectWithData()
 	{
-		var called = default((MockSheet, MockSheet));
+		var factory = new MockEffectFactory();
 		var source = new MockSheet();
 		var target = new MockSheet();
-		var behaviour = ScriptableObject.CreateInstance<MockEffectBehaviourSO>();
-		var data = new EffectData { behaviour = behaviour };
-		behaviour.revert = (s, t, _) => called = (s as MockSheet, t as MockSheet);
-
-		var effect = data.GetEffect(source, target);
-		effect.Apply();
-		effect.Revert();
-
-		Assert.AreEqual((source, target), called);
-	}
-
-	[Test]
-	public void SetDuration()
-	{
-		var source = new MockSheet();
-		var target = new MockSheet();
-		var behaviour = ScriptableObject.CreateInstance<MockEffectBehaviourSO>();
-		var data = new EffectData { behaviour = behaviour, duration = 42f };
+		var data = new EffectData<MockSheet, MockEffectFactory> { factory = factory, silence = SilenceTag.Maintain, duration = 10f };
 
 		var effect = data.GetEffect(source, target);
 
-		Assert.AreEqual(42f, effect.duration);
-	}
-
-	[Test]
-	public void UseIntensity()
-	{
-		var called = (a: 0f, m: 0f, r: 0f);
-		var source = new MockSheet();
-		var target = new MockSheet();
-		var behaviour = ScriptableObject.CreateInstance<MockEffectBehaviourSO>();
-		var data = new EffectData { behaviour = behaviour, duration = 1, intensity = 7 };
-
-		behaviour.apply = (_, __, i) => called.a = i;
-		behaviour.maintain = (_, __, i, ___) => called.m = i;
-		behaviour.revert = (_, __, i) => called.r = i;
-
-		var effect = data.GetEffect(source, target);
-
-		effect.Apply();
-		effect.Maintain(5f);
-		effect.Revert();
-
-		Assert.AreEqual((7f, 7f, 7f), called);
-	}
-
-	[Test]
-	public void ApplySilenced()
-	{
-		var called = false;
-		var source = new MockSheet();
-		var target = new MockSheet();
-		var behaviour = ScriptableObject.CreateInstance<MockEffectBehaviourSO>();
-		var data = new EffectData { behaviour = behaviour };
-
-		behaviour.apply = (_, __, ___) => called = true;
-		data.silence = SilenceTag.ApplyAndRevert;
-
-		var effect = data.GetEffect(source, target);
-
-		effect.Apply();
-
-		Assert.False(called);
-	}
-
-	[Test]
-	public void RevertSilencedWhenApplySilenced()
-	{
-		var called = false;
-		var source = new MockSheet();
-		var target = new MockSheet();
-		var behaviour = ScriptableObject.CreateInstance<MockEffectBehaviourSO>();
-		var data = new EffectData { behaviour = behaviour };
-
-		behaviour.revert = (_, __, ___) => called = true;
-		data.silence = SilenceTag.ApplyAndRevert;
-
-		var effect = data.GetEffect(source, target);
-
-		effect.Apply();
-		effect.Revert();
-
-		Assert.False(called);
-	}
-
-	[Test]
-	public void MaintainSilenced()
-	{
-		var called = false;
-		var source = new MockSheet();
-		var target = new MockSheet();
-		var behaviour = ScriptableObject.CreateInstance<MockEffectBehaviourSO>();
-		var data = new EffectData { behaviour = behaviour };
-
-		behaviour.maintain = (_, __, ___, ____) => called = true;
-		data.silence = SilenceTag.Maintain;
-
-		var effect = data.GetEffect(source, target);
-
-		effect.Apply();
-		effect.Maintain(0.1f);
-
-		Assert.False(called);
+		Assert.AreEqual((SilenceTag.Maintain, 10f), (effect.silence, effect.duration));
 	}
 }

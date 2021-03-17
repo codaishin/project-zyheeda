@@ -1,4 +1,4 @@
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "ScriptableObjects/EffectBehaviour/ModHp")]
-public class ModHpSO : BaseModHpSO<Resistance> {}
+[CreateAssetMenu(menuName = "ScriptableObjects/EffectFactories/ModHp")]
+public class ModHpSO : BaseModHpSO<CharacterSheetMB, Resistance> {}
