@@ -103,7 +103,7 @@ public class BaseEffectCollectionTests : TestCollection
 
 		behaviour.maintain = (s, t, _, d) => called = (s as MockSheetMB, t as MockSheetMB, d);
 		target.add = e => {
-			e.Apply();
+			e.Apply(out _);
 			e.Maintain(42f);
 		};
 		coll.effectData = new EffectData[] {

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
@@ -10,10 +11,11 @@ public class EffectRoutineCreatorTests : TestCollection
 	public void CreateAndApply()
 	{
 		var called = false;
-		var effect = new Effect();
+		var effect = new Effect((out Action r) => {
+			called = true;
+			r = default;
+		});
 		var routine = new EffectRoutineCreator{ intervalDelta = 0f }.Create(effect);
-
-		effect.OnApply += () => called = true;
 
 		routine.MoveNext();
 
@@ -24,11 +26,10 @@ public class EffectRoutineCreatorTests : TestCollection
 	public void CreateAndMaintain()
 	{
 		var called = 0f;
-		var effect = new Effect();
+		var effect = new Effect(maintain: d => called = d);
 		var routine = new EffectRoutineCreator{ intervalDelta = 3f }.Create(effect);
 
 		effect.duration = 10f;
-		effect.OnMaintain += d => called = d;
 
 		routine.MoveNext();
 		routine.MoveNext();
@@ -40,10 +41,8 @@ public class EffectRoutineCreatorTests : TestCollection
 	public void CreateAndNoMaintain()
 	{
 		var called = false;
-		var effect = new Effect();
+		var effect = new Effect(maintain: _ => called = true);
 		var routine = new EffectRoutineCreator{ intervalDelta = 3f }.Create(effect);
-
-		effect.OnMaintain += _ => called = true;
 
 		routine.MoveNext();
 
@@ -54,10 +53,9 @@ public class EffectRoutineCreatorTests : TestCollection
 	public void CreateAndMaintainForDuration()
 	{
 		var called = new List<float>();
-		var effect = new Effect();
+		var effect = new Effect(maintain: d => called.Add(d));
 		var routine = new EffectRoutineCreator{ intervalDelta = 2f }.Create(effect);
 
-		effect.OnMaintain += d => called.Add(d);
 		effect.duration = 5f;
 
 		routine.MoveNext();  // Apply
@@ -109,10 +107,8 @@ public class EffectRoutineCreatorTests : TestCollection
 	public void CreateAndRevert()
 	{
 		var called = false;
-		var effect = new Effect();
+		var effect = new Effect((out Action r) => r = () => called = true);
 		var routine = new EffectRoutineCreator{ intervalDelta = 0f }.Create(effect);
-
-		effect.OnRevert += () => called = true;
 
 		routine.MoveNext();
 
@@ -124,11 +120,10 @@ public class EffectRoutineCreatorTests : TestCollection
 	{
 		var called = false;
 		var calledTrack = new List<bool>();
-		var effect = new Effect();
+		var effect = new Effect((out Action r) => r = () => called = true);
 		var routine = new EffectRoutineCreator{ intervalDelta = 42f }.Create(effect);
 
 		effect.duration = 42f;
-		effect.OnRevert += () => called = true;
 
 		routine.MoveNext();
 		calledTrack.Add(called);

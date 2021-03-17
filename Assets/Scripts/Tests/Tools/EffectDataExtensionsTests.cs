@@ -39,7 +39,7 @@ public class EffectDataExtensionsTests : TestCollection
 		behaviour.apply = (s, t, _) => called = (s as MockSheet, t as MockSheet);
 
 		var effect = data.GetEffect(source, target);
-		effect.Apply();
+		effect.Apply(out _);
 
 		Assert.AreEqual((source, target), called);
 	}
@@ -56,7 +56,7 @@ public class EffectDataExtensionsTests : TestCollection
 
 		var effect = data.GetEffect(source, target);
 		effect.duration = 1f;
-		effect.Apply();
+		effect.Apply(out _);
 		effect.Maintain(0.42f);
 
 		Assert.AreEqual((source, target, 0.42f), called);
@@ -73,8 +73,8 @@ public class EffectDataExtensionsTests : TestCollection
 		behaviour.revert = (s, t, _) => called = (s as MockSheet, t as MockSheet);
 
 		var effect = data.GetEffect(source, target);
-		effect.Apply();
-		effect.Revert();
+		effect.Apply(out var revert);
+		revert();
 
 		Assert.AreEqual((source, target), called);
 	}
@@ -107,9 +107,9 @@ public class EffectDataExtensionsTests : TestCollection
 
 		var effect = data.GetEffect(source, target);
 
-		effect.Apply();
+		effect.Apply(out var revert);
 		effect.Maintain(5f);
-		effect.Revert();
+		revert();
 
 		Assert.AreEqual((7f, 7f, 7f), called);
 	}
@@ -128,7 +128,7 @@ public class EffectDataExtensionsTests : TestCollection
 
 		var effect = data.GetEffect(source, target);
 
-		effect.Apply();
+		effect.Apply(out _);
 
 		Assert.False(called);
 	}
@@ -147,8 +147,8 @@ public class EffectDataExtensionsTests : TestCollection
 
 		var effect = data.GetEffect(source, target);
 
-		effect.Apply();
-		effect.Revert();
+		effect.Apply(out var revert);
+		revert();
 
 		Assert.False(called);
 	}
@@ -167,7 +167,7 @@ public class EffectDataExtensionsTests : TestCollection
 
 		var effect = data.GetEffect(source, target);
 
-		effect.Apply();
+		effect.Apply(out _);
 		effect.Maintain(0.1f);
 
 		Assert.False(called);

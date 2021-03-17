@@ -332,13 +332,13 @@ public class BaseConditionManagerMBTests : TestCollection
 	{
 		var called = false;
 		var manager = new GameObject("obj").AddComponent<MockConditionManagerMB>();
-		var effect = new Effect();
-		effect.OnRevert += () => called = true;
-		effect.Apply();
+		var effect = new Effect(apply: (out Action r) => r = () => called = true){ duration = 1f };
 
 		yield return new WaitForEndOfFrame();
 
 		manager.Add(effect);
+
+		yield return new WaitForSeconds(0.1f);
 
 		manager.Cancel(EffectTag.Physical);
 

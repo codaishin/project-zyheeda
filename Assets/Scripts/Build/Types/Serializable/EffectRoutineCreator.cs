@@ -10,7 +10,7 @@ public class EffectRoutineCreator : IEffectRoutineCreator
 
 	private IEnumerator PureRoutine(Effect effect)
 	{
-		effect.Apply();
+		effect.Apply(out Action revert);
 		while (effect.duration > 0) {
 			if (effect.duration < intervalDelta) {
 				intervalDelta = effect.duration;
@@ -18,7 +18,7 @@ public class EffectRoutineCreator : IEffectRoutineCreator
 			yield return new WaitForSeconds(intervalDelta);
 			effect.Maintain(intervalDelta);
 		}
-		effect.Revert();
+		revert();
 	}
 
 	public Finalizable Create(Effect effect)

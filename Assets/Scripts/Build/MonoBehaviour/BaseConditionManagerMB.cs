@@ -56,7 +56,7 @@ public abstract class BaseConditionManagerMB<TCreator, TStacking> : MonoBehaviou
 		if (this.stacks.TryGetValue(tag, out EffectStack stack)) {
 			stack.routines.ForEach(r => this.StopCoroutine(r));
 			stack.routines.Clear();
-			stack.effects.ForEach(e => e.Revert());
+			//stack.effects.ForEach(e => e.Revert());
 			stack.effects.Clear();
 		}
 	}
