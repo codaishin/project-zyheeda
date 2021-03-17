@@ -1,17 +1,13 @@
 public static class EffectDataExtensions
 {
-	public static Effect GetEffect<TSheet>(this EffectData data, TSheet source, TSheet target)
+	public static
+	Effect GetEffect<TSheet, TEffectFactory>(this EffectData<TSheet, TEffectFactory> data, TSheet source, TSheet target)
 		where TSheet : ISections
+		where TEffectFactory : IEffectFactory<TSheet>
 	{
-		//Effect effect = new Effect{ duration = data.duration };
-		//if (data.silence != SilenceTag.ApplyAndRevert) {
-		//	effect.apply += () => data.behaviour.Apply(source, target, data.intensity);
-		//	effect.OnRevert += () => data.behaviour.Revert(source, target, data.intensity);
-		//}
-		//if (data.silence != SilenceTag.Maintain) {
-		//	effect.maintain += d => data.behaviour.Maintain(source, target, data.intensity, d);
-		//}
-		//return effect;
-		return default;
+		Effect effect = data.factory.Create(source, target, data.intensity);
+		effect.duration = data.duration;
+		effect.silence = data.silence;
+		return effect;
 	}
 }
