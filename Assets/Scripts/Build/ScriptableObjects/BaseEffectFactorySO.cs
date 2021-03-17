@@ -6,5 +6,5 @@ public abstract class BaseEffectFactorySO<TSheet> : ScriptableObject, IEffectFac
 	public EffectTag tag;
 	public ConditionStacking stacking;
 
-	public abstract Effect Create(TSheet source, TSheet target, int intensity);
+	public abstract Effect Create(TSheet source, TSheet target, float intensity);
 }

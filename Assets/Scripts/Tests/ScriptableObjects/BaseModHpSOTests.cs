@@ -34,7 +34,7 @@ public class BaseModHpSOTests : TestCollection
 		}
 	}
 
-	private class MockModHpSO : BaseModHpSO<MockResistance> { }
+	private class MockModHpSO : BaseModHpSO<MockSheet, MockResistance> { }
 
 	[Test]
 	public void Apply()
@@ -42,7 +42,8 @@ public class BaseModHpSOTests : TestCollection
 		var target = new MockSheet{ health = new Health { hp = 42 } };
 		var modHp = ScriptableObject.CreateInstance<MockModHpSO>();
 
-		modHp.Apply(default, target, 4);
+		var effect = modHp.Create(default, target, 4);
+		effect.Apply(out _);
 
 		Assert.AreEqual(38, target.health.hp);
 	}
@@ -53,7 +54,8 @@ public class BaseModHpSOTests : TestCollection
 		var target = new MockSheet{ health = new Health { hp = 42 } };
 		var modHp = ScriptableObject.CreateInstance<MockModHpSO>();
 
-		modHp.Maintain(default, target, 4, 1f);
+		var effect = modHp.Create(default, target, 4);
+		effect.Maintain(1f);
 
 		Assert.AreEqual(38, target.health.hp);
 	}
@@ -64,7 +66,8 @@ public class BaseModHpSOTests : TestCollection
 		var target = new MockSheet{ health = new Health { hp = 42 } };
 		var modHp = ScriptableObject.CreateInstance<MockModHpSO>();
 
-		modHp.Maintain(default, target, 4, 0.5f);
+		var effect = modHp.Create(default, target, 4);
+		effect.Maintain(0.5f);
 
 		Assert.AreEqual(40, target.health.hp);
 	}
@@ -76,7 +79,8 @@ public class BaseModHpSOTests : TestCollection
 		var modHp = ScriptableObject.CreateInstance<MockModHpSO>();
 
 		modHp.invert = false;
-		modHp.Apply(default, target, 4);
+		var effect = modHp.Create(default, target, 4);
+		effect.Apply(out _);
 
 		Assert.AreEqual(46, target.health.hp);
 	}
@@ -88,17 +92,20 @@ public class BaseModHpSOTests : TestCollection
 		var modHp = ScriptableObject.CreateInstance<MockModHpSO>();
 
 		modHp.invert = false;
-		modHp.Maintain(default, target, 4, 0.5f);
+		var effect = modHp.Create(default, target, 4);
+		effect.Maintain(0.5f);
 
 		Assert.AreEqual(44, target.health.hp);
 	}
 
 	[Test]
-	public void RevertDoesNotThrow()
+	public void ApplyReturnsFalse()
 	{
+		var target = new MockSheet();
 		var modHp = ScriptableObject.CreateInstance<MockModHpSO>();
 
-		Assert.DoesNotThrow(() => modHp.Revert<MockSheet>(default, default, default));
+		var effect = modHp.Create(default, target, 4);
+		Assert.False(effect.Apply(out _));
 	}
 
 	[Test]
@@ -110,7 +117,8 @@ public class BaseModHpSOTests : TestCollection
 		target.health.hp = 42;
 		target.resistance[EffectTag.Heat] = 0.5f;
 		modHp.tag = EffectTag.Heat;
-		modHp.Apply(default, target, 4);
+		var effect = modHp.Create(default, target, 4);
+		effect.Apply(out _);
 
 		Assert.AreEqual(40, target.health.hp);
 	}
@@ -124,7 +132,8 @@ public class BaseModHpSOTests : TestCollection
 		target.health.hp = 42;
 		target.resistance[EffectTag.Heat] = 0.7f;
 		modHp.tag = EffectTag.Heat;
-		modHp.Maintain(default, target, 5, 2f);
+		var effect = modHp.Create(default, target, 5);
+		effect.Maintain(2f);
 
 		Assert.AreEqual(39, target.health.hp);
 	}

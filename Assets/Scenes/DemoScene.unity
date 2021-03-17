@@ -1693,11 +1693,11 @@ MonoBehaviour:
     - intensity: 20
       duration: 0
       silence: 2
-      behaviour: {fileID: 11400000, guid: d01fac225b704db4fa3654d1c6dc48b8, type: 2}
+      factory: {fileID: 11400000, guid: 922d7b5d3f46bb84baa43946921a77b6, type: 2}
     - intensity: 10
       duration: 3
       silence: 1
-      behaviour: {fileID: 11400000, guid: d01fac225b704db4fa3654d1c6dc48b8, type: 2}
+      factory: {fileID: 11400000, guid: 922d7b5d3f46bb84baa43946921a77b6, type: 2}
   cast:
     magazine:
       projectilePrefab: {fileID: 8992679554399984682}
