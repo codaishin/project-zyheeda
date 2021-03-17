@@ -1,7 +1,6 @@
 using System;
-using System.Collections.Generic;
 
-public interface IEffectRoutineCreator
+public interface IEffectRoutineFactory
 {
 	Finalizable Create(Effect effect, out Action revert);
 }

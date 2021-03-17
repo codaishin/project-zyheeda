@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine;
 
 [Serializable]
-public class EffectRoutineCreator : IEffectRoutineCreator
+public class EffectRoutineFactory : IEffectRoutineFactory
 {
 	private class RevertPtr
 	{

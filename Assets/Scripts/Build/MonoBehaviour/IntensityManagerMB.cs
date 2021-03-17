@@ -1,1 +1,1 @@
-public class IntensityManagerMB : BaseConditionManagerMB<EffectRoutineCreator, IntensityStacking> { }
+public class IntensityManagerMB : BaseConditionManagerMB<EffectRoutineFactory, IntensityStacking> { }

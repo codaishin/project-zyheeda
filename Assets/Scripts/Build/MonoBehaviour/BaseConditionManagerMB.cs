@@ -3,8 +3,8 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class BaseConditionManagerMB<TCreator, TStacking> : MonoBehaviour, IConditionManager
-	where TCreator: IEffectRoutineCreator, new()
+public abstract class BaseConditionManagerMB<TFactory, TStacking> : MonoBehaviour, IConditionManager
+	where TFactory: IEffectRoutineFactory, new()
 	where TStacking : IEffectRoutineStacking, new()
 {
 	private class EffectStack
@@ -14,7 +14,7 @@ public abstract class BaseConditionManagerMB<TCreator, TStacking> : MonoBehaviou
 	}
 
 	private Dictionary<EffectTag, EffectStack> stacks = new Dictionary<EffectTag, EffectStack>();
-	public TCreator effectRoutineCreator = new TCreator();
+	public TFactory effectRoutineFactory = new TFactory();
 	public TStacking effectRoutineStacking = new TStacking();
 
 
@@ -48,7 +48,7 @@ public abstract class BaseConditionManagerMB<TCreator, TStacking> : MonoBehaviou
 	public void Add(Effect effect)
 	{
 		EffectStack stack = this.GetOrCreateStack(effect.tag);
-		Finalizable effectRoutine = this.effectRoutineCreator.Create(effect, out Action revert);
+		Finalizable effectRoutine = this.effectRoutineFactory.Create(effect, out Action revert);
 
 		this.StoreEffect(effect, revert, effectRoutine, stack);
 		this.StackEffectRoutine(effectRoutine, stack);

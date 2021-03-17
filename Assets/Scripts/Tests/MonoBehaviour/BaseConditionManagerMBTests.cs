@@ -7,10 +7,10 @@ using UnityEngine.TestTools;
 
 public class BaseConditionManagerMBTests : TestCollection
 {
-	private class MockEffectRoutineCreator : IEffectRoutineCreator
+	private class MockEffectRoutineFactory : IEffectRoutineFactory
 	{
 		public delegate Finalizable CreateFunc(Effect e, out Action r);
-		public CreateFunc create = MockEffectRoutineCreator.Empty;
+		public CreateFunc create = MockEffectRoutineFactory.Empty;
 
 		private static Finalizable Empty(Effect effect, out Action revert)
 		{
@@ -30,7 +30,7 @@ public class BaseConditionManagerMBTests : TestCollection
 			this.add(effect, stackRoutines, onAdd);
 	}
 
-	private class MockConditionManagerMB : BaseConditionManagerMB<MockEffectRoutineCreator, MockStacking> {}
+	private class MockConditionManagerMB : BaseConditionManagerMB<MockEffectRoutineFactory, MockStacking> {}
 
 	[UnityTest]
 	public IEnumerator StackFromCreatedRoutine()
@@ -41,7 +41,7 @@ public class BaseConditionManagerMBTests : TestCollection
 		var effect = new Effect();
 		var routine = new Finalizable { wrapped = get() };
 
-		manager.effectRoutineCreator.create = (Effect _, out Action r) => {
+		manager.effectRoutineFactory.create = (Effect _, out Action r) => {
 			r = default;
 			return routine;
 		};
@@ -128,7 +128,7 @@ public class BaseConditionManagerMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		manager.effectRoutineCreator.create = (Effect _, out Action r) => {
+		manager.effectRoutineFactory.create = (Effect _, out Action r) => {
 			r = default;
 			return new Finalizable { wrapped = get() };
 		};
@@ -157,7 +157,7 @@ public class BaseConditionManagerMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		manager.effectRoutineCreator.create = (Effect _, out Action r) => {
+		manager.effectRoutineFactory.create = (Effect _, out Action r) => {
 			r = default;
 			return new Finalizable { wrapped = get() };
 		};
@@ -187,7 +187,7 @@ public class BaseConditionManagerMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		manager.effectRoutineCreator.create = (Effect _, out Action r) => {
+		manager.effectRoutineFactory.create = (Effect _, out Action r) => {
 			r = default;
 			return new Finalizable { wrapped = get() };
 		};
@@ -217,7 +217,7 @@ public class BaseConditionManagerMBTests : TestCollection
 			}
 		}
 
-		manager.effectRoutineCreator.create = (Effect _, out Action r) => {
+		manager.effectRoutineFactory.create = (Effect _, out Action r) => {
 			r = default;
 			return new Finalizable { wrapped = get() };
 		};
@@ -251,7 +251,7 @@ public class BaseConditionManagerMBTests : TestCollection
 			}
 		}
 
-		manager.effectRoutineCreator.create = (Effect _, out Action r) => {
+		manager.effectRoutineFactory.create = (Effect _, out Action r) => {
 			r = default;
 			return new Finalizable { wrapped = get() };
 		};
@@ -285,7 +285,7 @@ public class BaseConditionManagerMBTests : TestCollection
 			}
 		}
 
-		manager.effectRoutineCreator.create = (Effect _, out Action r) => {
+		manager.effectRoutineFactory.create = (Effect _, out Action r) => {
 			r = default;
 			return new Finalizable { wrapped = get() };
 		};
@@ -335,7 +335,7 @@ public class BaseConditionManagerMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		manager.effectRoutineCreator.create = (Effect _, out Action r) => {
+		manager.effectRoutineFactory.create = (Effect _, out Action r) => {
 			r = default;
 			return new Finalizable { wrapped = get() };
 		};
@@ -364,7 +364,7 @@ public class BaseConditionManagerMBTests : TestCollection
 				yield return new WaitForFixedUpdate();
 			}
 		}
-		manager.effectRoutineCreator.create = (Effect _, out Action r) => {
+		manager.effectRoutineFactory.create = (Effect _, out Action r) => {
 			r = () => called = true;
 			return new Finalizable { wrapped = get(100) };
 		};
@@ -410,7 +410,7 @@ public class BaseConditionManagerMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		manager.effectRoutineCreator.create = (Effect _, out Action r) => {
+		manager.effectRoutineFactory.create = (Effect _, out Action r) => {
 			r = default;
 			return new Finalizable { wrapped = get(0) };
 		};
@@ -438,7 +438,7 @@ public class BaseConditionManagerMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		manager.effectRoutineCreator.create = (Effect _, out Action r) => {
+		manager.effectRoutineFactory.create = (Effect _, out Action r) => {
 			r = default;
 			return new Finalizable { wrapped = get(0) };
 		};
