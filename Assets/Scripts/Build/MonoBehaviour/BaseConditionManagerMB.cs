@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,7 +9,7 @@ public abstract class BaseConditionManagerMB<TCreator, TStacking> : MonoBehaviou
 {
 	private class EffectStack
 	{
-		public List<Effect> effects = new List<Effect>();
+		public List<(Effect value, Action revert)> effects = new List<(Effect, Action)>();
 		public List<Finalizable> routines = new List<Finalizable>();
 	}
 
@@ -16,7 +18,7 @@ public abstract class BaseConditionManagerMB<TCreator, TStacking> : MonoBehaviou
 	public TStacking effectRoutineStacking = new TStacking();
 
 
-	public IEnumerable<Effect> GetEffects(EffectTag tag) => this.stacks[tag].effects;
+	public IEnumerable<Effect> GetEffects(EffectTag tag) => this.stacks[tag].effects.Select(e => e.value);
 
 	private EffectStack GetOrCreateStack(EffectTag tag)
 	{
@@ -27,10 +29,11 @@ public abstract class BaseConditionManagerMB<TCreator, TStacking> : MonoBehaviou
 		return stack;
 	}
 
-	private void StoreEffect(Effect effect, Finalizable effectRoutine, EffectStack stack)
+	private void StoreEffect(Effect effect, Action revert, Finalizable effectRoutine, EffectStack stack)
 	{
-		effectRoutine.OnFinalize += () => stack.effects.Remove(effect);
-		stack.effects.Add(effect);
+		(Effect, Action) cache = (effect, revert);
+		effectRoutine.OnFinalize += () => stack.effects.Remove(cache);
+		stack.effects.Add(cache);
 	}
 
 
@@ -45,9 +48,9 @@ public abstract class BaseConditionManagerMB<TCreator, TStacking> : MonoBehaviou
 	public void Add(Effect effect)
 	{
 		EffectStack stack = this.GetOrCreateStack(effect.tag);
-		Finalizable effectRoutine = this.effectRoutineCreator.Create(effect);
+		Finalizable effectRoutine = this.effectRoutineCreator.Create(effect, out Action revert);
 
-		this.StoreEffect(effect, effectRoutine, stack);
+		this.StoreEffect(effect, revert, effectRoutine, stack);
 		this.StackEffectRoutine(effectRoutine, stack);
 	}
 
@@ -56,7 +59,7 @@ public abstract class BaseConditionManagerMB<TCreator, TStacking> : MonoBehaviou
 		if (this.stacks.TryGetValue(tag, out EffectStack stack)) {
 			stack.routines.ForEach(r => this.StopCoroutine(r));
 			stack.routines.Clear();
-			//stack.effects.ForEach(e => e.Revert());
+			stack.effects.ForEach(e => e.revert?.Invoke());
 			stack.effects.Clear();
 		}
 	}
