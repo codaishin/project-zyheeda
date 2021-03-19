@@ -1,5 +1,4 @@
 using System.Linq;
-using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(RectTransform))]
@@ -20,15 +19,20 @@ public class UIOverlayFollowMB : MonoBehaviour
 		this.origDelta = this.rect.sizeDelta;
 	}
 
+	private float GetCamTargetDistance()
+	{
+		Vector3 camTargetDirection = this.target.transform.position - this.ctrlCam.transform.position;
+		return Vector3.Project(camTargetDirection, this.ctrlCam.transform.forward).magnitude;
+	}
+
+	private float GetTargetMaxBoundSize() => this.target.bounds.size.AsEnumerable().Max();
+
 	private void LateUpdate()
 	{
-		this.transform.position = this.ctrlCam.WorldToScreenPoint(this.target.transform.position);
-		Vector3 dir = this.target.transform.position - this.ctrlCam.transform.position;
-		Vector3 norm = this.ctrlCam.transform.forward;
-		Vector3 planeDist = Vector3.Project(dir, norm);
-		float dist = planeDist.magnitude;
-		float maxBoundSize = this.target.bounds.size.AsEnumerable().Max();
+		float dist = this.GetCamTargetDistance();
+		float maxBoundSize = this.GetTargetMaxBoundSize();
 
+		this.transform.position = this.ctrlCam.WorldToScreenPoint(this.target.transform.position);
 		this.rect.sizeDelta = new Vector2(
 			this.correctionFactor * maxBoundSize * this.origDelta.x / dist,
 			this.correctionFactor * maxBoundSize * this.origDelta.y / dist
