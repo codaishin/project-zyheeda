@@ -23,11 +23,9 @@ public class UIOverlayFollowMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		Tools.AssertEqual(
-			new Vector3(541.1f, 237.5f, 10f),
-			ovelray.transform.position,
-			delta: new Vector3(945.9f, 237.5f, 0.01f)
-		);
+		var expected = cam.WorldToScreenPoint(Vector3.right);
+
+		Assert.AreEqual(expected, ovelray.transform.position);
 	}
 
 	[UnityTest]
