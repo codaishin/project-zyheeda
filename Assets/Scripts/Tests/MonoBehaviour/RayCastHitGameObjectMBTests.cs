@@ -11,6 +11,6 @@ public class RayCastHitGameObjectMBTests : TestCollection
 
 		Physics.Raycast(new Ray(Vector3.up, Vector3.down), out RaycastHit hit);
 
-		Assert.AreSame(sphere, rayCast.Get(hit));
+		Assert.AreEqual((true, sphere), (rayCast.Get(hit, out var g), g));
 	}
 }

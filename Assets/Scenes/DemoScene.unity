@@ -1805,7 +1805,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1453732931}
-        m_TargetAssemblyTypeName: BaseRayCastHitMB`1[[UnityEngine.GameObject, UnityEngine
+        m_TargetAssemblyTypeName: BaseRayCastHitMB`1[[CharacterSheetMB, Build
         m_MethodName: TryHit
         m_Mode: 1
         m_Arguments:
@@ -1825,7 +1825,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1453732928}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 304066af0b596cf488bda4f4299732ab, type: 3}
+  m_Script: {fileID: 11500000, guid: 0b3ab073f884a9b40bd9a3c6b68fb43d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   raySource:

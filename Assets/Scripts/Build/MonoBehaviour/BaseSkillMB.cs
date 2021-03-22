@@ -4,7 +4,7 @@ using UnityEngine;
 
 public abstract class BaseSkillMB<TEffectCollection, TCast, TSheet> : MonoBehaviour
 	where TEffectCollection : IEffectCollection<TSheet>, new()
-	where TCast : ICast, new()
+	where TCast : ICast<TSheet>, new()
 {
 	private float cooldown;
 
@@ -13,7 +13,7 @@ public abstract class BaseSkillMB<TEffectCollection, TCast, TSheet> : MonoBehavi
 	public TEffectCollection effectCollection;
 	public TCast cast;
 
-	private IEnumerable<WaitForFixedUpdate> Cast(GameObject target)
+	private IEnumerable<WaitForFixedUpdate> Cast(TSheet target)
 	{
 		IEnumerator<WaitForFixedUpdate> routine = this.cast.Apply(target);
 		while (routine.MoveNext()) {
@@ -30,22 +30,22 @@ public abstract class BaseSkillMB<TEffectCollection, TCast, TSheet> : MonoBehavi
 		}
 	}
 
-	private IEnumerator<WaitForFixedUpdate> Apply(GameObject target, Action applyEffects)
+	private IEnumerator<WaitForFixedUpdate> Run(TSheet target)
 	{
 		foreach (WaitForFixedUpdate yield in this.Cast(target)) {
 			yield return yield;
 		}
-		applyEffects();
+		this.effectCollection.Apply(this.sheet, target);
 		foreach (WaitForFixedUpdate yield in this.AfterCast()) {
 			yield return yield;
 		}
 	}
 
-	public void Begin(GameObject target)
+	public void Begin(TSheet target)
 	{
-		if (this.effectCollection.GetApplyEffects(this.sheet, target, out Action applyEffects) && this.cooldown <= 0) {
+		if (this.cooldown <= 0) {
 			this.cooldown = this.applyPerSecond > 0 ? 1f / this.applyPerSecond : 0;
-			this.StartCoroutine(this.Apply(target, applyEffects));
+			this.StartCoroutine(this.Run(target));
 		}
 	}
 

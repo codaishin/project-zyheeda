@@ -7,35 +7,20 @@ using UnityEngine.TestTools;
 
 public class BaseSkillMBTests : TestCollection
 {
-	private class MockCast : ICast
+	private class MockSheet { }
+
+	private class MockCast : ICast<MockSheet>
 	{
-		public delegate IEnumerator<WaitForFixedUpdate> ApplyFunc(GameObject t);
-
-		public ApplyFunc apply = MockCast.BaseApply;
-
-		private static IEnumerator<WaitForFixedUpdate> BaseApply(GameObject _) { yield break; }
-
-		public IEnumerator<WaitForFixedUpdate> Apply(GameObject target) =>
-			this.apply(target);
+		public Func<MockSheet, IEnumerator<WaitForFixedUpdate>> apply = MockCast.BaseApply;
+		public IEnumerator<WaitForFixedUpdate> Apply(MockSheet target) => this.apply(target);
+		private static IEnumerator<WaitForFixedUpdate> BaseApply(MockSheet _) { yield break; }
 	}
 
 	private class MockEffect : IEffectCollection<MockSheet>
 	{
-		public delegate bool GetEffectFunc(MockSheet s, GameObject t, out Action a);
-
-		public GetEffectFunc getApplyEffects = MockEffect.BaseGetEffectFor;
-
-		private static bool BaseGetEffectFor(MockSheet _, GameObject __, out Action a)
-		{
-			a = () => {};
-			return true;
-		}
-
-		public bool GetApplyEffects(MockSheet source, GameObject target, out Action applyEffects) =>
-			this.getApplyEffects(source, target, out applyEffects);
+		public Action<MockSheet, MockSheet> apply = (s, t) => {};
+		public void Apply(MockSheet source, MockSheet target) => this.apply(source, target);
 	}
-
-	private class MockSheet { }
 
 	private class MockSkillMB : BaseSkillMB<MockEffect, MockCast, MockSheet> {}
 
@@ -43,11 +28,11 @@ public class BaseSkillMBTests : TestCollection
 	public IEnumerator Begin()
 	{
 		var applied = false;
-		var target = new GameObject("target");
+		var target = new MockSheet();
 		var skill = new GameObject("item").AddComponent<MockSkillMB>();
 		skill.sheet = new MockSheet();
 
-		IEnumerator<WaitForFixedUpdate> applyCast(GameObject _) {
+		IEnumerator<WaitForFixedUpdate> applyCast(MockSheet _) {
 			applied = true;
 			yield break;
 		}
@@ -56,86 +41,37 @@ public class BaseSkillMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		skill.Begin(target.gameObject);
+		skill.Begin(target);
 
 		Assert.True(applied);
 	}
 
 	[UnityTest]
-	public IEnumerator DontBeginWhenGetEffectFalse()
-	{
-		var got = default(GameObject);
-		var target = new GameObject("target");
-		var skill = new GameObject("item").AddComponent<MockSkillMB>();
-		skill.sheet = new MockSheet();
-
-		IEnumerator<WaitForFixedUpdate> applyCast(GameObject t) {
-			got = t;
-			yield break;
-		}
-
-		skill.cast.apply = applyCast;
-		skill.effectCollection.getApplyEffects = (MockSheet s, GameObject t, out Action applyEffects) => {
-			applyEffects = () => {};
-			return false;
-		};
-
-		yield return new WaitForEndOfFrame();
-
-		skill.Begin(target.gameObject);
-
-		Assert.Null(got);
-	}
-
-	[UnityTest]
 	public IEnumerator ApplyEffect()
 	{
-		var got = (default(MockSheet), default(GameObject));
-		var target = new GameObject("target");
+		var got = (default(MockSheet), default(MockSheet));
+		var target = new MockSheet();
 		var skill = new GameObject("item").AddComponent<MockSkillMB>();
 		skill.sheet = new MockSheet();
 
-		skill.effectCollection.getApplyEffects = (MockSheet s, GameObject t, out Action applyEffects) => {
-			applyEffects = () => got = (s, t);
-			return true;
-		};
+		skill.effectCollection.apply = (s, t) => got = (s, t);
 
 		yield return new WaitForEndOfFrame();
 
-		skill.Begin(target.gameObject);
+		skill.Begin(target);
 
-		Assert.AreEqual((skill.sheet, target.gameObject), got);
-	}
-
-	[UnityTest]
-	public IEnumerator DontApplyEffectWhenGetEffectFalse()
-	{
-		var got = (default(MockSheet), default(GameObject));
-		var target = new GameObject("target");
-		var skill = new GameObject("item").AddComponent<MockSkillMB>();
-		skill.sheet = new MockSheet();
-
-		skill.effectCollection.getApplyEffects = (MockSheet s, GameObject t, out Action applyEffects) => {
-			applyEffects = () => got = (s, t);
-			return false;
-		};
-
-		yield return new WaitForEndOfFrame();
-
-		skill.Begin(target.gameObject);
-
-		Assert.AreEqual((default(MockSheet), default(GameObject)), got);
+		Assert.AreEqual((skill.sheet, target), got);
 	}
 
 	[UnityTest]
 	public IEnumerator ApplyEffectAfterCast()
 	{
-		var got = new List<(MockSheet, GameObject)>();
-		var target = new GameObject("target");
+		var got = new List<(MockSheet, MockSheet)>();
+		var target = new MockSheet();
 		var skill = new GameObject("item").AddComponent<MockSkillMB>();
 		skill.sheet = new MockSheet();
 
-		IEnumerator<WaitForFixedUpdate> applyCast(GameObject t) {
+		IEnumerator<WaitForFixedUpdate> applyCast(MockSheet t) {
 			got.Add((default, t));
 			yield return new WaitForFixedUpdate();
 			got.Add((default, t));
@@ -143,23 +79,20 @@ public class BaseSkillMBTests : TestCollection
 		}
 
 		skill.cast.apply = applyCast;
-		skill.effectCollection.getApplyEffects = (MockSheet s, GameObject t, out Action applyEffects) => {
-			applyEffects = () => got.Add((s, t));
-			return true;
-		};
+		skill.effectCollection.apply = (s, t) => got.Add((s, t));
 
 		yield return new WaitForEndOfFrame();
 
-		skill.Begin(target.gameObject);
+		skill.Begin(target);
 
 		yield return new WaitForFixedUpdate();
 		yield return new WaitForFixedUpdate();
 
 		CollectionAssert.AreEqual(
-			new (MockSheet, GameObject)[] {
-				(default, target.gameObject),
-				(default, target.gameObject),
-				(skill.sheet, target.gameObject),
+			new (MockSheet, MockSheet)[] {
+				(default, target),
+				(default, target),
+				(skill.sheet, target),
 			},
 			got
 		);
@@ -169,11 +102,11 @@ public class BaseSkillMBTests : TestCollection
 	public IEnumerator DontBeginDuringCooldown()
 	{
 		var applied = 0;
-		var target = new GameObject("target");
+		var target = new MockSheet();
 		var skill = new GameObject("item").AddComponent<MockSkillMB>();
 		skill.sheet = new MockSheet();
 
-		IEnumerator<WaitForFixedUpdate> applyCast(GameObject _) {
+		IEnumerator<WaitForFixedUpdate> applyCast(MockSheet _) {
 			++applied;
 			yield break;
 		}
@@ -183,8 +116,8 @@ public class BaseSkillMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		skill.Begin(target.gameObject);
-		skill.Begin(target.gameObject);
+		skill.Begin(target);
+		skill.Begin(target);
 
 		Assert.AreEqual(1, applied);
 	}
@@ -193,11 +126,11 @@ public class BaseSkillMBTests : TestCollection
 	public IEnumerator BeginAfterCooldown()
 	{
 		var applied = 0;
-		var target = new GameObject("target");
+		var target = new MockSheet();
 		var skill = new GameObject("item").AddComponent<MockSkillMB>();
 		skill.sheet = new MockSheet();
 
-		IEnumerator<WaitForFixedUpdate> applyCast(GameObject _) {
+		IEnumerator<WaitForFixedUpdate> applyCast(MockSheet _) {
 			++applied;
 			yield break;
 		}
@@ -207,11 +140,11 @@ public class BaseSkillMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		skill.Begin(target.gameObject);
+		skill.Begin(target);
 
 		yield return new WaitForSeconds(0.11f);
 
-		skill.Begin(target.gameObject);
+		skill.Begin(target);
 
 		Assert.AreEqual(2, applied);
 	}
@@ -220,11 +153,11 @@ public class BaseSkillMBTests : TestCollection
 	public IEnumerator BeginWithNoCooldown()
 	{
 		var applied = 0;
-		var target = new GameObject("target");
+		var target = new MockSheet();
 		var skill = new GameObject("item").AddComponent<MockSkillMB>();
 		skill.sheet = new MockSheet();
 
-		IEnumerator<WaitForFixedUpdate> applyCast(GameObject _) {
+		IEnumerator<WaitForFixedUpdate> applyCast(MockSheet _) {
 			++applied;
 			yield break;
 		}
@@ -233,8 +166,8 @@ public class BaseSkillMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		skill.Begin(target.gameObject);
-		skill.Begin(target.gameObject);
+		skill.Begin(target);
+		skill.Begin(target);
 
 		Assert.AreEqual(2, applied);
 	}

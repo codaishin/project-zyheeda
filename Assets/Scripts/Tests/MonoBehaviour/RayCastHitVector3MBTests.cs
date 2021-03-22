@@ -8,8 +8,8 @@ public class RayCastHitVector3MBTests : TestCollection
 	{
 		var rayCastHit = new GameObject("rayCastHit").AddComponent<RayCastHitVector3MB>();
 		Assert.AreEqual(
-			Vector3.left,
-			rayCastHit.Get(new RaycastHit{ point = Vector3.left })
+			(true, Vector3.left),
+			(rayCastHit.Get(new RaycastHit{ point = Vector3.left }, out var g), g)
 		);
 	}
 }
