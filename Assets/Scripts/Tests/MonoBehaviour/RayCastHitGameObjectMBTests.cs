@@ -1,12 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
-using UnityEngine.TestTools;
 
 public class RayCastHitGameObjectMBTests : TestCollection
 {
-  [Test]
+	[Test]
 	public void TestGetGameObject()
 	{
 		var rayCast = new GameObject("rayCast").AddComponent<RayCastHitGameObjectMB>();
