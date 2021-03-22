@@ -3,7 +3,7 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-public class RayCastHitMBTests : TestCollection
+public class BaseRayCastHitMBTests : TestCollection
 {
 	private class MockRayMB : BaseRayProviderMB
 	{
@@ -15,7 +15,7 @@ public class RayCastHitMBTests : TestCollection
 	[UnityTest]
 	public IEnumerator OnHitGameObjectInitAfterStart()
 	{
-		var rayCastHitMB = new GameObject("hitter").AddComponent<RayCastHitMB>();
+		var rayCastHitMB = new GameObject("hitter").AddComponent<BaseRayCastHitMB>();
 		var rayProviderMB = new GameObject("ray").AddComponent<MockRayMB>();
 		rayCastHitMB.raySource = rayProviderMB;
 
@@ -27,7 +27,7 @@ public class RayCastHitMBTests : TestCollection
 	[UnityTest]
 	public IEnumerator OnHitGameObjectDefaultNull()
 	{
-		var rayCastHitMB = new GameObject("hitter").AddComponent<RayCastHitMB>();
+		var rayCastHitMB = new GameObject("hitter").AddComponent<BaseRayCastHitMB>();
 		var rayProviderMB = new GameObject("ray").AddComponent<MockRayMB>();
 		rayCastHitMB.raySource = rayProviderMB;
 
@@ -41,7 +41,7 @@ public class RayCastHitMBTests : TestCollection
 	{
 		var hit = null as GameObject;
 		var sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-		var rayCastHitMB = new GameObject("hitter").AddComponent<RayCastHitMB>();
+		var rayCastHitMB = new GameObject("hitter").AddComponent<BaseRayCastHitMB>();
 		var rayProviderMB = new GameObject("ray").AddComponent<MockRayMB>();
 
 		sphere.transform.position = Vector3.up;
@@ -65,7 +65,7 @@ public class RayCastHitMBTests : TestCollection
 		var hit = null as GameObject;
 		var sphereDefault = GameObject.CreatePrimitive(PrimitiveType.Sphere);
 		var cubeWater = GameObject.CreatePrimitive(PrimitiveType.Cube);
-		var rayCastHitMB = new GameObject("hitter").AddComponent<RayCastHitMB>();
+		var rayCastHitMB = new GameObject("hitter").AddComponent<BaseRayCastHitMB>();
 		var rayProviderMB = new GameObject("ray").AddComponent<MockRayMB>();
 
 		sphereDefault.transform.position = Vector3.up;
@@ -88,7 +88,7 @@ public class RayCastHitMBTests : TestCollection
 	[UnityTest]
 	public IEnumerator OnHitVector3InitAfterStart()
 	{
-		var rayCastHitMB = new GameObject("hitter").AddComponent<RayCastHitMB>();
+		var rayCastHitMB = new GameObject("hitter").AddComponent<BaseRayCastHitMB>();
 		var rayProviderMB = new GameObject("ray").AddComponent<MockRayMB>();
 		rayCastHitMB.raySource = rayProviderMB;
 
@@ -100,7 +100,7 @@ public class RayCastHitMBTests : TestCollection
 	[UnityTest]
 	public IEnumerator OnHitVector3DefaultNull()
 	{
-		var rayCastHitMB = new GameObject("hitter").AddComponent<RayCastHitMB>();
+		var rayCastHitMB = new GameObject("hitter").AddComponent<BaseRayCastHitMB>();
 		var rayProviderMB = new GameObject("ray").AddComponent<MockRayMB>();
 		rayCastHitMB.raySource = rayProviderMB;
 
@@ -114,7 +114,7 @@ public class RayCastHitMBTests : TestCollection
 	{
 		var hit = Vector3.zero;
 		var sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-		var rayCastHitMB = new GameObject("hitter").AddComponent<RayCastHitMB>();
+		var rayCastHitMB = new GameObject("hitter").AddComponent<BaseRayCastHitMB>();
 		var rayProviderMB = new GameObject("ray").AddComponent<MockRayMB>();
 
 		sphere.transform.position = Vector3.up;
@@ -138,7 +138,7 @@ public class RayCastHitMBTests : TestCollection
 		var hit = Vector3.zero;
 		var sphereDefault = GameObject.CreatePrimitive(PrimitiveType.Sphere);
 		var cubeWater = GameObject.CreatePrimitive(PrimitiveType.Cube);
-		var rayCastHitMB = new GameObject("hitter").AddComponent<RayCastHitMB>();
+		var rayCastHitMB = new GameObject("hitter").AddComponent<BaseRayCastHitMB>();
 		var rayProviderMB = new GameObject("ray").AddComponent<MockRayMB>();
 
 		sphereDefault.transform.position = Vector3.up;
