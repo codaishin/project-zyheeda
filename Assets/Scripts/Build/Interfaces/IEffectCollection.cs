@@ -1,6 +1,4 @@
-using System;
-
 public interface IEffectCollection<TSheet>
 {
-	bool GetApplyEffects(TSheet source, TSheet target, out Action applyEffects);
+	void Apply(TSheet source, TSheet target);
 }

@@ -30,12 +30,12 @@ public abstract class BaseSkillMB<TEffectCollection, TCast, TSheet> : MonoBehavi
 		}
 	}
 
-	private IEnumerator<WaitForFixedUpdate> Apply(TSheet target, Action applyEffects)
+	private IEnumerator<WaitForFixedUpdate> Run(TSheet target)
 	{
 		foreach (WaitForFixedUpdate yield in this.Cast(target)) {
 			yield return yield;
 		}
-		applyEffects();
+		this.effectCollection.Apply(this.sheet, target);
 		foreach (WaitForFixedUpdate yield in this.AfterCast()) {
 			yield return yield;
 		}
@@ -43,9 +43,9 @@ public abstract class BaseSkillMB<TEffectCollection, TCast, TSheet> : MonoBehavi
 
 	public void Begin(TSheet target)
 	{
-		if (this.effectCollection.GetApplyEffects(this.sheet, target, out Action applyEffects) && this.cooldown <= 0) {
+		if (this.cooldown <= 0) {
 			this.cooldown = this.applyPerSecond > 0 ? 1f / this.applyPerSecond : 0;
-			this.StartCoroutine(this.Apply(target, applyEffects));
+			this.StartCoroutine(this.Run(target));
 		}
 	}
 
