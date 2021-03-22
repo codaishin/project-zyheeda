@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb51a63e398b78a409dac77c272660c1, type: 3}
+  m_Name: UIInput
+  m_EditorClassIdentifier: 
+  inputSO: {fileID: 11400000, guid: 64199461d458d3542b4e790dd776d784, type: 2}
+  items:
+  - name: UI Target Overlay On
+    keyCode: 101
+    keyState: 1
+    eventSO: {fileID: 11400000, guid: ae37a7168c7b7aa4d870614de69cc167, type: 2}
+  - name: UI Target Overlay Off
+    keyCode: 101
+    keyState: 2
+    eventSO: {fileID: 11400000, guid: 3231a52cb67842040bf347dc930f3e40, type: 2}
