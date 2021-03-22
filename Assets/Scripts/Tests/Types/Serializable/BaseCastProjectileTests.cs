@@ -5,18 +5,20 @@ using UnityEngine;
 
 public class BaseCastProjectileTests : TestCollection
 {
-	private class MockApproach : IApproach<GameObject>
+	private class MockSheet {}
+
+	private class MockApproach : IApproach<MockSheet>
 	{
 		public
-		Func<Transform, GameObject, float, IEnumerator<WaitForFixedUpdate>> apply =
+		Func<Transform, MockSheet, float, IEnumerator<WaitForFixedUpdate>> apply =
 			MockApproach.DefaultApproach;
 
 		public
-		IEnumerator<WaitForFixedUpdate> Apply(Transform transform, GameObject target, float speed) =>
+		IEnumerator<WaitForFixedUpdate> Apply(Transform transform, MockSheet target, float speed) =>
 			this.apply(transform, target, speed);
 
 		private static
-		IEnumerator<WaitForFixedUpdate> DefaultApproach(Transform _, GameObject __, float ___)
+		IEnumerator<WaitForFixedUpdate> DefaultApproach(Transform _, MockSheet __, float ___)
 		{
 			yield break;
 		}
@@ -34,18 +36,18 @@ public class BaseCastProjectileTests : TestCollection
 		}
 	}
 
-	private class MockCastProjectile : BaseCastProjectile<MockMagazine, MockApproach> { }
+	private class MockCastProjectile : BaseCastProjectile<MockMagazine, MockApproach, MockSheet> { }
 
 	[Test]
 	public void ApproachArgs()
 	{
-		var called = default((Transform, GameObject, float));
+		var called = default((Transform, MockSheet, float));
 		var spawn = new GameObject("spawn");
-		var target = new GameObject("target");
+		var target = new MockSheet();
 		var cast = new MockCastProjectile{ projectileSpawn = spawn.transform };
 		cast.projectileSpeed = 1;
 
-		IEnumerator<WaitForFixedUpdate> approach(Transform projectile, GameObject target, float speed) {
+		IEnumerator<WaitForFixedUpdate> approach(Transform projectile, MockSheet target, float speed) {
 			called = (projectile, target, speed);
 			yield break;
 		}
@@ -60,7 +62,7 @@ public class BaseCastProjectileTests : TestCollection
 	public void ProjectileSpawnPosition()
 	{
 		var spawn = new GameObject("spawn");
-		var target = new GameObject("target");
+		var target = new MockSheet();
 		var cast = new MockCastProjectile{ projectileSpawn = spawn.transform };
 		spawn.transform.position = Vector3.back;
 
@@ -74,7 +76,7 @@ public class BaseCastProjectileTests : TestCollection
 	{
 		var disposed = null as GameObject;
 		var spawn = new GameObject("spawn");
-		var target = new GameObject("target");
+		var target = new MockSheet();
 		var cast = new MockCastProjectile{ projectileSpawn = spawn.transform };
 		cast.magazine.onDispose =o => disposed = o;
 
@@ -88,11 +90,11 @@ public class BaseCastProjectileTests : TestCollection
 	{
 		var disposed = false;
 		var spawn = new GameObject("spawn");
-		var target = new GameObject("target");
+		var target = new MockSheet();
 		var cast = new MockCastProjectile{ projectileSpawn = spawn.transform };
 		cast.magazine.onDispose = _ => disposed = true;
 
-		IEnumerator<WaitForFixedUpdate> approach(Transform _, GameObject __, float ___) {
+		IEnumerator<WaitForFixedUpdate> approach(Transform _, MockSheet __, float ___) {
 			yield return new WaitForFixedUpdate();
 		}
 		cast.approach.apply = approach;

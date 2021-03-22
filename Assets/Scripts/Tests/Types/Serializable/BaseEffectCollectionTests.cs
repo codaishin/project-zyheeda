@@ -28,17 +28,7 @@ public class BaseEffectCollectionTests : TestCollection
 		var source = new GameObject("source").AddComponent<MockSheetMB>();
 		var target = new GameObject("target").AddComponent<MockSheetMB>();
 		coll.effectData = new EffectData<MockSheetMB, MockEffectFactory>[0];
-		Assert.True(coll.GetApplyEffects(source, target.gameObject, out _));
-	}
-
-	[Test]
-	public void GetApplyEffectsFalse()
-	{
-		var coll = new MockEffectCollection();
-		var source = new GameObject("source").AddComponent<MockSheetMB>();
-		var target = new GameObject("target");
-		coll.effectData = new EffectData<MockSheetMB, MockEffectFactory>[0];
-		Assert.False(coll.GetApplyEffects(source, target, out _));
+		Assert.True(coll.GetApplyEffects(source, target, out _));
 	}
 
 	[Test]
@@ -57,7 +47,7 @@ public class BaseEffectCollectionTests : TestCollection
 		coll.effectData = new EffectData<MockSheetMB, MockEffectFactory>[] {
 			new EffectData<MockSheetMB, MockEffectFactory> { factory = factory, intensity = 4 }
 		};
-		coll.GetApplyEffects(source, target.gameObject, out var apply);
+		coll.GetApplyEffects(source, target, out var apply);
 		apply();
 
 		Assert.AreEqual((source, target, 4f), called);
@@ -76,7 +66,7 @@ public class BaseEffectCollectionTests : TestCollection
 		coll.effectData = new EffectData<MockSheetMB, MockEffectFactory>[] {
 			new EffectData<MockSheetMB, MockEffectFactory> { factory = factory }
 		};
-		coll.GetApplyEffects(source, target.gameObject, out var apply);
+		coll.GetApplyEffects(source, target, out var apply);
 		apply();
 
 		Assert.True(called);
@@ -94,7 +84,7 @@ public class BaseEffectCollectionTests : TestCollection
 		coll.effectData = new EffectData<MockSheetMB, MockEffectFactory>[] {
 			new EffectData<MockSheetMB, MockEffectFactory> { factory = factory }
 		};
-		coll.GetApplyEffects(source, target.gameObject, out var apply);
+		coll.GetApplyEffects(source, target, out var apply);
 		Assert.DoesNotThrow(() => apply());
 	}
 
@@ -112,7 +102,7 @@ public class BaseEffectCollectionTests : TestCollection
 		coll.effectData = new EffectData<MockSheetMB, MockEffectFactory>[] {
 			new EffectData<MockSheetMB, MockEffectFactory> { factory = factory, duration = 1f }
 		};
-		coll.GetApplyEffects(source, target.gameObject, out var apply);
+		coll.GetApplyEffects(source, target, out var apply);
 		apply();
 
 		Assert.AreEqual(42f, called);
@@ -131,7 +121,7 @@ public class BaseEffectCollectionTests : TestCollection
 		coll.effectData = new EffectData<MockSheetMB, MockEffectFactory>[] {
 			new EffectData<MockSheetMB, MockEffectFactory> { factory = factory }
 		};
-		coll.GetApplyEffects(source, target.gameObject, out var apply);
+		coll.GetApplyEffects(source, target, out var apply);
 		apply();
 
 		Assert.False(called);

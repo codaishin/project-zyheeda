@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface ICast
+public interface ICast<TSheet>
 {
-	IEnumerator<WaitForFixedUpdate> Apply(GameObject target);
+	IEnumerator<WaitForFixedUpdate> Apply(TSheet target);
 }

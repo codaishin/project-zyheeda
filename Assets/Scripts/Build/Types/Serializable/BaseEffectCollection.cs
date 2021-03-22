@@ -24,13 +24,9 @@ public class BaseEffectCollection<TSheet, TEffectFactory> : IEffectCollection<TS
 		}
 	}
 
-	public bool GetApplyEffects(TSheet source, GameObject target, out Action applyEffects)
+	public bool GetApplyEffects(TSheet source, TSheet target, out Action applyEffects)
 	{
-		if (target.TryGetComponent(out TSheet targetSheet)) {
-			applyEffects = () => this.Apply(source, targetSheet);
-			return true;
-		}
-		applyEffects = default;
-		return false;
+		applyEffects = () => this.Apply(source, target);
+		return true;
 	}
 }

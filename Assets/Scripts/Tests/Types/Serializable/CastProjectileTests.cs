@@ -9,7 +9,7 @@ public class CastProjectileTests : TestCollection
 	[Test]
 	public void GetPosition()
 	{
-		var obj = new GameObject("obj");
+		var obj = new GameObject("obj").AddComponent<CharacterSheetMB>();
 		var appraoch = new CastProjectileApproach();
 		obj.transform.position = Vector3.down;
 
@@ -30,7 +30,7 @@ public class CastProjectileTests : TestCollection
 	public void PostUpdate()
 	{
 		var transform = new GameObject("transform").transform;
-		var target = new GameObject("target");
+		var target = new GameObject("target").AddComponent<CharacterSheetMB>();
 		var appraoch = new CastProjectileApproach();
 
 		target.transform.position = Vector3.up;
