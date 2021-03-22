@@ -1,8 +1,10 @@
+using System;
 using UnityEngine;
 using UnityEngine.Events;
 
 public abstract class BaseRayCastHitMB<T> : MonoBehaviour
 {
+	[Serializable]
 	public class OnHitEvent : UnityEvent<T> {}
 
 	private BaseRayProviderMB rayProvider;
