@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class RayCastHitVector3MBTests : TestCollection
 {
-  [Test]
+	[Test]
 	public void TestGetPoint()
 	{
 		var rayCastHit = new GameObject("rayCastHit").AddComponent<RayCastHitVector3MB>();
