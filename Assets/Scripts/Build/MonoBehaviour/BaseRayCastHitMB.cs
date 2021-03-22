@@ -25,14 +25,20 @@ public abstract class BaseRayCastHitMB<T> : MonoBehaviour
 
 	public void TryHit()
 	{
-		if (this.Hit(out RaycastHit hit) && this.Get(hit, out T got)) {
-			this.onHit.Invoke(got);
+		if (this.Hit(out T target)) {
+			this.onHit.Invoke(target);
 		}
 	}
 
+	private bool Hit(out T target)
+	{
+		target = default;
+		return  this.Hit(out RaycastHit hit) && this.Get(hit, out target);
+	}
+
 	private bool Hit(out RaycastHit hit) => this.layerConstraints == default
-		? Physics.Raycast(this.rayProvider.Ray, out hit, float.MaxValue)
-		: Physics.Raycast(this.rayProvider.Ray, out hit, float.MaxValue, this.layerConstraints);
+		? Physics.Raycast(this.rayProvider.Ray, out hit, float.PositiveInfinity)
+		: Physics.Raycast(this.rayProvider.Ray, out hit, float.PositiveInfinity, this.layerConstraints);
 
 	public abstract bool Get(RaycastHit hit, out T got);
 }
