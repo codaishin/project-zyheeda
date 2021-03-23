@@ -7,7 +7,7 @@ public class UIHealthInspectorMB : BaseUIInspectorMB<Health>
 
 	public override void Set(Health value)
 	{
-		this.text.text = $"{value.hp}/{value.maxHp}";
+		this.text.text = $"{value.hp:F1}/{value.maxHp:F1}";
 		this.image.fillAmount = value.hp / value.maxHp;
 	}
 }
