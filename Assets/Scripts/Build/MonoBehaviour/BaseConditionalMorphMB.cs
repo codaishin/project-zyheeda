@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.Events;
 
-public abstract class BaseOnMorphMB<TSeed, TMorph> : MonoBehaviour
+public abstract class BaseConditionalMorphMB<TSeed, TMorph> : MonoBehaviour
 {
 	[Serializable]
 	public class SeedEvent : UnityEvent<TSeed> {};

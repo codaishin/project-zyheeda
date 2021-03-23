@@ -1,10 +1,6 @@
 using UnityEngine;
 
-public class RayCastHitToColliderMB : BaseOnMorphMB<RaycastHit, Collider>
+public class RayCastHitToColliderMB : BaseMorphMB<RaycastHit, Collider>
 {
-	public override bool TryMorph(RaycastHit hit, out Collider got)
-	{
-		got = hit.collider;
-		return true;
-	}
+	public override Collider DoMorph(RaycastHit hit) => hit.collider;
 }

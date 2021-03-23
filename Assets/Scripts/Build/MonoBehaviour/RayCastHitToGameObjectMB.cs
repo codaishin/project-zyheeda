@@ -1,9 +1,6 @@
 using UnityEngine;
 
-public class RayCastHitToGameObjectMB : BaseOnMorphMB<RaycastHit, GameObject>
+public class RayCastHitToGameObjectMB : BaseMorphMB<RaycastHit, GameObject>
 {
-	public override bool TryMorph(RaycastHit hit, out GameObject got) {
-		got = hit.transform.gameObject;
-		return true;
-	}
+	public override GameObject DoMorph(RaycastHit hit) => hit.transform.gameObject;
 }

@@ -7,9 +7,7 @@ public class RayCastHitToPointMBTests : TestCollection
 	public void TestGetPoint()
 	{
 		var morph = new GameObject("rayCastHit").AddComponent<RayCastHitToPointMB>();
-		Assert.AreEqual(
-			(true, Vector3.left),
-			(morph.TryMorph(new RaycastHit{ point = Vector3.left }, out var g), g)
-		);
+
+		Assert.AreEqual(Vector3.left, morph.DoMorph(new RaycastHit{ point = Vector3.left }));
 	}
 }

@@ -4,10 +4,10 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-public class BaseOnMorphMBTests : TestCollection
+public class BaseConditionalMorphMBTests : TestCollection
 {
 	private class MockComponent : MonoBehaviour {}
-	private class MockOnMorph : BaseOnMorphMB<GameObject, MockComponent>
+	private class MockOnMorph : BaseConditionalMorphMB<GameObject, MockComponent>
 	{
 		public override bool TryMorph(GameObject seed, out MockComponent morph)
 		{
