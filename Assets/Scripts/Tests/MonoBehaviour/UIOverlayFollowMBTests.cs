@@ -13,7 +13,7 @@ public class UIOverlayFollowMBTests : TestCollection
 		var target = GameObject.CreatePrimitive(PrimitiveType.Cube);
 
 		ovelray.cam = cam;
-		ovelray.target = target.GetComponent<Collider>();
+		ovelray.Target = target.GetComponent<Collider>();
 		cam.transform.position = new Vector3(0, 10, 0);
 		cam.transform.LookAt(target.transform);
 
@@ -36,7 +36,7 @@ public class UIOverlayFollowMBTests : TestCollection
 		var target = GameObject.CreatePrimitive(PrimitiveType.Cube);
 
 		ovelray.cam = cam;
-		ovelray.target = target.GetComponent<Collider>();
+		ovelray.Target = target.GetComponent<Collider>();
 		cam.transform.position = new Vector3(0, 10, 0);
 		cam.transform.LookAt(target.transform);
 
@@ -58,7 +58,7 @@ public class UIOverlayFollowMBTests : TestCollection
 		var target = GameObject.CreatePrimitive(PrimitiveType.Cube);
 
 		ovelray.cam = cam;
-		ovelray.target = target.GetComponent<Collider>();
+		ovelray.Target = target.GetComponent<Collider>();
 		ovelray.correctionFactor = 10f;
 		cam.transform.position = new Vector3(0, 10, 0);
 		cam.transform.LookAt(target.transform);
@@ -81,7 +81,7 @@ public class UIOverlayFollowMBTests : TestCollection
 		var target = GameObject.CreatePrimitive(PrimitiveType.Cube);
 
 		ovelray.cam = cam;
-		ovelray.target = target.GetComponent<Collider>();
+		ovelray.Target = target.GetComponent<Collider>();
 		cam.transform.position = new Vector3(0, 10, 0);
 		cam.transform.LookAt(target.transform);
 		target.transform.position = Vector3.left * 100f;
@@ -104,7 +104,7 @@ public class UIOverlayFollowMBTests : TestCollection
 		var target = GameObject.CreatePrimitive(PrimitiveType.Cube);
 
 		ovelray.cam = cam;
-		ovelray.target = target.GetComponent<Collider>();
+		ovelray.Target = target.GetComponent<Collider>();
 		cam.transform.position = new Vector3(0, 10, 0);
 		cam.transform.LookAt(target.transform);
 
@@ -126,7 +126,7 @@ public class UIOverlayFollowMBTests : TestCollection
 		var target = GameObject.CreatePrimitive(PrimitiveType.Cube).GetComponent<BoxCollider>();
 
 		ovelray.cam = cam;
-		ovelray.target = target;
+		ovelray.Target = target;
 		cam.transform.position = new Vector3(0, 10, 0);
 		cam.transform.LookAt(target.transform);
 		target.size = new Vector3(1, 5, 4);
