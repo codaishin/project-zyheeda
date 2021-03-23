@@ -20,7 +20,7 @@ public class UIHealthInspectorMBTests : TestCollection
 
 		inspector.Set(new Health{ hp = 10f, maxHp = 100f });
 
-		Assert.AreEqual("10/100", text.text);
+		Assert.AreEqual("10.0/100.0", text.text);
 	}
 
 	[UnityTest]
@@ -37,5 +37,21 @@ public class UIHealthInspectorMBTests : TestCollection
 		inspector.Set(new Health{ hp = 5f, maxHp = 25f });
 
 		Assert.AreEqual(5f / 25f, image.fillAmount);
+	}
+
+	[UnityTest]
+	public IEnumerator SetTextRounded()
+	{
+		var inspector = new GameObject("inspector").AddComponent<UIHealthInspectorMB>();
+		var text = new GameObject("text").AddComponent<Text>();
+		var image = new GameObject("image").AddComponent<Image>();
+		inspector.text = text;
+		inspector.image = image;
+
+		yield return new WaitForFixedUpdate();
+
+		inspector.Set(new Health{ hp = 10.12f, maxHp = 99.99f });
+
+		Assert.AreEqual("10.1/100.0", text.text);
 	}
 }
