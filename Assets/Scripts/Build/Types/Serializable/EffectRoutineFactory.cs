@@ -14,15 +14,16 @@ public class EffectRoutineFactory : IEffectRoutineFactory
 
 	private IEnumerator PureRoutine(Effect effect, RevertPtr revertPtr)
 	{
+		float delta = this.intervalDelta;
 		if(effect.Apply(out Action revert)) {
 			revertPtr.invoke = revert;
 		};
 		while (effect.duration > 0) {
-			if (effect.duration < intervalDelta) {
-				intervalDelta = effect.duration;
+			if (effect.duration < delta) {
+				delta = effect.duration;
 			}
-			yield return new WaitForSeconds(intervalDelta);
-			effect.Maintain(intervalDelta);
+			yield return new WaitForSeconds(delta);
+			effect.Maintain(delta);
 		}
 		revertPtr.invoke();
 	}

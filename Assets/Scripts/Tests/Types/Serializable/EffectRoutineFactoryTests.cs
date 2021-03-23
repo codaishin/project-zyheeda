@@ -187,4 +187,16 @@ public class EffectRoutineFactoryTests : TestCollection
 
 		Assert.DoesNotThrow(() => revert());
 	}
+
+	[Test]
+	public void IntervalDeltaUntouched()
+	{
+		var factory = new EffectRoutineFactory{ intervalDelta = 0.1f };
+		var routine = factory.Create(new Effect{ duration = 10f }, out _);
+		var count = 0;
+
+		while (routine.MoveNext() && count++ < 100);
+
+		Assert.AreEqual((0.1f, 100), (factory.intervalDelta, count));
+	}
 }
