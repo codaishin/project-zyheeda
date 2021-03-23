@@ -1,9 +1,13 @@
+using System;
 using UnityEngine;
 using UnityEngine.Events;
 
 public abstract class BaseOnMorphMB<TSeed, TMorph> : MonoBehaviour
 {
+	[Serializable]
 	public class SeedEvent : UnityEvent<TSeed> {};
+
+	[Serializable]
 	public class MorphEvent : UnityEvent<TMorph> {};
 
 	[Header("Success Callbacks")]
