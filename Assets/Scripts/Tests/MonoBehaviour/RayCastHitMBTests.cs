@@ -3,7 +3,7 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-public class BaseRayCastHitMBTests : TestCollection
+public class RayCastHitMBTests : TestCollection
 {
 	private class MockRayMB : BaseRayProviderMB
 	{
@@ -12,18 +12,10 @@ public class BaseRayCastHitMBTests : TestCollection
 		public override Ray Ray => this.ray;
 	}
 
-	private class MockRayCastHitMB : BaseRayCastHitMB<GameObject>
-	{
-		public override bool Get(RaycastHit hit, out GameObject got) {
-			got = hit.transform.gameObject;
-			return true;
-		}
-	}
-
 	[UnityTest]
 	public IEnumerator OnHitGameObjectInitAfterStart()
 	{
-		var rayCastHitMB = new GameObject("hitter").AddComponent<MockRayCastHitMB>();
+		var rayCastHitMB = new GameObject("hitter").AddComponent<RayCastHitMB>();
 		var rayProviderMB = new GameObject("ray").AddComponent<MockRayMB>();
 		rayCastHitMB.raySource = rayProviderMB;
 
@@ -35,7 +27,7 @@ public class BaseRayCastHitMBTests : TestCollection
 	[UnityTest]
 	public IEnumerator OnHitGameObjectDefaultNull()
 	{
-		var rayCastHitMB = new GameObject("hitter").AddComponent<MockRayCastHitMB>();
+		var rayCastHitMB = new GameObject("hitter").AddComponent<RayCastHitMB>();
 		var rayProviderMB = new GameObject("ray").AddComponent<MockRayMB>();
 		rayCastHitMB.raySource = rayProviderMB;
 
@@ -47,9 +39,9 @@ public class BaseRayCastHitMBTests : TestCollection
 	[UnityTest]
 	public IEnumerator OnHitGameObject()
 	{
-		var hit = null as GameObject;
+		var hit = default(RaycastHit);
 		var sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-		var rayCastHitMB = new GameObject("hitter").AddComponent<MockRayCastHitMB>();
+		var rayCastHitMB = new GameObject("hitter").AddComponent<RayCastHitMB>();
 		var rayProviderMB = new GameObject("ray").AddComponent<MockRayMB>();
 
 		sphere.transform.position = Vector3.up;
@@ -64,16 +56,16 @@ public class BaseRayCastHitMBTests : TestCollection
 
 		rayCastHitMB.TryHit();
 
-		Assert.AreSame(sphere, hit);
+		Assert.AreSame(sphere.transform, hit.transform);
 	}
 
 	[UnityTest]
 	public IEnumerator OnHitGameObjectLayer()
 	{
-		var hit = null as GameObject;
+		var hit = default(RaycastHit);
 		var sphereDefault = GameObject.CreatePrimitive(PrimitiveType.Sphere);
 		var cubeWater = GameObject.CreatePrimitive(PrimitiveType.Cube);
-		var rayCastHitMB = new GameObject("hitter").AddComponent<MockRayCastHitMB>();
+		var rayCastHitMB = new GameObject("hitter").AddComponent<RayCastHitMB>();
 		var rayProviderMB = new GameObject("ray").AddComponent<MockRayMB>();
 
 		sphereDefault.transform.position = Vector3.up;
@@ -90,6 +82,6 @@ public class BaseRayCastHitMBTests : TestCollection
 
 		rayCastHitMB.TryHit();
 
-		Assert.AreSame(cubeWater, hit);
+		Assert.AreSame(cubeWater.transform, hit.transform);
 	}
 }

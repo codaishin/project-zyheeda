@@ -244,6 +244,7 @@ GameObject:
   - component: {fileID: 2986458861660030729}
   - component: {fileID: 1656181589147222510}
   - component: {fileID: 6616426102967674054}
+  - component: {fileID: 8307513602995979915}
   - component: {fileID: 2948324260406941809}
   m_Layer: 0
   m_Name: Walk
@@ -294,6 +295,39 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11cd456b0e32cf749856059e523ea4f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  onSuccessSeed:
+    m_PersistentCalls:
+      m_Calls: []
+  onSuccessMorph:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1656181589147222510}
+        m_TargetAssemblyTypeName: BaseApproachMB`1[[Approach, Build
+        m_MethodName: Apply
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onFailSeed:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &8307513602995979915
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8810766115449542013}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b5aa89a909941047bcaba63525e1e5b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   raySource:
     gameObject: {fileID: 0}
     referenceSO: {fileID: 11400000, guid: 7b8ba24cfd2e7fd468cdb283de5395e3, type: 2}
@@ -303,9 +337,9 @@ MonoBehaviour:
   onHit:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1656181589147222510}
-        m_TargetAssemblyTypeName: BaseApproachMB`1[[Approach, Build
-        m_MethodName: Apply
+      - m_Target: {fileID: 6616426102967674054}
+        m_TargetAssemblyTypeName: BaseOnMorphMB`2[[UnityEngine.RaycastHit, UnityEngine
+        m_MethodName: Morph
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -331,8 +365,8 @@ MonoBehaviour:
   onRaise:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6616426102967674054}
-        m_TargetAssemblyTypeName: BaseRayCastHitMB`1[[UnityEngine.Vector3, UnityEngine
+      - m_Target: {fileID: 8307513602995979915}
+        m_TargetAssemblyTypeName: RayCastHitMB, Build
         m_MethodName: TryHit
         m_Mode: 1
         m_Arguments:

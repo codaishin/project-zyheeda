@@ -1,27 +1,27 @@
 using NUnit.Framework;
 using UnityEngine;
 
-public class RayCastHitCharacterSheetMBTests : TestCollection
+public class RayCastHitToCharacterSheetMBTests : TestCollection
 {
 	[Test]
 	public void GetSheet()
 	{
-		var rayCast = new GameObject("rayCast").AddComponent<RayCastHitCharacterSheetMB>();
+		var morph = new GameObject("rayCast").AddComponent<RayCastHitToCharacterSheetMB>();
 		var sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere).AddComponent<CharacterSheetMB>();
 
 		Physics.Raycast(new Ray(Vector3.up, Vector3.down), out RaycastHit hit);
 
-		Assert.AreEqual((true, sphere), (rayCast.Get(hit, out var g), g));
+		Assert.AreEqual((true, sphere), (morph.TryMorph(hit, out var g), g));
 	}
 
 	[Test]
 	public void GetSheetFalse()
 	{
-		var rayCast = new GameObject("rayCast").AddComponent<RayCastHitCharacterSheetMB>();
+		var morph = new GameObject("rayCast").AddComponent<RayCastHitToCharacterSheetMB>();
 		var sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
 
 		Physics.Raycast(new Ray(Vector3.up, Vector3.down), out RaycastHit hit);
 
-		Assert.False(rayCast.Get(hit, out _));
+		Assert.False(morph.TryMorph(hit, out _));
 	}
 }
