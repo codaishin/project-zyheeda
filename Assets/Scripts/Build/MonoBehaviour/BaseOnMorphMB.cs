@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -14,6 +15,16 @@ public abstract class BaseOnMorphMB<TSeed, TMorph> : MonoBehaviour
 	public SeedEvent onFailSeed;
 
 	public abstract bool TryMorph(TSeed seed, out TMorph morph);
+
+	public void Morph(TSeed seed)
+	{
+		if (this.TryMorph(seed, out TMorph morph)) {
+			this.onSuccessSeed.Invoke(seed);
+			this.onSuccessMorph.Invoke(morph);
+		} else {
+			this.onFailSeed.Invoke(seed);
+		}
+	}
 
 	private void Start()
 	{
