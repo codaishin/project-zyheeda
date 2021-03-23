@@ -1,6 +1,5 @@
 using System.Linq;
 using System.Collections;
-using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
@@ -50,11 +49,11 @@ public class BaseOnMorphMBTests : TestCollection
 		onMorph.onFailSeed = new MockOnMorph.SeedEvent();
 		onMorph.onSuccessSeed = new MockOnMorph.SeedEvent();
 		onMorph.onSuccessMorph = new MockOnMorph.MorphEvent();
-		var callbacks = (onMorph.onFailSeed, onMorph.onSuccessSeed, onMorph.onSuccessMorph);
+		var origCallbacks = (onMorph.onFailSeed, onMorph.onSuccessSeed, onMorph.onSuccessMorph);
 
 		yield return new WaitForEndOfFrame();
 
-		Assert.AreEqual(callbacks, (onMorph.onFailSeed, onMorph.onSuccessSeed, onMorph.onSuccessMorph ));
+		Assert.AreEqual(origCallbacks, (onMorph.onFailSeed, onMorph.onSuccessSeed, onMorph.onSuccessMorph));
 	}
 
 	[UnityTest]
