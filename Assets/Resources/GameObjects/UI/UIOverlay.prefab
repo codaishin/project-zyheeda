@@ -615,10 +615,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e565cd575f799c24fbe4c67dadb7545a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  onSuccessSeed:
-    m_PersistentCalls:
-      m_Calls: []
-  onSuccessMorph:
+  onMorph:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 554762681336859542}
@@ -633,9 +630,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  onFailSeed:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!114 &554762681981483176
 MonoBehaviour:
   m_ObjectHideFlags: 0
