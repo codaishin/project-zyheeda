@@ -1854,7 +1854,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health:
     hp: 100
-    maxHp: 0
+    maxHp: 100
   resistance:
     data:
     - name: Heat
