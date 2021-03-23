@@ -91,7 +91,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health:
     hp: 0
-    maxHp: 0
+    maxHp: 100
   resistance:
     data: []
 --- !u!1 &7728212569196843803
