@@ -8,10 +8,10 @@ public class CharacterSheetMB : MonoBehaviour, IConditionManager, ISections
 {
 	private IntensityManagerMB stackIntensity;
 	private DurationManagerMB stackDuration;
-	private Resisitance resistanceWrapper;
+	private Resistance resistance;
 
 	public Health health;
-	public List<Record<EffectTag, float>> resistances;
+	public List<Record<EffectTag, float>> resistanceRecords;
 
 	public void Add(Effect condition)
 	{
@@ -27,7 +27,7 @@ public class CharacterSheetMB : MonoBehaviour, IConditionManager, ISections
 	{
 		return action switch {
 			RefAction<Health> use => () => use(ref this.health),
-			RefAction<Resisitance> use => () => use(ref this.resistanceWrapper),
+			RefAction<Resistance> use => () => use(ref this.resistance),
 			_ => fallback,
 		};
 	}
@@ -36,14 +36,14 @@ public class CharacterSheetMB : MonoBehaviour, IConditionManager, ISections
 	{
 		this.stackIntensity = this.GetComponent<IntensityManagerMB>();
 		this.stackDuration = this.GetComponent<DurationManagerMB>();
-		if (this.resistances == null) {
-			this.resistances = new List<Record<EffectTag, float>>();
-			this.resistanceWrapper = new Resisitance(this.resistances);
+		if (this.resistanceRecords == null) {
+			this.resistanceRecords = new List<Record<EffectTag, float>>();
 		}
+		this.resistance = new Resistance(this.resistanceRecords);
 	}
 
 	private void OnValidate()
 	{
-		this.resistances.Validate();
+		this.resistanceRecords.Validate();
 	}
 }
