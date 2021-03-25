@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(IntensityManagerMB), typeof(DurationManagerMB))]
@@ -7,9 +8,10 @@ public class CharacterSheetMB : MonoBehaviour, IConditionManager, ISections
 {
 	private IntensityManagerMB stackIntensity;
 	private DurationManagerMB stackDuration;
+	private InspectorDict<EffectTag, float> resistanceDict;
 
 	public Health health;
-	public Resistance resistance;
+	public List<Record<EffectTag, float>> resistance;
 
 	public void Add(Effect condition)
 	{
@@ -25,7 +27,7 @@ public class CharacterSheetMB : MonoBehaviour, IConditionManager, ISections
 	{
 		return action switch {
 			RefAction<Health> use => () => use(ref this.health),
-			RefAction<Resistance> use => () => use(ref this.resistance),
+			RefAction<InspectorDict<EffectTag, float>> use => () => use(ref this.resistanceDict),
 			_ => fallback,
 		};
 	}
@@ -34,14 +36,9 @@ public class CharacterSheetMB : MonoBehaviour, IConditionManager, ISections
 	{
 		this.stackIntensity = this.GetComponent<IntensityManagerMB>();
 		this.stackDuration = this.GetComponent<DurationManagerMB>();
-	}
-
-	private void OnValidate()
-	{
-		if (this.resistance.data != null) {
-			this.resistance.data = this.resistance.data
-				.Consolidate()
-				.ToArray();
+		if (this.resistance == null) {
+			this.resistance = new List<Record<EffectTag, float>>();
+			this.resistanceDict = new InspectorDict<EffectTag, float>(this.resistance);
 		}
 	}
 }

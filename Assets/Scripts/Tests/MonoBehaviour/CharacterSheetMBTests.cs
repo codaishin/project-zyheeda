@@ -97,11 +97,12 @@ public class CharacterSheetMBTests : TestCollection
 	public void UseResistanceSection()
 	{
 		var sheet = new GameObject("obj").AddComponent<CharacterSheetMB>();
-		sheet.resistance.data = new Resistance.Data[0];
+		sheet.resistance.Add(new Record<EffectTag, float>{ key = EffectTag.Physical, value = 44f});
 
-		var exec = sheet.UseSection((ref Resistance r) => r.data = new Resistance.Data[10], default);
+		var exec = sheet.UseSection((ref InspectorDict<EffectTag, float> r) => r[EffectTag.Physical] = 2f, default);
 		exec();
 
-		Assert.AreEqual(10, sheet.resistance.data.Length);
+		var record = sheet.resistance[0];
+		Assert.AreEqual((EffectTag.Physical, 2f), (record.key, record.value));
 	}
 }

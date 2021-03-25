@@ -1,4 +1,4 @@
-public interface IResistance
+public interface IInspectorDict<TKey, TValue>
 {
-	float this[EffectTag tag] { get; set; }
+	TValue this[TKey tag] { get; set; }
 }
