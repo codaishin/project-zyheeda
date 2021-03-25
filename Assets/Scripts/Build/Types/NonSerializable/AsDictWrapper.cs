@@ -2,8 +2,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 
-[Serializable]
-public class InspectorDict<TKey, TValue> : IInspectorDict<TKey, TValue>
+public class AsDictWrapper<TKey, TValue> : ISimpleDict<TKey, TValue>
 {
 	private List<Record<TKey, TValue>> records;
 
@@ -13,7 +12,7 @@ public class InspectorDict<TKey, TValue> : IInspectorDict<TKey, TValue>
 		set => this.Set(key, value);
 	}
 
-	public InspectorDict(List<Record<TKey, TValue>> records) => this.records = records;
+	public AsDictWrapper(List<Record<TKey, TValue>> records) => this.records = records;
 
 	private Record<TKey, TValue> Get(TKey key)
 	{

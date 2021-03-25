@@ -2,7 +2,7 @@ using System;
 
 public class BaseModHpSO<TSheet, TResistance> : BaseEffectFactorySO<TSheet>
 	where TSheet : ISections
-	where TResistance : IInspectorDict<EffectTag, float>
+	where TResistance : ISimpleDict<EffectTag, float>
 {
 	public bool invert = true;
 

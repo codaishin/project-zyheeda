@@ -8,7 +8,7 @@ public class CharacterSheetMB : MonoBehaviour, IConditionManager, ISections
 {
 	private IntensityManagerMB stackIntensity;
 	private DurationManagerMB stackDuration;
-	private InspectorDict<EffectTag, float> resistanceDict;
+	private AsDictWrapper<EffectTag, float> resistanceDict;
 
 	public Health health;
 	public List<Record<EffectTag, float>> resistance;
@@ -27,7 +27,7 @@ public class CharacterSheetMB : MonoBehaviour, IConditionManager, ISections
 	{
 		return action switch {
 			RefAction<Health> use => () => use(ref this.health),
-			RefAction<InspectorDict<EffectTag, float>> use => () => use(ref this.resistanceDict),
+			RefAction<AsDictWrapper<EffectTag, float>> use => () => use(ref this.resistanceDict),
 			_ => fallback,
 		};
 	}
@@ -38,7 +38,7 @@ public class CharacterSheetMB : MonoBehaviour, IConditionManager, ISections
 		this.stackDuration = this.GetComponent<DurationManagerMB>();
 		if (this.resistance == null) {
 			this.resistance = new List<Record<EffectTag, float>>();
-			this.resistanceDict = new InspectorDict<EffectTag, float>(this.resistance);
+			this.resistanceDict = new AsDictWrapper<EffectTag, float>(this.resistance);
 		}
 	}
 }

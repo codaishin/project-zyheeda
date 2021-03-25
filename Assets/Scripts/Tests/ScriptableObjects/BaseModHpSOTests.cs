@@ -6,7 +6,7 @@ using UnityEngine.TestTools;
 
 public class BaseModHpSOTests : TestCollection
 {
-	private class MockResistance : IInspectorDict<EffectTag, float>
+	private class MockResistance : ISimpleDict<EffectTag, float>
 	{
 		private Dictionary<EffectTag, float> values = new Dictionary<EffectTag, float>();
 
