@@ -4,7 +4,7 @@ using NUnit.Framework;
 public class RecordCollectionExtensionsTests : TestCollection
 {
 	[Test]
-	public void MarkDoublesUnchanged()
+	public void ValidateWithNoDublicates()
 	{
 		var list = new Record<char, string>[] {
 			new Record<char, string>{ key = 'a' },
@@ -17,7 +17,7 @@ public class RecordCollectionExtensionsTests : TestCollection
 	}
 
 	[Test]
-	public void MarkDoubles()
+	public void ValidateWithDublicates()
 	{
 		var list = new Record<char, string>[] {
 			new Record<char, string>{ key = 'a' },
