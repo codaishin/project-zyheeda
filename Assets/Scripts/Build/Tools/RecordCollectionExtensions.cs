@@ -1,10 +1,10 @@
-using System;
 using System.Linq;
 using System.Collections.Generic;
 
-public static class RecordListExtensions
+public static class RecordCollectionExtensions
 {
-	public static void Validate<TKey, TValue>(this List<Record<TKey, TValue>> records)
+	public static
+	IEnumerable<Record<TKey, TValue>> Validate<TKey, TValue>(this IEnumerable<Record<TKey, TValue>> records)
 	{
 		HashSet<TKey> track = new HashSet<TKey>();
 
@@ -14,8 +14,6 @@ public static class RecordListExtensions
 			return item;
 		}
 
-		for (int i = 0; i < records.Count; ++i) {
-			records[i] = markDuplicates(records[i]);
-		}
+		return records.Select(markDuplicates);
 	}
 }
