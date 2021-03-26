@@ -1,8 +1,7 @@
 using System;
-using System.Linq;
-using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(ResistanceMB))]
 [RequireComponent(typeof(IntensityManagerMB), typeof(DurationManagerMB))]
 public class CharacterSheetMB : MonoBehaviour, IConditionManager, ISections
 {
@@ -11,7 +10,6 @@ public class CharacterSheetMB : MonoBehaviour, IConditionManager, ISections
 	private Resistance resistance;
 
 	public Health health;
-	public Record<EffectTag, float>[] resistanceRecords;
 
 	public void Add(Effect condition)
 	{
@@ -36,17 +34,6 @@ public class CharacterSheetMB : MonoBehaviour, IConditionManager, ISections
 	{
 		this.stackIntensity = this.GetComponent<IntensityManagerMB>();
 		this.stackDuration = this.GetComponent<DurationManagerMB>();
-		if (this.resistanceRecords == null) {
-			this.resistanceRecords = new Record<EffectTag, float>[0];
-		}
-		this.resistance = new Resistance(
-			get: () => this.resistanceRecords,
-			set: r => this.resistanceRecords = r
-		);
-	}
-
-	private void OnValidate()
-	{
-		this.resistanceRecords.Validate();
+		this.resistance = this.GetComponent<ResistanceMB>().Resistance;
 	}
 }
