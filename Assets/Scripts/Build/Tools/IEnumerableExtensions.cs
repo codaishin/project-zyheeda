@@ -17,4 +17,12 @@ public static class IEnumerableExtensions
 	{
 		return enumerable ?? Enumerable.Empty<T>();
 	}
+
+	public static IEnumerable<T> Concat<T>(this IEnumerable<T> enumerable, T value)
+	{
+		foreach (T elem in enumerable) {
+			yield return elem;
+		}
+		yield return value;
+	}
 }
