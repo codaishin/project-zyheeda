@@ -20,7 +20,7 @@ public class RecordsArray<TKey, TValue> : ISimpleDict<TKey, TValue>
 
 	private Record<TKey, TValue> Get(TKey key)
 	{
-		return this.getRecords().OrEmpty()
+		return this.getRecords()
 			.Where(d => d.key.Equals(key))
 			.FirstOrDefault();
 	}
