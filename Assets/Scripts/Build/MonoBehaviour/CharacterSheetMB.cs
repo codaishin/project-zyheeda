@@ -34,6 +34,10 @@ public class CharacterSheetMB : MonoBehaviour, IConditionManager, ISections
 	{
 		this.stackIntensity = this.GetComponent<IntensityManagerMB>();
 		this.stackDuration = this.GetComponent<DurationManagerMB>();
+	}
+
+	private void Start()
+	{
 		this.resistance = this.GetComponent<ResistanceMB>().Resistance;
 	}
 }
