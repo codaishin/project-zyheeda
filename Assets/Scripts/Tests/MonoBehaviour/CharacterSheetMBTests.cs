@@ -1,6 +1,8 @@
 using System;
+using System.Collections;
 using NUnit.Framework;
 using UnityEngine;
+using UnityEngine.TestTools;
 
 public class CharacterSheetMBTests : TestCollection
 {
@@ -93,15 +95,33 @@ public class CharacterSheetMBTests : TestCollection
 		Assert.AreEqual(5f, sheet.health.hp);
 	}
 
-	[Test]
-	public void UseResistanceSection()
+	[UnityTest]
+	public IEnumerator UseResistanceSection()
 	{
 		var sheet = new GameObject("obj").AddComponent<CharacterSheetMB>();
-		sheet.resistance.data = new Resistance.Data[0];
+		var resistance = sheet.GetComponent<ResistanceMB>();
+		resistance.records = new Record<EffectTag, float>[] {
+			new Record<EffectTag, float>{ key = EffectTag.Physical, value = 44f },
+		};
+		var exec = sheet.UseSection((ref Resistance r) => r[EffectTag.Physical] = 2f, default);
 
-		var exec = sheet.UseSection((ref Resistance r) => r.data = new Resistance.Data[10], default);
+		yield return new WaitForFixedUpdate();
+
 		exec();
 
-		Assert.AreEqual(10, sheet.resistance.data.Length);
+		var record = resistance.records[0];
+		Assert.AreEqual((EffectTag.Physical, 2f), (record.key, record.value));
+	}
+
+	[UnityTest]
+	public IEnumerator NoResistanceBeforeStart()
+	{
+		var sheet = new GameObject("obj").AddComponent<CharacterSheetMB>();
+		var resistance = sheet.GetComponent<ResistanceMB>();
+		resistance.records = new Record<EffectTag, float>[0];
+		var exec = sheet.UseSection((ref Resistance r) => r[EffectTag.Physical] = 2f, default);
+
+		Assert.Throws<NullReferenceException>(() => exec());
+		yield break;
 	}
 }

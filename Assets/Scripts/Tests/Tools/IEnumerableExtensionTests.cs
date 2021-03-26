@@ -39,4 +39,11 @@ public class IEnumerableExtensionTests : TestCollection
 	{
 		Assert.IsEmpty((null as int[]).OrEmpty());
 	}
+
+	[Test]
+	public void ConcatValue()
+	{
+		var concatenated = new int[] { 1, 2, 3 }.Concat(4);
+		CollectionAssert.AreEqual(new int[] { 1, 2, 3, 4 }, concatenated);
+	}
 }

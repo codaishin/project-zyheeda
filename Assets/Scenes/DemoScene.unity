@@ -1448,6 +1448,7 @@ GameObject:
   - component: {fileID: 1320382541}
   - component: {fileID: 1320382546}
   - component: {fileID: 1320382545}
+  - component: {fileID: 1320382547}
   - component: {fileID: 1320382540}
   m_Layer: 0
   m_Name: Cube
@@ -1471,11 +1472,6 @@ MonoBehaviour:
   health:
     hp: 100
     maxHp: 100
-  resistance:
-    data:
-    - name: Heat
-      tag: 1
-      value: 0.1
 --- !u!65 &1320382541
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1580,6 +1576,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   effectRoutineFactory:
     intervalDelta: 1
+--- !u!114 &1320382547
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1320382539}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8aaed8efd175a1d41846f5bd7de01ff3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  records:
+  - name: Heat
+    key: 1
+    value: 0.1
 --- !u!1 &1453732928
 GameObject:
   m_ObjectHideFlags: 0

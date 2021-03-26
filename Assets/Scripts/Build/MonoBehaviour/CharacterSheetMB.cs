@@ -1,15 +1,15 @@
 using System;
-using System.Linq;
 using UnityEngine;
 
+[RequireComponent(typeof(ResistanceMB))]
 [RequireComponent(typeof(IntensityManagerMB), typeof(DurationManagerMB))]
 public class CharacterSheetMB : MonoBehaviour, IConditionManager, ISections
 {
 	private IntensityManagerMB stackIntensity;
 	private DurationManagerMB stackDuration;
+	private Resistance resistance;
 
 	public Health health;
-	public Resistance resistance;
 
 	public void Add(Effect condition)
 	{
@@ -36,12 +36,8 @@ public class CharacterSheetMB : MonoBehaviour, IConditionManager, ISections
 		this.stackDuration = this.GetComponent<DurationManagerMB>();
 	}
 
-	private void OnValidate()
+	private void Start()
 	{
-		if (this.resistance.data != null) {
-			this.resistance.data = this.resistance.data
-				.Consolidate()
-				.ToArray();
-		}
+		this.resistance = this.GetComponent<ResistanceMB>().Resistance;
 	}
 }

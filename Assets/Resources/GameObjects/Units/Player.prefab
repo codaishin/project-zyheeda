@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 3538435731205650882}
   - component: {fileID: 6315553598413430133}
   - component: {fileID: 7874305445965646885}
+  - component: {fileID: 7619440275854931417}
   - component: {fileID: 3654853928223236511}
   m_Layer: 0
   m_Name: SheetAndCollider
@@ -77,6 +78,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   effectRoutineFactory:
     intervalDelta: 1
+--- !u!114 &7619440275854931417
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2976097700542157458}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8aaed8efd175a1d41846f5bd7de01ff3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  records: []
 --- !u!114 &3654853928223236511
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -92,8 +106,6 @@ MonoBehaviour:
   health:
     hp: 0
     maxHp: 100
-  resistance:
-    data: []
 --- !u!1 &7728212569196843803
 GameObject:
   m_ObjectHideFlags: 0
