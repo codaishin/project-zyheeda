@@ -296,4 +296,22 @@ public class DurationStackTests : TestCollection
 
 		Assert.AreNotSame(routines[0], routines[1]);
 	}
+
+	[Test]
+	public void NewEventCallAfterCancel()
+	{
+		var routines = new List<Finalizable>();
+		var stack = new DurationStack<MockEffectRoutineFactory>();
+		var factory = new MockEffectRoutineFactory();
+		IEnumerator create() { yield return null; };
+		factory.create = e => new Finalizable{ wrapped = create() };
+		stack.Factory = factory;
+		stack.OnPull += r => routines.Add(r);
+
+		stack.Push(new Effect());
+		stack.Cancel();
+		stack.Push(new Effect());
+
+		Assert.AreNotSame(routines[0], routines[1]);
+	}
 }

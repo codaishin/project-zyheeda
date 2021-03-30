@@ -16,6 +16,7 @@ public class DurationStack<TEffectRoutineFactory> : IStack<TEffectRoutineFactory
 	public void Cancel()
 	{
 		this.OnCancel?.Invoke(this.wrapper);
+		this.wrapper = null;
 		if (this.effects.Count > 0) {
 			this.effects.Peek().Revert();
 		}
