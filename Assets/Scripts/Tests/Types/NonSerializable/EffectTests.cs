@@ -7,12 +7,9 @@ public class EffectTests : TestCollection
 	public void Apply()
 	{
 		var called = false;
-		var effect = new Effect((out Action r) => {
-			called = true;
-			r = default;
-		});
+		var effect = new Effect(() => called = true);
 
-		effect.Apply(out _);
+		effect.Apply();
 
 		Assert.True(called);
 	}
@@ -22,7 +19,7 @@ public class EffectTests : TestCollection
 	{
 		var effect = new Effect();
 
-		Assert.DoesNotThrow(() => effect.Apply(out _));
+		Assert.DoesNotThrow(() => effect.Apply());
 	}
 
 	[Test]
@@ -31,7 +28,6 @@ public class EffectTests : TestCollection
 		var called = 0f;
 		var effect = new Effect(maintain: d => called = d);
 
-		effect.Apply(out _);
 		effect.Maintain(0.4f);
 
 		Assert.AreEqual(0.4f, called);
@@ -51,7 +47,6 @@ public class EffectTests : TestCollection
 		var effect = new Effect();
 		effect.duration = 5f;
 
-		effect.Apply(out _);
 		effect.Maintain(3f);
 
 		Assert.AreEqual(2f, effect.duration);
@@ -61,35 +56,35 @@ public class EffectTests : TestCollection
 	public void Revert()
 	{
 		var called = false;
-		var effect = new Effect((out Action r) => r = () => called = true);
+		var effect = new Effect(revert: () => called = true);
 
-		var outed = effect.Apply(out var revert);
-		revert();
+		effect.Revert();
 
-		Assert.AreEqual((true, true), (outed, called));
+		Assert.True(called);
 	}
 
 	[Test]
-	public void FalseApplyWhenNoRevert()
+	public void DefaultRevertDoesNotThrow()
 	{
-		var effect = new Effect((out Action r) => r = default);
+		var effect = new Effect();
 
-		Assert.False(effect.Apply(out _));
+		Assert.DoesNotThrow(() => effect.Revert());
 	}
 
 	[Test]
 	public void SilenceApplyAndRevert()
 	{
-		var called = false;
-		var effect = new Effect((out Action r) => {
-			called = true;
-			r = () => {};
-		});
+		var called = (apply: false, revert: false);
+		var effect = new Effect(
+			apply: () => called.apply = true,
+			revert: () => called.revert = true
+		);
 		effect.silence = SilenceTag.ApplyAndRevert;
 
-		var outed = effect.Apply(out _);
+		effect.Apply();
+		effect.Revert();
 
-		Assert.AreEqual((false, false), (outed, called));
+		Assert.AreEqual((false, false), called);
 	}
 
 

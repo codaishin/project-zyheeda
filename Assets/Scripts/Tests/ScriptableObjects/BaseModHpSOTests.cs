@@ -43,7 +43,7 @@ public class BaseModHpSOTests : TestCollection
 		var modHp = ScriptableObject.CreateInstance<MockModHpSO>();
 
 		var effect = modHp.Create(default, target, 4);
-		effect.Apply(out _);
+		effect.Apply();
 
 		Assert.AreEqual(38, target.health.hp);
 	}
@@ -80,7 +80,7 @@ public class BaseModHpSOTests : TestCollection
 
 		modHp.invert = false;
 		var effect = modHp.Create(default, target, 4);
-		effect.Apply(out _);
+		effect.Apply();
 
 		Assert.AreEqual(46, target.health.hp);
 	}
@@ -99,16 +99,6 @@ public class BaseModHpSOTests : TestCollection
 	}
 
 	[Test]
-	public void ApplyReturnsFalse()
-	{
-		var target = new MockSheet();
-		var modHp = ScriptableObject.CreateInstance<MockModHpSO>();
-
-		var effect = modHp.Create(default, target, 4);
-		Assert.False(effect.Apply(out _));
-	}
-
-	[Test]
 	public void ApplyDamageReducedByResistance()
 	{
 		var target = new MockSheet();
@@ -118,7 +108,7 @@ public class BaseModHpSOTests : TestCollection
 		target.resistance[EffectTag.Heat] = 0.5f;
 		modHp.tag = EffectTag.Heat;
 		var effect = modHp.Create(default, target, 4);
-		effect.Apply(out _);
+		effect.Apply();
 
 		Assert.AreEqual(40, target.health.hp);
 	}

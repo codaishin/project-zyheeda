@@ -9,22 +9,22 @@ public class Effect
 	public SilenceTag silence;
 	public ConditionStacking stacking;
 
-	private event ApplyFunc apply;
-	private event Action<float> maintain;
+	private Action apply;
+	private Action<float> maintain;
+	private Action revert;
 
-	public Effect(ApplyFunc apply = default, Action<float> maintain = default)
+	public Effect(Action apply = default, Action<float> maintain = default, Action revert = default)
 	{
 		this.apply = apply;
 		this.maintain = maintain;
+		this.revert = revert;
 	}
 
-	public bool Apply(out Action revert)
+	public void Apply()
 	{
-		revert = default;
 		if (this.apply != null && this.silence != SilenceTag.ApplyAndRevert) {
-			this.apply(out revert);
+			this.apply();
 		}
-		return revert != default;
 	}
 
 	public void Maintain(float delta)
@@ -33,5 +33,12 @@ public class Effect
 			this.maintain(delta);
 		}
 		this.duration -= delta;
+	}
+
+	public void Revert()
+	{
+		if (this.revert != null && this.silence != SilenceTag.ApplyAndRevert) {
+			this.revert();
+		}
 	}
 }

@@ -2,5 +2,5 @@ using System;
 
 public interface IEffectRoutineFactory
 {
-	Finalizable Create(Effect effect, out Action revert);
+	Finalizable Create(Effect effect);
 }

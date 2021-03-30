@@ -31,10 +31,7 @@ public class BaseEffectCollectionTests : TestCollection
 		var source = new GameObject("source").AddComponent<MockSheetMB>();
 		var target = new GameObject("target").AddComponent<MockSheetMB>();
 
-		factory.create = (s, t, i) => new Effect((out Action r) => {
-			called = (s, t, i);
-			r = () => {};
-		});
+		factory.create = (s, t, i) => new Effect(() => called = (s, t, i));
 		coll.effectData = new EffectData<MockSheetMB, MockEffectFactory>[] {
 			new EffectData<MockSheetMB, MockEffectFactory> { factory = factory, intensity = 4 }
 		};
@@ -53,7 +50,7 @@ public class BaseEffectCollectionTests : TestCollection
 		var source = new GameObject("source").AddComponent<MockSheetMB>();
 		var target = new GameObject("target").AddComponent<MockSheetMB>();
 
-		factory.create = (s, t, i) => new Effect((out Action r) => r = () => called = true);
+		factory.create = (s, t, i) => new Effect(revert: () => called = true);
 		coll.effectData = new EffectData<MockSheetMB, MockEffectFactory>[] {
 			new EffectData<MockSheetMB, MockEffectFactory> { factory = factory }
 		};
@@ -61,22 +58,6 @@ public class BaseEffectCollectionTests : TestCollection
 		coll.Apply(source, target);
 
 		Assert.True(called);
-	}
-
-	[Test]
-	public void ApplyEffectDefaultRevertDoesNotThrow()
-	{
-		var coll = new MockEffectCollection();
-		var factory = new MockEffectFactory();
-		var source = new GameObject("source").AddComponent<MockSheetMB>();
-		var target = new GameObject("target").AddComponent<MockSheetMB>();
-
-		factory.create = (s, t, i) => new Effect((out Action r) => r = default);
-		coll.effectData = new EffectData<MockSheetMB, MockEffectFactory>[] {
-			new EffectData<MockSheetMB, MockEffectFactory> { factory = factory }
-		};
-
-		Assert.DoesNotThrow(() => coll.Apply(source, target));
 	}
 
 	[Test]

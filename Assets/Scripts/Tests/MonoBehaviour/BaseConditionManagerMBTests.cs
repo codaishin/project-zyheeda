@@ -9,17 +9,15 @@ public class BaseConditionManagerMBTests : TestCollection
 {
 	private class MockEffectRoutineFactory : IEffectRoutineFactory
 	{
-		public delegate Finalizable CreateFunc(Effect e, out Action r);
-		public CreateFunc create = MockEffectRoutineFactory.Empty;
+		public Func<Effect, Finalizable> create = MockEffectRoutineFactory.Empty;
 
-		private static Finalizable Empty(Effect effect, out Action revert)
+		private static Finalizable Empty(Effect effect)
 		{
-			revert = default;
 			IEnumerator get() { yield break; }
 			return new Finalizable { wrapped = get() };
 		}
 
-		public Finalizable Create(Effect effect, out Action revert) => this.create(effect, out revert);
+		public Finalizable Create(Effect effect) => this.create(effect);
 	}
 
 	private class MockStacking : IEffectRoutineStacking
@@ -41,10 +39,7 @@ public class BaseConditionManagerMBTests : TestCollection
 		var effect = new Effect();
 		var routine = new Finalizable { wrapped = get() };
 
-		manager.effectRoutineFactory.create = (Effect _, out Action r) => {
-			r = default;
-			return routine;
-		};
+		manager.effectRoutineFactory.create = _ => routine;
 		manager.effectRoutineStacking.add = (r, _, __) => called = r;
 
 		yield return new WaitForEndOfFrame();
@@ -128,10 +123,7 @@ public class BaseConditionManagerMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		manager.effectRoutineFactory.create = (Effect _, out Action r) => {
-			r = default;
-			return new Finalizable { wrapped = get() };
-		};
+		manager.effectRoutineFactory.create = _ => new Finalizable { wrapped = get() };
 		manager.effectRoutineStacking.add = (r, __, run) => run(r);
 
 		manager.Add(effect);
@@ -157,10 +149,7 @@ public class BaseConditionManagerMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		manager.effectRoutineFactory.create = (Effect _, out Action r) => {
-			r = default;
-			return new Finalizable { wrapped = get() };
-		};
+		manager.effectRoutineFactory.create = _ => new Finalizable { wrapped = get() };
 		manager.effectRoutineStacking.add = (r, __, run) => run(r);
 
 		manager.Add(effect);
@@ -187,10 +176,7 @@ public class BaseConditionManagerMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		manager.effectRoutineFactory.create = (Effect _, out Action r) => {
-			r = default;
-			return new Finalizable { wrapped = get() };
-		};
+		manager.effectRoutineFactory.create = _ => new Finalizable { wrapped = get() };
 		manager.effectRoutineStacking.add = (r, l, run) => {
 			l.Add(r);
 			routines = l;
@@ -217,10 +203,7 @@ public class BaseConditionManagerMBTests : TestCollection
 			}
 		}
 
-		manager.effectRoutineFactory.create = (Effect _, out Action r) => {
-			r = default;
-			return new Finalizable { wrapped = get() };
-		};
+		manager.effectRoutineFactory.create = _ => new Finalizable { wrapped = get() };
 		manager.effectRoutineStacking.add = (r, l, run) => {
 			l.Add(r);
 			run(r);
@@ -251,10 +234,7 @@ public class BaseConditionManagerMBTests : TestCollection
 			}
 		}
 
-		manager.effectRoutineFactory.create = (Effect _, out Action r) => {
-			r = default;
-			return new Finalizable { wrapped = get() };
-		};
+		manager.effectRoutineFactory.create = _ => new Finalizable { wrapped = get() };
 		manager.effectRoutineStacking.add = (r, l, run) => {
 			l.Add(r);
 			run(r);
@@ -285,10 +265,7 @@ public class BaseConditionManagerMBTests : TestCollection
 			}
 		}
 
-		manager.effectRoutineFactory.create = (Effect _, out Action r) => {
-			r = default;
-			return new Finalizable { wrapped = get() };
-		};
+		manager.effectRoutineFactory.create = _ => new Finalizable { wrapped = get() };
 		manager.effectRoutineStacking.add = (r, l, run) => {
 			routines = l;
 			l.Add(r);
@@ -335,10 +312,7 @@ public class BaseConditionManagerMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		manager.effectRoutineFactory.create = (Effect _, out Action r) => {
-			r = default;
-			return new Finalizable { wrapped = get() };
-		};
+		manager.effectRoutineFactory.create = _ => new Finalizable { wrapped = get() };
 		manager.effectRoutineStacking.add = (r, l, run) => {
 			l.Add(r);
 			run(r);
@@ -358,16 +332,13 @@ public class BaseConditionManagerMBTests : TestCollection
 	{
 		var called = false;
 		var manager = new GameObject("obj").AddComponent<MockConditionManagerMB>();
-		var effect = new Effect(){ duration = 1f };
+		var effect = new Effect(revert: () => called = true){ duration = 1f };
 		IEnumerator get(int count) {
 			for (int i = 0; i < count; ++i) {
 				yield return new WaitForFixedUpdate();
 			}
 		}
-		manager.effectRoutineFactory.create = (Effect _, out Action r) => {
-			r = () => called = true;
-			return new Finalizable { wrapped = get(100) };
-		};
+		manager.effectRoutineFactory.create = _ => new Finalizable { wrapped = get(100) };
 
 		yield return new WaitForEndOfFrame();
 
@@ -410,10 +381,7 @@ public class BaseConditionManagerMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		manager.effectRoutineFactory.create = (Effect _, out Action r) => {
-			r = default;
-			return new Finalizable { wrapped = get(0) };
-		};
+		manager.effectRoutineFactory.create = _ => new Finalizable { wrapped = get(0) };
 		manager.effectRoutineStacking.add = (_, __, run) => run(new Finalizable{ wrapped = get(2) });
 
 		manager.Add(effect);
@@ -438,10 +406,7 @@ public class BaseConditionManagerMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		manager.effectRoutineFactory.create = (Effect _, out Action r) => {
-			r = default;
-			return new Finalizable { wrapped = get(0) };
-		};
+		manager.effectRoutineFactory.create = _ => new Finalizable { wrapped = get(0) };
 		manager.effectRoutineStacking.add = (_, l, run) => {
 			Finalizable proper = new Finalizable{ wrapped = get(2) };
 			l.Add(proper);

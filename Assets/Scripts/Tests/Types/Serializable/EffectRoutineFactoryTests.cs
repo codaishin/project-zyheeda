@@ -11,11 +11,8 @@ public class EffectRoutineFactoryTests : TestCollection
 	public void CreateAndApply()
 	{
 		var called = false;
-		var effect = new Effect((out Action r) => {
-			called = true;
-			r = () => {};
-		});
-		var routine = new EffectRoutineFactory{ intervalDelta = 0f }.Create(effect, out _);
+		var effect = new Effect(() => called = true);
+		var routine = new EffectRoutineFactory{ intervalDelta = 0f }.Create(effect);
 
 		routine.MoveNext();
 
@@ -26,8 +23,8 @@ public class EffectRoutineFactoryTests : TestCollection
 	public void CreateAndMaintain()
 	{
 		var called = 0f;
-		var effect = new Effect((out Action r) => r = () => {}, d => called = d);
-		var routine = new EffectRoutineFactory{ intervalDelta = 3f }.Create(effect, out _);
+		var effect = new Effect(maintain: d => called = d);
+		var routine = new EffectRoutineFactory{ intervalDelta = 3f }.Create(effect);
 
 		effect.duration = 10f;
 
@@ -38,11 +35,11 @@ public class EffectRoutineFactoryTests : TestCollection
 	}
 
 	[Test]
-	public void CreateAndNoMaintain()
+	public void CreateAndNoMaintainWhenZeroDuration()
 	{
 		var called = false;
-		var effect = new Effect((out Action r) => r = () => {}, maintain: _ => called = true);
-		var routine = new EffectRoutineFactory{ intervalDelta = 3f }.Create(effect, out _);
+		var effect = new Effect(maintain: _ => called = true);
+		var routine = new EffectRoutineFactory{ intervalDelta = 3f }.Create(effect);
 
 		routine.MoveNext();
 
@@ -53,8 +50,8 @@ public class EffectRoutineFactoryTests : TestCollection
 	public void CreateAndMaintainForDuration()
 	{
 		var called = new List<float>();
-		var effect = new Effect((out Action r) => r = () => {}, d => called.Add(d));
-		var routine = new EffectRoutineFactory{ intervalDelta = 2f }.Create(effect, out _);
+		var effect = new Effect(maintain: d => called.Add(d));
+		var routine = new EffectRoutineFactory{ intervalDelta = 2f }.Create(effect);
 
 		effect.duration = 5f;
 
@@ -70,7 +67,7 @@ public class EffectRoutineFactoryTests : TestCollection
 	public IEnumerator CreateAndWaitForIntervalDelta()
 	{
 		var effect = new Effect();
-		var routine = new EffectRoutineFactory{ intervalDelta = 0.3f }.Create(effect, out _);
+		var routine = new EffectRoutineFactory{ intervalDelta = 0.3f }.Create(effect);
 
 		effect.duration = 10f;
 		routine.MoveNext();
@@ -88,7 +85,7 @@ public class EffectRoutineFactoryTests : TestCollection
 	public IEnumerator CreateAndWaitForRemainingCooldown()
 	{
 		var effect = new Effect();
-		var routine = new EffectRoutineFactory{ intervalDelta = 0.3f }.Create(effect, out _);
+		var routine = new EffectRoutineFactory{ intervalDelta = 0.3f }.Create(effect);
 
 		effect.duration = 0.4f;
 		routine.MoveNext();
@@ -107,8 +104,8 @@ public class EffectRoutineFactoryTests : TestCollection
 	public void CreateAndRevert()
 	{
 		var called = false;
-		var effect = new Effect((out Action r) => r = () => called = true);
-		var routine = new EffectRoutineFactory{ intervalDelta = 0f }.Create(effect, out _);
+		var effect = new Effect(revert: () => called = true);
+		var routine = new EffectRoutineFactory{ intervalDelta = 0f }.Create(effect);
 
 		routine.MoveNext();
 
@@ -116,21 +113,12 @@ public class EffectRoutineFactoryTests : TestCollection
 	}
 
 	[Test]
-	public void CreateAndRevertDoesNotThrow()
-	{
-		var effect = new Effect((out Action r) => r = default);
-		var routine = new EffectRoutineFactory{ intervalDelta = 0f }.Create(effect, out _);
-
-		Assert.DoesNotThrow(() => routine.MoveNext());
-	}
-
-	[Test]
 	public void CreateAndRevertOnlyAtEnd()
 	{
 		var called = false;
 		var calledTrack = new List<bool>();
-		var effect = new Effect((out Action r) => r = () => called = true);
-		var routine = new EffectRoutineFactory{ intervalDelta = 42f }.Create(effect, out _);
+		var effect = new Effect(revert: () => called = true);
+		var routine = new EffectRoutineFactory{ intervalDelta = 42f }.Create(effect);
 
 		effect.duration = 42f;
 
@@ -150,49 +138,10 @@ public class EffectRoutineFactoryTests : TestCollection
 	}
 
 	[Test]
-	public void PassRevertOut()
-	{
-		var called = false;
-		var calledTrack = new List<bool>();
-		var effect = new Effect((out Action r) => r = () => called = true){ duration = 1f };
-		var routine = new EffectRoutineFactory().Create(effect, out var revert);
-
-		effect.duration = 42f;
-
-		routine.MoveNext();
-		revert();
-
-		Assert.True(called);
-	}
-
-	[Test]
-	public void PassefRevertDoesNotThrow()
-	{
-		var calledTrack = new List<bool>();
-		var effect = new Effect((out Action r) => r = default){ duration = 1f };
-		var routine = new EffectRoutineFactory().Create(effect, out var revert);
-
-		effect.duration = 42f;
-
-		routine.MoveNext();
-		Assert.DoesNotThrow(() => revert());
-	}
-
-	[Test]
-	public void PassefRevertDoesNotThrowWhenNotApplied()
-	{
-		var calledTrack = new List<bool>();
-		var effect = new Effect((out Action r) => r = default){ duration = 1f };
-		var routine = new EffectRoutineFactory().Create(effect, out var revert);
-
-		Assert.DoesNotThrow(() => revert());
-	}
-
-	[Test]
 	public void IntervalDeltaUntouched()
 	{
 		var factory = new EffectRoutineFactory{ intervalDelta = 0.1f };
-		var routine = factory.Create(new Effect{ duration = 10f }, out _);
+		var routine = factory.Create(new Effect{ duration = 10f });
 		var count = 0;
 
 		while (routine.MoveNext() && count++ < 100);
