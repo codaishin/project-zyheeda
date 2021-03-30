@@ -131,7 +131,7 @@ public class DurationStackTests : TestCollection
 	}
 
 	[Test]
-	public void OnPushOnlyForFirst()
+	public void OnPullOnlyForFirst()
 	{
 		var called = 0;
 		var stack = new DurationStack<MockEffectRoutineFactory>();
@@ -145,9 +145,11 @@ public class DurationStackTests : TestCollection
 		stack.OnPull += _ => ++called;
 
 		stack.Push(new Effect());
+		var callA = called;
 		stack.Push(new Effect());
+		var callB = called;
 
-		Assert.AreEqual(1, called);
+		Assert.AreEqual((1, 1), (callA, callB));
 	}
 
 	[Test]
