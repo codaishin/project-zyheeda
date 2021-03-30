@@ -6,7 +6,7 @@ public interface IStack<TEffectRoutineFactory>
 {
 	TEffectRoutineFactory Factory { get; set; }
 	IEnumerable<Effect> Effects  {get; }
-	event Action<Finalizable> OnPush;
+	event Action<Finalizable> OnPull;
 	event Action<Finalizable> OnCancel;
 	void Push(Effect effect);
 	void Cancel();
