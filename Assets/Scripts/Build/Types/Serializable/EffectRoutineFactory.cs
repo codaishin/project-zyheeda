@@ -12,12 +12,10 @@ public class EffectRoutineFactory : IEffectRoutineFactory
 
 	public float intervalDelta = 1f;
 
-	private IEnumerator PureRoutine(Effect effect, RevertPtr revertPtr)
+	private IEnumerator PureRoutine(Effect effect)
 	{
 		float delta = this.intervalDelta;
-		if(effect.Apply(out Action revert)) {
-			revertPtr.invoke = revert;
-		};
+		effect.Apply();
 		while (effect.duration > 0) {
 			if (effect.duration < delta) {
 				delta = effect.duration;
@@ -25,13 +23,11 @@ public class EffectRoutineFactory : IEffectRoutineFactory
 			yield return new WaitForSeconds(delta);
 			effect.Maintain(delta);
 		}
-		revertPtr.invoke();
+		effect.Revert();
 	}
 
-	public Finalizable Create(Effect effect, out Action revert)
+	public Finalizable Create(Effect effect)
 	{
-		RevertPtr revertPtr = new RevertPtr{ invoke = () => {} };
-		revert = () => revertPtr.invoke();
-		return new Finalizable { wrapped = this.PureRoutine(effect, revertPtr) };
+		return new Finalizable { wrapped = this.PureRoutine(effect) };
 	}
 }

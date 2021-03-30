@@ -32,13 +32,8 @@ public class BaseModHpSO<TSheet, TResistance> : BaseEffectFactorySO<TSheet>
 	{
 		Action<float> modHp = this.GetModHp(target);
 		return new Effect(
-			apply: (out Action reverse) => {
-				modHp(intensity);
-				reverse = default;
-			},
-			maintain: (float intervalDelta) => {
-				modHp(intensity * intervalDelta);
-			}
+			apply: () => modHp(intensity),
+			maintain: (float intervalDelta) => modHp(intensity * intervalDelta)
 		);
 	}
 }

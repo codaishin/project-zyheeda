@@ -15,9 +15,8 @@ public class BaseEffectCollection<TSheet, TEffectFactory> : IEffectCollection<TS
 		foreach (EffectData<TSheet, TEffectFactory> data in this.effectData) {
 			Effect effect = data.GetEffect(source, target);
 			if (effect.duration == 0) {
-				if (effect.Apply(out Action revert)) {
-					revert();
-				}
+				effect.Apply();
+				effect.Revert();
 			} else {
 				target.Add(effect);
 			}
