@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+[CreateAssetMenu(menuName = "ScriptableObjects/StackFactories/Intensity")]
 public class IntensityStackFactorySO : BaseStackFactorySO
 {
 	private class Stack : IStack

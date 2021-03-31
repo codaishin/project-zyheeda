@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[CreateAssetMenu(menuName = "ScriptableObjects/StackFactories/Duration")]
 public class DurationStackFactorySO : BaseStackFactorySO
 {
 	private class Stack : IStack
