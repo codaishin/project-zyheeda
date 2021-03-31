@@ -1,13 +1,10 @@
-using System;
+using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
-public interface IStack<TEffectRoutineFactory>
-	where TEffectRoutineFactory : IEffectRoutineFactory
+public interface IStack
 {
-	TEffectRoutineFactory Factory { get; set; }
-	IEnumerable<Effect> Effects  {get; }
-	event Action<Finalizable> OnPull;
-	event Action<Finalizable> OnCancel;
+	IEnumerable<Effect> Effects { get; }
 	void Push(Effect effect);
 	void Cancel();
 }
