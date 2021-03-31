@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DurationStackFactorySO : ScriptableObject, IStackFactory
+public class DurationStackFactorySO : BaseStackFactorySO
 {
 	private class Stack : IStack
 	{
@@ -54,7 +54,7 @@ public class DurationStackFactorySO : ScriptableObject, IStackFactory
 		}
 	}
 
-	public IStack Create(
+	public override IStack Create(
 		Func<Effect, Finalizable> effectToRoutine,
 		Action<Finalizable> onPull = default,
 		Action<Finalizable> onCancel = default
