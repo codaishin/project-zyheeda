@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class IntensityStackFactorySO : ScriptableObject, IStackFactory
+public class IntensityStackFactorySO : BaseStackFactorySO
 {
 	private class Stack : IStack
 	{
@@ -38,7 +38,7 @@ public class IntensityStackFactorySO : ScriptableObject, IStackFactory
 		}
 	}
 
-	public IStack Create(
+	public override IStack Create(
 		Func<Effect, Finalizable> effectToRoutine,
 		Action<Finalizable> onPull = default,
 		Action<Finalizable> onCancel = default
