@@ -1,13 +1,8 @@
-using System;
 using System.Collections.Generic;
 
-public interface IStack<TEffectRoutineFactory>
-	where TEffectRoutineFactory : IEffectRoutineFactory
+public interface IStack
 {
-	TEffectRoutineFactory Factory { get; set; }
-	IEnumerable<Effect> Effects  {get; }
-	event Action<Finalizable> OnPull;
-	event Action<Finalizable> OnCancel;
+	IEnumerable<Effect> Effects { get; }
 	void Push(Effect effect);
 	void Cancel();
 }
