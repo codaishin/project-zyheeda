@@ -5,27 +5,21 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-public class DurationStackTests : TestCollection
+public class DurationStackFactorySOTests : TestCollection
 {
-	private class MockEffectRoutineFactory : IEffectRoutineFactory
-	{
-		public Func<Effect, Finalizable> create;
-		public Finalizable Create(Effect effect) => this.create(effect);
-	}
-
 	[Test]
 	public void RoutineFromEffect()
 	{
-		var called = false;
-		var stack = new DurationStack<MockEffectRoutineFactory>();
-		var factory = new MockEffectRoutineFactory();
 		IEnumerator create(Effect effect) {
 			effect.Apply();
 			yield break;
 		}
-		factory.create = e => new Finalizable{ wrapped = create(e) };
-		stack.Factory = factory;
-		stack.OnPull += r => r.MoveNext();
+		var called = false;
+		var factory = ScriptableObject.CreateInstance<DurationStackFactorySO>();
+		var stack = factory.Create(
+			e => new Finalizable{ wrapped = create(e) },
+			onPull: r => r.MoveNext()
+		);
 
 		stack.Push(new Effect(apply: () => called = true));
 
@@ -35,14 +29,14 @@ public class DurationStackTests : TestCollection
 	[Test]
 	public void CancelCallWithPushRoutine()
 	{
-		var routines = (onPush: default(Finalizable), onCancel: default(Finalizable));
-		var stack = new DurationStack<MockEffectRoutineFactory>();
-		var factory = new MockEffectRoutineFactory();
 		IEnumerator create() { yield break; };
-		factory.create = e => new Finalizable{ wrapped = create() };
-		stack.Factory = factory;
-		stack.OnPull += r => routines.onPush = r;
-		stack.OnCancel += r => routines.onCancel = r;
+		var routines = (onPush: default(Finalizable), onCancel: default(Finalizable));
+		var factory = ScriptableObject.CreateInstance<DurationStackFactorySO>();
+		var stack = factory.Create(
+			_ => new Finalizable{ wrapped = create() },
+			onPull: r => routines.onPush = r,
+			onCancel: r => routines.onCancel = r
+		);
 
 		stack.Push(new Effect());
 		stack.Cancel();
@@ -53,13 +47,13 @@ public class DurationStackTests : TestCollection
 	[Test]
 	public void NoOnCancelWhenNoCancel()
 	{
-		var called = false;
-		var stack = new DurationStack<MockEffectRoutineFactory>();
-		var factory = new MockEffectRoutineFactory();
 		IEnumerator create() { yield break; };
-		factory.create = e => new Finalizable{ wrapped = create() };
-		stack.Factory = factory;
-		stack.OnCancel += _ => called = true;
+		var called = false;
+		var factory = ScriptableObject.CreateInstance<DurationStackFactorySO>();
+		var stack = factory.Create(
+			_ => new Finalizable{ wrapped = create() },
+			onCancel: _ => called = true
+		);
 
 		stack.Push(new Effect());
 
@@ -69,11 +63,9 @@ public class DurationStackTests : TestCollection
 	[Test]
 	public void EmptyPushDoesNotThrow()
 	{
-		var stack = new DurationStack<MockEffectRoutineFactory>();
-		var factory = new MockEffectRoutineFactory();
 		IEnumerator create() { yield break; };
-		factory.create = e => new Finalizable{ wrapped = create() };
-		stack.Factory = factory;
+		var factory = ScriptableObject.CreateInstance<DurationStackFactorySO>();
+		var stack = factory.Create(_ => new Finalizable{ wrapped = create() });
 
 		Assert.DoesNotThrow(() => stack.Push(new Effect()));
 	}
@@ -81,11 +73,9 @@ public class DurationStackTests : TestCollection
 	[Test]
 	public void EmptyCancelDoesNotThrow()
 	{
-		var stack = new DurationStack<MockEffectRoutineFactory>();
-		var factory = new MockEffectRoutineFactory();
 		IEnumerator create() { yield break; };
-		factory.create = e => new Finalizable{ wrapped = create() };
-		stack.Factory = factory;
+		var factory = ScriptableObject.CreateInstance<DurationStackFactorySO>();
+		var stack = factory.Create(_ => new Finalizable{ wrapped = create() });
 
 		stack.Push(new Effect());
 		Assert.DoesNotThrow(() => stack.Cancel());
@@ -94,15 +84,13 @@ public class DurationStackTests : TestCollection
 	[Test]
 	public void Effects()
 	{
-		var stack = new DurationStack<MockEffectRoutineFactory>();
-		var factory = new MockEffectRoutineFactory();
+		IEnumerator create() { yield break; };
+		var factory = ScriptableObject.CreateInstance<DurationStackFactorySO>();
+		var stack = factory.Create(_ => new Finalizable{ wrapped = create() });
 		var effects = new Effect[] {
 			new Effect(),
 			new Effect(),
 		};
-		IEnumerator create() { yield break; };
-		factory.create = e => new Finalizable{ wrapped = create() };
-		stack.Factory = factory;
 
 		stack.Push(effects[0]);
 		stack.Push(effects[1]);
@@ -113,15 +101,13 @@ public class DurationStackTests : TestCollection
 	[Test]
 	public void CancelClearsEffects()
 	{
-		var stack = new DurationStack<MockEffectRoutineFactory>();
-		var factory = new MockEffectRoutineFactory();
+		IEnumerator create() { yield break; };
+		var factory = ScriptableObject.CreateInstance<DurationStackFactorySO>();
+		var stack = factory.Create(_ => new Finalizable{ wrapped = create() });
 		var effects = new Effect[] {
 			new Effect(),
 			new Effect(),
 		};
-		IEnumerator create() { yield break; };
-		factory.create = e => new Finalizable{ wrapped = create() };
-		stack.Factory = factory;
 
 		stack.Push(effects[0]);
 		stack.Push(effects[1]);
@@ -133,16 +119,16 @@ public class DurationStackTests : TestCollection
 	[Test]
 	public void OnPullOnlyForFirst()
 	{
-		var called = 0;
-		var stack = new DurationStack<MockEffectRoutineFactory>();
-		var factory = new MockEffectRoutineFactory();
 		IEnumerator create() {
 			yield return null;
 			yield return null;
 		};
-		factory.create = e => new Finalizable{ wrapped = create() };
-		stack.Factory = factory;
-		stack.OnPull += _ => ++called;
+		var called = 0;
+		var factory = ScriptableObject.CreateInstance<DurationStackFactorySO>();
+		var stack = factory.Create(
+			_ => new Finalizable{ wrapped = create() },
+			onPull: _ => ++called
+		);
 
 		stack.Push(new Effect());
 		var callA = called;
@@ -156,9 +142,6 @@ public class DurationStackTests : TestCollection
 	public void FirstRoutinesAlsoYieldsSubsequentEffects()
 	{
 		var called = 0;
-		var routine = default(Finalizable);
-		var stack = new DurationStack<MockEffectRoutineFactory>();
-		var factory = new MockEffectRoutineFactory();
 		IEnumerator create() {
 			++called;
 			yield return null;
@@ -166,9 +149,12 @@ public class DurationStackTests : TestCollection
 			yield return null;
 			++called;
 		};
-		factory.create = e => new Finalizable{ wrapped = create() };
-		stack.Factory = factory;
-		stack.OnPull += r => routine = r;
+		var routine = default(Finalizable);
+		var factory = ScriptableObject.CreateInstance<DurationStackFactorySO>();
+		var stack = factory.Create(
+			_ => new Finalizable{ wrapped = create() },
+			onPull: r => routine = r
+		);
 
 		stack.Push(new Effect());
 
@@ -188,17 +174,17 @@ public class DurationStackTests : TestCollection
 	[Test]
 	public void FinishedEffectRemovedFromEffects()
 	{
-		var routine = default(Finalizable);
-		var stack = new DurationStack<MockEffectRoutineFactory>();
-		var factory = new MockEffectRoutineFactory();
 		IEnumerator create() {
 			yield return null;
 			yield return null;
 			yield return null;
 		}
-		factory.create = e => new Finalizable{ wrapped = create() };
-		stack.Factory = factory;
-		stack.OnPull += r => routine = r;
+		var routine = default(Finalizable);
+		var factory = ScriptableObject.CreateInstance<DurationStackFactorySO>();
+		var stack = factory.Create(
+			_ => new Finalizable{ wrapped = create() },
+			onPull: r => routine = r
+		);
 
 		stack.Push(new Effect());
 
@@ -213,17 +199,17 @@ public class DurationStackTests : TestCollection
 	[Test]
 	public void YieldsCorrectValues()
 	{
-		var routine = default(Finalizable);
-		var stack = new DurationStack<MockEffectRoutineFactory>();
-		var factory = new MockEffectRoutineFactory();
 		IEnumerator create() {
 			yield return 1;
 			yield return 2;
 			yield return 3;
 		}
-		factory.create = e => new Finalizable{ wrapped = create() };
-		stack.Factory = factory;
-		stack.OnPull += r => routine = r;
+		var routine = default(Finalizable);
+		var factory = ScriptableObject.CreateInstance<DurationStackFactorySO>();
+		var stack = factory.Create(
+			_ => new Finalizable{ wrapped = create() },
+			onPull: r => routine = r
+		);
 
 		stack.Push(new Effect());
 
@@ -240,19 +226,19 @@ public class DurationStackTests : TestCollection
 	[Test]
 	public void CancelCallsRevertOnRunningEffect()
 	{
+		IEnumerator create() { yield return null; };
 		var called = (a: false, b: false, c: false);
 		var routine = default(Finalizable);
-		var stack = new DurationStack<MockEffectRoutineFactory>();
-		var factory = new MockEffectRoutineFactory();
+		var factory = ScriptableObject.CreateInstance<DurationStackFactorySO>();
+		var stack = factory.Create(
+			_ => new Finalizable{ wrapped = create() },
+			onPull: r => routine = r
+		);
 		var effects = new Effect[] {
 			new Effect(revert: () => called.a = true),
 			new Effect(revert: () => called.b = true),
 			new Effect(revert: () => called.c = true),
 		};
-		IEnumerator create() { yield return null; };
-		factory.create = e => new Finalizable{ wrapped = create() };
-		stack.Factory = factory;
-		stack.OnPull += r => routine = r;
 
 		stack.Push(effects[0]);
 		stack.Push(effects[1]);
@@ -267,11 +253,9 @@ public class DurationStackTests : TestCollection
 	[Test]
 	public void CancelWithNoEffectDoesNotThrow()
 	{
-		var stack = new DurationStack<MockEffectRoutineFactory>();
-		var factory = new MockEffectRoutineFactory();
 		IEnumerator create() { yield return null; };
-		factory.create = e => new Finalizable{ wrapped = create() };
-		stack.Factory = factory;
+		var factory = ScriptableObject.CreateInstance<DurationStackFactorySO>();
+		var stack = factory.Create(_ => new Finalizable{ wrapped = create() });
 
 		Assert.DoesNotThrow(() => stack.Cancel());
 	}
@@ -279,13 +263,13 @@ public class DurationStackTests : TestCollection
 	[Test]
 	public void NewEventCallWhenPreviosRunCompleted()
 	{
-		var routines = new List<Finalizable>();
-		var stack = new DurationStack<MockEffectRoutineFactory>();
-		var factory = new MockEffectRoutineFactory();
 		IEnumerator create() { yield return null; };
-		factory.create = e => new Finalizable{ wrapped = create() };
-		stack.Factory = factory;
-		stack.OnPull += r => routines.Add(r);
+		var routines = new List<Finalizable>();
+		var factory = ScriptableObject.CreateInstance<DurationStackFactorySO>();
+		var stack = factory.Create(
+			_ => new Finalizable{ wrapped = create() },
+			onPull: r => routines.Add(r)
+		);
 
 		stack.Push(new Effect());
 
@@ -300,13 +284,13 @@ public class DurationStackTests : TestCollection
 	[Test]
 	public void NewEventCallAfterCancel()
 	{
-		var routines = new List<Finalizable>();
-		var stack = new DurationStack<MockEffectRoutineFactory>();
-		var factory = new MockEffectRoutineFactory();
 		IEnumerator create() { yield return null; };
-		factory.create = e => new Finalizable{ wrapped = create() };
-		stack.Factory = factory;
-		stack.OnPull += r => routines.Add(r);
+		var routines = new List<Finalizable>();
+		var factory = ScriptableObject.CreateInstance<DurationStackFactorySO>();
+		var stack = factory.Create(
+			_ => new Finalizable{ wrapped = create() },
+			onPull: r => routines.Add(r)
+		);
 
 		stack.Push(new Effect());
 		stack.Cancel();
