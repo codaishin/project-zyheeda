@@ -298,4 +298,20 @@ public class DurationStackFactorySOTests : TestCollection
 
 		Assert.AreNotSame(routines[0], routines[1]);
 	}
+
+	[Test]
+	public void NoOnCancelWhenNothingInStack()
+	{
+		IEnumerator create() { yield break; };
+		var called = false;
+		var factory = ScriptableObject.CreateInstance<DurationStackFactorySO>();
+		var stack = factory.Create(
+			_ => new Finalizable{ wrapped = create() },
+			onCancel: _ => called = true
+		);
+
+		stack.Cancel();
+
+		Assert.False(called);
+	}
 }

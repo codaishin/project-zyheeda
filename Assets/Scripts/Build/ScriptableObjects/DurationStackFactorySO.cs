@@ -24,11 +24,13 @@ public class DurationStackFactorySO : BaseStackFactorySO
 
 		public void Cancel()
 		{
-			this.onCancel?.Invoke(this.wrapper);
-			this.wrapper = null;
+			if (this.wrapper != null && this.onCancel != null) {
+				this.onCancel(this.wrapper);
+			}
 			if (this.effects.Count > 0) {
 				this.effects.Peek().Revert();
 			}
+			this.wrapper = null;
 			this.effects.Clear();
 		}
 
