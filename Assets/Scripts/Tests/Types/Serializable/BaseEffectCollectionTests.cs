@@ -1,15 +1,30 @@
 using System;
+using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
 
 public class BaseEffectCollectionTests : TestCollection
 {
-	private class MockSheetMB : MonoBehaviour, IConditionManager, ISections
+	private class MockStack : IStack
 	{
-		public Action<Effect> add = (_) => { };
+		public Action<Effect> push;
 
-		public void Add(Effect effect) => this.add(effect);
-		public Action UseSection<T>(RefAction<T> action, Action fallback) => fallback;
+		public IEnumerable<Effect> Effects => throw new NotImplementedException();
+		public void Cancel() => throw new NotImplementedException();
+		public void Push(Effect effect) => this.push(effect);
+	}
+
+	private class MockEffectRunner : IEffectRunner
+	{
+		public Func<EffectTag, ConditionStacking, IStack> getStack;
+		public IStack this[EffectTag tag, ConditionStacking stacking] => getStack(tag, stacking);
+	}
+
+	private class MockSheetMB : MonoBehaviour, ISections
+	{
+		public Func<Delegate, Action, Action> useSection;
+		public Action UseSection<T>(RefAction<T> action, Action fallback) =>
+			this.useSection(action, fallback);
 	}
 
 	private class MockEffectFactory : IEffectFactory<MockSheetMB>
@@ -19,7 +34,7 @@ public class BaseEffectCollectionTests : TestCollection
 		public Effect Create(MockSheetMB s, MockSheetMB t, float i) => this.create(s, t, i);
 	}
 
-	private class MockEffectCollection : BaseEffectCollection<MockSheetMB, MockEffectFactory> {}
+	private class MockEffectCollection : BaseEffectCollection<MockSheetMB, MockEffectRunner, MockEffectFactory> {}
 
 
 	[Test]
@@ -63,39 +78,26 @@ public class BaseEffectCollectionTests : TestCollection
 	[Test]
 	public void UseTargetAdd()
 	{
-		var called = 0f;
+		var called = (default(EffectTag), default(ConditionStacking), default(Effect));
+		var runner = new MockEffectRunner();
 		var coll = new MockEffectCollection();
 		var factory = new MockEffectFactory();
 		var source = new GameObject("source").AddComponent<MockSheetMB>();
 		var target = new GameObject("target").AddComponent<MockSheetMB>();
+		var effect = new Effect{ tag = EffectTag.Heat, stacking = ConditionStacking.Duration };
 
-		factory.create = (s, t, _) => new Effect(maintain: d => called = d);
-		target.add = e => e.Maintain(42f);
+		factory.create = (s, t, _) => effect;
+		runner.getStack = (t, s) => new MockStack { push = e => called = (t, s, e) };
+		target.useSection = (Delegate action, Action _) => action switch {
+			RefAction<MockEffectRunner> use => () => use(ref runner),
+			_ => null,
+		};
 		coll.effectData = new EffectData<MockSheetMB, MockEffectFactory>[] {
 			new EffectData<MockSheetMB, MockEffectFactory> { factory = factory, duration = 1f }
 		};
 
 		coll.Apply(source, target);
 
-		Assert.AreEqual(42f, called);
-	}
-
-	[Test]
-	public void DontUseTargetAddWhenApplyReturnsFalse()
-	{
-		var called = false;
-		var coll = new MockEffectCollection();
-		var factory = new MockEffectFactory();
-		var source = new GameObject("source").AddComponent<MockSheetMB>();
-		var target = new GameObject("target").AddComponent<MockSheetMB>();
-
-		target.add = _ => called = true;
-		coll.effectData = new EffectData<MockSheetMB, MockEffectFactory>[] {
-			new EffectData<MockSheetMB, MockEffectFactory> { factory = factory }
-		};
-
-		coll.Apply(source, target);
-
-		Assert.False(called);
+		Assert.AreEqual((EffectTag.Heat, ConditionStacking.Duration, effect), called);
 	}
 }
