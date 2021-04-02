@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-public class IntensityStackFactory
+public static class IntensityStackFactory
 {
 	private class Stack : IStack
 	{
