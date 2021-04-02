@@ -1,72 +1,40 @@
-using System.Linq;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class BaseEffectRunnerMB<TEffectRoutineFactory, TStackFactory> : MonoBehaviour
+public abstract class BaseEffectRunnerMB<TEffectRoutineFactory> : MonoBehaviour
 	where TEffectRoutineFactory : IEffectRoutineFactory
-	where TStackFactory : IStackFactory
 {
-	private Dictionary<ConditionStacking, IStack> stacks = new Dictionary<ConditionStacking, IStack>();
-
+	private Dictionary<EffectTag, Dictionary<ConditionStacking, IStack>> stacksMap =
+		new Dictionary<EffectTag, Dictionary<ConditionStacking, IStack>>();
 	public TEffectRoutineFactory routineFactory;
-	public Record<ConditionStacking, TStackFactory>[] records;
 
-	public IStack this[ConditionStacking stacking] => stacks[stacking];
+	protected abstract Dictionary<ConditionStacking, GetStackFunc> Factories { get; }
+	public IStack this[EffectTag tag, ConditionStacking stacking] => this.GetOrMakeStack(tag, stacking);
 
-	private void Start()
+	private IStack GetOrMakeStack(EffectTag tag, ConditionStacking stacking)
 	{
-		this.ValidateRecords();
-		this.UpdateStacks();
-	}
-
-	public void OnValidate()
-	{
-		if (this.records != null) {
-			this.ValidateRecords();
-			this.UpdateStacks();
+		if (!this.stacksMap.TryGetValue(tag, out Dictionary<ConditionStacking, IStack> stacks)) {
+			stacks = new Dictionary<ConditionStacking, IStack>();
+			this.stacksMap[tag] = stacks;
 		}
+		if (!stacks.TryGetValue(stacking, out IStack stack)) {
+			stack = this.Factories[stacking](
+				effectToRoutine: this.routineFactory.Create,
+				onPull: this.StartEffect,
+				onCancel: this.CancelEffect
+			);
+			stacks[stacking] = stack;
+		}
+		return stack;
 	}
 
-	private void ValidateRecords()
-	{
-		this.records = this.records
-			.Validate()
-			.Select(this.MarkUnset)
-			.ToArray();
-	}
-
-	private void UpdateStacks()
-	{
-		this.records
-			.Where(this.RecordIsValid)
-			.ForEach(this.UpdateStack);
-	}
-
-	private void OnPull(Finalizable routine)
+	private void StartEffect(Finalizable routine)
 	{
 		this.StartCoroutine(routine);
 	}
 
-	private void OnCancel(Finalizable routine)
+	private void CancelEffect(Finalizable routine)
 	{
 		this.StopCoroutine(routine);
-	}
-
-	private void UpdateStack(Record<ConditionStacking, TStackFactory> record)
-	{
-		this.stacks[record.key] = record.value.Create(this.routineFactory.Create, this.OnPull, this.OnCancel);
-	}
-
-	private bool RecordIsValid(Record<ConditionStacking, TStackFactory> record)
-	{
-		return record.name == record.key.ToString();
-	}
-
-	private Record<ConditionStacking, TStackFactory> MarkUnset(Record<ConditionStacking, TStackFactory> record) {
-		if (record.value == null) {
-			record.name = "__no_factory_set__";
-		}
-		return record;
 	}
 }

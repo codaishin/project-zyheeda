@@ -1,5 +1,10 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
-public class EffectRunnerMB : BaseEffectRunnerMB<EffectRoutineFactory, BaseStackFactorySO> {}
+public class EffectRunnerMB : BaseEffectRunnerMB<EffectRoutineFactory>
+{
+	protected override
+	Dictionary<ConditionStacking, GetStackFunc> Factories { get; } = new Dictionary<ConditionStacking, GetStackFunc> {
+		{ ConditionStacking.Intensity, IntensityStackFactory.Create },
+		{ ConditionStacking.Duration, DurationStackFactory.Create },
+	};
+}
