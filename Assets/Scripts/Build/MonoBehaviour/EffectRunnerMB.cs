@@ -1,10 +1,10 @@
-using System.Collections.Generic;
+using System;
 
 public class EffectRunnerMB : BaseEffectRunnerMB<EffectRoutineFactory>
 {
-	protected override
-	Dictionary<ConditionStacking, GetStackFunc> Factories { get; } = new Dictionary<ConditionStacking, GetStackFunc> {
-		{ ConditionStacking.Intensity, IntensityStackFactory.Create },
-		{ ConditionStacking.Duration, DurationStackFactory.Create },
+	public override GetStackFunc GetStack(ConditionStacking stacking) => stacking switch {
+		ConditionStacking.Intensity => IntensityStackFactory.Create,
+		ConditionStacking.Duration => DurationStackFactory.Create,
+		_ => throw new ArgumentException($"Stacking type {stacking} is not configured on {this}"),
 	};
 }
