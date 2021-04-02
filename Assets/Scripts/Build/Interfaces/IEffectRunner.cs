@@ -4,5 +4,5 @@ using UnityEngine;
 
 public interface IEffectRunner
 {
-	IStack this[EffectTag tag, ConditionStacking stacking] { get; }
+	void Push(Effect effect);
 }
