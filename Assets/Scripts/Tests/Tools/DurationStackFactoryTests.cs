@@ -1,11 +1,8 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
-using UnityEngine;
-using UnityEngine.TestTools;
 
-public class DurationStackFactorySOTests : TestCollection
+public class DurationStackFactoryTests : TestCollection
 {
 	[Test]
 	public void RoutineFromEffect()
@@ -15,8 +12,7 @@ public class DurationStackFactorySOTests : TestCollection
 			yield break;
 		}
 		var called = false;
-		var factory = ScriptableObject.CreateInstance<DurationStackFactorySO>();
-		var stack = factory.Create(
+		var stack = DurationStackFactory.Create(
 			e => new Finalizable{ wrapped = create(e) },
 			onPull: r => r.MoveNext()
 		);
@@ -31,8 +27,7 @@ public class DurationStackFactorySOTests : TestCollection
 	{
 		IEnumerator create() { yield break; };
 		var routines = (onPush: default(Finalizable), onCancel: default(Finalizable));
-		var factory = ScriptableObject.CreateInstance<DurationStackFactorySO>();
-		var stack = factory.Create(
+		var stack = DurationStackFactory.Create(
 			_ => new Finalizable{ wrapped = create() },
 			onPull: r => routines.onPush = r,
 			onCancel: r => routines.onCancel = r
@@ -49,8 +44,7 @@ public class DurationStackFactorySOTests : TestCollection
 	{
 		IEnumerator create() { yield break; };
 		var called = false;
-		var factory = ScriptableObject.CreateInstance<DurationStackFactorySO>();
-		var stack = factory.Create(
+		var stack = DurationStackFactory.Create(
 			_ => new Finalizable{ wrapped = create() },
 			onCancel: _ => called = true
 		);
@@ -64,8 +58,7 @@ public class DurationStackFactorySOTests : TestCollection
 	public void EmptyPushDoesNotThrow()
 	{
 		IEnumerator create() { yield break; };
-		var factory = ScriptableObject.CreateInstance<DurationStackFactorySO>();
-		var stack = factory.Create(_ => new Finalizable{ wrapped = create() });
+		var stack = DurationStackFactory.Create(_ => new Finalizable{ wrapped = create() });
 
 		Assert.DoesNotThrow(() => stack.Push(new Effect()));
 	}
@@ -74,8 +67,7 @@ public class DurationStackFactorySOTests : TestCollection
 	public void EmptyCancelDoesNotThrow()
 	{
 		IEnumerator create() { yield break; };
-		var factory = ScriptableObject.CreateInstance<DurationStackFactorySO>();
-		var stack = factory.Create(_ => new Finalizable{ wrapped = create() });
+		var stack = DurationStackFactory.Create(_ => new Finalizable{ wrapped = create() });
 
 		stack.Push(new Effect());
 		Assert.DoesNotThrow(() => stack.Cancel());
@@ -85,8 +77,7 @@ public class DurationStackFactorySOTests : TestCollection
 	public void Effects()
 	{
 		IEnumerator create() { yield break; };
-		var factory = ScriptableObject.CreateInstance<DurationStackFactorySO>();
-		var stack = factory.Create(_ => new Finalizable{ wrapped = create() });
+		var stack = DurationStackFactory.Create(_ => new Finalizable{ wrapped = create() });
 		var effects = new Effect[] {
 			new Effect(),
 			new Effect(),
@@ -102,8 +93,7 @@ public class DurationStackFactorySOTests : TestCollection
 	public void CancelClearsEffects()
 	{
 		IEnumerator create() { yield break; };
-		var factory = ScriptableObject.CreateInstance<DurationStackFactorySO>();
-		var stack = factory.Create(_ => new Finalizable{ wrapped = create() });
+		var stack = DurationStackFactory.Create(_ => new Finalizable{ wrapped = create() });
 		var effects = new Effect[] {
 			new Effect(),
 			new Effect(),
@@ -124,8 +114,7 @@ public class DurationStackFactorySOTests : TestCollection
 			yield return null;
 		};
 		var called = 0;
-		var factory = ScriptableObject.CreateInstance<DurationStackFactorySO>();
-		var stack = factory.Create(
+		var stack = DurationStackFactory.Create(
 			_ => new Finalizable{ wrapped = create() },
 			onPull: _ => ++called
 		);
@@ -150,8 +139,7 @@ public class DurationStackFactorySOTests : TestCollection
 			++called;
 		};
 		var routine = default(Finalizable);
-		var factory = ScriptableObject.CreateInstance<DurationStackFactorySO>();
-		var stack = factory.Create(
+		var stack = DurationStackFactory.Create(
 			_ => new Finalizable{ wrapped = create() },
 			onPull: r => routine = r
 		);
@@ -180,8 +168,7 @@ public class DurationStackFactorySOTests : TestCollection
 			yield return null;
 		}
 		var routine = default(Finalizable);
-		var factory = ScriptableObject.CreateInstance<DurationStackFactorySO>();
-		var stack = factory.Create(
+		var stack = DurationStackFactory.Create(
 			_ => new Finalizable{ wrapped = create() },
 			onPull: r => routine = r
 		);
@@ -205,8 +192,7 @@ public class DurationStackFactorySOTests : TestCollection
 			yield return 3;
 		}
 		var routine = default(Finalizable);
-		var factory = ScriptableObject.CreateInstance<DurationStackFactorySO>();
-		var stack = factory.Create(
+		var stack = DurationStackFactory.Create(
 			_ => new Finalizable{ wrapped = create() },
 			onPull: r => routine = r
 		);
@@ -229,8 +215,7 @@ public class DurationStackFactorySOTests : TestCollection
 		IEnumerator create() { yield return null; };
 		var called = (a: false, b: false, c: false);
 		var routine = default(Finalizable);
-		var factory = ScriptableObject.CreateInstance<DurationStackFactorySO>();
-		var stack = factory.Create(
+		var stack = DurationStackFactory.Create(
 			_ => new Finalizable{ wrapped = create() },
 			onPull: r => routine = r
 		);
@@ -254,8 +239,7 @@ public class DurationStackFactorySOTests : TestCollection
 	public void CancelWithNoEffectDoesNotThrow()
 	{
 		IEnumerator create() { yield return null; };
-		var factory = ScriptableObject.CreateInstance<DurationStackFactorySO>();
-		var stack = factory.Create(_ => new Finalizable{ wrapped = create() });
+		var stack = DurationStackFactory.Create(_ => new Finalizable{ wrapped = create() });
 
 		Assert.DoesNotThrow(() => stack.Cancel());
 	}
@@ -265,8 +249,7 @@ public class DurationStackFactorySOTests : TestCollection
 	{
 		IEnumerator create() { yield return null; };
 		var routines = new List<Finalizable>();
-		var factory = ScriptableObject.CreateInstance<DurationStackFactorySO>();
-		var stack = factory.Create(
+		var stack = DurationStackFactory.Create(
 			_ => new Finalizable{ wrapped = create() },
 			onPull: r => routines.Add(r)
 		);
@@ -286,8 +269,7 @@ public class DurationStackFactorySOTests : TestCollection
 	{
 		IEnumerator create() { yield return null; };
 		var routines = new List<Finalizable>();
-		var factory = ScriptableObject.CreateInstance<DurationStackFactorySO>();
-		var stack = factory.Create(
+		var stack = DurationStackFactory.Create(
 			_ => new Finalizable{ wrapped = create() },
 			onPull: r => routines.Add(r)
 		);
@@ -304,8 +286,7 @@ public class DurationStackFactorySOTests : TestCollection
 	{
 		IEnumerator create() { yield break; };
 		var called = false;
-		var factory = ScriptableObject.CreateInstance<DurationStackFactorySO>();
-		var stack = factory.Create(
+		var stack = DurationStackFactory.Create(
 			_ => new Finalizable{ wrapped = create() },
 			onCancel: _ => called = true
 		);
