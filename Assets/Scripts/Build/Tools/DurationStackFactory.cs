@@ -1,9 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
-public class DurationStackFactorySO : BaseStackFactorySO
+public static class DurationStackFactory
 {
 	private class Stack : IStack
 	{
@@ -56,7 +55,7 @@ public class DurationStackFactorySO : BaseStackFactorySO
 		}
 	}
 
-	public override IStack Create(
+	public static IStack Create(
 		Func<Effect, Finalizable> effectToRoutine,
 		Action<Finalizable> onPull = default,
 		Action<Finalizable> onCancel = default

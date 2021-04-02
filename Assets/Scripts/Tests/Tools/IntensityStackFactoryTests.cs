@@ -3,7 +3,7 @@ using System.Collections;
 using NUnit.Framework;
 using UnityEngine;
 
-public class IntensityStackFactorySOTests : TestCollection
+public class IntensityStackFactoryTests : TestCollection
 {
 	[Test]
 	public void RoutineFromEffect()
@@ -13,8 +13,7 @@ public class IntensityStackFactorySOTests : TestCollection
 			yield break;
 		}
 		var called = false;
-		var factory = ScriptableObject.CreateInstance<IntensityStackFactorySO>();
-		var stack = factory.Create(
+		var stack = IntensityStackFactory.Create(
 			effectToRoutine: e => new Finalizable{ wrapped = create(e) },
 			onPull: r => r.MoveNext()
 		);
@@ -29,8 +28,7 @@ public class IntensityStackFactorySOTests : TestCollection
 	{
 		IEnumerator create() { yield break; };
 		var routines = (onPush: default(Finalizable), onCancel: default(Finalizable));
-		var factory = ScriptableObject.CreateInstance<IntensityStackFactorySO>();
-		var stack = factory.Create(
+		var stack = IntensityStackFactory.Create(
 			effectToRoutine: _ => new Finalizable{ wrapped = create() },
 			onPull: r => routines.onPush = r,
 			onCancel: r => routines.onCancel = r
@@ -46,8 +44,7 @@ public class IntensityStackFactorySOTests : TestCollection
 	public void EmptyOnPullDoesNotThrow()
 	{
 		IEnumerator create() { yield break; };
-		var factory = ScriptableObject.CreateInstance<IntensityStackFactorySO>();
-		var stack = factory.Create(effectToRoutine: _ => new Finalizable{ wrapped = create() });
+		var stack = IntensityStackFactory.Create(effectToRoutine: _ => new Finalizable{ wrapped = create() });
 
 		Assert.DoesNotThrow(() => stack.Push(new Effect()));
 	}
@@ -56,8 +53,7 @@ public class IntensityStackFactorySOTests : TestCollection
 	public void EmptyCancelDoesNotThrow()
 	{
 		IEnumerator create() { yield break; };
-		var factory = ScriptableObject.CreateInstance<IntensityStackFactorySO>();
-		var stack = factory.Create(effectToRoutine: _ => new Finalizable{ wrapped = create() });
+		var stack = IntensityStackFactory.Create(effectToRoutine: _ => new Finalizable{ wrapped = create() });
 
 		stack.Push(new Effect());
 		Assert.DoesNotThrow(() => stack.Cancel());
@@ -68,8 +64,7 @@ public class IntensityStackFactorySOTests : TestCollection
 	{
 		IEnumerator create() { yield break; };
 		var called = false;
-		var factory = ScriptableObject.CreateInstance<IntensityStackFactorySO>();
-		var stack = factory.Create(
+		var stack = IntensityStackFactory.Create(
 			effectToRoutine: _ => new Finalizable{ wrapped = create() },
 			onCancel: _ => called = true
 		);
@@ -83,8 +78,7 @@ public class IntensityStackFactorySOTests : TestCollection
 	public void GetEffects()
 	{
 		IEnumerator create() { yield break; };
-		var factory = ScriptableObject.CreateInstance<IntensityStackFactorySO>();
-		var stack = factory.Create(effectToRoutine: _ => new Finalizable{ wrapped = create() });
+		var stack = IntensityStackFactory.Create(effectToRoutine: _ => new Finalizable{ wrapped = create() });
 		var effects = new Effect[] {
 			new Effect(),
 			new Effect(),
@@ -101,8 +95,7 @@ public class IntensityStackFactorySOTests : TestCollection
 	{
 		IEnumerator create() { yield break; };
 		var called = 0;
-		var factory = ScriptableObject.CreateInstance<IntensityStackFactorySO>();
-		var stack = factory.Create(effectToRoutine: _ => new Finalizable{ wrapped = create() });
+		var stack = IntensityStackFactory.Create(effectToRoutine: _ => new Finalizable{ wrapped = create() });
 		var effects = new Effect[] {
 			new Effect(revert: () => ++called),
 			new Effect(revert: () => ++called),
@@ -119,8 +112,7 @@ public class IntensityStackFactorySOTests : TestCollection
 	public void CancelClearsEffects()
 	{
 		IEnumerator create() { yield break; };
-		var factory = ScriptableObject.CreateInstance<IntensityStackFactorySO>();
-		var stack = factory.Create(effectToRoutine: _ => new Finalizable{ wrapped = create() });
+		var stack = IntensityStackFactory.Create(effectToRoutine: _ => new Finalizable{ wrapped = create() });
 		var effects = new Effect[] {
 			new Effect(),
 			new Effect(),
@@ -142,8 +134,7 @@ public class IntensityStackFactorySOTests : TestCollection
 			yield return null;
 		}
 		var routine = default(Finalizable);
-		var factory = ScriptableObject.CreateInstance<IntensityStackFactorySO>();
-		var stack = factory.Create(
+		var stack = IntensityStackFactory.Create(
 			effectToRoutine: _ => new Finalizable{ wrapped = create() },
 			onPull: r => routine = r
 		);
