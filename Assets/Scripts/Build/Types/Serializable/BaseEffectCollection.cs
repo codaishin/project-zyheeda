@@ -7,7 +7,7 @@ using UnityEngine;
 public class BaseEffectCollection<TSheet, TRunner, TEffectFactory> : IEffectCollection<TSheet>
 	where TSheet : ISections
 	where TRunner : IEffectRunner
-	where TEffectFactory : IEffectFactory<TSheet>
+	where TEffectFactory : IEffectFactory
 {
 	public EffectData<TSheet, TEffectFactory>[] effectData;
 

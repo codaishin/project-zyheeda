@@ -1,12 +1,12 @@
 using System;
 
-public class BaseModHpSO<TSheet, TResistance> : BaseEffectFactorySO<TSheet>
-	where TSheet : ISections
+public class BaseModHpSO<TResistance> : BaseEffectFactorySO
 	where TResistance : ISimpleDict<EffectTag, float>
 {
 	public bool invert = true;
 
-	private Action<float> GetModHp(TSheet target)
+	private Action<float> GetModHp<TSheet>(TSheet target)
+		where TSheet : ISections
 	{
 		float compliance = default;
 		float modifier = default;
@@ -28,7 +28,7 @@ public class BaseModHpSO<TSheet, TResistance> : BaseEffectFactorySO<TSheet>
 		};
 	}
 
-	public override Effect Create(TSheet source, TSheet target, float intensity)
+	public override Effect Create<TSheet>(TSheet source, TSheet target, float intensity)
 	{
 		Action<float> modHp = this.GetModHp(target);
 		return new Effect(

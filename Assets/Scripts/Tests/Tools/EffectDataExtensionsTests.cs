@@ -9,11 +9,13 @@ public class EffectDataExtensionsTests : TestCollection
 		public Action UseSection<TSection>(RefAction<TSection> action, Action fallback) => fallback;
 	}
 
-	private class MockEffectFactory : IEffectFactory<MockSheet>
+	private class MockEffectFactory : IEffectFactory
 	{
-		public Func<MockSheet, MockSheet, float, Effect> create = (_, __, ___) => new Effect();
+		public Func<ISections, ISections, float, Effect> create = (_, __, ___) => new Effect();
 
-		public Effect Create(MockSheet s, MockSheet t, float i) => this.create(s, t, i);
+		public Effect Create<TSheet>(TSheet s, TSheet t, float i)
+			where TSheet : ISections => this.create(s, t, i);
+
 	}
 
 	[Test]
@@ -36,7 +38,7 @@ public class EffectDataExtensionsTests : TestCollection
 		var target = new MockSheet();
 		var data = new EffectData<MockSheet, MockEffectFactory> { factory = factory, intensity = 4000000f };
 		factory.create = (s, t, i) => {
-			called = (s, t, i);
+			called = ((MockSheet)s, (MockSheet)t, i);
 			return new Effect();
 		};
 

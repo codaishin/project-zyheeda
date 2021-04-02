@@ -1,5 +1,5 @@
-public interface IEffectFactory<TSheet>
-	where TSheet : ISections
+public interface IEffectFactory
 {
-	Effect Create(TSheet source, TSheet target, float intensity);
+	Effect Create<TSheet>(TSheet source, TSheet target, float intensity)
+		where TSheet : ISections;
 }
