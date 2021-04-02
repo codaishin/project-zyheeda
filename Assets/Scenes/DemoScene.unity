@@ -1590,8 +1590,6 @@ GameObject:
   - component: {fileID: 1453732931}
   - component: {fileID: 1453732933}
   - component: {fileID: 1453732930}
-  - component: {fileID: 1453732935}
-  - component: {fileID: 1453732934}
   m_Layer: 0
   m_Name: Shoot
   m_TagString: Untagged
@@ -1737,34 +1735,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &1453732934
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1453732928}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d8d22fe5b5379b448ae8e78fc429e675, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  effectRoutineFactory:
-    intervalDelta: 1
---- !u!114 &1453732935
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1453732928}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 65f5e777396704644961138457e39c21, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  effectRoutineFactory:
-    intervalDelta: 1
 --- !u!1 &1457652737
 GameObject:
   m_ObjectHideFlags: 0
