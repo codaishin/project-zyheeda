@@ -1446,9 +1446,8 @@ GameObject:
   - component: {fileID: 1320382543}
   - component: {fileID: 1320382542}
   - component: {fileID: 1320382541}
-  - component: {fileID: 1320382546}
-  - component: {fileID: 1320382545}
   - component: {fileID: 1320382547}
+  - component: {fileID: 1320382548}
   - component: {fileID: 1320382540}
   m_Layer: 0
   m_Name: Cube
@@ -1548,34 +1547,6 @@ Transform:
   m_Father: {fileID: 1154642173}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1320382545
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1320382539}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d8d22fe5b5379b448ae8e78fc429e675, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  effectRoutineFactory:
-    intervalDelta: 1
---- !u!114 &1320382546
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1320382539}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 65f5e777396704644961138457e39c21, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  effectRoutineFactory:
-    intervalDelta: 1
 --- !u!114 &1320382547
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1592,6 +1563,20 @@ MonoBehaviour:
   - name: Heat
     key: 1
     value: 0.1
+--- !u!114 &1320382548
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1320382539}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79274a3630d6b7c42875838b997935ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  routineFactory:
+    intervalDelta: 1
 --- !u!1 &1453732928
 GameObject:
   m_ObjectHideFlags: 0
