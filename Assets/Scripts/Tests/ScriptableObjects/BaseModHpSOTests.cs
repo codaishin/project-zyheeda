@@ -34,7 +34,7 @@ public class BaseModHpSOTests : TestCollection
 		}
 	}
 
-	private class MockModHpSO : BaseModHpSO<MockSheet, MockResistance> { }
+	private class MockModHpSO : BaseModHpSO<MockResistance> { }
 
 	[Test]
 	public void Apply()

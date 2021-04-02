@@ -1,10 +1,10 @@
 using UnityEngine;
 
-public abstract class BaseEffectFactorySO<TSheet> : ScriptableObject, IEffectFactory<TSheet>
-	where TSheet : ISections
+public abstract class BaseEffectFactorySO : ScriptableObject, IEffectFactory
 {
 	public EffectTag tag;
 	public ConditionStacking stacking;
 
-	public abstract Effect Create(TSheet source, TSheet target, float intensity);
+	public abstract Effect Create<TSheet>(TSheet source, TSheet target, float intensity)
+		where TSheet : ISections;
 }

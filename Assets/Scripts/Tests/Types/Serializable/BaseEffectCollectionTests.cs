@@ -27,11 +27,12 @@ public class BaseEffectCollectionTests : TestCollection
 			this.useSection(action, fallback);
 	}
 
-	private class MockEffectFactory : IEffectFactory<MockSheetMB>
+	private class MockEffectFactory : IEffectFactory
 	{
-		public Func<MockSheetMB, MockSheetMB, float, Effect> create = (_, __, ___) => new Effect();
+		public Func<ISections, ISections, float, Effect> create = (_, __, ___) => new Effect();
 
-		public Effect Create(MockSheetMB s, MockSheetMB t, float i) => this.create(s, t, i);
+		public Effect Create<TSheet>(TSheet s, TSheet t, float i)
+			where TSheet : ISections => this.create(s, t, i);
 	}
 
 	private class MockEffectCollection : BaseEffectCollection<MockSheetMB, MockEffectRunner, MockEffectFactory> {}
@@ -46,7 +47,7 @@ public class BaseEffectCollectionTests : TestCollection
 		var source = new GameObject("source").AddComponent<MockSheetMB>();
 		var target = new GameObject("target").AddComponent<MockSheetMB>();
 
-		factory.create = (s, t, i) => new Effect(() => called = (s, t, i));
+		factory.create = (s, t, i) => new Effect(() => called = ((MockSheetMB)s, (MockSheetMB)t, i));
 		coll.effectData = new EffectData<MockSheetMB, MockEffectFactory>[] {
 			new EffectData<MockSheetMB, MockEffectFactory> { factory = factory, intensity = 4 }
 		};
