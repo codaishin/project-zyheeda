@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class BaseEffectRunnerMB<TEffectRoutineFactory> : MonoBehaviour
+public abstract class BaseEffectRunnerMB<TEffectRoutineFactory> : MonoBehaviour, IEffectRunner
 	where TEffectRoutineFactory : IEffectRoutineFactory
 {
 	private Dictionary<EffectTag, Dictionary<ConditionStacking, IStack>> stacksMap =
