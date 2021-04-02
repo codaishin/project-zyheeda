@@ -33,6 +33,6 @@ public class BaseEffectCollection<TSheet, TRunner, TEffectFactory> : IEffectColl
 
 	private Action Push(Effect effect, TSheet target)
 	{
-		return target.UseSection((ref TRunner runner) => runner[effect.tag, effect.stacking].Push(effect));
+		return target.UseSection((ref TRunner runner) => runner.Push(effect));
 	}
 }

@@ -14,9 +14,11 @@ public class BaseEffectRunnerMBTests : TestCollection
 
 	private class MockStack : IStack
 	{
+		public Action<Effect> push = _ => { };
+
 		public IEnumerable<Effect> Effects => throw new NotImplementedException();
 		public void Cancel() => throw new NotImplementedException();
-		public void Push(Effect effect) => throw new NotImplementedException();
+		public void Push(Effect effect) => this.push(effect);
 	}
 
 	private class MockEffectRunner : BaseEffectRunnerMB<MockEffectRoutineFactory>
@@ -26,61 +28,77 @@ public class BaseEffectRunnerMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator InitStack()
+	public IEnumerator PushOnStack()
 	{
+		var called = default(Effect);
 		var runner = new GameObject("runner").AddComponent<MockEffectRunner>();
-		var stack = new MockStack();
+		var effect = new Effect();
 		runner.routineFactory = new MockEffectRoutineFactory();
-		runner.getStack = _ => (_, __, ___) => stack;
+		runner.getStack = _ => (_, __, ___) => new MockStack{ push = e => called = e };
 
 		yield return new WaitForEndOfFrame();
 
-		Assert.AreSame(stack, runner[EffectTag.Heat, ConditionStacking.Intensity]);
+		runner.Push(effect);
+
+		Assert.AreSame(effect, called);
 	}
 
 	[UnityTest]
 	public IEnumerator InitStackCashed()
 	{
+		var called = 0;
 		var runner = new GameObject("runner").AddComponent<MockEffectRunner>();
 		runner.routineFactory = new MockEffectRoutineFactory();
-		runner.getStack = _ => (_, __, ___) => new MockStack();
+		runner.getStack = _ => (_, __, ___) => {
+			++called;
+			return new MockStack();
+		};
 
 		yield return new WaitForEndOfFrame();
 
-		Assert.AreSame(
-			runner[EffectTag.Heat, ConditionStacking.Intensity],
-			runner[EffectTag.Heat, ConditionStacking.Intensity]
-		);
+		runner.Push(new Effect());
+		runner.Push(new Effect());
+
+		Assert.AreEqual(1, called);
 	}
 
 	[UnityTest]
 	public IEnumerator InitStackCashedViaTag()
 	{
+		var called = 0;
 		var runner = new GameObject("runner").AddComponent<MockEffectRunner>();
 		runner.routineFactory = new MockEffectRoutineFactory();
-		runner.getStack = _ => (_, __, ___) => new MockStack();
+		runner.getStack = _ => (_, __, ___) => {
+			++called;
+			return new MockStack();
+		};
 
 		yield return new WaitForEndOfFrame();
 
-		Assert.AreNotSame(
-			runner[EffectTag.Heat, ConditionStacking.Intensity],
-			runner[EffectTag.Physical, ConditionStacking.Intensity]
-		);
+		runner.Push(new Effect{ tag = EffectTag.Heat });
+		runner.Push(new Effect{ tag = EffectTag.Physical });
+
+		Assert.AreEqual(2, called);
 	}
 
 	[UnityTest]
 	public IEnumerator InitStackCashedViaStacking()
 	{
+		var called = 0;
 		var runner = new GameObject("runner").AddComponent<MockEffectRunner>();
 		runner.routineFactory = new MockEffectRoutineFactory();
-		runner.getStack = _ => (_, __, ___) => new MockStack();
+		runner.routineFactory = new MockEffectRoutineFactory();
+		runner.getStack = _ => (_, __, ___) => {
+			++called;
+			return new MockStack();
+		};
 
 		yield return new WaitForEndOfFrame();
 
-		Assert.AreNotSame(
-			runner[EffectTag.Heat, ConditionStacking.Intensity],
-			runner[EffectTag.Heat, ConditionStacking.Duration]
-		);
+		runner.Push(new Effect{ stacking = ConditionStacking.Duration });
+		runner.Push(new Effect{ stacking = ConditionStacking.Intensity});
+
+		Assert.AreEqual(2, called);
 	}
 
 	[UnityTest]
@@ -96,7 +114,7 @@ public class BaseEffectRunnerMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		_ = runner[EffectTag.Heat, ConditionStacking.Duration];
+		runner.Push(new Effect{ stacking = ConditionStacking.Duration });
 
 		Assert.AreEqual(ConditionStacking.Duration, called);
 	}
@@ -109,12 +127,12 @@ public class BaseEffectRunnerMBTests : TestCollection
 		runner.routineFactory = new MockEffectRoutineFactory();
 		runner.getStack = _ => (effectToRoutine, __, ___) => {
 			fed = effectToRoutine;
-			return default;
+			return new MockStack();
 		};
 
 		yield return new WaitForEndOfFrame();
 
-		_ = runner[EffectTag.Heat, ConditionStacking.Intensity];
+		runner.Push(new Effect());
 
 		Assert.True(runner.routineFactory.Create == fed);
 	}
@@ -134,12 +152,12 @@ public class BaseEffectRunnerMBTests : TestCollection
 		runner.routineFactory = new MockEffectRoutineFactory();
 		runner.getStack = _ => (_, onPull, ___) => {
 			onPull?.Invoke(routine);
-			return default;
+			return new MockStack();
 		};
 
 		yield return new WaitForEndOfFrame();
 
-		_ = runner[EffectTag.Heat, ConditionStacking.Duration];
+		runner.Push(new Effect());
 
 		yield return new WaitForFixedUpdate();
 		yield return new WaitForFixedUpdate();
@@ -165,12 +183,12 @@ public class BaseEffectRunnerMBTests : TestCollection
 		runner.getStack = _ => (_, onPull, onCancel) => {
 			onPull?.Invoke(routine);
 			cancel = onCancel;
-			return default;
+			return new MockStack();
 		};
 
 		yield return new WaitForEndOfFrame();
 
-		_ = runner[EffectTag.Heat, ConditionStacking.Duration];
+		runner.Push(new Effect());
 
 		yield return new WaitForFixedUpdate();
 
