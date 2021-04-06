@@ -2,16 +2,17 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class BaseSkillMB<TEffectCollection, TCast, TSheet> : MonoBehaviour
+public abstract class BaseSkillMB<TEffectCollection, TCast, TSheet> : MonoBehaviour, ISkill<TSheet>
 	where TEffectCollection : IEffectCollection<TSheet>, new()
 	where TCast : ICast<TSheet>, new()
 {
 	private float cooldown;
 
-	public TSheet sheet;
 	public float applyPerSecond;
 	public TEffectCollection effectCollection;
 	public TCast cast;
+
+	public TSheet Sheet { get; set; }
 
 	private IEnumerable<WaitForFixedUpdate> Cast(TSheet target)
 	{
@@ -35,7 +36,7 @@ public abstract class BaseSkillMB<TEffectCollection, TCast, TSheet> : MonoBehavi
 		foreach (WaitForFixedUpdate yield in this.Cast(target)) {
 			yield return yield;
 		}
-		this.effectCollection.Apply(this.sheet, target);
+		this.effectCollection.Apply(this.Sheet, target);
 		foreach (WaitForFixedUpdate yield in this.AfterCast()) {
 			yield return yield;
 		}
