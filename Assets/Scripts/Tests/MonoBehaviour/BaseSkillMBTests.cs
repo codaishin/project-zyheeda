@@ -30,7 +30,7 @@ public class BaseSkillMBTests : TestCollection
 		var applied = false;
 		var target = new MockSheet();
 		var skill = new GameObject("item").AddComponent<MockSkillMB>();
-		skill.sheet = new MockSheet();
+		skill.Sheet = new MockSheet();
 
 		IEnumerator<WaitForFixedUpdate> applyCast(MockSheet _) {
 			applied = true;
@@ -52,7 +52,7 @@ public class BaseSkillMBTests : TestCollection
 		var got = (default(MockSheet), default(MockSheet));
 		var target = new MockSheet();
 		var skill = new GameObject("item").AddComponent<MockSkillMB>();
-		skill.sheet = new MockSheet();
+		skill.Sheet = new MockSheet();
 
 		skill.effectCollection.apply = (s, t) => got = (s, t);
 
@@ -60,7 +60,7 @@ public class BaseSkillMBTests : TestCollection
 
 		skill.Begin(target);
 
-		Assert.AreEqual((skill.sheet, target), got);
+		Assert.AreEqual((skill.Sheet, target), got);
 	}
 
 	[UnityTest]
@@ -69,7 +69,7 @@ public class BaseSkillMBTests : TestCollection
 		var got = new List<(MockSheet, MockSheet)>();
 		var target = new MockSheet();
 		var skill = new GameObject("item").AddComponent<MockSkillMB>();
-		skill.sheet = new MockSheet();
+		skill.Sheet = new MockSheet();
 
 		IEnumerator<WaitForFixedUpdate> applyCast(MockSheet t) {
 			got.Add((default, t));
@@ -92,7 +92,7 @@ public class BaseSkillMBTests : TestCollection
 			new (MockSheet, MockSheet)[] {
 				(default, target),
 				(default, target),
-				(skill.sheet, target),
+				(skill.Sheet, target),
 			},
 			got
 		);
@@ -104,7 +104,7 @@ public class BaseSkillMBTests : TestCollection
 		var applied = 0;
 		var target = new MockSheet();
 		var skill = new GameObject("item").AddComponent<MockSkillMB>();
-		skill.sheet = new MockSheet();
+		skill.Sheet = new MockSheet();
 
 		IEnumerator<WaitForFixedUpdate> applyCast(MockSheet _) {
 			++applied;
@@ -128,7 +128,7 @@ public class BaseSkillMBTests : TestCollection
 		var applied = 0;
 		var target = new MockSheet();
 		var skill = new GameObject("item").AddComponent<MockSkillMB>();
-		skill.sheet = new MockSheet();
+		skill.Sheet = new MockSheet();
 
 		IEnumerator<WaitForFixedUpdate> applyCast(MockSheet _) {
 			++applied;
@@ -155,7 +155,7 @@ public class BaseSkillMBTests : TestCollection
 		var applied = 0;
 		var target = new MockSheet();
 		var skill = new GameObject("item").AddComponent<MockSkillMB>();
-		skill.sheet = new MockSheet();
+		skill.Sheet = new MockSheet();
 
 		IEnumerator<WaitForFixedUpdate> applyCast(MockSheet _) {
 			++applied;
