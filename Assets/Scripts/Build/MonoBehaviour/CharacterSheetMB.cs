@@ -5,8 +5,8 @@ using UnityEngine;
 [RequireComponent(typeof(ResistanceMB))]
 public class CharacterSheetMB : MonoBehaviour, ISections
 {
-	private Resistance resistance;
-	private EffectRunnerMB effectRunner;
+	private ResistanceMB resistanceMB;
+	private EffectRunnerMB effectRunnerMB;
 
 	public Health health;
 
@@ -14,19 +14,15 @@ public class CharacterSheetMB : MonoBehaviour, ISections
 	{
 		return action switch {
 			RefAction<Health> use => () => use(ref this.health),
-			RefAction<Resistance> use => () => use(ref this.resistance),
-			RefAction<EffectRunnerMB> use => () => use(ref this.effectRunner),
+			RefAction<Resistance> use => () => use(ref this.resistanceMB.resistance),
+			RefAction<EffectRunnerMB> use => () => use(ref this.effectRunnerMB),
 			_ => fallback,
 		};
 	}
 
 	private void Awake()
 	{
-		this.effectRunner = this.GetComponent<EffectRunnerMB>();
-	}
-
-	private void Start()
-	{
-		this.resistance = this.GetComponent<ResistanceMB>().Resistance;
+		this.effectRunnerMB = this.GetComponent<EffectRunnerMB>();
+		this.resistanceMB = this.GetComponent<ResistanceMB>();
 	}
 }

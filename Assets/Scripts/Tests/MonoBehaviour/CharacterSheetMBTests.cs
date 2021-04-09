@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections;
 using NUnit.Framework;
 using UnityEngine;
@@ -34,29 +35,14 @@ public class CharacterSheetMBTests : TestCollection
 	{
 		var sheet = new GameObject("obj").AddComponent<CharacterSheetMB>();
 		var resistance = sheet.GetComponent<ResistanceMB>();
-		resistance.records = new Record<EffectTag, float>[] {
-			new Record<EffectTag, float>{ key = EffectTag.Physical, value = 44f },
-		};
 		var exec = sheet.UseSection((ref Resistance r) => r[EffectTag.Physical] = 2f, default);
 
 		yield return new WaitForFixedUpdate();
 
 		exec();
 
-		var record = resistance.records[0];
+		var record = resistance.resistance.Records.First();
 		Assert.AreEqual((EffectTag.Physical, 2f), (record.key, record.value));
-	}
-
-	[UnityTest]
-	public IEnumerator NoResistanceBeforeStart()
-	{
-		var sheet = new GameObject("obj").AddComponent<CharacterSheetMB>();
-		var resistance = sheet.GetComponent<ResistanceMB>();
-		resistance.records = new Record<EffectTag, float>[0];
-		var exec = sheet.UseSection((ref Resistance r) => r[EffectTag.Physical] = 2f, default);
-
-		Assert.Throws<NullReferenceException>(() => exec());
-		yield break;
 	}
 
 	[UnityTest]
