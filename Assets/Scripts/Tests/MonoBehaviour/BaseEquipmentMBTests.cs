@@ -25,7 +25,7 @@ public class BaseEquipmentMBTests : TestCollection
 
 		public Record<EquipmentSlot, ItemMB>[] Records => this.records;
 
-		public void SetNames(string duplicateLabel) => this.setNames(duplicateLabel);
+		public void SetNamesFromKeys(string duplicateLabel) => this.setNames(duplicateLabel);
 	}
 
 	private class MockEquipmentMB : BaseEquipmentMB<MockEquipment> {}

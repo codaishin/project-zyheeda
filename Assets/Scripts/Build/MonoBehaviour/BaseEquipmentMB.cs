@@ -34,7 +34,7 @@ public abstract class BaseEquipmentMB<TEquipment> : MonoBehaviour, ISimpleDict<E
 
 	public void OnValidate()
 	{
-		this.equipment.SetNames(duplicateLabel: "__duplicate__");
+		this.equipment.SetNamesFromKeys(duplicateLabel: "__duplicate__");
 		this.equipment.Records
 			.Select(r => r.value)
 			.ForEach(this.AssignSheet);
