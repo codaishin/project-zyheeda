@@ -3,7 +3,7 @@ using System.Linq;
 using UnityEngine;
 
 [Serializable]
-public class RecordArray<TKey, TValue> : IRecordArray<TKey, TValue>
+public class RecordArray<TKey, TValue> : IRecordArray<TKey, TValue>, ISimpleDict<TKey, TValue>
 {
 	[SerializeField]
 	private Record<TKey, TValue>[] records;
