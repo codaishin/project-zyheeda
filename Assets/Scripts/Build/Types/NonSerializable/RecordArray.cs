@@ -20,7 +20,7 @@ public class RecordArray<TKey, TValue> : IRecordArray<TKey, TValue>, ISimpleDict
 
 	public RecordArray() : this(new Record<TKey, TValue>[0]) {}
 
-	public void SetNames(string duplicateLabel)
+	public void SetNamesFromKeys(string duplicateLabel)
 	{
 		this.records = this.records
 			.GroupBy(r => r.key)

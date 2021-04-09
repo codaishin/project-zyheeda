@@ -57,7 +57,7 @@ public class RecordArrayTests : TestCollection
 			new Record<int, string> { key = 3, value = "three" },
 		};
 		var dict = new RecordArray<int, string>(records);
-		dict.SetNames(default);
+		dict.SetNamesFromKeys(default);
 
 		CollectionAssert.AreEqual(new string[] { "2", "3" }, dict.Records.Select(r => r.name));
 	}
@@ -71,7 +71,7 @@ public class RecordArrayTests : TestCollection
 			new Record<int, string> { key = 3, value = "three" },
 		};
 		var dict = new RecordArray<int, string>(records);
-		dict.SetNames("_");
+		dict.SetNamesFromKeys("_");
 
 		CollectionAssert.AreEqual(new string[] { "2", "_", "3" }, dict.Records.Select(r => r.name));
 	}
