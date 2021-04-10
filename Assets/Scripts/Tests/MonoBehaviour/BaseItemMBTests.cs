@@ -85,7 +85,6 @@ public class BaseItemMBTests : TestCollection
 	[UnityTest]
 	public IEnumerator GetSkills()
 	{
-		var sheet = new MockSheet();
 		var item = new GameObject("item").AddComponent<MockItem>();
 		var skills = new MockSkillMB[] {
 			item.gameObject.AddComponent<MockSkillMB>(),
@@ -94,8 +93,6 @@ public class BaseItemMBTests : TestCollection
 		};
 
 		yield return new WaitForEndOfFrame();
-
-		item.Sheet = sheet;
 
 		CollectionAssert.AreEqual(skills, item.Skills);
 	}
