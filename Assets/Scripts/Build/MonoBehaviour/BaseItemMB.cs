@@ -13,6 +13,8 @@ public abstract class BaseItemMB<TSheet> : MonoBehaviour
 		}
 	}
 
+	public ISkill<TSheet>[] Skills => this.skills;
+
 	private void Start()
 	{
 		this.skills = this.GetComponents<ISkill<TSheet>>();

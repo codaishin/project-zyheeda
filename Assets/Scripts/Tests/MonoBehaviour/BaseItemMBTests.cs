@@ -81,4 +81,22 @@ public class BaseItemMBTests : TestCollection
 			skills.Select(s => s.Sheet)
 		);
 	}
+
+	[UnityTest]
+	public IEnumerator GetSkills()
+	{
+		var sheet = new MockSheet();
+		var item = new GameObject("item").AddComponent<MockItem>();
+		var skills = new MockSkillMB[] {
+			item.gameObject.AddComponent<MockSkillMB>(),
+			item.gameObject.AddComponent<MockSkillMB>(),
+			item.gameObject.AddComponent<MockSkillMB>(),
+		};
+
+		yield return new WaitForEndOfFrame();
+
+		item.Sheet = sheet;
+
+		CollectionAssert.AreEqual(skills, item.Skills);
+	}
 }
