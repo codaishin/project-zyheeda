@@ -1609,10 +1609,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8aaed8efd175a1d41846f5bd7de01ff3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  records:
-  - name: Heat
-    key: 1
-    value: 0.1
   resistance:
     records:
     - name: Heat
@@ -1642,10 +1638,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1453732929}
   - component: {fileID: 1453732932}
-  - component: {fileID: 1453732931}
-  - component: {fileID: 1453732933}
-  - component: {fileID: 1453732930}
   - component: {fileID: 1453732934}
+  - component: {fileID: 1453732930}
   m_Layer: 0
   m_Name: Gun
   m_TagString: Untagged
@@ -1683,9 +1677,9 @@ MonoBehaviour:
   onRaise:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1453732933}
-        m_TargetAssemblyTypeName: RayCastHitMB, Build
-        m_MethodName: TryHit
+      - m_Target: {fileID: 1453732932}
+        m_TargetAssemblyTypeName: BaseSkillMB`3[[EffectCollection, Build
+        m_MethodName: Begin
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1695,39 +1689,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &1453732931
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1453732928}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0b3ab073f884a9b40bd9a3c6b68fb43d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  onSuccessSeed:
-    m_PersistentCalls:
-      m_Calls: []
-  onSuccessMorph:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1453732932}
-        m_TargetAssemblyTypeName: BaseSkillMB`3[[EffectCollection, Build
-        m_MethodName: Begin
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  onFailSeed:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!114 &1453732932
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1740,6 +1701,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad376995a65d7744db54c2136c223657, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hitter: {fileID: 11400000, guid: 9370508409fd36d43b04301710bbfee6, type: 2}
   applyPerSecond: 1
   effectCollection:
     effectData:
@@ -1757,39 +1719,6 @@ MonoBehaviour:
       projectileStorage: {fileID: 1453732929}
     projectileSpawn: {fileID: 7728212569146213376}
     projectileSpeed: 10
---- !u!114 &1453732933
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1453732928}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7b5aa89a909941047bcaba63525e1e5b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  raySource:
-    gameObject: {fileID: 0}
-    referenceSO: {fileID: 11400000, guid: 7b8ba24cfd2e7fd468cdb283de5395e3, type: 2}
-  layerConstraints:
-    serializedVersion: 2
-    m_Bits: 0
-  onHit:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1453732931}
-        m_TargetAssemblyTypeName: BaseOnMorphMB`2[[UnityEngine.RaycastHit, UnityEngine
-        m_MethodName: Morph
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!114 &1453732934
 MonoBehaviour:
   m_ObjectHideFlags: 0
