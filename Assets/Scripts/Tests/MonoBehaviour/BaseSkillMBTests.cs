@@ -9,6 +9,19 @@ public class BaseSkillMBTests : TestCollection
 {
 	private class MockSheet { }
 
+	private class MockHit : IHit
+	{
+		public Func<object, (object, bool)> tryHit = o => (null, false);
+
+		public bool TryHit<T>(T source, out T target) {
+			(object target, bool success) hit = this.tryHit(source);
+			target = hit.target == null ? default : (T)hit.target;
+			return hit.success;
+		}
+	}
+
+	private class MockHitter : BaseHitSO<MockHit> {}
+
 	private class MockCast : ICast<MockSheet>
 	{
 		public Func<MockSheet, IEnumerator<WaitForFixedUpdate>> apply = MockCast.BaseApply;
@@ -30,7 +43,10 @@ public class BaseSkillMBTests : TestCollection
 		var applied = false;
 		var target = new MockSheet();
 		var skill = new GameObject("item").AddComponent<MockSkillMB>();
+		var hitter = ScriptableObject.CreateInstance<MockHitter>();
 		skill.Sheet = new MockSheet();
+		skill.target = hitter;
+		hitter.hit.tryHit = _ => (target, true);
 
 		IEnumerator<WaitForFixedUpdate> applyCast(MockSheet _) {
 			applied = true;
@@ -41,9 +57,30 @@ public class BaseSkillMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		skill.Begin(target);
+		skill.Begin();
 
 		Assert.True(applied);
+	}
+
+	[UnityTest]
+	public IEnumerator TryHitFromSource()
+	{
+		var source = default(object);
+		var target = new MockSheet();
+		var skill = new GameObject("item").AddComponent<MockSkillMB>();
+		var hitter = ScriptableObject.CreateInstance<MockHitter>();
+		skill.Sheet = new MockSheet();
+		skill.target = hitter;
+		hitter.hit.tryHit = s => {
+			source = s;
+			return (target, true);
+		};
+
+		yield return new WaitForEndOfFrame();
+
+		skill.Begin();
+
+		Assert.AreSame(skill.Sheet, source);
 	}
 
 	[UnityTest]
@@ -52,13 +89,16 @@ public class BaseSkillMBTests : TestCollection
 		var got = (default(MockSheet), default(MockSheet));
 		var target = new MockSheet();
 		var skill = new GameObject("item").AddComponent<MockSkillMB>();
+		var hitter = ScriptableObject.CreateInstance<MockHitter>();
 		skill.Sheet = new MockSheet();
+		skill.target = hitter;
+		hitter.hit.tryHit = _ => (target, true);
 
 		skill.effectCollection.apply = (s, t) => got = (s, t);
 
 		yield return new WaitForEndOfFrame();
 
-		skill.Begin(target);
+		skill.Begin();
 
 		Assert.AreEqual((skill.Sheet, target), got);
 	}
@@ -69,7 +109,10 @@ public class BaseSkillMBTests : TestCollection
 		var got = new List<(MockSheet, MockSheet)>();
 		var target = new MockSheet();
 		var skill = new GameObject("item").AddComponent<MockSkillMB>();
+		var hitter = ScriptableObject.CreateInstance<MockHitter>();
 		skill.Sheet = new MockSheet();
+		skill.target = hitter;
+		hitter.hit.tryHit = _ => (target, true);
 
 		IEnumerator<WaitForFixedUpdate> applyCast(MockSheet t) {
 			got.Add((default, t));
@@ -83,7 +126,7 @@ public class BaseSkillMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		skill.Begin(target);
+		skill.Begin();
 
 		yield return new WaitForFixedUpdate();
 		yield return new WaitForFixedUpdate();
@@ -104,7 +147,10 @@ public class BaseSkillMBTests : TestCollection
 		var applied = 0;
 		var target = new MockSheet();
 		var skill = new GameObject("item").AddComponent<MockSkillMB>();
+		var hitter = ScriptableObject.CreateInstance<MockHitter>();
 		skill.Sheet = new MockSheet();
+		skill.target = hitter;
+		hitter.hit.tryHit = _ => (target, true);
 
 		IEnumerator<WaitForFixedUpdate> applyCast(MockSheet _) {
 			++applied;
@@ -116,10 +162,35 @@ public class BaseSkillMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		skill.Begin(target);
-		skill.Begin(target);
+		skill.Begin();
+		skill.Begin();
 
 		Assert.AreEqual(1, applied);
+	}
+
+	[UnityTest]
+	public IEnumerator DontBeginWhenNotHit()
+	{
+		var applied = false;
+		var target = new MockSheet();
+		var skill = new GameObject("item").AddComponent<MockSkillMB>();
+		var hitter = ScriptableObject.CreateInstance<MockHitter>();
+		skill.Sheet = new MockSheet();
+		skill.target = hitter;
+		hitter.hit.tryHit = _ => (null, false);
+
+		IEnumerator<WaitForFixedUpdate> applyCast(MockSheet _) {
+			applied = true;
+			yield break;
+		}
+
+		skill.cast.apply = applyCast;
+
+		yield return new WaitForEndOfFrame();
+
+		skill.Begin();
+
+		Assert.False(applied);
 	}
 
 	[UnityTest]
@@ -128,7 +199,10 @@ public class BaseSkillMBTests : TestCollection
 		var applied = 0;
 		var target = new MockSheet();
 		var skill = new GameObject("item").AddComponent<MockSkillMB>();
+		var hitter = ScriptableObject.CreateInstance<MockHitter>();
 		skill.Sheet = new MockSheet();
+		skill.target = hitter;
+		hitter.hit.tryHit = _ => (target, true);
 
 		IEnumerator<WaitForFixedUpdate> applyCast(MockSheet _) {
 			++applied;
@@ -140,11 +214,11 @@ public class BaseSkillMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		skill.Begin(target);
+		skill.Begin();
 
 		yield return new WaitForSeconds(0.11f);
 
-		skill.Begin(target);
+		skill.Begin();
 
 		Assert.AreEqual(2, applied);
 	}
@@ -155,7 +229,10 @@ public class BaseSkillMBTests : TestCollection
 		var applied = 0;
 		var target = new MockSheet();
 		var skill = new GameObject("item").AddComponent<MockSkillMB>();
+		var hitter = ScriptableObject.CreateInstance<MockHitter>();
 		skill.Sheet = new MockSheet();
+		skill.target = hitter;
+		hitter.hit.tryHit = _ => (target, true);
 
 		IEnumerator<WaitForFixedUpdate> applyCast(MockSheet _) {
 			++applied;
@@ -166,8 +243,8 @@ public class BaseSkillMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		skill.Begin(target);
-		skill.Begin(target);
+		skill.Begin();
+		skill.Begin();
 
 		Assert.AreEqual(2, applied);
 	}

@@ -8,6 +8,7 @@ public abstract class BaseSkillMB<TEffectCollection, TCast, TSheet> : MonoBehavi
 {
 	private float cooldown;
 
+	public BaseHitSO target;
 	public float applyPerSecond;
 	public TEffectCollection effectCollection;
 	public TCast cast;
@@ -42,9 +43,9 @@ public abstract class BaseSkillMB<TEffectCollection, TCast, TSheet> : MonoBehavi
 		}
 	}
 
-	public void Begin(TSheet target)
+	public void Begin()
 	{
-		if (this.cooldown <= 0) {
+		if (this.cooldown <= 0 && this.target.Hit.TryHit(this.Sheet, out TSheet target)) {
 			this.cooldown = this.applyPerSecond > 0 ? 1f / this.applyPerSecond : 0;
 			this.StartCoroutine(this.Run(target));
 		}

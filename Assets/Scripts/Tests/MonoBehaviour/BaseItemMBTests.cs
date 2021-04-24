@@ -11,7 +11,7 @@ public class BaseItemMBTests : TestCollection
 	private class MockSkillMB : MonoBehaviour, ISkill<MockSheet>
 	{
 		public MockSheet Sheet { get; set; }
-		public void Begin(MockSheet target) => throw new System.NotImplementedException();
+		public void Begin() => throw new System.NotImplementedException();
 	}
 
 	private class MockItem : BaseItemMB<MockSheet> {}
