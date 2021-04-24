@@ -1,7 +1,7 @@
 using NUnit.Framework;
 using UnityEngine;
 
-public class BaseHitTests : TestCollection
+public class BasePhyiscalHitTests : TestCollection
 {
 	private class MockRayProvider : IRay
 	{
@@ -11,7 +11,7 @@ public class BaseHitTests : TestCollection
 
 	private class MockMB : MonoBehaviour {}
 
-	private class MockHit : BaseHit<MockRayProvider> {}
+	private class MockHit : BasePhysicsHit<MockRayProvider> {}
 
 	[Test]
 	public void HitNothing()

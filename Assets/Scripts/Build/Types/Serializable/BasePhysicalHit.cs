@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 
 [Serializable]
-public abstract class BaseHit<TRayProvider> : IHit
+public abstract class BasePhysicsHit<TRayProvider> : IHit
 	where TRayProvider : IRay
 {
 	public TRayProvider rayProvider;
