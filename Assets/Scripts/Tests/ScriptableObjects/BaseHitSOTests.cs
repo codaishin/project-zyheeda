@@ -18,4 +18,12 @@ public class BaseHitSOTests : TestCollection
 
 		Assert.NotNull(mockSO.hit);
 	}
+
+	[Test]
+	public void NonGenericHastHit()
+	{
+		var mockSO = ScriptableObject.CreateInstance<MockHitSO>();
+
+		Assert.AreSame(mockSO.hit, mockSO.Hit);
+	}
 }
