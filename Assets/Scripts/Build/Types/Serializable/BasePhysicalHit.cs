@@ -8,7 +8,7 @@ public abstract class BasePhysicsHit<TRayProvider> : IHit
 	public TRayProvider rayProvider;
 	public LayerMask layerConstraints;
 
-	public bool TryHit<TSource, TTarget>(TSource _, out TTarget target)
+	public bool TryHit<T>(T _, out T target)
 	{
 		if (this.TryHit(out RaycastHit hit)) {
 			return hit.transform.TryGetComponent(out target);

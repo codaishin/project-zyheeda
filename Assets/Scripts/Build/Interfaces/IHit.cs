@@ -1,4 +1,4 @@
 public interface IHit
 {
-	bool TryHit<TSource, TTarget>(TSource source, out TTarget target);
+	bool TryHit<T>(T source, out T target);
 }

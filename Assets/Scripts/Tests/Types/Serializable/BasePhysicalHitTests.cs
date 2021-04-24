@@ -17,7 +17,7 @@ public class BasePhyiscalHitTests : TestCollection
 	public void HitNothing()
 	{
 		var rayCastHit = new MockHit{ rayProvider = new MockRayProvider() };
-		Assert.AreEqual((false, default(MockMB)), (rayCastHit.TryHit(default(object), out MockMB t), t));
+		Assert.AreEqual((false, default(MockMB)), (rayCastHit.TryHit(default, out MockMB t), t));
 	}
 
 	[Test]
@@ -27,7 +27,7 @@ public class BasePhyiscalHitTests : TestCollection
 		var target = new GameObject("target").AddComponent<MockMB>();
 		target.gameObject.AddComponent<SphereCollider>();
 
-		Assert.AreEqual((true, target), (rayCastHit.TryHit(default(object), out MockMB t), t));
+		Assert.AreEqual((true, target), (rayCastHit.TryHit(default, out MockMB t), t));
 	}
 
 	[Test]
@@ -37,7 +37,7 @@ public class BasePhyiscalHitTests : TestCollection
 		var target = new GameObject("target");
 		target.gameObject.AddComponent<SphereCollider>();
 
-		Assert.AreEqual((false, default(MockMB)), (rayCastHit.TryHit(default(object), out MockMB t), t));
+		Assert.AreEqual((false, default(MockMB)), (rayCastHit.TryHit(default, out MockMB t), t));
 	}
 
 	[Test]
@@ -50,7 +50,7 @@ public class BasePhyiscalHitTests : TestCollection
 		rayCastHit.layerConstraints += 1 << 19;
 		target.gameObject.layer = 20;
 
-		Assert.AreEqual((false, default(MockMB)), (rayCastHit.TryHit(default(object), out MockMB t), t));
+		Assert.AreEqual((false, default(MockMB)), (rayCastHit.TryHit(default, out MockMB t), t));
 	}
 
 	[Test]
@@ -63,6 +63,6 @@ public class BasePhyiscalHitTests : TestCollection
 		rayCastHit.layerConstraints += 1 << 20;
 		target.gameObject.layer = 20;
 
-		Assert.AreEqual((true, target), (rayCastHit.TryHit(default(object), out MockMB t), t));
+		Assert.AreEqual((true, target), (rayCastHit.TryHit(default, out MockMB t), t));
 	}
 }
