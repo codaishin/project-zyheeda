@@ -45,7 +45,7 @@ public class BaseSkillMBTests : TestCollection
 		var skill = new GameObject("item").AddComponent<MockSkillMB>();
 		var hitter = ScriptableObject.CreateInstance<MockHitter>();
 		skill.Sheet = new MockSheet();
-		skill.target = hitter;
+		skill.hitter = hitter;
 		hitter.hit.tryHit = _ => (target, true);
 
 		IEnumerator<WaitForFixedUpdate> applyCast(MockSheet _) {
@@ -70,7 +70,7 @@ public class BaseSkillMBTests : TestCollection
 		var skill = new GameObject("item").AddComponent<MockSkillMB>();
 		var hitter = ScriptableObject.CreateInstance<MockHitter>();
 		skill.Sheet = new MockSheet();
-		skill.target = hitter;
+		skill.hitter = hitter;
 		hitter.hit.tryHit = s => {
 			source = s;
 			return (target, true);
@@ -91,7 +91,7 @@ public class BaseSkillMBTests : TestCollection
 		var skill = new GameObject("item").AddComponent<MockSkillMB>();
 		var hitter = ScriptableObject.CreateInstance<MockHitter>();
 		skill.Sheet = new MockSheet();
-		skill.target = hitter;
+		skill.hitter = hitter;
 		hitter.hit.tryHit = _ => (target, true);
 
 		skill.effectCollection.apply = (s, t) => got = (s, t);
@@ -111,7 +111,7 @@ public class BaseSkillMBTests : TestCollection
 		var skill = new GameObject("item").AddComponent<MockSkillMB>();
 		var hitter = ScriptableObject.CreateInstance<MockHitter>();
 		skill.Sheet = new MockSheet();
-		skill.target = hitter;
+		skill.hitter = hitter;
 		hitter.hit.tryHit = _ => (target, true);
 
 		IEnumerator<WaitForFixedUpdate> applyCast(MockSheet t) {
@@ -149,7 +149,7 @@ public class BaseSkillMBTests : TestCollection
 		var skill = new GameObject("item").AddComponent<MockSkillMB>();
 		var hitter = ScriptableObject.CreateInstance<MockHitter>();
 		skill.Sheet = new MockSheet();
-		skill.target = hitter;
+		skill.hitter = hitter;
 		hitter.hit.tryHit = _ => (target, true);
 
 		IEnumerator<WaitForFixedUpdate> applyCast(MockSheet _) {
@@ -176,7 +176,7 @@ public class BaseSkillMBTests : TestCollection
 		var skill = new GameObject("item").AddComponent<MockSkillMB>();
 		var hitter = ScriptableObject.CreateInstance<MockHitter>();
 		skill.Sheet = new MockSheet();
-		skill.target = hitter;
+		skill.hitter = hitter;
 		hitter.hit.tryHit = _ => (null, false);
 
 		IEnumerator<WaitForFixedUpdate> applyCast(MockSheet _) {
@@ -201,7 +201,7 @@ public class BaseSkillMBTests : TestCollection
 		var skill = new GameObject("item").AddComponent<MockSkillMB>();
 		var hitter = ScriptableObject.CreateInstance<MockHitter>();
 		skill.Sheet = new MockSheet();
-		skill.target = hitter;
+		skill.hitter = hitter;
 		hitter.hit.tryHit = _ => (target, true);
 
 		IEnumerator<WaitForFixedUpdate> applyCast(MockSheet _) {
@@ -231,7 +231,7 @@ public class BaseSkillMBTests : TestCollection
 		var skill = new GameObject("item").AddComponent<MockSkillMB>();
 		var hitter = ScriptableObject.CreateInstance<MockHitter>();
 		skill.Sheet = new MockSheet();
-		skill.target = hitter;
+		skill.hitter = hitter;
 		hitter.hit.tryHit = _ => (target, true);
 
 		IEnumerator<WaitForFixedUpdate> applyCast(MockSheet _) {

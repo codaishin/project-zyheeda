@@ -1701,7 +1701,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad376995a65d7744db54c2136c223657, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  target: {fileID: 11400000, guid: 9370508409fd36d43b04301710bbfee6, type: 2}
+  hitter: {fileID: 11400000, guid: 9370508409fd36d43b04301710bbfee6, type: 2}
   applyPerSecond: 1
   effectCollection:
     effectData:
