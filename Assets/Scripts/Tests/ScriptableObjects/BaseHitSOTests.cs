@@ -5,7 +5,7 @@ public class BaseHitSOTests : TestCollection
 {
 	private class MockHit : IHit
 	{
-		public bool TryHit<T>(T source, out T target) =>
+		public bool Try<T>(T source, out T target) =>
 			throw new System.NotImplementedException();
 	}
 

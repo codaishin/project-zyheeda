@@ -13,7 +13,7 @@ public class BaseSkillMBTests : TestCollection
 	{
 		public Func<object, (object, bool)> tryHit = o => (null, false);
 
-		public bool TryHit<T>(T source, out T target) {
+		public bool Try<T>(T source, out T target) {
 			(object target, bool success) hit = this.tryHit(source);
 			target = hit.target == null ? default : (T)hit.target;
 			return hit.success;

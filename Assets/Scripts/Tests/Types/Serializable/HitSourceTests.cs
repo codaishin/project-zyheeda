@@ -13,7 +13,7 @@ public class HitSourceTests : TestCollection
 	{
 		var hitter = new HitSource();
 		var source = new MockClass();
-		hitter.TryHit(source, out var target);
+		hitter.Try(source, out var target);
 		Assert.AreSame(source, target);
 	}
 
@@ -21,6 +21,6 @@ public class HitSourceTests : TestCollection
 	public void TryHitReturnsTrue()
 	{
 		var hitter = new HitSource();
-		Assert.True(hitter.TryHit(default(MockClass), out _));
+		Assert.True(hitter.Try(default(MockClass), out _));
 	}
 }
