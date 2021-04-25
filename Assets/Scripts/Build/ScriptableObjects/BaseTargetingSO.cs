@@ -5,6 +5,7 @@ public abstract class BaseTargetingSO : ScriptableObject, ITargeting<CharacterSh
 {
 	public abstract IEnumerator<WaitForEndOfFrame> Select(
 		CharacterSheetMB source,
-		List<CharacterSheetMB> targets
+		List<CharacterSheetMB> targets,
+		int maxCount = 1
 	);
 }

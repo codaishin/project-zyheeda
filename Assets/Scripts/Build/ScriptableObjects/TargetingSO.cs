@@ -9,7 +9,7 @@ public class TargetingSO : BaseTargetingSO
 	public bool upToMaxCount;
 
 	public override
-	IEnumerator<WaitForEndOfFrame> Select(CharacterSheetMB source, List<CharacterSheetMB> targets)
+	IEnumerator<WaitForEndOfFrame> Select(CharacterSheetMB source, List<CharacterSheetMB> targets, int maxCount = 1)
 	{
 		bool canceled = false;
 
