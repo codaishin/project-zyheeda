@@ -19,6 +19,14 @@ MonoBehaviour:
     keyState: 1
     eventSO: {fileID: 11400000, guid: b30b2baa09a76a541b7c2e5ff360d901, type: 2}
   - name: Shoot
-    keyCode: 324
+    keyCode: 49
     keyState: 1
     eventSO: {fileID: 11400000, guid: f7a9ef2da0c91ea43afcda8b6ac99a1e, type: 2}
+  - name: SelectTarget
+    keyCode: 323
+    keyState: 1
+    eventSO: {fileID: 11400000, guid: 136a31d57e9535243bb250f7f588159c, type: 2}
+  - name: UnSelectTarget
+    keyCode: 324
+    keyState: 1
+    eventSO: {fileID: 11400000, guid: 6fe5b9ac0b8a2f54eba5e0613d8f2266, type: 2}

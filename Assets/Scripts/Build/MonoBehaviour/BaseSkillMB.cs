@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,8 +8,11 @@ public abstract class BaseSkillMB<TEffectCollection, TCast, TSheet> : MonoBehavi
 {
 	private float cooldown;
 
-	public BaseHitSO hitter;
+	[Range(0.1f, 10f)]
 	public float applyPerSecond;
+	[Range(1, 10)]
+	public int maxTargetCount;
+	public BaseTargetingSO<TSheet> targeting;
 	public TEffectCollection effectCollection;
 	public TCast cast;
 
@@ -31,7 +35,26 @@ public abstract class BaseSkillMB<TEffectCollection, TCast, TSheet> : MonoBehavi
 		}
 	}
 
-	private IEnumerator<WaitForFixedUpdate> Run(TSheet target)
+	private IEnumerable<WaitForEndOfFrame> SelectTargets(List<TSheet> targets)
+	{
+		IEnumerator<WaitForEndOfFrame> routine = this.targeting.Select(
+			this.Sheet,
+			targets,
+			this.maxTargetCount
+		);
+		while (routine.MoveNext()) {
+			yield return routine.Current;
+		}
+	}
+
+	private void StartCooldown(List<TSheet> targets)
+	{
+		if (targets.Count > 0) {
+			this.cooldown = this.applyPerSecond > 0 ? 1f / this.applyPerSecond : 0;
+		}
+	}
+
+	private IEnumerator RunOn(TSheet target)
 	{
 		foreach (WaitForFixedUpdate yield in this.Cast(target)) {
 			yield return yield;
@@ -42,11 +65,22 @@ public abstract class BaseSkillMB<TEffectCollection, TCast, TSheet> : MonoBehavi
 		}
 	}
 
+	private IEnumerator Run()
+	{
+		List<TSheet> targets = new List<TSheet>();
+		foreach (WaitForEndOfFrame yield in this.SelectTargets(targets)) {
+			yield return yield;
+		}
+		this.StartCooldown(targets);
+		foreach (TSheet target in targets) {
+			this.StartCoroutine(this.RunOn(target));
+		}
+	}
+
 	public void Begin()
 	{
-		if (this.cooldown <= 0 && this.hitter.Hit.Try(this.Sheet, out TSheet target)) {
-			this.cooldown = this.applyPerSecond > 0 ? 1f / this.applyPerSecond : 0;
-			this.StartCoroutine(this.Run(target));
+		if (this.cooldown <= 0) {
+			this.StartCoroutine(this.Run());
 		}
 	}
 
