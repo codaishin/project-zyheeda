@@ -1701,8 +1701,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad376995a65d7744db54c2136c223657, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hitter: {fileID: 11400000, guid: 9370508409fd36d43b04301710bbfee6, type: 2}
   applyPerSecond: 1
+  maxTargetCount: 1
+  targeting: {fileID: 11400000, guid: be9c8b64a24360745b325905ac21ef62, type: 2}
   effectCollection:
     effectData:
     - intensity: 20
