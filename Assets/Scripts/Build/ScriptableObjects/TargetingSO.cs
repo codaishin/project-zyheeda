@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+[CreateAssetMenu(menuName = "ScriptableObjects/Targeting")]
 public class TargetingSO : BaseTargetingSO<CharacterSheetMB>
 {
 	public BaseHitSO hitter;
