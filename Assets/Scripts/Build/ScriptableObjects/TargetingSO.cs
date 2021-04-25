@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TargetingSO : BaseTargetingSO
+public class TargetingSO : BaseTargetingSO<CharacterSheetMB>
 {
 	public BaseHitSO hitter;
 	public EventSO selectTarget;
