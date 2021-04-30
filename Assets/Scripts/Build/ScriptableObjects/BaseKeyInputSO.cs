@@ -3,11 +3,11 @@ using UnityEngine;
 
 public abstract class BaseKeyInputSO : ScriptableObject
 {
-	protected abstract bool Get(in KeyCode code);
-	protected abstract bool GetDown(in KeyCode code);
-	protected abstract bool GetUp(in KeyCode code);
+	protected abstract bool Get(KeyCode code);
+	protected abstract bool GetDown(KeyCode code);
+	protected abstract bool GetUp(KeyCode code);
 
-	public virtual bool GetKey(in KeyCode code, in KeyState state)
+	public bool GetKey(KeyCode code, KeyState state)
 		=> state switch {
 			KeyState.Up => this.GetUp(code),
 			KeyState.Down => this.GetDown(code),

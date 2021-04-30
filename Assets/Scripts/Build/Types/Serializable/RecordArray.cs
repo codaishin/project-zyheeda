@@ -25,7 +25,7 @@ public class RecordArray<TKey, TValue> : IRecordArray<TKey, TValue>, ISimpleDict
 		this.records = this.records
 			.GroupBy(r => r.key)
 			.SelectMany(g => g.Select((r, i) => {
-				r.name = i == 0 ? r.key.ToString() : duplicateLabel;
+				r.name = i == 0 ? r.key?.ToString() : duplicateLabel;
 				return r;
 			}))
 			.ToArray();

@@ -11,13 +11,13 @@ public class BaseKeyInputSOTests : TestCollection
 		public Dictionary<KeyCode, KeyState> keyStates =
 			new Dictionary<KeyCode, KeyState>();
 
-		protected override bool Get(in KeyCode code) =>
+		protected override bool Get(KeyCode code) =>
 			this.keyStates.TryGetValue(code, out KeyState state) &&
 			state == KeyState.Hold;
-		protected override bool GetDown(in KeyCode code) =>
+		protected override bool GetDown(KeyCode code) =>
 			this.keyStates.TryGetValue(code, out KeyState state) &&
 			state == KeyState.Down;
-		protected override bool GetUp(in KeyCode code) =>
+		protected override bool GetUp(KeyCode code) =>
 			this.keyStates.TryGetValue(code, out KeyState state) &&
 			state == KeyState.Up;
 	}
