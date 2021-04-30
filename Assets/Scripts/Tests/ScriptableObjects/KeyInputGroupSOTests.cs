@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
@@ -8,17 +9,60 @@ public class KeyInputGroupSOTests
 {
 	private class MockKeyInputSO : BaseKeyInputSO
 	{
-		public List<(KeyCode, KeyState)> used = new List<(KeyCode, KeyState)>();
+		public Func<KeyCode, bool> get = _ => false;
+		public Func<KeyCode, bool> getDown = _ => false;
+		public Func<KeyCode, bool> getUp = _ => false;
+		protected override bool Get(KeyCode key) => this.get(key);
+		protected override bool GetDown(KeyCode key) => this.getDown(key);
+		protected override bool GetUp(KeyCode key) => this.getUp(key);
+	}
 
-		protected override bool Get(in KeyCode _) => true;
-		protected override bool GetDown(in KeyCode _) => true;
-		protected override bool GetUp(in KeyCode _) => true;
+	[Test]
+	public void KorrektInputSOGetKeyParameters()
+	{
+		var called = new List<(KeyCode, KeyState)>();
+		var inputSO = ScriptableObject.CreateInstance<MockKeyInputSO>();
+		var inputGroupSO = ScriptableObject.CreateInstance<KeyInputGroupSO>();
+		var eventSO = ScriptableObject.CreateInstance<EventSO>();
+		inputSO.get = k => {
+			called.Add((k, KeyState.Hold));
+			return true;
+		};
+		inputSO.getDown = k => {
+			called.Add((k, KeyState.Down));
+			return true;
+		};
+		inputSO.getUp = k => {
+			called.Add((k, KeyState.Up));
+			return true;
+		};
+		inputGroupSO.inputSO = inputSO;
+		inputGroupSO.input = new RecordArray<EventSO, KeyInputItem>(
+			new Record<EventSO, KeyInputItem>[] {
+				new Record<EventSO, KeyInputItem> {
+					key = eventSO,
+					value = new KeyInputItem{ keyCode = KeyCode.D, keyState = KeyState.Down },
+				},
+				new Record<EventSO, KeyInputItem> {
+					key = eventSO,
+					value = new KeyInputItem{ keyCode = KeyCode.H, keyState = KeyState.Hold },
+				},
+				new Record<EventSO, KeyInputItem> {
+					key = eventSO,
+					value = new KeyInputItem{ keyCode = KeyCode.U, keyState = KeyState.Up },
+				},
+			}
+		);
+		inputGroupSO.Apply();
 
-		public override bool GetKey(in KeyCode code, in KeyState state)
-		{
-			this.used.Add((code, state));
-			return base.GetKey(code, state);
-		}
+		CollectionAssert.AreEquivalent(
+			new (KeyCode, KeyState)[] {
+				(KeyCode.H, KeyState.Hold),
+				(KeyCode.D, KeyState.Down),
+				(KeyCode.U, KeyState.Up),
+			},
+			called
+		);
 	}
 
 	[Test]
@@ -33,46 +77,22 @@ public class KeyInputGroupSOTests
 
 		eventA.Listeners += () => ++calledA;
 		eventB.Listeners += () => ++calledB;
+		inputSO.getDown = _ => true;
 		inputGroupSO.inputSO = inputSO;
-		inputGroupSO.items = new KeyInputItem[] {
-			new KeyInputItem{ eventSO = eventA },
-			new KeyInputItem{ eventSO = eventB },
-		};
+		inputGroupSO.input = new RecordArray<EventSO, KeyInputItem>(
+			new Record<EventSO, KeyInputItem>[] {
+				new Record<EventSO, KeyInputItem> {
+					key = eventA,
+					value = new KeyInputItem{ keyState = KeyState.Down },
+				},
+				new Record<EventSO, KeyInputItem> {
+					key = eventB,
+					value = new KeyInputItem{ keyState = KeyState.Down },
+				},
+			}
+		);
 		inputGroupSO.Apply();
 
-		CollectionAssert.AreEqual(
-			new int[] { 1, 1 },
-			new int[] { calledA, calledB }
-		);
-	}
-
-	[Test]
-	public void InjectsInputSOCallback()
-	{
-		var inputSO = ScriptableObject.CreateInstance<MockKeyInputSO>();
-		var inputGroupSO = ScriptableObject.CreateInstance<KeyInputGroupSO>();
-		var eventSO = ScriptableObject.CreateInstance<EventSO>();
-		var itemA = new KeyInputItem{
-			keyCode = KeyCode.U,
-			keyState = KeyState.Up,
-			eventSO = eventSO,
-		};
-		var itemB = new KeyInputItem{
-			keyCode = KeyCode.D,
-			keyState = KeyState.Down,
-			eventSO = eventSO,
-		};
-
-		inputGroupSO.inputSO = inputSO;
-		inputGroupSO.items = new KeyInputItem[] { itemA, itemB };
-		inputGroupSO.Apply();
-
-		CollectionAssert.AreEqual(
-			new (KeyCode, KeyState) [] {
-				(itemA.keyCode, itemA.keyState),
-				(itemB.keyCode, itemB.keyState),
-			},
-			inputSO.used
-		);
+		Assert.AreEqual((1, 1), (calledA, calledB));
 	}
 }
