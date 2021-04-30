@@ -16,7 +16,7 @@ public class RecordArray<TKey, TValue> : IRecordArray<TKey, TValue>, ISimpleDict
 		set => this.Set(key, value);
 	}
 
-	public RecordArray(Record<TKey, TValue>[] initialState) => this.records = initialState;
+	private RecordArray(Record<TKey, TValue>[] initialState) => this.records = initialState;
 
 	public RecordArray() : this(new Record<TKey, TValue>[0]) {}
 
@@ -46,5 +46,10 @@ public class RecordArray<TKey, TValue> : IRecordArray<TKey, TValue>, ISimpleDict
 			int i => () => this.records[i] = record,
 		};
 		updateRecords();
+	}
+
+	public static implicit operator RecordArray<TKey, TValue>(Record<TKey, TValue>[] records)
+	{
+		return new RecordArray<TKey, TValue>(records);
 	}
 }

@@ -17,7 +17,7 @@ public class RecordArrayTests : TestCollection
 			new Record<int, string> { key = 2, value = "two" },
 			new Record<int, string> { key = 2, value = "other two" },
 		};
-		var dict = new RecordArray<int, string>(records);
+		var dict = (RecordArray<int, string>)records;
 
 		CollectionAssert.AreEqual(records, dict.Records);
 	}
@@ -56,7 +56,7 @@ public class RecordArrayTests : TestCollection
 			new Record<int, string> { key = 2, value = "two" },
 			new Record<int, string> { key = 3, value = "three" },
 		};
-		var dict = new RecordArray<int, string>(records);
+		var dict = (RecordArray<int, string>)records;
 		dict.SetNamesFromKeys(default);
 
 		CollectionAssert.AreEqual(new string[] { "2", "3" }, dict.Records.Select(r => r.name));
@@ -70,7 +70,7 @@ public class RecordArrayTests : TestCollection
 			new Record<int, string> { key = 2, value = "other two" },
 			new Record<int, string> { key = 3, value = "three" },
 		};
-		var dict = new RecordArray<int, string>(records);
+		var dict = (RecordArray<int, string>)records;
 		dict.SetNamesFromKeys("_");
 
 		CollectionAssert.AreEqual(new string[] { "2", "_", "3" }, dict.Records.Select(r => r.name));
@@ -82,7 +82,7 @@ public class RecordArrayTests : TestCollection
 		var records = new Record<string, string>[] {
 			new Record<string, string> { key = null, value = "two" },
 		};
-		var dict = new RecordArray<string, string>(records);
+		var dict = (RecordArray<string, string>)records;
 		Assert.DoesNotThrow(() => dict.SetNamesFromKeys("_"));
 	}
 }
