@@ -22,7 +22,9 @@ public class KeyInputGroupSOTests
 		var called = new List<(KeyCode, KeyState)>();
 		var inputSO = ScriptableObject.CreateInstance<MockKeyInputSO>();
 		var inputGroupSO = ScriptableObject.CreateInstance<KeyInputGroupSO>();
-		var eventSO = ScriptableObject.CreateInstance<EventSO>();
+		var eventU = ScriptableObject.CreateInstance<EventSO>();
+		var eventD = ScriptableObject.CreateInstance<EventSO>();
+		var eventH = ScriptableObject.CreateInstance<EventSO>();
 		inputSO.get = k => {
 			called.Add((k, KeyState.Hold));
 			return true;
@@ -39,15 +41,15 @@ public class KeyInputGroupSOTests
 		inputGroupSO.input = new RecordArray<EventSO, KeyInputItem>(
 			new Record<EventSO, KeyInputItem>[] {
 				new Record<EventSO, KeyInputItem> {
-					key = eventSO,
+					key = eventD,
 					value = new KeyInputItem{ keyCode = KeyCode.D, keyState = KeyState.Down },
 				},
 				new Record<EventSO, KeyInputItem> {
-					key = eventSO,
+					key = eventH,
 					value = new KeyInputItem{ keyCode = KeyCode.H, keyState = KeyState.Hold },
 				},
 				new Record<EventSO, KeyInputItem> {
-					key = eventSO,
+					key = eventU,
 					value = new KeyInputItem{ keyCode = KeyCode.U, keyState = KeyState.Up },
 				},
 			}
@@ -122,5 +124,33 @@ public class KeyInputGroupSOTests
 			new string[]{ "EventA (EventSO)", "__duplicate__" },
 			names
 		);
+	}
+
+	[Test]
+	public void AppliesOnlyUniqueItems()
+	{
+		var called = 0;
+		var inputSO = ScriptableObject.CreateInstance<MockKeyInputSO>();
+		var inputGroupSO = ScriptableObject.CreateInstance<KeyInputGroupSO>();
+		var eventSO = ScriptableObject.CreateInstance<EventSO>();
+
+		eventSO.Listeners += () => ++called;
+		inputSO.getDown = _ => true;
+		inputGroupSO.inputSO = inputSO;
+		inputGroupSO.input = new RecordArray<EventSO, KeyInputItem>(
+			new Record<EventSO, KeyInputItem>[] {
+				new Record<EventSO, KeyInputItem> {
+					key = eventSO,
+					value = new KeyInputItem{ keyState = KeyState.Down },
+				},
+				new Record<EventSO, KeyInputItem> {
+					key = eventSO,
+					value = new KeyInputItem{ keyState = KeyState.Down },
+				},
+			}
+		);
+		inputGroupSO.Apply();
+
+		Assert.AreEqual(1, called);
 	}
 }

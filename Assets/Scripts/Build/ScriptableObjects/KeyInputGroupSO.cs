@@ -8,6 +8,8 @@ public class KeyInputGroupSO : ScriptableObject
 	public RecordArray<EventSO, KeyInputItem> input;
 
 	public void Apply() => this.input.Records
+		.GroupBy(r => r.key)
+		.Select(g => g.First())
 		.Where(this.GotInput)
 		.ForEach(KeyInputGroupSO.Raise);
 
