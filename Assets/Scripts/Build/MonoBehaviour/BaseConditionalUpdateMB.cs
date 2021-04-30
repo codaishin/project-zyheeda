@@ -17,7 +17,7 @@ public class BaseConditionalUpdateMB<TValue, TConditional> : MonoBehaviour
 
 	private void Update()
 	{
-		if (this.conditional.Check(default)) {
+		if (this.conditional.Check(this.value)) {
 			this.onUpdate.Invoke();
 		}
 	}

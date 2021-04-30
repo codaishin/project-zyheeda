@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.Events;
@@ -76,5 +75,24 @@ public class BaseConditionalUpdateMBTests : TestCollection
 		yield return new WaitForEndOfFrame();
 
 		Assert.False(called);
+	}
+
+	[UnityTest]
+	public IEnumerator PassCheckValue()
+	{
+		var called = -1;
+		var updater = new GameObject("updater").AddComponent<MockConditionalUpdateMB>();
+		updater.value = 42;
+		updater.conditional = new MockCondtional{
+			check = v => {
+				called = v;
+				return false;
+			}
+		};
+
+		yield return new WaitForEndOfFrame();
+		yield return new WaitForEndOfFrame();
+
+		Assert.AreEqual(42, called);
 	}
 }
