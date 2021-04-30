@@ -63,7 +63,7 @@ public class RecordArrayTests : TestCollection
 	}
 
 	[Test]
-	public void SetDuplicateNames()
+	public void SetNamesWithDuplicates()
 	{
 		var records = new Record<int, string>[] {
 			new Record<int, string> { key = 2, value = "two" },
@@ -74,5 +74,15 @@ public class RecordArrayTests : TestCollection
 		dict.SetNamesFromKeys("_");
 
 		CollectionAssert.AreEqual(new string[] { "2", "_", "3" }, dict.Records.Select(r => r.name));
+	}
+
+	[Test]
+	public void SetNamesDoesNotThrowWhenKeyNull()
+	{
+		var records = new Record<string, string>[] {
+			new Record<string, string> { key = null, value = "two" },
+		};
+		var dict = new RecordArray<string, string>(records);
+		Assert.DoesNotThrow(() => dict.SetNamesFromKeys("_"));
 	}
 }
