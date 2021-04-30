@@ -12,6 +12,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b99458a97d2928b438bcad05c1591420, type: 3}
   m_Name: MousePositionExactCount
   m_EditorClassIdentifier: 
+  onBeginSelect:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: bc69d7f6ecf05a741af6e12f09862784, type: 2}
+        m_TargetAssemblyTypeName: EventSO, Build
+        m_MethodName: Raise
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onEndSelect:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: 43ae0fcbb5738ff468796a2b7b521d60, type: 2}
+        m_TargetAssemblyTypeName: EventSO, Build
+        m_MethodName: Raise
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   hitter: {fileID: 11400000, guid: 9370508409fd36d43b04301710bbfee6, type: 2}
   selectTarget: {fileID: 11400000, guid: 136a31d57e9535243bb250f7f588159c, type: 2}
   cancelSelect: {fileID: 11400000, guid: 6fe5b9ac0b8a2f54eba5e0613d8f2266, type: 2}
