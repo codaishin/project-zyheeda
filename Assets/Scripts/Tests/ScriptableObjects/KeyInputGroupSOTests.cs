@@ -1,9 +1,8 @@
 using System;
-using System.Collections;
+using System.Linq;
 using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
-using UnityEngine.TestTools;
 
 public class KeyInputGroupSOTests
 {
@@ -94,5 +93,34 @@ public class KeyInputGroupSOTests
 		inputGroupSO.Apply();
 
 		Assert.AreEqual((1, 1), (calledA, calledB));
+	}
+
+	[Test]
+	public void OnValidateSetsNames()
+	{
+		var inputGroupSO = ScriptableObject.CreateInstance<KeyInputGroupSO>();
+		var eventA = ScriptableObject.CreateInstance<EventSO>();
+
+		eventA.name = "EventA";
+		inputGroupSO.input = new RecordArray<EventSO, KeyInputItem>(
+			new Record<EventSO, KeyInputItem>[] {
+				new Record<EventSO, KeyInputItem> {
+					key = eventA,
+					value = new KeyInputItem{ keyState = KeyState.Down },
+				},
+				new Record<EventSO, KeyInputItem> {
+					key = eventA,
+					value = new KeyInputItem{ keyState = KeyState.Down },
+				},
+			}
+		);
+		inputGroupSO.OnValidate();
+
+		var names = inputGroupSO.input.Records.Select(r => r.name);
+
+		CollectionAssert.AreEqual(
+			new string[]{ "EventA (EventSO)", "__duplicate__" },
+			names
+		);
 	}
 }

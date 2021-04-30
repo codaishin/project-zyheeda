@@ -19,4 +19,11 @@ public class KeyInputGroupSO : ScriptableObject
 
 	private static
 	void Raise(Record<EventSO, KeyInputItem> record) => record.key.Raise();
+
+	public void OnValidate()
+	{
+		if (this.input != null) {
+			this.input.SetNamesFromKeys(duplicateLabel: "__duplicate__");
+		}
+	}
 }
