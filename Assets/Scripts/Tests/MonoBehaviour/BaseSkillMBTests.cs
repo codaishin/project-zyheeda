@@ -14,8 +14,8 @@ public class BaseSkillMBTests : TestCollection
 		public WaitForEndOfFrame[] yields = new WaitForEndOfFrame[0];
 		public Action<MockSheet, List<MockSheet>, int> select = (_, __, ___) => {};
 
-		public override
-		IEnumerator<WaitForEndOfFrame> Select(MockSheet source, List<MockSheet> targets, int maxCount = 1)
+		protected override
+		IEnumerator<WaitForEndOfFrame> DoSelect(MockSheet source, List<MockSheet> targets, int maxCount = 1)
 		{
 			this.select(source, targets, maxCount);
 			foreach (var yield in this.yields) {

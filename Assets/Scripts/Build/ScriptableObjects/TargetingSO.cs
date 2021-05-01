@@ -19,8 +19,8 @@ public class TargetingSO : BaseTargetingSO<CharacterSheetMB>
 		return maxCount;
 	}
 
-	public override
-	IEnumerator<WaitForEndOfFrame> Select(CharacterSheetMB source, List<CharacterSheetMB> targets, int maxCount = 1)
+	protected override
+	IEnumerator<WaitForEndOfFrame> DoSelect(CharacterSheetMB source, List<CharacterSheetMB> targets, int maxCount)
 	{
 		bool notCanceled = true;
 

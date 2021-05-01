@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fb51a63e398b78a409dac77c272660c1, type: 3}
-  m_Name: PlayerMouseKeyInput
+  m_Name: DefaultPlayerInput
   m_EditorClassIdentifier: 
   inputSO: {fileID: 11400000, guid: 64199461d458d3542b4e790dd776d784, type: 2}
   input:
@@ -24,14 +24,4 @@ MonoBehaviour:
       key: {fileID: 11400000, guid: f7a9ef2da0c91ea43afcda8b6ac99a1e, type: 2}
       value:
         keyCode: 49
-        keyState: 1
-    - name: SelectTarget (EventSO)
-      key: {fileID: 11400000, guid: 136a31d57e9535243bb250f7f588159c, type: 2}
-      value:
-        keyCode: 323
-        keyState: 1
-    - name: UnselectTarget (EventSO)
-      key: {fileID: 11400000, guid: 6fe5b9ac0b8a2f54eba5e0613d8f2266, type: 2}
-      value:
-        keyCode: 324
         keyState: 1
