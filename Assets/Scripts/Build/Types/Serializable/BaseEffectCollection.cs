@@ -1,13 +1,11 @@
 using System;
-using System.Linq;
-using UnityEngine;
 
 
 [Serializable]
-public class BaseEffectCollection<TSheet, TRunner, TEffectFactory> : IEffectCollection<TSheet>
-	where TSheet : ISections
-	where TRunner : IEffectRunner
-	where TEffectFactory : IEffectFactory
+public class BaseEffectCollection<TSheet, TEffectFactory> :
+	IEffectCollection<TSheet>
+		where TSheet : ISections
+		where TEffectFactory : IEffectFactory
 {
 	public EffectData<TSheet, TEffectFactory>[] effectData;
 
@@ -33,6 +31,6 @@ public class BaseEffectCollection<TSheet, TRunner, TEffectFactory> : IEffectColl
 
 	private Action Push(Effect effect, TSheet target)
 	{
-		return target.UseSection((ref TRunner runner) => runner.Push(effect));
+		return target.UseSection((ref IEffectRunner runner) => runner.Push(effect));
 	}
 }

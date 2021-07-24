@@ -48,10 +48,10 @@ public class CharacterSheetMBTests : TestCollection
 	[UnityTest]
 	public IEnumerator UseEffectRunnerMBSection()
 	{
-		var got = default(EffectRunnerMB);
+		var got = default(IEffectRunner);
 		var sheet = new GameObject("obj").AddComponent<CharacterSheetMB>();
 		var runner = sheet.GetComponent<EffectRunnerMB>();
-		var exec = sheet.UseSection((ref EffectRunnerMB r) => got = r, () => Assert.Fail("no runner"));
+		var exec = sheet.UseSection((ref IEffectRunner r) => got = r, () => Assert.Fail("no runner"));
 
 		yield return new WaitForFixedUpdate();
 
