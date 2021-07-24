@@ -1,5 +1,6 @@
-public interface IRecordArray<TKey, TValue>
+using System.Collections.Generic;
+
+public interface IRecordArray<TKey, TValue> : IEnumerable<Record<TKey, TValue>>
 {
-	Record<TKey, TValue>[] Records { get; }
 	void SetNamesFromKeys(string duplicateLabel);
 }

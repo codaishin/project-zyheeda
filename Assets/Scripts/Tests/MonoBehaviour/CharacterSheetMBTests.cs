@@ -41,7 +41,7 @@ public class CharacterSheetMBTests : TestCollection
 
 		exec();
 
-		var record = resistance.resistance.Records.First();
+		var record = resistance.resistance.First();
 		Assert.AreEqual((EffectTag.Physical, 2f), (record.key, record.value));
 	}
 

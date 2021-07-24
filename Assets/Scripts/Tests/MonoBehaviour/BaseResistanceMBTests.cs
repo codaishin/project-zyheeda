@@ -7,13 +7,12 @@ using UnityEngine.TestTools;
 
 public class BaseResistanceMBTests : TestCollection
 {
-	private class MockResistance : IRecordArray<EffectTag, float>
+	private class MockResistance : RecordArray<EffectTag, float>
 	{
-		public Record<EffectTag, float>[] records = new Record<EffectTag, float>[0];
-		public Action<string> setNames = _ => {};
-
-		public Record<EffectTag, float>[] Records => this.records;
-		public void SetNamesFromKeys(string duplicateLabel) => this.setNames(duplicateLabel);
+		public MockResistance()
+			: base() {}
+		public MockResistance(params Record<EffectTag, float>[] records)
+			: base(records) {}
 	}
 
 	private class MockResistanceMB : BaseResistanceMB<MockResistance> {}
@@ -36,27 +35,30 @@ public class BaseResistanceMBTests : TestCollection
 	[UnityTest]
 	public IEnumerator DontReinitResistanceOnStart()
 	{
-		var mock = new MockResistance();
-		var resistance = new GameObject("resistance").AddComponent<MockResistanceMB>();
+		var resistance = new MockResistance();
+		var resistanceMB = new GameObject("resistance")
+			.AddComponent<MockResistanceMB>();
 
-		resistance.resistance = mock;
+		resistanceMB.resistance = resistance;
 
 		yield return new WaitForEndOfFrame();
 
-		Assert.AreSame(mock, resistance.resistance);
+		Assert.AreSame(resistance, resistanceMB.resistance);
 	}
 
 	[UnityTest]
 	public IEnumerator OnValidateSetNames()
 	{
-		var called = string.Empty;
-		var resistance = new GameObject("resistance").AddComponent<MockResistanceMB>();
+		var resistanceMB = new GameObject("resistance").AddComponent<MockResistanceMB>();
+		resistanceMB.resistance = new MockResistance(
+			new Record<EffectTag, float>{ key = EffectTag.Heat, value= 33 },
+			new Record<EffectTag, float>{ key = EffectTag.Heat, value= 22 }
+		);
 
 		yield return new WaitForEndOfFrame();
 
-		resistance.resistance.setNames = d => called = d;
-		resistance.OnValidate();
+		resistanceMB.OnValidate();
 
-		Assert.AreEqual("__duplicate__", called);
+		Assert.AreEqual("__duplicate__", resistanceMB.resistance.ElementAt(1).name);
 	}
 }

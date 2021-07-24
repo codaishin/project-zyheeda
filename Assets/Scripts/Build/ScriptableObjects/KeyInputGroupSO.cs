@@ -7,7 +7,7 @@ public class KeyInputGroupSO : ScriptableObject
 	public BaseKeyInputSO inputSO;
 	public RecordArray<EventSO, KeyInputItem> input;
 
-	public void Apply() => this.input.Records
+	public void Apply() => this.input
 		.GroupBy(r => r.key)
 		.Select(g => g.First())
 		.Where(this.GotInput)

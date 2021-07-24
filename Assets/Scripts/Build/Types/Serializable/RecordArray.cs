@@ -1,14 +1,16 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
 [Serializable]
-public class RecordArray<TKey, TValue> : IRecordArray<TKey, TValue>, ISimpleDict<TKey, TValue>
+public class RecordArray<TKey, TValue> :
+	IRecordArray<TKey, TValue>,
+	ISimpleDict<TKey, TValue>
 {
 	[SerializeField]
 	private Record<TKey, TValue>[] records;
-
-	public Record<TKey, TValue>[] Records => this.records;
 
 	public TValue this[TKey key]
 	{
@@ -16,7 +18,7 @@ public class RecordArray<TKey, TValue> : IRecordArray<TKey, TValue>, ISimpleDict
 		set => this.Set(key, value);
 	}
 
-	private RecordArray(Record<TKey, TValue>[] initialState) => this.records = initialState;
+	public RecordArray(params Record<TKey, TValue>[] initialState) => this.records = initialState;
 
 	public RecordArray() : this(new Record<TKey, TValue>[0]) {}
 
@@ -48,8 +50,12 @@ public class RecordArray<TKey, TValue> : IRecordArray<TKey, TValue>, ISimpleDict
 		updateRecords();
 	}
 
-	public static implicit operator RecordArray<TKey, TValue>(Record<TKey, TValue>[] records)
+	public IEnumerator<Record<TKey, TValue>> GetEnumerator()
 	{
-		return new RecordArray<TKey, TValue>(records);
+		foreach (Record<TKey, TValue> record in this.records) {
+			yield return record;
+		}
 	}
+
+	IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 }

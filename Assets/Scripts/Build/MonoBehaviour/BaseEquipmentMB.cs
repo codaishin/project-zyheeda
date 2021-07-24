@@ -1,22 +1,15 @@
 using System.Linq;
 using UnityEngine;
 
-public abstract class BaseEquipmentMB<TEquipment> : MonoBehaviour, ISimpleDict<EquipmentSlot, ItemMB>
-	where TEquipment : IRecordArray<EquipmentSlot, ItemMB>, ISimpleDict<EquipmentSlot, ItemMB>, new()
+public abstract class BaseEquipmentMB<TEquipment> : MonoBehaviour
+	where TEquipment :
+		IRecordArray<EquipmentSlot, ItemMB>,
+		ISimpleDict<EquipmentSlot, ItemMB>,
+		new()
 {
 	public CharacterSheetMB sheet;
 
-	[SerializeField]
-	private TEquipment equipment = new TEquipment();
-
-	public ItemMB this[EquipmentSlot key]
-	{
-		get => this.equipment[key];
-		set {
-			this.equipment[key] = value;
-			this.AssignSheet(value);
-		}
-	}
+	public TEquipment equipment = new TEquipment();
 
 	private void AssignSheet(ItemMB item)
 	{
@@ -27,7 +20,7 @@ public abstract class BaseEquipmentMB<TEquipment> : MonoBehaviour, ISimpleDict<E
 
 	private void Start()
 	{
-		this.equipment.Records
+		this.equipment
 			.Select(r => r.value)
 			.ForEach(this.AssignSheet);
 	}
@@ -35,7 +28,7 @@ public abstract class BaseEquipmentMB<TEquipment> : MonoBehaviour, ISimpleDict<E
 	public void OnValidate()
 	{
 		this.equipment.SetNamesFromKeys(duplicateLabel: "__duplicate__");
-		this.equipment.Records
+		this.equipment
 			.Select(r => r.value)
 			.ForEach(this.AssignSheet);
 	}

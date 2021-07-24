@@ -38,20 +38,29 @@ public class KeyInputGroupSOTests
 			return true;
 		};
 		inputGroupSO.inputSO = inputSO;
-		inputGroupSO.input = new Record<EventSO, KeyInputItem>[] {
+		inputGroupSO.input = new RecordArray<EventSO, KeyInputItem>(
 			new Record<EventSO, KeyInputItem> {
 				key = eventD,
-				value = new KeyInputItem{ keyCode = KeyCode.D, keyState = KeyState.Down },
+				value = new KeyInputItem{
+					keyCode = KeyCode.D,
+					keyState = KeyState.Down
+				},
 			},
 			new Record<EventSO, KeyInputItem> {
 				key = eventH,
-				value = new KeyInputItem{ keyCode = KeyCode.H, keyState = KeyState.Hold },
+				value = new KeyInputItem{
+					keyCode = KeyCode.H,
+					keyState = KeyState.Hold
+				},
 			},
 			new Record<EventSO, KeyInputItem> {
 				key = eventU,
-				value = new KeyInputItem{ keyCode = KeyCode.U, keyState = KeyState.Up },
-			},
-		};
+				value = new KeyInputItem{
+					keyCode = KeyCode.U,
+					keyState = KeyState.Up
+				},
+			}
+		);
 		inputGroupSO.Apply();
 
 		CollectionAssert.AreEquivalent(
@@ -78,7 +87,7 @@ public class KeyInputGroupSOTests
 		eventB.Listeners += () => ++calledB;
 		inputSO.getDown = _ => true;
 		inputGroupSO.inputSO = inputSO;
-		inputGroupSO.input = new Record<EventSO, KeyInputItem>[] {
+		inputGroupSO.input = new RecordArray<EventSO, KeyInputItem>(
 			new Record<EventSO, KeyInputItem> {
 				key = eventA,
 				value = new KeyInputItem{ keyState = KeyState.Down },
@@ -86,8 +95,8 @@ public class KeyInputGroupSOTests
 			new Record<EventSO, KeyInputItem> {
 				key = eventB,
 				value = new KeyInputItem{ keyState = KeyState.Down },
-			},
-		};
+			}
+		);
 		inputGroupSO.Apply();
 
 		Assert.AreEqual((1, 1), (calledA, calledB));
@@ -100,7 +109,7 @@ public class KeyInputGroupSOTests
 		var eventA = ScriptableObject.CreateInstance<EventSO>();
 
 		eventA.name = "EventA";
-		inputGroupSO.input = new Record<EventSO, KeyInputItem>[] {
+		inputGroupSO.input = new RecordArray<EventSO, KeyInputItem>(
 			new Record<EventSO, KeyInputItem> {
 				key = eventA,
 				value = new KeyInputItem{ keyState = KeyState.Down },
@@ -108,11 +117,11 @@ public class KeyInputGroupSOTests
 			new Record<EventSO, KeyInputItem> {
 				key = eventA,
 				value = new KeyInputItem{ keyState = KeyState.Down },
-			},
-		};
+			}
+		);
 		inputGroupSO.OnValidate();
 
-		var names = inputGroupSO.input.Records.Select(r => r.name);
+		var names = inputGroupSO.input.Select(r => r.name);
 
 		CollectionAssert.AreEqual(
 			new string[]{ "EventA (EventSO)", "__duplicate__" },
@@ -131,7 +140,7 @@ public class KeyInputGroupSOTests
 		eventSO.Listeners += () => ++called;
 		inputSO.getDown = _ => true;
 		inputGroupSO.inputSO = inputSO;
-		inputGroupSO.input = new Record<EventSO, KeyInputItem>[] {
+		inputGroupSO.input = new RecordArray<EventSO, KeyInputItem>(
 			new Record<EventSO, KeyInputItem> {
 				key = eventSO,
 				value = new KeyInputItem{ keyState = KeyState.Down },
@@ -139,8 +148,8 @@ public class KeyInputGroupSOTests
 			new Record<EventSO, KeyInputItem> {
 				key = eventSO,
 				value = new KeyInputItem{ keyState = KeyState.Down },
-			},
-		};
+			}
+		);
 		inputGroupSO.Apply();
 
 		Assert.AreEqual(1, called);
