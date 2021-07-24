@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
 
@@ -14,10 +13,14 @@ public class BaseEffectCollectionTests : TestCollection
 	private class MockSheetMB : MonoBehaviour, ISections
 	{
 		public MockEffectRunner runner = new MockEffectRunner();
-		public Action UseSection<T>(RefAction<T> action, Action fallback) => action switch {
-			RefAction<MockEffectRunner> use => () => use(ref this.runner),
-			_ => null,
-		};
+
+		public Action UseSection<T>(RefAction<T> action, Action fallback) {
+			IEffectRunner runner = this.runner;
+			return action switch {
+				RefAction<IEffectRunner> use => () => use(ref runner),
+				_ => null,
+			};
+		}
 	}
 
 	private class MockEffectFactory : IEffectFactory
@@ -28,7 +31,7 @@ public class BaseEffectCollectionTests : TestCollection
 			where TSheet : ISections => this.create(s, t, i);
 	}
 
-	private class MockEffectCollection : BaseEffectCollection<MockSheetMB, MockEffectRunner, MockEffectFactory> {}
+	private class MockEffectCollection : BaseEffectCollection<MockSheetMB, MockEffectFactory> {}
 
 
 	[Test]
