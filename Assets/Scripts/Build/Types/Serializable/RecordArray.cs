@@ -7,10 +7,13 @@ using UnityEngine;
 [Serializable]
 public class RecordArray<TKey, TValue> :
 	IRecordArray<TKey, TValue>,
-	ISimpleDict<TKey, TValue>
+	ISimpleDict<TKey, TValue>,
+	IEventDict<TKey, TValue>
 {
 	[SerializeField]
 	private Record<TKey, TValue>[] records;
+
+	public event Action<TKey, TValue> OnAdd;
 
 	public TValue this[TKey key]
 	{
@@ -18,7 +21,10 @@ public class RecordArray<TKey, TValue> :
 		set => this.Set(key, value);
 	}
 
-	public RecordArray(params Record<TKey, TValue>[] initialState) => this.records = initialState;
+	public RecordArray(params Record<TKey, TValue>[] initialState)
+	{
+		this.records = initialState;
+	}
 
 	public RecordArray() : this(new Record<TKey, TValue>[0]) {}
 
@@ -42,12 +48,17 @@ public class RecordArray<TKey, TValue> :
 
 	private void Set(TKey key, TValue value)
 	{
-		Record<TKey, TValue> record = new Record<TKey, TValue>{ key = key, value = value };
-		Action updateRecords = Array.FindIndex(this.records, r => r.key.Equals(key)) switch {
+		Predicate<Record<TKey, TValue>> match = r => r.key.Equals(key);
+		Record<TKey, TValue> record = new Record<TKey, TValue> {
+			key = key,
+			value = value,
+		};
+		Action updateRecords = Array.FindIndex(this.records, match) switch {
 			-1 => () => this.records = this.records.Concat(record).ToArray(),
 			int i => () => this.records[i] = record,
 		};
 		updateRecords();
+		this.OnAdd?.Invoke(key, value);
 	}
 
 	public IEnumerator<Record<TKey, TValue>> GetEnumerator()

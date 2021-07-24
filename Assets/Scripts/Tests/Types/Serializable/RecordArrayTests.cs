@@ -91,4 +91,16 @@ public class RecordArrayTests : TestCollection
 		var dict = new RecordArray<string, string>(records);
 		Assert.DoesNotThrow(() => dict.SetNamesFromKeys("_"));
 	}
+
+	[Test]
+	public void RunOnAdd()
+	{
+		var passed = (string.Empty, 0f);
+		var recod = new RecordArray<string, float>();
+
+		recod.OnAdd += (k, v) => passed = (k, v);
+		recod["two"] = 2f;
+
+		Assert.AreEqual(("two", 2f), passed);
+	}
 }
