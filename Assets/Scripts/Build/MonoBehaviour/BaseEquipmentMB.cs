@@ -5,6 +5,7 @@ public abstract class BaseEquipmentMB<TEquipment> : MonoBehaviour
 	where TEquipment :
 		IRecordArray<EquipmentSlot, ItemMB>,
 		ISimpleDict<EquipmentSlot, ItemMB>,
+		IEventDict<EquipmentSlot, ItemMB>,
 		new()
 {
 	public CharacterSheetMB sheet;
@@ -20,6 +21,7 @@ public abstract class BaseEquipmentMB<TEquipment> : MonoBehaviour
 
 	private void Start()
 	{
+		this.equipment.OnAdd += (_, item) => this.AssignSheet(item);
 		this.equipment
 			.Select(r => r.value)
 			.ForEach(this.AssignSheet);

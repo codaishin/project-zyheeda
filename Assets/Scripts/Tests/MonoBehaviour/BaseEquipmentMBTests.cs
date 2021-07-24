@@ -114,6 +114,6 @@ public class BaseEquipmentMBTests : TestCollection
 
 		equipmentMB.sheet = sheetMB;
 		equipmentMB.equipment[default] = itemMB;
-		Assert.AreEqual(sheetMB, itemMB);
+		Assert.AreEqual(sheetMB, itemMB.Sheet);
 	}
 }
