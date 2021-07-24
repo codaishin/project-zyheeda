@@ -17,9 +17,9 @@ public class RecordArrayTests : TestCollection
 			new Record<int, string> { key = 2, value = "two" },
 			new Record<int, string> { key = 2, value = "other two" },
 		};
-		var dict = (RecordArray<int, string>)records;
+		var dict = new RecordArray<int, string>(records);
 
-		CollectionAssert.AreEqual(records, dict.Records);
+		CollectionAssert.AreEqual(records, dict);
 	}
 
 	[Test]
@@ -31,7 +31,7 @@ public class RecordArrayTests : TestCollection
 
 		CollectionAssert.AreEqual(
 			new (int, string)[] { (20, "Hello") },
-			dict.Records.Select(r => (r.key, r.value))
+			dict.Select(r => (r.key, r.value))
 		);
 	}
 
@@ -45,7 +45,7 @@ public class RecordArrayTests : TestCollection
 
 		CollectionAssert.AreEqual(
 			new (int, string)[] { (20, "Hello, dict!") },
-			dict.Records.Select(r => (r.key, r.value))
+			dict.Select(r => (r.key, r.value))
 		);
 	}
 
@@ -56,10 +56,13 @@ public class RecordArrayTests : TestCollection
 			new Record<int, string> { key = 2, value = "two" },
 			new Record<int, string> { key = 3, value = "three" },
 		};
-		var dict = (RecordArray<int, string>)records;
+		var dict = new RecordArray<int, string>(records);
 		dict.SetNamesFromKeys(default);
 
-		CollectionAssert.AreEqual(new string[] { "2", "3" }, dict.Records.Select(r => r.name));
+		CollectionAssert.AreEqual(
+			new string[] { "2", "3" },
+			dict.Select(r => r.name)
+		);
 	}
 
 	[Test]
@@ -70,10 +73,13 @@ public class RecordArrayTests : TestCollection
 			new Record<int, string> { key = 2, value = "other two" },
 			new Record<int, string> { key = 3, value = "three" },
 		};
-		var dict = (RecordArray<int, string>)records;
+		var dict = new RecordArray<int, string>(records);
 		dict.SetNamesFromKeys("_");
 
-		CollectionAssert.AreEqual(new string[] { "2", "_", "3" }, dict.Records.Select(r => r.name));
+		CollectionAssert.AreEqual(
+			new string[] { "2", "_", "3" },
+			dict.Select(r => r.name)
+		);
 	}
 
 	[Test]
@@ -82,7 +88,19 @@ public class RecordArrayTests : TestCollection
 		var records = new Record<string, string>[] {
 			new Record<string, string> { key = null, value = "two" },
 		};
-		var dict = (RecordArray<string, string>)records;
+		var dict = new RecordArray<string, string>(records);
 		Assert.DoesNotThrow(() => dict.SetNamesFromKeys("_"));
+	}
+
+	[Test]
+	public void RunOnAdd()
+	{
+		var passed = (string.Empty, 0f);
+		var recod = new RecordArray<string, float>();
+
+		recod.OnAdd += (k, v) => passed = (k, v);
+		recod["two"] = 2f;
+
+		Assert.AreEqual(("two", 2f), passed);
 	}
 }
