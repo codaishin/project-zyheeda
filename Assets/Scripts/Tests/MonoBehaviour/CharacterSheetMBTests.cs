@@ -63,29 +63,26 @@ public class CharacterSheetMBTests : TestCollection
 	[UnityTest]
 	public IEnumerator UseEquipmentMBSection()
 	{
-		var got = default(EquipmentMB);
+		var got = default(Equipment);
 		var sheet = new GameObject("obj").AddComponent<CharacterSheetMB>();
-		var runner = sheet.GetComponent<EquipmentMB>();
-		var exec = sheet.UseSection((ref EquipmentMB e) => got = e, () => Assert.Fail("no equipment"));
+		var equipment = sheet.GetComponent<EquipmentMB>();
+		var exec = sheet.UseSection((ref Equipment e) => got = e, () => Assert.Fail("no equipment"));
 
 		yield return new WaitForFixedUpdate();
 
 		exec();
 
-		Assert.AreSame(runner, got);
+		Assert.AreSame(equipment.equipment, got);
 	}
 
 	[UnityTest]
 	public IEnumerator SetEquipmentMBCharacterSheet()
 	{
-		var got = default(CharacterSheetMB);
 		var sheet = new GameObject("obj").AddComponent<CharacterSheetMB>();
-		var exec = sheet.UseSection((ref EquipmentMB e) => got = e.sheet, null);
+		var equipment = sheet.GetComponent<EquipmentMB>();
 
 		yield return new WaitForFixedUpdate();
 
-		exec();
-
-		Assert.AreSame(sheet, got);
+		Assert.AreSame(sheet, equipment.sheet);
 	}
 }

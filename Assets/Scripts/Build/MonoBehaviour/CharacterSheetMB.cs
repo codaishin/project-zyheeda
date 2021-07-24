@@ -6,19 +6,21 @@ using UnityEngine;
 [RequireComponent(typeof(EquipmentMB))]
 public class CharacterSheetMB : MonoBehaviour, ISections
 {
-	private ResistanceMB resistanceMB;
 	private EffectRunnerMB effectRunnerMB;
+	private ResistanceMB resistanceMB;
 	private EquipmentMB equipmentMB;
 
 	public Health health;
 
-	public Action UseSection<TSection>(RefAction<TSection> action, Action fallback)
-	{
+	public Action UseSection<TSection>(
+		RefAction<TSection> action,
+		Action fallback
+	) {
 		return action switch {
-			RefAction<Health> use => () => use(ref this.health),
-			RefAction<Resistance> use => () => use(ref this.resistanceMB.resistance),
 			RefAction<EffectRunnerMB> use => () => use(ref this.effectRunnerMB),
-			RefAction<EquipmentMB> use => () => use(ref this.equipmentMB),
+			RefAction<Resistance> use => () => use(ref this.resistanceMB.resistance),
+			RefAction<Equipment> use => () => use(ref this.equipmentMB.equipment),
+			RefAction<Health> use => () => use(ref this.health),
 			_ => fallback,
 		};
 	}
