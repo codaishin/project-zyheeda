@@ -12,8 +12,7 @@ public class TargetingSOTests : TestCollection
 	{
 		public Func<object, (object, bool)> tryHit = _ => (null, false);
 
-		public bool Try<T>(T source, out T target)
-		{
+		public bool Try<T>(T source, out T target) {
 			(object hit, bool success) = this.tryHit(source);
 			target = hit == null ? default : (T)hit;
 			return success;
@@ -27,8 +26,7 @@ public class TargetingSOTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator AddTarget()
-	{
+	public IEnumerator AddTarget() {
 		var targets = new List<CharacterSheetMB>();
 		var target = new GameObject("target").AddComponent<CharacterSheetMB>();
 		var singleTarget = ScriptableObject.CreateInstance<TargetingSO>();
@@ -40,7 +38,9 @@ public class TargetingSOTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		var routine = singleTarget.Select(default, targets);
+		var routine = singleTarget
+			.Select(default, targets)
+			.GetEnumerator();
 		routine.MoveNext();
 		singleTarget.selectTarget.Raise();
 
@@ -48,8 +48,7 @@ public class TargetingSOTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator InjectSourceInHitTry()
-	{
+	public IEnumerator InjectSourceInHitTry() {
 		var targets = new List<CharacterSheetMB>();
 		var source = new GameObject("target").AddComponent<CharacterSheetMB>();
 		var singleTarget = ScriptableObject.CreateInstance<TargetingSO>();
@@ -61,7 +60,9 @@ public class TargetingSOTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		var routine = singleTarget.Select(source, targets);
+		var routine = singleTarget
+			.Select(source, targets)
+			.GetEnumerator();
 		routine.MoveNext();
 		singleTarget.selectTarget.Raise();
 
@@ -69,8 +70,7 @@ public class TargetingSOTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator DontAddTargetWhenNoHit()
-	{
+	public IEnumerator DontAddTargetWhenNoHit() {
 		var targets = new List<CharacterSheetMB>();
 		var target = new GameObject("target").AddComponent<CharacterSheetMB>();
 		var singleTarget = ScriptableObject.CreateInstance<TargetingSO>();
@@ -82,7 +82,9 @@ public class TargetingSOTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		var routine = singleTarget.Select(default, targets);
+		var routine = singleTarget
+			.Select(default, targets)
+			.GetEnumerator();
 		routine.MoveNext();
 		singleTarget.selectTarget.Raise();
 
@@ -90,8 +92,7 @@ public class TargetingSOTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator DontAddTargetWhenNoSelectTargetRaise()
-	{
+	public IEnumerator DontAddTargetWhenNoSelectTargetRaise() {
 		var targets = new List<CharacterSheetMB>();
 		var target = new GameObject("target").AddComponent<CharacterSheetMB>();
 		var singleTarget = ScriptableObject.CreateInstance<TargetingSO>();
@@ -103,15 +104,16 @@ public class TargetingSOTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		var routine = singleTarget.Select(default, targets);
+		var routine = singleTarget
+			.Select(default, targets)
+			.GetEnumerator();
 		routine.MoveNext();
 
 		CollectionAssert.IsEmpty(targets);
 	}
 
 	[UnityTest]
-	public IEnumerator YieldUntilSelectTargetRaise()
-	{
+	public IEnumerator YieldUntilSelectTargetRaise() {
 		var yields = new List<bool>();
 		var target = new GameObject("target").AddComponent<CharacterSheetMB>();
 		var singleTarget = ScriptableObject.CreateInstance<TargetingSO>();
@@ -123,7 +125,9 @@ public class TargetingSOTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		var routine = singleTarget.Select(default, new List<CharacterSheetMB>());
+		var routine = singleTarget
+			.Select(default, new List<CharacterSheetMB>())
+			.GetEnumerator();
 		yields.Add(routine.MoveNext());
 		yields.Add(routine.MoveNext());
 		singleTarget.selectTarget.Raise();
@@ -133,8 +137,7 @@ public class TargetingSOTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator YieldUntilHit()
-	{
+	public IEnumerator YieldUntilHit() {
 		var yields = new List<bool>();
 		var target = new GameObject("target").AddComponent<CharacterSheetMB>();
 		var singleTarget = ScriptableObject.CreateInstance<TargetingSO>();
@@ -146,7 +149,9 @@ public class TargetingSOTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		var routine = singleTarget.Select(default, new List<CharacterSheetMB>());
+		var routine = singleTarget
+			.Select(default, new List<CharacterSheetMB>())
+			.GetEnumerator();
 		yields.Add(routine.MoveNext());
 		singleTarget.selectTarget.Raise();
 		yields.Add(routine.MoveNext());
@@ -160,8 +165,7 @@ public class TargetingSOTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator SelectTargetListenerRemovedAfterRoutine()
-	{
+	public IEnumerator SelectTargetListenerRemovedAfterRoutine() {
 		var target = new GameObject("target").AddComponent<CharacterSheetMB>();
 		var targets = new List<CharacterSheetMB>();
 		var singleTarget = ScriptableObject.CreateInstance<TargetingSO>();
@@ -173,7 +177,9 @@ public class TargetingSOTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		var routine = singleTarget.Select(default, targets);
+		var routine = singleTarget
+			.Select(default, targets)
+			.GetEnumerator();
 		routine.MoveNext();
 		routine.MoveNext();
 		singleTarget.selectTarget.Raise();
@@ -184,8 +190,7 @@ public class TargetingSOTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator CancelSelectClearsTargets()
-	{
+	public IEnumerator CancelSelectClearsTargets() {
 		var targets = new List<CharacterSheetMB>();
 		var target = new GameObject("target").AddComponent<CharacterSheetMB>();
 		var singleTarget = ScriptableObject.CreateInstance<TargetingSO>();
@@ -197,7 +202,9 @@ public class TargetingSOTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		var routine = singleTarget.Select(default, targets);
+		var routine = singleTarget
+			.Select(default, targets)
+			.GetEnumerator();
 		routine.MoveNext();
 		singleTarget.selectTarget.Raise();
 		singleTarget.cancelSelect.Raise();
@@ -206,8 +213,7 @@ public class TargetingSOTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator YieldUntilCancel()
-	{
+	public IEnumerator YieldUntilCancel() {
 		var yields = new List<bool>();
 		var target = new GameObject("target").AddComponent<CharacterSheetMB>();
 		var singleTarget = ScriptableObject.CreateInstance<TargetingSO>();
@@ -218,7 +224,9 @@ public class TargetingSOTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		var routine = singleTarget.Select(default, new List<CharacterSheetMB>());
+		var routine = singleTarget
+			.Select(default, new List<CharacterSheetMB>())
+			.GetEnumerator();
 		yields.Add(routine.MoveNext());
 		yields.Add(routine.MoveNext());
 		yields.Add(routine.MoveNext());
@@ -229,8 +237,7 @@ public class TargetingSOTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator CancelSelectListenerRemovedAfterRoutine()
-	{
+	public IEnumerator CancelSelectListenerRemovedAfterRoutine() {
 		var targets = new List<CharacterSheetMB>();
 		var target = new GameObject("target").AddComponent<CharacterSheetMB>();
 		var singleTarget = ScriptableObject.CreateInstance<TargetingSO>();
@@ -241,7 +248,9 @@ public class TargetingSOTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		var routine = singleTarget.Select(default, targets);
+		var routine = singleTarget
+			.Select(default, targets)
+			.GetEnumerator();
 		routine.MoveNext();
 		routine.MoveNext();
 		singleTarget.cancelSelect.Raise();
@@ -254,8 +263,7 @@ public class TargetingSOTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator AddMultipleTargets()
-	{
+	public IEnumerator AddMultipleTargets() {
 		var i = 0;
 		var selectedTargets = new List<CharacterSheetMB>();
 		var targets = new CharacterSheetMB[] {
@@ -272,7 +280,9 @@ public class TargetingSOTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		var routine = singleTarget.Select(default, selectedTargets, maxCount: 3);
+		var routine = singleTarget
+			.Select(default, selectedTargets, maxCount: 3)
+			.GetEnumerator();
 		routine.MoveNext();
 		singleTarget.selectTarget.Raise();
 		routine.MoveNext();
@@ -285,8 +295,7 @@ public class TargetingSOTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator CancelSelectRemovesLastTarget()
-	{
+	public IEnumerator CancelSelectRemovesLastTarget() {
 		var i = 0;
 		var selectedTargets = new List<CharacterSheetMB>();
 		var targets = new CharacterSheetMB[] {
@@ -304,7 +313,9 @@ public class TargetingSOTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		var routine = singleTarget.Select(default, selectedTargets, maxCount: 4);
+		var routine = singleTarget
+			.Select(default, selectedTargets, maxCount: 4)
+			.GetEnumerator();
 		routine.MoveNext();
 		singleTarget.selectTarget.Raise();
 		routine.MoveNext();
@@ -319,8 +330,7 @@ public class TargetingSOTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator YieldUntilFullySelectedWithIntermediateCancel()
-	{
+	public IEnumerator YieldUntilFullySelectedWithIntermediateCancel() {
 		var yields = new List<bool>();
 		var selectedTargets = new List<CharacterSheetMB>();
 		var target = new GameObject("target").AddComponent<CharacterSheetMB>();
@@ -333,7 +343,9 @@ public class TargetingSOTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		var routine = singleTarget.Select(default, selectedTargets, maxCount: 3);
+		var routine = singleTarget
+			.Select(default, selectedTargets, maxCount: 3)
+			.GetEnumerator();
 		yields.Add(routine.MoveNext());
 		singleTarget.selectTarget.Raise();
 		yields.Add(routine.MoveNext());
@@ -353,8 +365,7 @@ public class TargetingSOTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator TerminateRoutinePrematurely()
-	{
+	public IEnumerator TerminateRoutinePrematurely() {
 		var yields = new List<bool>();
 		var target = new GameObject("target").AddComponent<CharacterSheetMB>();
 		var singleTarget = ScriptableObject.CreateInstance<TargetingSO>();
@@ -362,24 +373,25 @@ public class TargetingSOTests : TestCollection
 		singleTarget.hitter = hitter;
 		singleTarget.selectTarget = ScriptableObject.CreateInstance<EventSO>();
 		singleTarget.cancelSelect = ScriptableObject.CreateInstance<EventSO>();
-		singleTarget.upToMaxCount = true;
+		singleTarget.doubleSelectFinishes = true;
 		hitter.hit.tryHit = _ => (target, true);
 
 		yield return new WaitForEndOfFrame();
 
-		var routine = singleTarget.Select(default, new List<CharacterSheetMB>(), maxCount: 10);
+		var routine = singleTarget
+			.Select(default, new List<CharacterSheetMB>(), maxCount: 10)
+			.GetEnumerator();
 		yields.Add(routine.MoveNext());
 		singleTarget.selectTarget.Raise();
 		yields.Add(routine.MoveNext());
 		singleTarget.selectTarget.Raise();
 		yields.Add(routine.MoveNext());
 
-		CollectionAssert.AreEqual(new bool[] {true, true, false}, yields);
+		CollectionAssert.AreEqual(new bool[] { true, true, false }, yields);
 	}
 
 	[UnityTest]
-	public IEnumerator TerminateRoutinePrematurelyNoDoubles()
-	{
+	public IEnumerator TerminateRoutinePrematurelyNoDoubles() {
 		var targets = new List<CharacterSheetMB>();
 		var target = new GameObject("target").AddComponent<CharacterSheetMB>();
 		var singleTarget = ScriptableObject.CreateInstance<TargetingSO>();
@@ -387,12 +399,14 @@ public class TargetingSOTests : TestCollection
 		singleTarget.hitter = hitter;
 		singleTarget.selectTarget = ScriptableObject.CreateInstance<EventSO>();
 		singleTarget.cancelSelect = ScriptableObject.CreateInstance<EventSO>();
-		singleTarget.upToMaxCount = true;
+		singleTarget.doubleSelectFinishes = true;
 		hitter.hit.tryHit = _ => (target, true);
 
 		yield return new WaitForEndOfFrame();
 
-		var routine = singleTarget.Select(default, targets, maxCount: 10);
+		var routine = singleTarget
+			.Select(default, targets, maxCount: 10)
+			.GetEnumerator();
 		routine.MoveNext();
 		singleTarget.selectTarget.Raise();
 		routine.MoveNext();

@@ -45,4 +45,4 @@ MonoBehaviour:
   hitter: {fileID: 11400000, guid: 9370508409fd36d43b04301710bbfee6, type: 2}
   selectTarget: {fileID: 11400000, guid: 136a31d57e9535243bb250f7f588159c, type: 2}
   cancelSelect: {fileID: 11400000, guid: 6fe5b9ac0b8a2f54eba5e0613d8f2266, type: 2}
-  upToMaxCount: 0
+  doubleSelectFinishes: 0

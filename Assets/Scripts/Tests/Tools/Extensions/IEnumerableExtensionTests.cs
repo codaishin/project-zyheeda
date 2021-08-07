@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Collections.Generic;
 using NUnit.Framework;
@@ -9,8 +10,7 @@ public class IEnumerableExtensionTests : TestCollection
 	private class Mutable { public int value; }
 
 	[Test]
-	public void ForEach()
-	{
+	public void ForEach() {
 		var mutables = new Mutable[] {
 			new Mutable { value = 1 },
 			new Mutable { value = 2 },
@@ -26,8 +26,7 @@ public class IEnumerableExtensionTests : TestCollection
 	}
 
 	[Test]
-	public void OrEmptyThis()
-	{
+	public void OrEmptyThis() {
 		CollectionAssert.AreEqual(
 			new int[] { 1, 2, 3, 4 },
 			new int[] { 1, 2, 3, 4 }.OrEmpty()
@@ -35,15 +34,27 @@ public class IEnumerableExtensionTests : TestCollection
 	}
 
 	[Test]
-	public void OrEmptyNull()
-	{
+	public void OrEmptyNull() {
 		Assert.IsEmpty((null as int[]).OrEmpty());
 	}
 
 	[Test]
-	public void ConcatValue()
-	{
+	public void ConcatValue() {
 		var concatenated = new int[] { 1, 2, 3 }.Concat(4);
 		CollectionAssert.AreEqual(new int[] { 1, 2, 3, 4 }, concatenated);
+	}
+
+	[Test]
+	public void ApplyAllActions() {
+		var a = 1;
+		var b = "1";
+
+		var actions = new Action[] {
+			() => a += 1,
+			() => b += "1",
+		} as IEnumerable<Action>;
+		actions.Apply();
+
+		Assert.AreEqual((2, "11"), (a, b));
 	}
 }

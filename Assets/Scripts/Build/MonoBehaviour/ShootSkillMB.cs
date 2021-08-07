@@ -1,1 +1,3 @@
-public class ShootSkillMB : BaseSkillMB<EffectCollection, CastProjectile, CharacterSheetMB> {}
+public class ShootSkillMB :
+	SkillMB<CharacterSheetMB, EffectCollection, CastProjectile>
+{ }

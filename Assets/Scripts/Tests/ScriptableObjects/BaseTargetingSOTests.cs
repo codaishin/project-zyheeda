@@ -1,47 +1,45 @@
 using System;
 using System.Linq;
-using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.TestTools;
 
 public class BaseTargetingSOTests : TestCollection
 {
-	private class MockSheet {}
+	private class MockSheet { }
 
 	private class MockTargetingSO : BaseTargetingSO<MockSheet>
 	{
-		public Func<MockSheet, List<MockSheet>, int, IEnumerator<WaitForEndOfFrame>> doSelect =
-			(_, __, ___) => Enumerable.Empty<WaitForEndOfFrame>().GetEnumerator();
+		public Func<MockSheet, List<MockSheet>, int, IEnumerable<WaitForEndOfFrame>> doSelect =
+			(_, __, ___) => Enumerable.Empty<WaitForEndOfFrame>();
 
 		protected override
-		IEnumerator<WaitForEndOfFrame> DoSelect(MockSheet source, List<MockSheet> targets, int maxCount)
-		{
+		IEnumerable<WaitForEndOfFrame> DoSelect(MockSheet source, List<MockSheet> targets, int maxCount) {
 			return this.doSelect(source, targets, maxCount);
 		}
 	}
 
 	[Test]
-	public void RunDoSelect()
-	{
+	public void RunDoSelect() {
 		var called = (default(MockSheet), default(List<MockSheet>), 0);
 		var source = new MockSheet();
 		var list = new List<MockSheet>();
 		var targeting = ScriptableObject.CreateInstance<MockTargetingSO>();
 		targeting.doSelect = (s, t, c) => {
 			called = (s, t, c);
-			return Enumerable.Empty<WaitForEndOfFrame>().GetEnumerator();
+			return Enumerable.Empty<WaitForEndOfFrame>();
 		};
-		targeting.Select(source, list, 42).MoveNext();
+		targeting
+			.Select(source, list, 42)
+			.GetEnumerator()
+			.MoveNext();
 
 		Assert.AreEqual((source, list, 42), called);
 	}
 
 	[Test]
-	public void RunOnBeginSelect()
-	{
+	public void RunOnBeginSelect() {
 		var called = false;
 		var trigger = ScriptableObject.CreateInstance<EventSO>();
 		var targeting = ScriptableObject.CreateInstance<MockTargetingSO>();
@@ -49,14 +47,16 @@ public class BaseTargetingSOTests : TestCollection
 		targeting.onBeginSelect.AddListener(() => trigger.Raise());
 		trigger.Listeners += () => called = true;
 
-		targeting.Select(default, default, default).MoveNext();
+		targeting
+			.Select(default, default, default)
+			.GetEnumerator()
+			.MoveNext();
 
 		Assert.True(called);
 	}
 
 	[Test]
-	public void DontRunOnBeginSelectWhenNotIterating()
-	{
+	public void DontRunOnBeginSelectWhenNotIterating() {
 		var called = false;
 		var trigger = ScriptableObject.CreateInstance<EventSO>();
 		var targeting = ScriptableObject.CreateInstance<MockTargetingSO>();
@@ -70,8 +70,7 @@ public class BaseTargetingSOTests : TestCollection
 	}
 
 	[Test]
-	public void RunOnEndSelect()
-	{
+	public void RunOnEndSelect() {
 		var called = false;
 		var trigger = ScriptableObject.CreateInstance<EventSO>();
 		var targeting = ScriptableObject.CreateInstance<MockTargetingSO>();
@@ -79,18 +78,20 @@ public class BaseTargetingSOTests : TestCollection
 		targeting.onEndSelect.AddListener(() => trigger.Raise());
 		trigger.Listeners += () => called = true;
 
-		targeting.Select(default, default, default).MoveNext();
+		targeting
+			.Select(default, default, default)
+			.GetEnumerator()
+			.MoveNext();
 
 		Assert.True(called);
 	}
 
 	[Test]
-	public void DontRunOnEndSelectBeforeLastIteration()
-	{
+	public void DontRunOnEndSelectBeforeLastIteration() {
 		var called = false;
 		var trigger = ScriptableObject.CreateInstance<EventSO>();
 		var targeting = ScriptableObject.CreateInstance<MockTargetingSO>();
-		IEnumerator<WaitForEndOfFrame> select() {
+		IEnumerable<WaitForEndOfFrame> select() {
 			yield return new WaitForEndOfFrame();
 			yield return new WaitForEndOfFrame();
 		}
@@ -99,7 +100,9 @@ public class BaseTargetingSOTests : TestCollection
 		targeting.onEndSelect.AddListener(() => trigger.Raise());
 		trigger.Listeners += () => called = true;
 
-		var routine = targeting.Select(default, default, default);
+		var routine = targeting
+			.Select(default, default, default)
+			.GetEnumerator();
 		routine.MoveNext();
 
 		Assert.False(called);
