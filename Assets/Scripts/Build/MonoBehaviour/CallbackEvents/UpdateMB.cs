@@ -7,8 +7,7 @@ public class UpdateMB : MonoBehaviour
 {
 	public UnityEvent onUpdate;
 
-	private void Start()
-	{
+	private void Start() {
 		if (this.onUpdate == null) {
 			this.onUpdate = new UnityEvent();
 		}

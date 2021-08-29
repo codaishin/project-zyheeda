@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
@@ -7,8 +6,7 @@ using UnityEngine.TestTools;
 public class UpdateMBTests : TestCollection
 {
 	[UnityTest]
-	public IEnumerator OnUpdateNotNullAfterStart()
-	{
+	public IEnumerator OnUpdateNotNullAfterStart() {
 		var updateMB = new GameObject("obj").AddComponent<UpdateMB>();
 
 		yield return new WaitForEndOfFrame();
@@ -17,8 +15,7 @@ public class UpdateMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator OnUpdateNullDefault()
-	{
+	public IEnumerator OnUpdateNullDefault() {
 		var updateMB = new GameObject("obj").AddComponent<UpdateMB>();
 
 		Assert.Null(updateMB.onUpdate);
@@ -27,8 +24,7 @@ public class UpdateMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator OnUpdateCalled()
-	{
+	public IEnumerator OnUpdateCalled() {
 		var called = 0;
 		var updateMB = new GameObject("obj").AddComponent<UpdateMB>();
 
