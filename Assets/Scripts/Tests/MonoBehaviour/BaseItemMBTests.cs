@@ -6,19 +6,18 @@ using UnityEngine.TestTools;
 
 public class BaseItemMBTests : TestCollection
 {
-	private class MockSheet {}
+	private class MockSheet { }
 
-	private class MockSkillMB : MonoBehaviour, ISkill<MockSheet>
+	private class MockSkillMB : MonoBehaviour, IHasBegin, IHasSheet<MockSheet>
 	{
 		public MockSheet Sheet { get; set; }
 		public void Begin() => throw new System.NotImplementedException();
 	}
 
-	private class MockItem : BaseItemMB<MockSheet> {}
+	private class MockItem : BaseItemMB<MockSkillMB, MockSheet> { }
 
 	[UnityTest]
-	public IEnumerator SetSkillSheet()
-	{
+	public IEnumerator SetSkillSheet() {
 		var sheet = new MockSheet();
 		var item = new GameObject("item").AddComponent<MockItem>();
 		var skills = new MockSkillMB[] {
@@ -38,8 +37,7 @@ public class BaseItemMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator GetSheet()
-	{
+	public IEnumerator GetSheet() {
 		var sheet = new MockSheet();
 		var item = new GameObject("item").AddComponent<MockItem>();
 
@@ -51,8 +49,7 @@ public class BaseItemMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator SetSheetBeforeStartNoThrow()
-	{
+	public IEnumerator SetSheetBeforeStartNoThrow() {
 		var item = new GameObject("item").AddComponent<MockItem>();
 
 		Assert.DoesNotThrow(() => item.Sheet = new MockSheet());
@@ -61,8 +58,7 @@ public class BaseItemMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator SetSheetFromBeforeStart()
-	{
+	public IEnumerator SetSheetFromBeforeStart() {
 		var sheet = new MockSheet();
 		var item = new GameObject("item").AddComponent<MockItem>();
 
@@ -83,8 +79,7 @@ public class BaseItemMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator GetSkills()
-	{
+	public IEnumerator GetSkills() {
 		var item = new GameObject("item").AddComponent<MockItem>();
 		var skills = new MockSkillMB[] {
 			item.gameObject.AddComponent<MockSkillMB>(),

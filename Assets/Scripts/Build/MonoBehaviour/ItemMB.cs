@@ -1,1 +1,3 @@
-public class ItemMB : BaseItemMB<CharacterSheetMB> {}
+public class ItemMB :
+	BaseItemMB<BaseSkillMB<CharacterSheetMB>, CharacterSheetMB>
+{ }

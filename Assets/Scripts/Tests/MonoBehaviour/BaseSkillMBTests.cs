@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
@@ -9,74 +10,59 @@ public class BaseSkillMBTests : TestCollection
 {
 	private class MockSheet { }
 
+	private delegate IEnumerable<WaitForEndOfFrame> SelectFn(
+		MockSheet sheet,
+		List<MockSheet> targets,
+		int maxCount
+	);
+
 	private class MockTargetingSO : BaseTargetingSO<MockSheet>
 	{
-		public WaitForEndOfFrame[] yields = new WaitForEndOfFrame[0];
-		public Action<MockSheet, List<MockSheet>, int> select = (_, __, ___) => {};
+		public SelectFn doSelect
+			= (_, __, ___) => Enumerable.Empty<WaitForEndOfFrame>();
 
-		protected override
-		IEnumerator<WaitForEndOfFrame> DoSelect(MockSheet source, List<MockSheet> targets, int maxCount = 1)
-		{
-			this.select(source, targets, maxCount);
-			foreach (var yield in this.yields) {
-				yield return yield;
-			}
-		}
+		protected override IEnumerable<WaitForEndOfFrame> DoSelect(
+			MockSheet source,
+			List<MockSheet> targets,
+			int maxCount
+		) => this.doSelect(source, targets, maxCount);
 	}
 
-	private class MockCast : ICast<MockSheet>
+	private class MockSkillMB : BaseSkillMB<MockSheet>
 	{
-		public Func<MockSheet, IEnumerator<WaitForFixedUpdate>> apply = MockCast.BaseApply;
-		public IEnumerator<WaitForFixedUpdate> Apply(MockSheet target) => this.apply(target);
-		private static IEnumerator<WaitForFixedUpdate> BaseApply(MockSheet _) { yield break; }
-	}
+		public Action<MockSheet, MockSheet> applyEffects
+			= (s, t) => { };
+		public Func<MockSheet, IEnumerator<WaitForFixedUpdate>> applyCast
+			= _ => Enumerable.Empty<WaitForFixedUpdate>().GetEnumerator();
 
-	private class MockEffect : IEffectCollection<MockSheet>
-	{
-		public Action<MockSheet, MockSheet> apply = (s, t) => {};
-		public void Apply(MockSheet source, MockSheet target) => this.apply(source, target);
-	}
+		protected override void ApplyEffects(
+			MockSheet source,
+			MockSheet target
+		) => this.applyEffects(source, target);
 
-	private class MockSkillMB : BaseSkillMB<MockEffect, MockCast, MockSheet> {}
-
-	[UnityTest]
-	public IEnumerator Begin()
-	{
-		var applied = false;
-		var target = new MockSheet();
-		var skill = new GameObject("item").AddComponent<MockSkillMB>();
-		var targeting = ScriptableObject.CreateInstance<MockTargetingSO>();
-		skill.Sheet = new MockSheet();
-		skill.targeting = targeting;
-		targeting.select = (_, targets, __) => targets.Add(target);
-
-		IEnumerator<WaitForFixedUpdate> applyCast(MockSheet _) {
-			applied = true;
-			yield break;
-		}
-
-		skill.cast.apply = applyCast;
-
-		yield return new WaitForEndOfFrame();
-
-		skill.Begin();
-
-		Assert.True(applied);
+		protected override IEnumerator<WaitForFixedUpdate> ApplyCast(
+			MockSheet target
+		) => this.applyCast(target);
 	}
 
 	[UnityTest]
-	public IEnumerator TargetingFromSource()
-	{
+	public IEnumerator TargetingFromSource() {
 		var source = default(object);
-		var target = new MockSheet();
 		var skill = new GameObject("item").AddComponent<MockSkillMB>();
 		var targeting = ScriptableObject.CreateInstance<MockTargetingSO>();
+
+		IEnumerable<WaitForEndOfFrame> selectTargets(
+			MockSheet targetingSource,
+			List<MockSheet> _,
+			int __
+		) {
+			source = targetingSource;
+			yield break;
+		};
+
+		targeting.doSelect = selectTargets;
 		skill.Sheet = new MockSheet();
 		skill.targeting = targeting;
-		targeting.select = (s, targets, __) => {
-			source = s;
-			targets.Add(target);
-		};
 
 		yield return new WaitForEndOfFrame();
 
@@ -86,19 +72,24 @@ public class BaseSkillMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator TargetingWithMaxCount()
-	{
+	public IEnumerator TargetingWithMaxCount() {
 		var called = 0;
-		var target = new MockSheet();
 		var skill = new GameObject("item").AddComponent<MockSkillMB>();
 		var targeting = ScriptableObject.CreateInstance<MockTargetingSO>();
-		skill.Sheet = new MockSheet();
-		skill.maxTargetCount = 42;
-		skill.targeting = targeting;
-		targeting.select = (_, targets, mC) => {
+
+		IEnumerable<WaitForEndOfFrame> selectTargets(
+			MockSheet _,
+			List<MockSheet> __,
+			int mC
+		) {
 			called = mC;
-			targets.Add(target);
+			yield break;
 		};
+
+		targeting.doSelect = selectTargets;
+		skill.targeting = targeting;
+		skill.maxTargetCount = 42;
+		skill.Sheet = new MockSheet();
 
 		yield return new WaitForEndOfFrame();
 
@@ -108,17 +99,25 @@ public class BaseSkillMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator ApplyEffect()
-	{
+	public IEnumerator ApplyEffect() {
 		var got = (default(MockSheet), default(MockSheet));
 		var target = new MockSheet();
 		var skill = new GameObject("item").AddComponent<MockSkillMB>();
 		var targeting = ScriptableObject.CreateInstance<MockTargetingSO>();
-		skill.Sheet = new MockSheet();
-		skill.targeting = targeting;
-		targeting.select = (_, targets, __) => targets.Add(target);
 
-		skill.effectCollection.apply = (s, t) => got = (s, t);
+		IEnumerable<WaitForEndOfFrame> selectTargets(
+			MockSheet _,
+			List<MockSheet> targets,
+			int __
+		) {
+			targets.Add(target);
+			yield break;
+		}
+
+		targeting.doSelect = selectTargets;
+		skill.targeting = targeting;
+		skill.applyEffects = (s, t) => got = (s, t);
+		skill.Sheet = new MockSheet();
 
 		yield return new WaitForEndOfFrame();
 
@@ -128,21 +127,27 @@ public class BaseSkillMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator ApplyEffectPerTarget()
-	{
+	public IEnumerator ApplyEffectPerTarget() {
 		var got = new List<(MockSheet, MockSheet)>();
 		var targetA = new MockSheet();
 		var targetB = new MockSheet();
 		var skill = new GameObject("item").AddComponent<MockSkillMB>();
 		var targeting = ScriptableObject.CreateInstance<MockTargetingSO>();
-		skill.Sheet = new MockSheet();
-		skill.targeting = targeting;
-		targeting.select = (_, targets, __) => {
+
+		IEnumerable<WaitForEndOfFrame> selectTargets(
+			MockSheet _,
+			List<MockSheet> targets,
+			int __
+		) {
 			targets.Add(targetA);
 			targets.Add(targetB);
-		};
+			yield break;
+		}
 
-		skill.effectCollection.apply = (s, t) => got.Add((s, t));
+		targeting.doSelect = selectTargets;
+		skill.targeting = targeting;
+		skill.applyEffects = (s, t) => got.Add((s, t));
+		skill.Sheet = new MockSheet();
 
 		yield return new WaitForEndOfFrame();
 
@@ -159,19 +164,22 @@ public class BaseSkillMBTests : TestCollection
 
 
 	[UnityTest]
-	public IEnumerator ApplyEffectPerTargetParallel()
-	{
+	public IEnumerator ApplyEffectPerTargetParallel() {
 		var got = string.Empty;
 		var targetA = new MockSheet();
 		var targetB = new MockSheet();
 		var skill = new GameObject("item").AddComponent<MockSkillMB>();
 		var targeting = ScriptableObject.CreateInstance<MockTargetingSO>();
-		skill.Sheet = new MockSheet();
-		skill.targeting = targeting;
-		targeting.select = (_, targets, __) => {
+
+		IEnumerable<WaitForEndOfFrame> selectTargets(
+			MockSheet _,
+			List<MockSheet> targets,
+			int __
+		) {
 			targets.Add(targetA);
 			targets.Add(targetB);
-		};
+			yield break;
+		}
 
 		IEnumerator<WaitForFixedUpdate> castApply(MockSheet target) {
 			got += target == targetA ? "A" : "B";
@@ -180,7 +188,10 @@ public class BaseSkillMBTests : TestCollection
 			yield return new WaitForFixedUpdate();
 		}
 
-		skill.cast.apply = castApply;
+		targeting.doSelect = selectTargets;
+		skill.targeting = targeting;
+		skill.applyCast = castApply;
+		skill.Sheet = new MockSheet();
 
 		yield return new WaitForEndOfFrame();
 
@@ -193,15 +204,20 @@ public class BaseSkillMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator ApplyEffectAfterCast()
-	{
+	public IEnumerator ApplyEffectAfterCast() {
 		var got = new List<(MockSheet, MockSheet)>();
 		var target = new MockSheet();
 		var skill = new GameObject("item").AddComponent<MockSkillMB>();
 		var targeting = ScriptableObject.CreateInstance<MockTargetingSO>();
-		skill.Sheet = new MockSheet();
-		skill.targeting = targeting;
-		targeting.select = (_, targets, __) => targets.Add(target);
+
+		IEnumerable<WaitForEndOfFrame> selectTargets(
+			MockSheet _,
+			List<MockSheet> targets,
+			int __
+		) {
+			targets.Add(target);
+			yield break;
+		}
 
 		IEnumerator<WaitForFixedUpdate> applyCast(MockSheet t) {
 			got.Add((default, t));
@@ -210,8 +226,11 @@ public class BaseSkillMBTests : TestCollection
 			yield return new WaitForFixedUpdate();
 		}
 
-		skill.cast.apply = applyCast;
-		skill.effectCollection.apply = (s, t) => got.Add((s, t));
+		targeting.doSelect = selectTargets;
+		skill.targeting = targeting;
+		skill.applyCast = applyCast;
+		skill.applyEffects = (s, t) => got.Add((s, t));
+		skill.Sheet = new MockSheet();
 
 		yield return new WaitForEndOfFrame();
 
@@ -231,23 +250,26 @@ public class BaseSkillMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator BeginCooldownAfterSelect()
-	{
+	public IEnumerator BeginCooldownAfterSelect() {
 		var applied = 0;
 		var target = new MockSheet();
 		var skill = new GameObject("item").AddComponent<MockSkillMB>();
 		var targeting = ScriptableObject.CreateInstance<MockTargetingSO>();
-		skill.Sheet = new MockSheet();
-		skill.targeting = targeting;
-		targeting.select = (_, targets, __) => {
+
+		IEnumerable<WaitForEndOfFrame> selectTargets(
+			MockSheet _,
+			List<MockSheet> targets,
+			int __
+		) {
 			++applied;
 			targets.Add(target);
-		};
+			yield return new WaitForEndOfFrame();
+		}
 
-		targeting.yields = new WaitForEndOfFrame[] {
-			new WaitForEndOfFrame(),
-		};
+		targeting.doSelect = selectTargets;
+		skill.targeting = targeting;
 		skill.applyPerSecond = 1;
+		skill.Sheet = new MockSheet();
 
 		yield return new WaitForEndOfFrame();
 
@@ -258,17 +280,24 @@ public class BaseSkillMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator BeginCooldownOnlyWhenTargetsFound()
-	{
+	public IEnumerator BeginCooldownOnlyWhenTargetsFound() {
 		var applied = 0;
-		var target = new MockSheet();
 		var skill = new GameObject("item").AddComponent<MockSkillMB>();
 		var targeting = ScriptableObject.CreateInstance<MockTargetingSO>();
-		skill.Sheet = new MockSheet();
-		skill.targeting = targeting;
-		targeting.select = (_, __, ___) => ++applied;
 
+		IEnumerable<WaitForEndOfFrame> selectTargets(
+			MockSheet _,
+			List<MockSheet> targets,
+			int __
+		) {
+			++applied;
+			yield break;
+		}
+
+		targeting.doSelect = selectTargets;
+		skill.targeting = targeting;
 		skill.applyPerSecond = 1;
+		skill.Sheet = new MockSheet();
 
 		yield return new WaitForEndOfFrame();
 
@@ -279,23 +308,31 @@ public class BaseSkillMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator DontBeginDuringCooldown()
-	{
+	public IEnumerator DontBeginDuringCooldown() {
 		var applied = 0;
 		var target = new MockSheet();
 		var skill = new GameObject("item").AddComponent<MockSkillMB>();
 		var targeting = ScriptableObject.CreateInstance<MockTargetingSO>();
-		skill.Sheet = new MockSheet();
-		skill.targeting = targeting;
-		targeting.select = (_, targets, __) => targets.Add(target);
+
+		IEnumerable<WaitForEndOfFrame> selectTargets(
+			MockSheet _,
+			List<MockSheet> targets,
+			int __
+		) {
+			targets.Add(target);
+			yield break;
+		}
 
 		IEnumerator<WaitForFixedUpdate> applyCast(MockSheet _) {
 			++applied;
 			yield break;
 		}
 
-		skill.cast.apply = applyCast;
+		targeting.doSelect = selectTargets;
+		skill.targeting = targeting;
+		skill.applyCast = applyCast;
 		skill.applyPerSecond = 1;
+		skill.Sheet = new MockSheet();
 
 		yield return new WaitForEndOfFrame();
 
@@ -306,28 +343,34 @@ public class BaseSkillMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator WaitForTargetingRoutine()
-	{
+	public IEnumerator WaitForTargetingRoutine() {
 		var applied = false;
 		var target = new MockSheet();
 		var skill = new GameObject("item").AddComponent<MockSkillMB>();
 		var targeting = ScriptableObject.CreateInstance<MockTargetingSO>();
-		skill.Sheet = new MockSheet();
-		skill.targeting = targeting;
-		targeting.yields = new WaitForEndOfFrame[]{
-			new WaitForEndOfFrame(),
-			new WaitForEndOfFrame(),
-			new WaitForEndOfFrame(),
-			new WaitForEndOfFrame(),
-			new WaitForEndOfFrame(),
-		};
+
+		IEnumerable<WaitForEndOfFrame> selectTargets(
+			MockSheet _,
+			List<MockSheet> targets,
+			int __
+		) {
+			targets.Add(target);
+			yield return new WaitForEndOfFrame();
+			yield return new WaitForEndOfFrame();
+			yield return new WaitForEndOfFrame();
+			yield return new WaitForEndOfFrame();
+			yield return new WaitForEndOfFrame();
+		}
 
 		IEnumerator<WaitForFixedUpdate> applyCast(MockSheet _) {
 			applied = true;
 			yield break;
 		}
 
-		skill.cast.apply = applyCast;
+		targeting.doSelect = selectTargets;
+		skill.targeting = targeting;
+		skill.applyCast = applyCast;
+		skill.Sheet = new MockSheet();
 
 		yield return new WaitForEndOfFrame();
 
@@ -337,23 +380,31 @@ public class BaseSkillMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator BeginAfterCooldown()
-	{
+	public IEnumerator BeginAfterCooldown() {
 		var applied = 0;
 		var target = new MockSheet();
 		var skill = new GameObject("item").AddComponent<MockSkillMB>();
 		var targeting = ScriptableObject.CreateInstance<MockTargetingSO>();
-		skill.Sheet = new MockSheet();
-		skill.targeting = targeting;
-		targeting.select = (_, targets, __) => targets.Add(target);
+
+		IEnumerable<WaitForEndOfFrame> selectTargets(
+			MockSheet _,
+			List<MockSheet> targets,
+			int __
+		) {
+			targets.Add(target);
+			yield break;
+		}
 
 		IEnumerator<WaitForFixedUpdate> applyCast(MockSheet _) {
 			++applied;
 			yield break;
 		}
 
-		skill.cast.apply = applyCast;
+		targeting.doSelect = selectTargets;
+		skill.targeting = targeting;
+		skill.applyCast = applyCast;
 		skill.applyPerSecond = 10;
+		skill.Sheet = new MockSheet();
 
 		yield return new WaitForEndOfFrame();
 
@@ -367,22 +418,30 @@ public class BaseSkillMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator BeginWithNoCooldown()
-	{
+	public IEnumerator BeginWithNoCooldown() {
 		var applied = 0;
 		var target = new MockSheet();
 		var skill = new GameObject("item").AddComponent<MockSkillMB>();
 		var targeting = ScriptableObject.CreateInstance<MockTargetingSO>();
-		skill.Sheet = new MockSheet();
-		skill.targeting = targeting;
-		targeting.select = (_, targets, __) => targets.Add(target);
+
+		IEnumerable<WaitForEndOfFrame> selectTargets(
+			MockSheet _,
+			List<MockSheet> targets,
+			int __
+		) {
+			targets.Add(target);
+			yield break;
+		}
 
 		IEnumerator<WaitForFixedUpdate> applyCast(MockSheet _) {
 			++applied;
 			yield break;
 		}
 
-		skill.cast.apply = applyCast;
+		targeting.doSelect = selectTargets;
+		skill.targeting = targeting; ;
+		skill.applyCast = applyCast;
+		skill.Sheet = new MockSheet();
 
 		yield return new WaitForEndOfFrame();
 

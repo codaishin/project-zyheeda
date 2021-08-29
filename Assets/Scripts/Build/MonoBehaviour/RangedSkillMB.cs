@@ -1,1 +1,3 @@
-public class RangedSkillMB : BaseSkillMB<EffectCollection, CastProjectile, CharacterSheetMB> {}
+public class RangedSkillMB :
+	SkillMB<CharacterSheetMB, EffectCollection, CastProjectile>
+{ }

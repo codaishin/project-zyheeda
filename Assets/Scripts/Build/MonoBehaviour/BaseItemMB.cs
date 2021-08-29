@@ -1,8 +1,13 @@
 using UnityEngine;
 
-public abstract class BaseItemMB<TSheet> : MonoBehaviour
+public abstract class BaseItemMB<TSkill, TSheet> :
+	MonoBehaviour,
+	IHasSkills<TSkill>
+	where TSkill :
+		IHasBegin,
+		IHasSheet<TSheet>
 {
-	private ISkill<TSheet>[] skills;
+	private TSkill[] skills;
 	private TSheet sheet;
 
 	public TSheet Sheet {
@@ -13,16 +18,14 @@ public abstract class BaseItemMB<TSheet> : MonoBehaviour
 		}
 	}
 
-	public ISkill<TSheet>[] Skills => this.skills;
+	public TSkill[] Skills => this.skills;
 
-	private void Start()
-	{
-		this.skills = this.GetComponents<ISkill<TSheet>>();
+	private void Start() {
+		this.skills = this.GetComponents<TSkill>();
 		this.AssignSkillsSheet();
 	}
 
-	private void AssignSkillsSheet()
-	{
+	private void AssignSkillsSheet() {
 		this.skills?.ForEach(s => s.Sheet = this.sheet);
 	}
 }
