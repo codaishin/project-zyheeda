@@ -1606,9 +1606,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1453732929}
-  - component: {fileID: 1453732932}
   - component: {fileID: 1453732934}
   - component: {fileID: 1453732930}
+  - component: {fileID: 1453732932}
+  - component: {fileID: 1453732931}
   m_Layer: 0
   m_Name: Gun
   m_TagString: Untagged
@@ -1658,6 +1659,33 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &1453732931
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1453732928}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad376995a65d7744db54c2136c223657, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  applyPerSecond: 1
+  maxTargetCount: 1
+  targeting: {fileID: 11400000, guid: be9c8b64a24360745b325905ac21ef62, type: 2}
+  effectCollection:
+    effectData:
+    - intensity: 5
+      duration: 0
+      silence: 2
+      factory: {fileID: 11400000, guid: 922d7b5d3f46bb84baa43946921a77b6, type: 2}
+  cast:
+    magazine:
+      projectilePrefab: {fileID: 8992679554399984682}
+      projectileStorage: {fileID: 1453732929}
+    projectileSpawn: {fileID: 7728212569146213376}
+    projectileSpeed: 20
 --- !u!114 &1453732932
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1945,6 +1973,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 554762682498061452, guid: c2ab0f7c111be8a4caa4d287c7cf9474, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 554762682498061452, guid: c2ab0f7c111be8a4caa4d287c7cf9474, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4401046520164549637, guid: c2ab0f7c111be8a4caa4d287c7cf9474, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c2ab0f7c111be8a4caa4d287c7cf9474, type: 3}
 --- !u!1001 &1656181589147222508
@@ -2160,6 +2200,30 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3126088106883075294, guid: bf447ba10ce81fc409c8597b6aa35a6e, type: 3}
+      propertyPath: equipment.records.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3126088106883075294, guid: bf447ba10ce81fc409c8597b6aa35a6e, type: 3}
+      propertyPath: equipment.records.Array.data[1].key
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3126088106883075294, guid: bf447ba10ce81fc409c8597b6aa35a6e, type: 3}
+      propertyPath: equipment.records.Array.data[0].name
+      value: MainHand
+      objectReference: {fileID: 0}
+    - target: {fileID: 3126088106883075294, guid: bf447ba10ce81fc409c8597b6aa35a6e, type: 3}
+      propertyPath: equipment.records.Array.data[1].name
+      value: OffHand
+      objectReference: {fileID: 0}
+    - target: {fileID: 3126088106883075294, guid: bf447ba10ce81fc409c8597b6aa35a6e, type: 3}
+      propertyPath: equipment.records.Array.data[0].value
+      value: 
+      objectReference: {fileID: 1453732934}
+    - target: {fileID: 3126088106883075294, guid: bf447ba10ce81fc409c8597b6aa35a6e, type: 3}
+      propertyPath: equipment.records.Array.data[1].value
+      value: 
+      objectReference: {fileID: 1453732934}
     - target: {fileID: 7728212569935627539, guid: bf447ba10ce81fc409c8597b6aa35a6e, type: 3}
       propertyPath: m_RootOrder
       value: 3
