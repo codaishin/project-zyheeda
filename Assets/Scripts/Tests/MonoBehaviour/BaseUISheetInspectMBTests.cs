@@ -8,10 +8,15 @@ public class BaseUISheetInspectMBTests : TestCollection
 {
 	private class MockSheet : ISections
 	{
-		public Func<Delegate, Action, Action> useSection = (_, fb) => fb;
+		public Func<Delegate, Action?, Action> useSection
+			= (_, __)
+			=> ()
+			=> throw new NotImplementedException();
 
-		public Action UseSection<TSection>(RefAction<TSection> action, Action fallback) =>
-			this.useSection(action, fallback);
+		public Action UseSection<TSection>(
+			RefAction<TSection> action,
+			Action? fallback
+		) => this.useSection(action, fallback);
 	}
 
 	private class MockUIInspectHealth : BaseUIInspectorMB<Health>
@@ -20,16 +25,17 @@ public class BaseUISheetInspectMBTests : TestCollection
 		public override void Set(Health health) => this.hp = health.hp;
 	}
 
-	private class MockUISheetInspectMB : BaseUISheetInspectMB<MockSheet> {}
+	private class MockUISheetInspectMB : BaseUISheetInspectMB<MockSheet> { }
 
 	[UnityTest]
-	public IEnumerator MonitorHealth()
-	{
-		var health = new Health{ hp = 42f };
-		var sheet = new MockSheet{ useSection = (d, fb) => d switch {
-			RefAction<Health> u => () => u(ref health),
-			_ => fb,
-		}};
+	public IEnumerator MonitorHealth() {
+		var health = new Health { hp = 42f };
+		var sheet = new MockSheet {
+			useSection = (d, fb) => d switch {
+				RefAction<Health> u => () => u(ref health),
+				_ => fb ?? (() => throw new NotImplementedException()),
+			}
+		};
 		var inspect = new GameObject("inspector").AddComponent<MockUISheetInspectMB>();
 		var uIHealth = new GameObject("health").AddComponent<MockUIInspectHealth>();
 		inspect.uIHealth = uIHealth;
@@ -43,27 +49,14 @@ public class BaseUISheetInspectMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator DefaultFallbackHandled()
-	{
-		var sheet = new MockSheet{ useSection = (_, __) => default };
-		var inspect = new GameObject("inspector").AddComponent<MockUISheetInspectMB>();
-		var uIHealth = new GameObject("health").AddComponent<MockUIInspectHealth>();
-		inspect.uIHealth = uIHealth;
-
-		yield return new WaitForEndOfFrame();
-
-		inspect.SetSheet(sheet);
-		Assert.DoesNotThrow(() => inspect.Monitor());
-	}
-
-	[UnityTest]
-	public IEnumerator Clear()
-	{
+	public IEnumerator Clear() {
 		var health = new Health();
-		var sheet = new MockSheet{ useSection = (d, fb) => d switch {
-			RefAction<Health> u => () => u(ref health),
-			_ => fb,
-		}};
+		var sheet = new MockSheet {
+			useSection = (d, fb) => d switch {
+				RefAction<Health> u => () => u(ref health),
+				_ => fb ?? (() => throw new NotImplementedException()),
+			}
+		};
 		var inspect = new GameObject("inspector").AddComponent<MockUISheetInspectMB>();
 		var uIHealth = new GameObject("health").AddComponent<MockUIInspectHealth>();
 		inspect.uIHealth = uIHealth;

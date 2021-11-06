@@ -6,7 +6,7 @@ public class BaseMapValueToContentMBTests : TestCollection
 {
 	class MockCollection : IHasValue<int[]>
 	{
-		public int[] Value { get; set; }
+		public int[] Value { get; set; } = new int[0];
 	}
 
 	class MockGatewayMB : BaseMapValueToContentMB<string[], int[], MockCollection>

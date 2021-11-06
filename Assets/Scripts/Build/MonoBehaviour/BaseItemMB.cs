@@ -7,25 +7,25 @@ public abstract class BaseItemMB<TSkill, TSheet> :
 		IHasBegin,
 		IHasSheet<TSheet>
 {
-	private TSkill[] skills;
-	private TSheet sheet;
+	private TSkill[]? skills;
+	private TSheet? sheet;
 
 	public TSheet Sheet {
-		get => this.sheet;
-		set {
-			this.sheet = value;
-			this.AssignSkillsSheet();
-		}
+		get => this.sheet ?? throw this.NullError();
+		set => this.MapSheet(value);
 	}
 
-	public TSkill[] Skills => this.skills;
+	public TSkill[] Skills => this.skills ?? throw this.NullError();
 
 	private void Start() {
 		this.skills = this.GetComponents<TSkill>();
-		this.AssignSkillsSheet();
+		if (this.sheet != null) {
+			this.MapSheet(this.sheet);
+		}
 	}
 
-	private void AssignSkillsSheet() {
-		this.skills?.ForEach(s => s.Sheet = this.sheet);
+	private void MapSheet(TSheet sheet) {
+		this.sheet = sheet;
+		this.skills?.ForEach(s => s.Sheet = sheet);
 	}
 }

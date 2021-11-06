@@ -7,12 +7,11 @@ using UnityEngine;
 public class Magazine : IMagazine
 {
 	private List<GameObject> projectiles = new List<GameObject>();
+	public GameObject? projectilePrefab;
+	public Transform? projectileStorage;
 
-	public GameObject projectilePrefab;
-	public Transform projectileStorage;
-
-	private GameObject MakeProjectile()
-	{
+	private GameObject MakeProjectile() {
+		if (this.projectilePrefab == null) throw this.NullError();
 		GameObject projectile = GameObject.Instantiate(this.projectilePrefab);
 		this.projectiles.Add(projectile);
 		return projectile;
@@ -23,14 +22,12 @@ public class Magazine : IMagazine
 			.Where(p => !p.gameObject.activeSelf)
 			.FirstOrDefault();
 
-	private void StoreProjectile(GameObject projectile)
-	{
+	private void StoreProjectile(GameObject projectile) {
 		projectile.SetActive(false);
 		projectile.transform.SetParent(this.projectileStorage);
 	}
 
-	public Disposable<GameObject> GetOrMakeProjectile()
-	{
+	public Disposable<GameObject> GetOrMakeProjectile() {
 		if (!this.GetProjectile(out GameObject projectile)) {
 			projectile = this.MakeProjectile();
 		}

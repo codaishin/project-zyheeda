@@ -7,8 +7,7 @@ using UnityEngine.TestTools;
 public class EventListenerMBTests : TestCollection
 {
 	[UnityTest]
-	public IEnumerator OnRaiseNotNullAfterStart()
-	{
+	public IEnumerator OnRaiseNotNullAfterStart() {
 		var listenerMB = new GameObject("obj").AddComponent<EventListenerMB>();
 		var eventSO = ScriptableObject.CreateInstance<EventSO>();
 
@@ -20,8 +19,7 @@ public class EventListenerMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator OnRaiseDefaultNull()
-	{
+	public IEnumerator OnRaiseDefaultNull() {
 		var listenerMB = new GameObject("obj").AddComponent<EventListenerMB>();
 
 		Assert.Null(listenerMB.onRaise);
@@ -30,8 +28,7 @@ public class EventListenerMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator Listen()
-	{
+	public IEnumerator Listen() {
 		var called = 0;
 		var listenerMB = new GameObject("obj").AddComponent<EventListenerMB>();
 		var eventSO = ScriptableObject.CreateInstance<EventSO>();
@@ -40,7 +37,7 @@ public class EventListenerMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		listenerMB.onRaise.AddListener(() => ++called);
+		listenerMB.onRaise!.AddListener(() => ++called);
 
 		yield return new WaitForEndOfFrame();
 
@@ -50,8 +47,7 @@ public class EventListenerMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator NoRaiseWhenGOInactive()
-	{
+	public IEnumerator NoRaiseWhenGOInactive() {
 		var called = 0;
 		var listenerMB = new GameObject("obj").AddComponent<EventListenerMB>();
 		var eventSO = ScriptableObject.CreateInstance<EventSO>();
@@ -60,7 +56,7 @@ public class EventListenerMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		listenerMB.onRaise.AddListener(() => ++called);
+		listenerMB.onRaise!.AddListener(() => ++called);
 
 		yield return new WaitForEndOfFrame();
 
@@ -74,8 +70,7 @@ public class EventListenerMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator NoRaiseWhenDisabled()
-	{
+	public IEnumerator NoRaiseWhenDisabled() {
 		var called = 0;
 		var listenerMB = new GameObject("obj").AddComponent<EventListenerMB>();
 		var eventSO = ScriptableObject.CreateInstance<EventSO>();
@@ -84,7 +79,7 @@ public class EventListenerMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		listenerMB.onRaise.AddListener(() => ++called);
+		listenerMB.onRaise!.AddListener(() => ++called);
 
 		yield return new WaitForEndOfFrame();
 
@@ -98,8 +93,7 @@ public class EventListenerMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator RemoveListenerOnDestroy()
-	{
+	public IEnumerator RemoveListenerOnDestroy() {
 		var listenerMB = new GameObject("obj").AddComponent<EventListenerMB>();
 		var eventSO = ScriptableObject.CreateInstance<EventSO>();
 
@@ -115,8 +109,7 @@ public class EventListenerMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator ListenAfterDisableAndReEnable()
-	{
+	public IEnumerator ListenAfterDisableAndReEnable() {
 		var called = 0;
 		var listenerMB = new GameObject("obj").AddComponent<EventListenerMB>();
 		var eventSO = ScriptableObject.CreateInstance<EventSO>();
@@ -125,7 +118,7 @@ public class EventListenerMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		listenerMB.onRaise.AddListener(() => ++called);
+		listenerMB.onRaise!.AddListener(() => ++called);
 
 		yield return new WaitForEndOfFrame();
 

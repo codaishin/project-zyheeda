@@ -53,7 +53,12 @@ public class SkillMBTests : TestCollection
 		) => this.apply(source, target);
 	}
 
-	class MockSkillMB : SkillMB<MockSheet, MockEffects, MockCast> { }
+	class MockSkillMB : SkillMB<MockSheet, MockEffects, MockCast>
+	{
+		private void Start() {
+			this.Sheet = new MockSheet();
+		}
+	}
 
 
 	[UnityTest]

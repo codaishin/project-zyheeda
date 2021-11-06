@@ -6,7 +6,7 @@ public class BaseSkillRunnerMBTests : TestCollection
 {
 	class MockBeginnable : IHasBegin
 	{
-		public Action begin;
+		public Action begin = () => throw new NotImplementedException();
 		public void Begin() => this.begin();
 	}
 

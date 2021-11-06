@@ -1,12 +1,14 @@
 using System;
 using NUnit.Framework;
-using UnityEngine;
 
 public class EffectDataExtensionsTests : TestCollection
 {
 	private class MockSheet : ISections
 	{
-		public Action UseSection<TSection>(RefAction<TSection> action, Action fallback) => fallback;
+		public Action UseSection<TSection>(
+			RefAction<TSection> action,
+			Action? fallback
+		) => fallback ?? (() => throw new NotImplementedException());
 	}
 
 	private class MockEffectFactory : IEffectFactory
@@ -19,19 +21,17 @@ public class EffectDataExtensionsTests : TestCollection
 	}
 
 	[Test]
-	public void CreateEffectThroughFactory()
-	{
+	public void CreateEffectThroughFactory() {
 		var effect = new Effect();
 		var factory = new MockEffectFactory();
 		var data = new EffectData<MockSheet, MockEffectFactory> { factory = factory };
 		factory.create = (_, __, ___) => effect;
 
-		Assert.AreSame(effect, data.GetEffect(default, default));
+		Assert.AreSame(effect, data.GetEffect(new MockSheet(), new MockSheet()));
 	}
 
 	[Test]
-	public void CreateEffectWithParameters()
-	{
+	public void CreateEffectWithParameters() {
 		var called = (default(MockSheet), default(MockSheet), 0f);
 		var factory = new MockEffectFactory();
 		var source = new MockSheet();
@@ -48,8 +48,7 @@ public class EffectDataExtensionsTests : TestCollection
 	}
 
 	[Test]
-	public void CreateEffectWithData()
-	{
+	public void CreateEffectWithData() {
 		var factory = new MockEffectFactory();
 		var source = new MockSheet();
 		var target = new MockSheet();

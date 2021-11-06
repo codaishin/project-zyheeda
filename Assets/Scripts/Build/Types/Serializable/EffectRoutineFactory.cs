@@ -5,15 +5,9 @@ using UnityEngine;
 [Serializable]
 public class EffectRoutineFactory : IEffectRoutineFactory
 {
-	private class RevertPtr
-	{
-		public Action invoke;
-	}
-
 	public float intervalDelta = 1f;
 
-	private IEnumerator PureRoutine(Effect effect)
-	{
+	private IEnumerator PureRoutine(Effect effect) {
 		float delta = this.intervalDelta;
 		effect.Apply();
 		while (effect.duration > 0) {
@@ -26,8 +20,7 @@ public class EffectRoutineFactory : IEffectRoutineFactory
 		effect.Revert();
 	}
 
-	public Finalizable Create(Effect effect)
-	{
-		return new Finalizable { wrapped = this.PureRoutine(effect) };
+	public Finalizable Create(Effect effect) {
+		return new Finalizable(this.PureRoutine(effect));
 	}
 }

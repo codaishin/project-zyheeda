@@ -7,8 +7,7 @@ using UnityEngine.TestTools;
 public class PlayStateReaderMBTests : TestCollection
 {
 	[UnityTest]
-	public IEnumerator OnStateEnterNotNullAfterStart()
-	{
+	public IEnumerator OnStateEnterNotNullAfterStart() {
 		var reader = new GameObject("reader").AddComponent<PlayStateReaderMB>();
 		var stateSwitch = ScriptableObject.CreateInstance<PlayStateSwitchSO>();
 		reader.stateSwitch = stateSwitch;
@@ -19,8 +18,7 @@ public class PlayStateReaderMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator OnStateEnterDefaultNull()
-	{
+	public IEnumerator OnStateEnterDefaultNull() {
 		var reader = new GameObject("reader").AddComponent<PlayStateReaderMB>();
 		var stateSwitch = ScriptableObject.CreateInstance<PlayStateSwitchSO>();
 		reader.stateSwitch = stateSwitch;
@@ -31,8 +29,7 @@ public class PlayStateReaderMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator OnStateEnter()
-	{
+	public IEnumerator OnStateEnter() {
 		var called = 0;
 		var reader = new GameObject("reader").AddComponent<PlayStateReaderMB>();
 		var stateSwitch = ScriptableObject.CreateInstance<PlayStateSwitchSO>();
@@ -42,15 +39,14 @@ public class PlayStateReaderMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		reader.onStateEnter.AddListener(() => ++called);
+		reader.onStateEnter!.AddListener(() => ++called);
 		stateSwitch.State = PlayState.Paused;
 
 		Assert.AreEqual(1, called);
 	}
 
 	[UnityTest]
-	public IEnumerator OnStateEnterOnStart()
-	{
+	public IEnumerator OnStateEnterOnStart() {
 		var called = 0;
 		var reader = new GameObject("reader").AddComponent<PlayStateReaderMB>();
 		var stateSwitch = ScriptableObject.CreateInstance<PlayStateSwitchSO>();
@@ -67,8 +63,7 @@ public class PlayStateReaderMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator OnStateEnterOnlyOnRealEnter()
-	{
+	public IEnumerator OnStateEnterOnlyOnRealEnter() {
 		var called = 0;
 		var reader = new GameObject("reader").AddComponent<PlayStateReaderMB>();
 		var stateSwitch = ScriptableObject.CreateInstance<PlayStateSwitchSO>();
@@ -78,7 +73,7 @@ public class PlayStateReaderMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		reader.onStateEnter.AddListener(() => ++called);
+		reader.onStateEnter!.AddListener(() => ++called);
 		stateSwitch.State = PlayState.Paused;
 		stateSwitch.State = PlayState.Menu;
 
@@ -86,8 +81,7 @@ public class PlayStateReaderMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator OnStateEnterUnsubscribeWhenDestroyed()
-	{
+	public IEnumerator OnStateEnterUnsubscribeWhenDestroyed() {
 		var called = 0;
 		var reader = new GameObject("reader").AddComponent<PlayStateReaderMB>();
 		var stateSwitch = ScriptableObject.CreateInstance<PlayStateSwitchSO>();
@@ -97,7 +91,7 @@ public class PlayStateReaderMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		reader.onStateEnter.AddListener(() => ++called);
+		reader.onStateEnter!.AddListener(() => ++called);
 		Object.Destroy(reader);
 
 		yield return new WaitForEndOfFrame();
@@ -108,8 +102,7 @@ public class PlayStateReaderMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator OnStateExitNotNullAfterStart()
-	{
+	public IEnumerator OnStateExitNotNullAfterStart() {
 		var reader = new GameObject("reader").AddComponent<PlayStateReaderMB>();
 		var stateSwitch = ScriptableObject.CreateInstance<PlayStateSwitchSO>();
 		reader.stateSwitch = stateSwitch;
@@ -120,8 +113,7 @@ public class PlayStateReaderMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator OnStateExitDefaultNull()
-	{
+	public IEnumerator OnStateExitDefaultNull() {
 		var reader = new GameObject("reader").AddComponent<PlayStateReaderMB>();
 		var stateSwitch = ScriptableObject.CreateInstance<PlayStateSwitchSO>();
 		reader.stateSwitch = stateSwitch;
@@ -132,8 +124,7 @@ public class PlayStateReaderMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator OnStateExit()
-	{
+	public IEnumerator OnStateExit() {
 		var called = 0;
 		var reader = new GameObject("reader").AddComponent<PlayStateReaderMB>();
 		var stateSwitch = ScriptableObject.CreateInstance<PlayStateSwitchSO>();
@@ -144,15 +135,14 @@ public class PlayStateReaderMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		reader.onStateExit.AddListener(() => ++called);
+		reader.onStateExit!.AddListener(() => ++called);
 		stateSwitch.State = PlayState.Play;
 
 		Assert.AreEqual(1, called);
 	}
 
 	[UnityTest]
-	public IEnumerator OnStateExitOnStart()
-	{
+	public IEnumerator OnStateExitOnStart() {
 		var called = 0;
 		var reader = new GameObject("reader").AddComponent<PlayStateReaderMB>();
 		var stateSwitch = ScriptableObject.CreateInstance<PlayStateSwitchSO>();
@@ -169,8 +159,7 @@ public class PlayStateReaderMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator OnStateExitNotWhenNotExiting()
-	{
+	public IEnumerator OnStateExitNotWhenNotExiting() {
 		var called = 0;
 		var reader = new GameObject("reader").AddComponent<PlayStateReaderMB>();
 		var stateSwitch = ScriptableObject.CreateInstance<PlayStateSwitchSO>();
@@ -180,15 +169,14 @@ public class PlayStateReaderMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		reader.onStateExit.AddListener(() => ++called);
+		reader.onStateExit!.AddListener(() => ++called);
 		stateSwitch.State = PlayState.Paused;
 
 		Assert.AreEqual(0, called);
 	}
 
 	[UnityTest]
-	public IEnumerator OnStateExitOnlyOnRealExit()
-	{
+	public IEnumerator OnStateExitOnlyOnRealExit() {
 		var called = 0;
 		var reader = new GameObject("reader").AddComponent<PlayStateReaderMB>();
 		var stateSwitch = ScriptableObject.CreateInstance<PlayStateSwitchSO>();
@@ -199,7 +187,7 @@ public class PlayStateReaderMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		reader.onStateExit.AddListener(() => ++called);
+		reader.onStateExit!.AddListener(() => ++called);
 		stateSwitch.State = PlayState.Play;
 		stateSwitch.State = PlayState.Menu;
 
@@ -207,8 +195,7 @@ public class PlayStateReaderMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator OnStateExitUnsubscribeWhenDestroyed()
-	{
+	public IEnumerator OnStateExitUnsubscribeWhenDestroyed() {
 		var called = 0;
 		var reader = new GameObject("reader").AddComponent<PlayStateReaderMB>();
 		var stateSwitch = ScriptableObject.CreateInstance<PlayStateSwitchSO>();
@@ -219,7 +206,7 @@ public class PlayStateReaderMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		reader.onStateExit.AddListener(() => ++called);
+		reader.onStateExit!.AddListener(() => ++called);
 
 		Object.Destroy(reader);
 

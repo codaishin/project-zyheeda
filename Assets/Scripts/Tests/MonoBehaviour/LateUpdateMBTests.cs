@@ -14,20 +14,17 @@ public class LateUpdateMBTests : TestCollection
 
 		public void Call() => this.called = true;
 
-		private void Update()
-		{
+		private void Update() {
 			if (this.called && this.time == Time.None) this.time = Time.Early;
 		}
 
-		private void LateUpdate()
-		{
-			if (this.called && this.time == Time.None) this.time =  Time.Late;
+		private void LateUpdate() {
+			if (this.called && this.time == Time.None) this.time = Time.Late;
 		}
 	}
 
 	[UnityTest]
-	public IEnumerator OnLateUpdateNotNullAfterStart()
-	{
+	public IEnumerator OnLateUpdateNotNullAfterStart() {
 		var updateMB = new GameObject("obj").AddComponent<LateUpdateMB>();
 
 		yield return new WaitForEndOfFrame();
@@ -36,8 +33,7 @@ public class LateUpdateMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator OnLateUpdateNullDefault()
-	{
+	public IEnumerator OnLateUpdateNullDefault() {
 		var updateMB = new GameObject("obj").AddComponent<LateUpdateMB>();
 
 		Assert.Null(updateMB.onLateUpdate);
@@ -46,14 +42,13 @@ public class LateUpdateMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator OnLateUpdateCalled()
-	{
+	public IEnumerator OnLateUpdateCalled() {
 		var called = 0;
 		var updateMB = new GameObject("obj").AddComponent<LateUpdateMB>();
 
 		yield return new WaitForEndOfFrame();
 
-		updateMB.onLateUpdate.AddListener(() => ++called);
+		updateMB.onLateUpdate!.AddListener(() => ++called);
 
 		yield return new WaitForEndOfFrame();
 
@@ -61,14 +56,13 @@ public class LateUpdateMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator OnLateUpdateCalledLate()
-	{
+	public IEnumerator OnLateUpdateCalledLate() {
 		var updateMB = new GameObject("obj").AddComponent<LateUpdateMB>();
 		var updateReaderMB = updateMB.gameObject.AddComponent<UpdateReaderMB>();
 
 		yield return new WaitForEndOfFrame();
 
-		updateMB.onLateUpdate.AddListener(() => updateReaderMB.Call());
+		updateMB.onLateUpdate!.AddListener(() => updateReaderMB.Call());
 
 		yield return new WaitForEndOfFrame();
 

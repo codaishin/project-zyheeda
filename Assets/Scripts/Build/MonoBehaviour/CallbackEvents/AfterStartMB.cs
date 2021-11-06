@@ -4,7 +4,7 @@ using UnityEngine.Events;
 
 public class AfterStartMB : MonoBehaviour
 {
-	public UnityEvent onStart;
+	public UnityEvent? onStart;
 
 	private void Start() {
 		this.StartCoroutine(this.OnStartNextUpdate());
@@ -12,6 +12,6 @@ public class AfterStartMB : MonoBehaviour
 
 	private IEnumerator<WaitForEndOfFrame> OnStartNextUpdate() {
 		yield return new WaitForEndOfFrame();
-		this.onStart.Invoke();
+		this.onStart?.Invoke();
 	}
 }

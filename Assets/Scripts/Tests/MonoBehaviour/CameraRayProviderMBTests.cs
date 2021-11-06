@@ -1,8 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
-using UnityEngine.TestTools;
 
 public class CameraRayProviderMBTests : TestCollection
 {
@@ -13,17 +10,15 @@ public class CameraRayProviderMBTests : TestCollection
 		public override Vector3 Position => this.position;
 	}
 
-  [Test]
-	public void RequiresCamera()
-	{
+	[Test]
+	public void RequiresCamera() {
 		var camRayProviderMB = new GameObject("cam")
 			.AddComponent<CameraRayProviderMB>();
 		Assert.True(camRayProviderMB.TryGetComponent(out Camera _));
 	}
 
-  [Test]
-	public void ExposesRequiredCamera()
-	{
+	[Test]
+	public void ExposesRequiredCamera() {
 		var camRayProviderMB = new GameObject("cam")
 			.AddComponent<CameraRayProviderMB>();
 		Assert.AreSame(
@@ -33,11 +28,10 @@ public class CameraRayProviderMBTests : TestCollection
 	}
 
 	[Test]
-	public void RayForward()
-	{
+	public void RayForward() {
 		var camRayProviderMB = new GameObject("cam")
 			.AddComponent<CameraRayProviderMB>();
-		var camera = camRayProviderMB.Camera;
+		var camera = camRayProviderMB.Camera!;
 		var mockMouseSO = ScriptableObject.CreateInstance<MockMouseSO>();
 
 		mockMouseSO.position = new Vector3(Screen.width / 2, Screen.height / 2);

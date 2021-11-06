@@ -10,12 +10,13 @@ public class TargetingSOTests : TestCollection
 {
 	private class MockHitter : IHit
 	{
-		public Func<object, (object, bool)> tryHit = _ => (null, false);
+		public Func<object, object?> tryHit = _ => null;
 
-		public bool Try<T>(T source, out T target) {
-			(object hit, bool success) = this.tryHit(source);
-			target = hit == null ? default : (T)hit;
-			return success;
+		public Maybe<T> Try<T>(T source) where T : notnull {
+			object? hit = this.tryHit(source);
+			return hit != null
+				? Maybe.Some((T)hit)
+				: Maybe.None<T>();
 		}
 	}
 
@@ -24,6 +25,9 @@ public class TargetingSOTests : TestCollection
 		public MockHitter hit = new TargetingSOTests.MockHitter();
 		public override IHit Hit => this.hit;
 	}
+
+	private CharacterSheetMB DefaultSheet
+		=> new GameObject("Default").AddComponent<CharacterSheetMB>();
 
 	[UnityTest]
 	public IEnumerator AddTarget() {
@@ -34,12 +38,12 @@ public class TargetingSOTests : TestCollection
 		singleTarget.hitter = hitter;
 		singleTarget.selectTarget = ScriptableObject.CreateInstance<EventSO>();
 		singleTarget.cancelSelect = ScriptableObject.CreateInstance<EventSO>();
-		hitter.hit.tryHit = _ => (target, true);
+		hitter.hit.tryHit = _ => target;
 
 		yield return new WaitForEndOfFrame();
 
 		var routine = singleTarget
-			.Select(default, targets)
+			.Select(this.DefaultSheet, targets)
 			.GetEnumerator();
 		routine.MoveNext();
 		singleTarget.selectTarget.Raise();
@@ -56,7 +60,7 @@ public class TargetingSOTests : TestCollection
 		singleTarget.hitter = hitter;
 		singleTarget.selectTarget = ScriptableObject.CreateInstance<EventSO>();
 		singleTarget.cancelSelect = ScriptableObject.CreateInstance<EventSO>();
-		hitter.hit.tryHit = s => (s, true);
+		hitter.hit.tryHit = s => s;
 
 		yield return new WaitForEndOfFrame();
 
@@ -78,12 +82,12 @@ public class TargetingSOTests : TestCollection
 		singleTarget.hitter = hitter;
 		singleTarget.selectTarget = ScriptableObject.CreateInstance<EventSO>();
 		singleTarget.cancelSelect = ScriptableObject.CreateInstance<EventSO>();
-		hitter.hit.tryHit = _ => (null, false);
+		hitter.hit.tryHit = _ => null;
 
 		yield return new WaitForEndOfFrame();
 
 		var routine = singleTarget
-			.Select(default, targets)
+			.Select(this.DefaultSheet, targets)
 			.GetEnumerator();
 		routine.MoveNext();
 		singleTarget.selectTarget.Raise();
@@ -100,12 +104,12 @@ public class TargetingSOTests : TestCollection
 		singleTarget.hitter = hitter;
 		singleTarget.selectTarget = ScriptableObject.CreateInstance<EventSO>();
 		singleTarget.cancelSelect = ScriptableObject.CreateInstance<EventSO>();
-		hitter.hit.tryHit = _ => (target, true);
+		hitter.hit.tryHit = _ => target;
 
 		yield return new WaitForEndOfFrame();
 
 		var routine = singleTarget
-			.Select(default, targets)
+			.Select(this.DefaultSheet, targets)
 			.GetEnumerator();
 		routine.MoveNext();
 
@@ -121,12 +125,12 @@ public class TargetingSOTests : TestCollection
 		singleTarget.hitter = hitter;
 		singleTarget.selectTarget = ScriptableObject.CreateInstance<EventSO>();
 		singleTarget.cancelSelect = ScriptableObject.CreateInstance<EventSO>();
-		hitter.hit.tryHit = _ => (target, true);
+		hitter.hit.tryHit = _ => target;
 
 		yield return new WaitForEndOfFrame();
 
 		var routine = singleTarget
-			.Select(default, new List<CharacterSheetMB>())
+			.Select(this.DefaultSheet, new List<CharacterSheetMB>())
 			.GetEnumerator();
 		yields.Add(routine.MoveNext());
 		yields.Add(routine.MoveNext());
@@ -145,19 +149,19 @@ public class TargetingSOTests : TestCollection
 		singleTarget.hitter = hitter;
 		singleTarget.selectTarget = ScriptableObject.CreateInstance<EventSO>();
 		singleTarget.cancelSelect = ScriptableObject.CreateInstance<EventSO>();
-		hitter.hit.tryHit = _ => (null, false);
+		hitter.hit.tryHit = _ => null;
 
 		yield return new WaitForEndOfFrame();
 
 		var routine = singleTarget
-			.Select(default, new List<CharacterSheetMB>())
+			.Select(this.DefaultSheet, new List<CharacterSheetMB>())
 			.GetEnumerator();
 		yields.Add(routine.MoveNext());
 		singleTarget.selectTarget.Raise();
 		yields.Add(routine.MoveNext());
 		singleTarget.selectTarget.Raise();
 		yields.Add(routine.MoveNext());
-		hitter.hit.tryHit = _ => (target, true);
+		hitter.hit.tryHit = _ => target;
 		singleTarget.selectTarget.Raise();
 		yields.Add(routine.MoveNext());
 
@@ -173,12 +177,12 @@ public class TargetingSOTests : TestCollection
 		singleTarget.hitter = hitter;
 		singleTarget.selectTarget = ScriptableObject.CreateInstance<EventSO>();
 		singleTarget.cancelSelect = ScriptableObject.CreateInstance<EventSO>();
-		hitter.hit.tryHit = _ => (target, true);
+		hitter.hit.tryHit = _ => target;
 
 		yield return new WaitForEndOfFrame();
 
 		var routine = singleTarget
-			.Select(default, targets)
+			.Select(this.DefaultSheet, targets)
 			.GetEnumerator();
 		routine.MoveNext();
 		routine.MoveNext();
@@ -198,12 +202,12 @@ public class TargetingSOTests : TestCollection
 		singleTarget.hitter = hitter;
 		singleTarget.selectTarget = ScriptableObject.CreateInstance<EventSO>();
 		singleTarget.cancelSelect = ScriptableObject.CreateInstance<EventSO>();
-		hitter.hit.tryHit = _ => (target, true);
+		hitter.hit.tryHit = _ => target;
 
 		yield return new WaitForEndOfFrame();
 
 		var routine = singleTarget
-			.Select(default, targets)
+			.Select(this.DefaultSheet, targets)
 			.GetEnumerator();
 		routine.MoveNext();
 		singleTarget.selectTarget.Raise();
@@ -225,7 +229,7 @@ public class TargetingSOTests : TestCollection
 		yield return new WaitForEndOfFrame();
 
 		var routine = singleTarget
-			.Select(default, new List<CharacterSheetMB>())
+			.Select(this.DefaultSheet, new List<CharacterSheetMB>())
 			.GetEnumerator();
 		yields.Add(routine.MoveNext());
 		yields.Add(routine.MoveNext());
@@ -249,7 +253,7 @@ public class TargetingSOTests : TestCollection
 		yield return new WaitForEndOfFrame();
 
 		var routine = singleTarget
-			.Select(default, targets)
+			.Select(this.DefaultSheet, targets)
 			.GetEnumerator();
 		routine.MoveNext();
 		routine.MoveNext();
@@ -276,12 +280,12 @@ public class TargetingSOTests : TestCollection
 		singleTarget.hitter = hitter;
 		singleTarget.selectTarget = ScriptableObject.CreateInstance<EventSO>();
 		singleTarget.cancelSelect = ScriptableObject.CreateInstance<EventSO>();
-		hitter.hit.tryHit = _ => (targets[i++], true);
+		hitter.hit.tryHit = _ => targets[i++];
 
 		yield return new WaitForEndOfFrame();
 
 		var routine = singleTarget
-			.Select(default, selectedTargets, maxCount: 3)
+			.Select(this.DefaultSheet, selectedTargets, maxCount: 3)
 			.GetEnumerator();
 		routine.MoveNext();
 		singleTarget.selectTarget.Raise();
@@ -309,12 +313,12 @@ public class TargetingSOTests : TestCollection
 		singleTarget.hitter = hitter;
 		singleTarget.selectTarget = ScriptableObject.CreateInstance<EventSO>();
 		singleTarget.cancelSelect = ScriptableObject.CreateInstance<EventSO>();
-		hitter.hit.tryHit = _ => (targets[i++], true);
+		hitter.hit.tryHit = _ => targets[i++];
 
 		yield return new WaitForEndOfFrame();
 
 		var routine = singleTarget
-			.Select(default, selectedTargets, maxCount: 4)
+			.Select(this.DefaultSheet, selectedTargets, maxCount: 4)
 			.GetEnumerator();
 		routine.MoveNext();
 		singleTarget.selectTarget.Raise();
@@ -339,12 +343,12 @@ public class TargetingSOTests : TestCollection
 		singleTarget.hitter = hitter;
 		singleTarget.selectTarget = ScriptableObject.CreateInstance<EventSO>();
 		singleTarget.cancelSelect = ScriptableObject.CreateInstance<EventSO>();
-		hitter.hit.tryHit = _ => (target, true);
+		hitter.hit.tryHit = _ => target;
 
 		yield return new WaitForEndOfFrame();
 
 		var routine = singleTarget
-			.Select(default, selectedTargets, maxCount: 3)
+			.Select(this.DefaultSheet, selectedTargets, maxCount: 3)
 			.GetEnumerator();
 		yields.Add(routine.MoveNext());
 		singleTarget.selectTarget.Raise();
@@ -374,12 +378,12 @@ public class TargetingSOTests : TestCollection
 		singleTarget.selectTarget = ScriptableObject.CreateInstance<EventSO>();
 		singleTarget.cancelSelect = ScriptableObject.CreateInstance<EventSO>();
 		singleTarget.doubleSelectFinishes = true;
-		hitter.hit.tryHit = _ => (target, true);
+		hitter.hit.tryHit = _ => target;
 
 		yield return new WaitForEndOfFrame();
 
 		var routine = singleTarget
-			.Select(default, new List<CharacterSheetMB>(), maxCount: 10)
+			.Select(this.DefaultSheet, new List<CharacterSheetMB>(), maxCount: 10)
 			.GetEnumerator();
 		yields.Add(routine.MoveNext());
 		singleTarget.selectTarget.Raise();
@@ -400,12 +404,12 @@ public class TargetingSOTests : TestCollection
 		singleTarget.selectTarget = ScriptableObject.CreateInstance<EventSO>();
 		singleTarget.cancelSelect = ScriptableObject.CreateInstance<EventSO>();
 		singleTarget.doubleSelectFinishes = true;
-		hitter.hit.tryHit = _ => (target, true);
+		hitter.hit.tryHit = _ => target;
 
 		yield return new WaitForEndOfFrame();
 
 		var routine = singleTarget
-			.Select(default, targets, maxCount: 10)
+			.Select(this.DefaultSheet, targets, maxCount: 10)
 			.GetEnumerator();
 		routine.MoveNext();
 		singleTarget.selectTarget.Raise();

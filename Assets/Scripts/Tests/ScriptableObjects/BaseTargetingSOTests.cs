@@ -7,7 +7,10 @@ using UnityEngine.Events;
 
 public class BaseTargetingSOTests : TestCollection
 {
-	private class MockSheet { }
+	private class MockSheet
+	{
+		public static MockSheet Default => new MockSheet();
+	}
 
 	private class MockTargetingSO : BaseTargetingSO<MockSheet>
 	{
@@ -48,7 +51,7 @@ public class BaseTargetingSOTests : TestCollection
 		trigger.Listeners += () => called = true;
 
 		targeting
-			.Select(default, default, default)
+			.Select(MockSheet.Default, new List<MockSheet>(), default)
 			.GetEnumerator()
 			.MoveNext();
 
@@ -64,7 +67,7 @@ public class BaseTargetingSOTests : TestCollection
 		targeting.onBeginSelect.AddListener(() => trigger.Raise());
 		trigger.Listeners += () => called = true;
 
-		targeting.Select(default, default, default);
+		targeting.Select(MockSheet.Default, new List<MockSheet>(), default);
 
 		Assert.False(called);
 	}
@@ -79,7 +82,7 @@ public class BaseTargetingSOTests : TestCollection
 		trigger.Listeners += () => called = true;
 
 		targeting
-			.Select(default, default, default)
+			.Select(MockSheet.Default, new List<MockSheet>(), default)
 			.GetEnumerator()
 			.MoveNext();
 
@@ -101,7 +104,7 @@ public class BaseTargetingSOTests : TestCollection
 		trigger.Listeners += () => called = true;
 
 		var routine = targeting
-			.Select(default, default, default)
+			.Select(MockSheet.Default, new List<MockSheet>(), default)
 			.GetEnumerator();
 		routine.MoveNext();
 

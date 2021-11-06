@@ -8,14 +8,18 @@ public abstract class BaseSkillMB<TSheet> :
 	IHasSheet<TSheet>
 {
 	private float cooldown;
+	private TSheet? sheet;
 
 	[Range(0.1f, 10f)]
 	public float applyPerSecond;
 	[Range(1, 10)]
 	public int maxTargetCount;
-	public BaseTargetingSO<TSheet> targeting;
+	public BaseTargetingSO<TSheet>? targeting;
 
-	public TSheet Sheet { get; set; }
+	public TSheet Sheet {
+		get => this.sheet ?? throw this.NullError();
+		set => this.sheet = value;
+	}
 
 	protected abstract void ApplyEffects(TSheet source, TSheet target);
 	protected abstract IEnumerator<WaitForFixedUpdate> ApplyCast(TSheet target);
@@ -36,6 +40,7 @@ public abstract class BaseSkillMB<TSheet> :
 	}
 
 	private IEnumerable<WaitForEndOfFrame> SelectTargets(List<TSheet> targets) {
+		if (this.targeting == null) throw this.NullError();
 		return this.targeting.Select(this.Sheet, targets, this.maxTargetCount);
 	}
 

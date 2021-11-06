@@ -14,11 +14,13 @@ public class BaseConditionalUpdateMBTests : TestCollection
 		public bool Check(int value) => this.check(value);
 	}
 
-	class MockConditionalUpdateMB : BaseConditionalUpdateMB<int, MockCondtional> {}
+	class MockConditionalUpdateMB : BaseConditionalUpdateMB<int, MockCondtional>
+	{
+
+	}
 
 	[UnityTest]
-	public IEnumerator InitEvent()
-	{
+	public IEnumerator InitEvent() {
 		var state = (before: true, after: false);
 		var updater = new GameObject("updater").AddComponent<MockConditionalUpdateMB>();
 		updater.conditional = new MockCondtional();
@@ -33,8 +35,7 @@ public class BaseConditionalUpdateMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator DontInitEvent()
-	{
+	public IEnumerator DontInitEvent() {
 		var updater = new GameObject("updater").AddComponent<MockConditionalUpdateMB>();
 		var onUpdate = new UnityEvent();
 		updater.onUpdate = onUpdate;
@@ -46,15 +47,14 @@ public class BaseConditionalUpdateMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator InvokeUpdate()
-	{
+	public IEnumerator InvokeUpdate() {
 		var called = false;
 		var updater = new GameObject("updater").AddComponent<MockConditionalUpdateMB>();
-		updater.conditional = new MockCondtional{ check = _ => true };
+		updater.conditional = new MockCondtional { check = _ => true };
 
 		yield return new WaitForEndOfFrame();
 
-		updater.onUpdate.AddListener(() => called = true);
+		updater.onUpdate?.AddListener(() => called = true);
 
 		yield return new WaitForEndOfFrame();
 
@@ -62,15 +62,14 @@ public class BaseConditionalUpdateMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator DontInvokeUpdate()
-	{
+	public IEnumerator DontInvokeUpdate() {
 		var called = false;
 		var updater = new GameObject("updater").AddComponent<MockConditionalUpdateMB>();
-		updater.conditional = new MockCondtional{ check = _ => false };
+		updater.conditional = new MockCondtional { check = _ => false };
 
 		yield return new WaitForEndOfFrame();
 
-		updater.onUpdate.AddListener(() => called = true);
+		updater.onUpdate?.AddListener(() => called = true);
 
 		yield return new WaitForEndOfFrame();
 
@@ -78,12 +77,11 @@ public class BaseConditionalUpdateMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator PassCheckValue()
-	{
+	public IEnumerator PassCheckValue() {
 		var called = -1;
 		var updater = new GameObject("updater").AddComponent<MockConditionalUpdateMB>();
 		updater.value = 42;
-		updater.conditional = new MockCondtional{
+		updater.conditional = new MockCondtional {
 			check = v => {
 				called = v;
 				return false;

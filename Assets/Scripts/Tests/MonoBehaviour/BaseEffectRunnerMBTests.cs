@@ -23,18 +23,22 @@ public class BaseEffectRunnerMBTests : TestCollection
 
 	private class MockEffectRunner : BaseEffectRunnerMB<MockEffectRoutineFactory>
 	{
-		public Func<ConditionStacking, GetStackFunc> getStack;
-		public override GetStackFunc GetStack(ConditionStacking stacking) => this.getStack(stacking);
+		public Func<ConditionStacking, GetStackFunc> getStack
+			= (_)
+			=> (_, __, ___)
+			=> new MockStack();
+		public override GetStackFunc GetStack(ConditionStacking stacking) {
+			return this.getStack(stacking);
+		}
 	}
 
 	[UnityTest]
-	public IEnumerator PushOnStack()
-	{
+	public IEnumerator PushOnStack() {
 		var called = default(Effect);
 		var runner = new GameObject("runner").AddComponent<MockEffectRunner>();
 		var effect = new Effect();
 		runner.routineFactory = new MockEffectRoutineFactory();
-		runner.getStack = _ => (_, __, ___) => new MockStack{ push = e => called = e };
+		runner.getStack = _ => (_, __, ___) => new MockStack { push = e => called = e };
 
 		yield return new WaitForEndOfFrame();
 
@@ -44,8 +48,7 @@ public class BaseEffectRunnerMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator InitStackCashed()
-	{
+	public IEnumerator InitStackCashed() {
 		var called = 0;
 		var runner = new GameObject("runner").AddComponent<MockEffectRunner>();
 		runner.routineFactory = new MockEffectRoutineFactory();
@@ -63,8 +66,7 @@ public class BaseEffectRunnerMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator InitStackCashedViaTag()
-	{
+	public IEnumerator InitStackCashedViaTag() {
 		var called = 0;
 		var runner = new GameObject("runner").AddComponent<MockEffectRunner>();
 		runner.routineFactory = new MockEffectRoutineFactory();
@@ -75,15 +77,14 @@ public class BaseEffectRunnerMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		runner.Push(new Effect{ tag = EffectTag.Heat });
-		runner.Push(new Effect{ tag = EffectTag.Physical });
+		runner.Push(new Effect { tag = EffectTag.Heat });
+		runner.Push(new Effect { tag = EffectTag.Physical });
 
 		Assert.AreEqual(2, called);
 	}
 
 	[UnityTest]
-	public IEnumerator InitStackCashedViaStacking()
-	{
+	public IEnumerator InitStackCashedViaStacking() {
 		var called = 0;
 		var runner = new GameObject("runner").AddComponent<MockEffectRunner>();
 		runner.routineFactory = new MockEffectRoutineFactory();
@@ -95,15 +96,14 @@ public class BaseEffectRunnerMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		runner.Push(new Effect{ stacking = ConditionStacking.Duration });
-		runner.Push(new Effect{ stacking = ConditionStacking.Intensity});
+		runner.Push(new Effect { stacking = ConditionStacking.Duration });
+		runner.Push(new Effect { stacking = ConditionStacking.Intensity });
 
 		Assert.AreEqual(2, called);
 	}
 
 	[UnityTest]
-	public IEnumerator InitStackFormMatchingFactory()
-	{
+	public IEnumerator InitStackFormMatchingFactory() {
 		var called = default(ConditionStacking);
 		var runner = new GameObject("runner").AddComponent<MockEffectRunner>();
 		runner.routineFactory = new MockEffectRoutineFactory();
@@ -114,14 +114,13 @@ public class BaseEffectRunnerMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		runner.Push(new Effect{ stacking = ConditionStacking.Duration });
+		runner.Push(new Effect { stacking = ConditionStacking.Duration });
 
 		Assert.AreEqual(ConditionStacking.Duration, called);
 	}
 
 	[UnityTest]
-	public IEnumerator CreateStackFedWithRoutineFactory()
-	{
+	public IEnumerator CreateStackFedWithRoutineFactory() {
 		var fed = default(Func<Effect, Finalizable>);
 		var runner = new GameObject("runner").AddComponent<MockEffectRunner>();
 		runner.routineFactory = new MockEffectRoutineFactory();
@@ -134,20 +133,22 @@ public class BaseEffectRunnerMBTests : TestCollection
 
 		runner.Push(new Effect());
 
-		Assert.True(runner.routineFactory.Create == fed);
+		Assert.AreEqual(
+			(Func<Effect, Finalizable>?)runner.routineFactory.Create,
+			fed
+		);
 	}
 
 	[UnityTest]
-	public IEnumerator OnPullStartsCoroutine()
-	{
+	public IEnumerator OnPullStartsCoroutine() {
 		var called = 0;
 		IEnumerator create() {
-			while(true) {
+			while (true) {
 				yield return new WaitForFixedUpdate();
 				++called;
 			}
 		}
-		var routine = new Finalizable{ wrapped = create() };
+		var routine = new Finalizable(create());
 		var runner = new GameObject("runner").AddComponent<MockEffectRunner>();
 		runner.routineFactory = new MockEffectRoutineFactory();
 		runner.getStack = _ => (_, onPull, ___) => {
@@ -167,16 +168,15 @@ public class BaseEffectRunnerMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator OnCancelStopsCoroutine()
-	{
+	public IEnumerator OnCancelStopsCoroutine() {
 		var called = 0;
 		IEnumerator create() {
-			while(true) {
+			while (true) {
 				yield return new WaitForFixedUpdate();
 				++called;
 			}
 		}
-		var routine = new Finalizable{ wrapped = create() };
+		var routine = new Finalizable(create());
 		var cancel = default(Action<Finalizable>);
 		var runner = new GameObject("runner").AddComponent<MockEffectRunner>();
 		runner.routineFactory = new MockEffectRoutineFactory();

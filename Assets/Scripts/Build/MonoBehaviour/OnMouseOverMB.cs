@@ -3,11 +3,10 @@ using UnityEngine.Events;
 
 public class OnMouseOverMB : MonoBehaviour
 {
-	public UnityEvent onMouseEnter;
-	public UnityEvent onMouseExit;
+	public UnityEvent? onMouseEnter;
+	public UnityEvent? onMouseExit;
 
-	private void Start()
-	{
+	private void Start() {
 		if (this.onMouseEnter == null) {
 			this.onMouseEnter = new UnityEvent();
 		}
@@ -16,7 +15,7 @@ public class OnMouseOverMB : MonoBehaviour
 		}
 	}
 
-	private void OnMouseEnter() => this.onMouseEnter.Invoke();
+	private void OnMouseEnter() => this.onMouseEnter!.Invoke();
 
-	private void OnMouseExit() => this.onMouseExit.Invoke();
+	private void OnMouseExit() => this.onMouseExit!.Invoke();
 }

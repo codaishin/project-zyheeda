@@ -13,7 +13,7 @@ public static class IEnumerableExtensions
 		}
 	}
 
-	public static IEnumerable<T> OrEmpty<T>(this IEnumerable<T> enumerable) {
+	public static IEnumerable<T> OrEmpty<T>(this IEnumerable<T>? enumerable) {
 		return enumerable ?? Enumerable.Empty<T>();
 	}
 

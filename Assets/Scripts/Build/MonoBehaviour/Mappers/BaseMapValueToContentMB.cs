@@ -5,15 +5,13 @@ public abstract class BaseMapValueToContentMB<TValue, TContentValue, TContent> :
 	where TContent :
 		IHasValue<TContentValue>
 {
-	private TValue value;
-
-	public TContent content;
+	public TContent? content;
 
 	public override TValue Value {
-		get => this.value;
 		set {
+			if (this.content == null) throw this.NullError();
 			this.content.Value = this.MapValueToContent(value);
-			this.value = value;
+			base.Value = value;
 		}
 	}
 

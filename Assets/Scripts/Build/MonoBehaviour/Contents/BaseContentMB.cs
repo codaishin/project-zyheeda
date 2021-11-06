@@ -10,12 +10,12 @@ public abstract class BaseContentMB<TElem, TContentElem> :
 		MonoBehaviour,
 		IHasValue<TElem>
 {
-	private TElem[] value;
+	private TElem[]? value;
 
-	public TContentElem prefab;
+	public TContentElem? prefab;
 
 	public TElem[] Value {
-		get => this.value;
+		get => this.value ?? throw this.NullError();
 		set {
 			this.value = value;
 			TContentElem[] contents = this.GetComponentsInChildren<TContentElem>(
@@ -27,16 +27,18 @@ public abstract class BaseContentMB<TElem, TContentElem> :
 		}
 	}
 
-	private Action MatchPairToAction((TElem, TContentElem) pair) {
+	private Action MatchPairToAction(
+		(TElem? elem, TContentElem? contentElem) pair
+	) {
 		return pair switch {
-			(_, null) => () => this.CreateContentElem(pair),
-			(null, _) => () => this.DisableContentElem(pair),
-			(_, _) => () => this.UpdateContentElem(pair),
+			(_, null) => () => this.CreateContentElemFor(pair.elem!),
+			(null, _) => () => this.DisableContentElem(pair.contentElem!),
+			(_, _) => () => this.UpdateContentElem((pair.elem!, pair.contentElem!)),
 		};
 	}
 
-	private void CreateContentElem((TElem, TContentElem) pair) {
-		(TElem elem, _) = pair;
+	private void CreateContentElemFor(TElem elem) {
+		if (this.prefab == null) throw this.NullError();
 		TContentElem contentElem = GameObject.Instantiate(this.prefab);
 		contentElem.Value = elem;
 		contentElem.transform.SetParent(this.transform);
@@ -48,12 +50,11 @@ public abstract class BaseContentMB<TElem, TContentElem> :
 		contentElem.gameObject.SetActive(true);
 	}
 
-	private void DisableContentElem((TElem, TContentElem) pair) {
-		(_, TContentElem contentElem) = pair;
+	private void DisableContentElem(TContentElem contentElem) {
 		contentElem.gameObject.SetActive(false);
 	}
 
-	private static IEnumerable<(TElem, TContentElem)> Pair(
+	private static IEnumerable<(TElem?, TContentElem?)> Pair(
 		TElem[] elems,
 		TContentElem[] contents
 	) {
