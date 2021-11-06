@@ -1,5 +1,7 @@
 public interface IEffectData
 {
-	Effect GetEffect<TSheet>(TSheet source, TSheet target)
-		where TSheet : ISections;
+	Effect GetEffect<TSheet>(
+		TSheet source,
+		TSheet target
+	) where TSheet : ISections;
 }
