@@ -6,18 +6,16 @@ using UnityEngine.TestTools;
 
 public class BaseConditionalMorphMBTests : TestCollection
 {
-	private class MockComponent : MonoBehaviour {}
+	private class MockComponent : MonoBehaviour { }
 	private class MockOnMorph : BaseConditionalMorphMB<GameObject, MockComponent>
 	{
-		public override bool TryMorph(GameObject seed, out MockComponent morph)
-		{
+		public override bool TryMorph(GameObject seed, out MockComponent morph) {
 			return seed.TryGetComponent(out morph);
 		}
 	}
 
 	[Test]
-	public void CallbacksDefaultNull()
-	{
+	public void CallbacksDefaultNull() {
 		var onMorph = new GameObject("morpher").AddComponent<MockOnMorph>();
 
 		Assert.AreEqual(
@@ -27,24 +25,22 @@ public class BaseConditionalMorphMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator CallbacksInitOnStart()
-	{
+	public IEnumerator CallbacksInitOnStart() {
 		var onMorph = new GameObject("morpher").AddComponent<MockOnMorph>();
 
 		yield return new WaitForEndOfFrame();
 
 		Assert.False(
 			new object[] {
-				onMorph.onFailSeed,
-				onMorph.onSuccessMorph,
-				onMorph.onSuccessSeed,
+				onMorph.onFailSeed!,
+				onMorph.onSuccessMorph!,
+				onMorph.onSuccessSeed!,
 			}.Any(o => o == null)
 		);
 	}
 
 	[UnityTest]
-	public IEnumerator CallbacksInitOnlyWhenNull()
-	{
+	public IEnumerator CallbacksInitOnlyWhenNull() {
 		var onMorph = new GameObject("morpher").AddComponent<MockOnMorph>();
 		onMorph.onFailSeed = new MockOnMorph.SeedEvent();
 		onMorph.onSuccessSeed = new MockOnMorph.SeedEvent();
@@ -57,76 +53,71 @@ public class BaseConditionalMorphMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator OnSuccessSeed()
-	{
+	public IEnumerator OnSuccessSeed() {
 		var called = default(GameObject);
 		var onMorph = new GameObject("morpher").AddComponent<MockOnMorph>();
 		var seed = new GameObject("target").AddComponent<MockComponent>().gameObject;
 
 		yield return new WaitForEndOfFrame();
 
-		onMorph.onSuccessSeed.AddListener(s => called = s);
+		onMorph.onSuccessSeed!.AddListener(s => called = s);
 		onMorph.Morph(seed);
 
 		Assert.AreSame(seed, called);
 	}
 
 	[UnityTest]
-	public IEnumerator OnFailSeed()
-	{
+	public IEnumerator OnFailSeed() {
 		var called = default(GameObject);
 		var onMorph = new GameObject("morpher").AddComponent<MockOnMorph>();
 		var seed = new GameObject("target");
 
 		yield return new WaitForEndOfFrame();
 
-		onMorph.onFailSeed.AddListener(s => called = s);
+		onMorph.onFailSeed!.AddListener(s => called = s);
 		onMorph.Morph(seed);
 
 		Assert.AreSame(seed, called);
 	}
 
 	[UnityTest]
-	public IEnumerator OnSuccessMorph()
-	{
+	public IEnumerator OnSuccessMorph() {
 		var called = default(MockComponent);
 		var onMorph = new GameObject("morpher").AddComponent<MockOnMorph>();
 		var seed = new GameObject("target").AddComponent<MockComponent>();
 
 		yield return new WaitForEndOfFrame();
 
-		onMorph.onSuccessMorph.AddListener(m => called = m);
+		onMorph.onSuccessMorph!.AddListener(m => called = m);
 		onMorph.Morph(seed.gameObject);
 
 		Assert.AreSame(seed, called);
 	}
 
 	[UnityTest]
-	public IEnumerator NoSuccessCallbacks()
-	{
+	public IEnumerator NoSuccessCallbacks() {
 		var called = 0;
 		var onMorph = new GameObject("morpher").AddComponent<MockOnMorph>();
 		var seed = new GameObject("target");
 
 		yield return new WaitForEndOfFrame();
 
-		onMorph.onSuccessMorph.AddListener(_ => ++called);
-		onMorph.onSuccessSeed.AddListener(_ => ++called);
+		onMorph.onSuccessMorph!.AddListener(_ => ++called);
+		onMorph.onSuccessSeed!.AddListener(_ => ++called);
 		onMorph.Morph(seed);
 
 		Assert.AreEqual(0, called);
 	}
 
 	[UnityTest]
-	public IEnumerator NoFailCallback()
-	{
+	public IEnumerator NoFailCallback() {
 		var called = 0;
 		var onMorph = new GameObject("morpher").AddComponent<MockOnMorph>();
 		var seed = new GameObject("target").AddComponent<MockComponent>().gameObject;
 
 		yield return new WaitForEndOfFrame();
 
-		onMorph.onFailSeed.AddListener(_ => ++called);
+		onMorph.onFailSeed!.AddListener(_ => ++called);
 		onMorph.Morph(seed);
 
 		Assert.AreEqual(0, called);

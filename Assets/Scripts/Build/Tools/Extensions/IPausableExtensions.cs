@@ -2,11 +2,11 @@ using System.Collections;
 
 public static class IPausableExtensions
 {
-	private static
-	bool PausedOrNextOf<TPauseYield>(this IPausable<TPauseYield> pausable,
-	                                 in IEnumerator enumerator,
-	                                 out object value)
-	{
+	private static bool PausedOrNextOf<TPauseYield>(
+		this IPausable<TPauseYield> pausable,
+		in IEnumerator enumerator,
+		out object value
+	) where TPauseYield : notnull {
 		if (pausable.Paused) {
 			value = pausable.Pause;
 			return true;
@@ -15,7 +15,7 @@ public static class IPausableExtensions
 			value = enumerator.Current;
 			return true;
 		}
-		value = default;
+		value = new object();
 		return false;
 	}
 
@@ -23,7 +23,7 @@ public static class IPausableExtensions
 	IEnumerator Manage<TPauseYield>(
 		this IPausable<TPauseYield> pausable,
 		IEnumerator enumerator
-	) {
+	) where TPauseYield : notnull {
 		while (pausable.PausedOrNextOf(enumerator, out object value)) {
 			yield return value;
 		};

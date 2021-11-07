@@ -1,19 +1,23 @@
 using UnityEngine;
+using System.Collections.Generic;
 
-public abstract class BaseApproachMB<TAppraoch> : MonoBehaviour
-	where TAppraoch: IApproach<Vector3>, new()
+public abstract class BaseApproachMB<TAppraoch> :
+	MonoBehaviour
+	where TAppraoch :
+		IApproach<Vector3>,
+		new()
 {
-	private Transform agentTransform;
-
 	public Reference agent;
 	public float deltaPerSecond;
 	public TAppraoch appraoch = new TAppraoch();
 
-	private void Start() => this.agentTransform = this.agent.GameObject.transform;
-
-	public void Apply(Vector3 position)
-	{
+	public void Apply(Vector3 position) {
+		IEnumerator<WaitForFixedUpdate> routine = this.appraoch.Apply(
+			this.agent.GameObject.transform,
+			position,
+			this.deltaPerSecond
+		);
 		this.StopAllCoroutines();
-		this.StartCoroutine(this.appraoch.Apply(this.agentTransform, position, this.deltaPerSecond));
+		this.StartCoroutine(routine);
 	}
 }

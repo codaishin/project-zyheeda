@@ -30,7 +30,7 @@ public class UpdateMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		updateMB.onUpdate.AddListener(() => ++called);
+		updateMB.onUpdate!.AddListener(() => ++called);
 
 		yield return new WaitForEndOfFrame();
 

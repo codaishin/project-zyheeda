@@ -7,22 +7,24 @@ public static class DurationStackFactory
 	private class Stack : IStack
 	{
 		private Queue<Effect> effects = new Queue<Effect>();
-		private Finalizable wrapper;
+		private Finalizable? wrapper;
 		private Func<Effect, Finalizable> effectToRoutine;
-		private Action<Finalizable> onPull;
-		private Action<Finalizable> onCancel;
+		private Action<Finalizable>? onPull;
+		private Action<Finalizable>? onCancel;
 
 		public IEnumerable<Effect> Effects => this.effects;
 
-		public Stack(Func<Effect, Finalizable> effectToRoutine, Action<Finalizable> onPull, Action<Finalizable> onCancel)
-		{
+		public Stack(
+			Func<Effect, Finalizable> effectToRoutine,
+			Action<Finalizable>? onPull,
+			Action<Finalizable>? onCancel
+		) {
 			this.effectToRoutine = effectToRoutine;
 			this.onPull = onPull;
 			this.onCancel = onCancel;
 		}
 
-		public void Cancel()
-		{
+		public void Cancel() {
 			if (this.wrapper != null && this.onCancel != null) {
 				this.onCancel(this.wrapper);
 			}
@@ -33,8 +35,7 @@ public static class DurationStackFactory
 			this.effects.Clear();
 		}
 
-		private IEnumerator GetNext()
-		{
+		private IEnumerator GetNext() {
 			while (this.effects.Count > 0) {
 				Finalizable routine = this.effectToRoutine(this.effects.Peek());
 				while (routine.MoveNext()) {
@@ -44,11 +45,10 @@ public static class DurationStackFactory
 			}
 		}
 
-		public void Push(Effect effect)
-		{
+		public void Push(Effect effect) {
 			this.effects.Enqueue(effect);
 			if (this.wrapper == null) {
-				this.wrapper = new Finalizable{ wrapped = this.GetNext() };
+				this.wrapper = new Finalizable(this.GetNext());
 				this.wrapper.OnFinalize += () => this.wrapper = null;
 				this.onPull?.Invoke(this.wrapper);
 			}
@@ -57,7 +57,7 @@ public static class DurationStackFactory
 
 	public static IStack Create(
 		Func<Effect, Finalizable> effectToRoutine,
-		Action<Finalizable> onPull = default,
-		Action<Finalizable> onCancel = default
+		Action<Finalizable>? onPull = default,
+		Action<Finalizable>? onCancel = default
 	) => new Stack(effectToRoutine, onPull, onCancel);
 }

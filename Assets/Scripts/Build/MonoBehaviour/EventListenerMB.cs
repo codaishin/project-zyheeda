@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -7,36 +5,33 @@ public class EventListenerMB : MonoBehaviour
 {
 	private bool listening;
 
-	public EventSO listenTo;
-	public UnityEvent onRaise;
+	public EventSO? listenTo;
+	public UnityEvent? onRaise;
 
-	private void Start()
-	{
+	private void Start() {
+		if (this.listenTo == null) throw this.NullError();
 		if (this.onRaise == null) {
 			this.onRaise = new UnityEvent();
 		}
-		this.StartListening();
+		this.StartListening(this.listenTo, this.onRaise);
 	}
 
-	private void OnDisable()
-	{
-		if (this.listenTo) {
-			this.listenTo.Listeners -= this.onRaise.Invoke;
+	private void OnDisable() {
+		if (this.listenTo != null) {
+			this.listenTo.Listeners -= this.onRaise!.Invoke;
 			this.listening = false;
 		}
 	}
 
-	private void OnEnable()
-	{
-		if (this.onRaise != null) {
-			this.StartListening();
+	private void OnEnable() {
+		if (this.onRaise != null && this.listenTo != null) {
+			this.StartListening(this.listenTo, this.onRaise);
 		}
 	}
 
-	private void StartListening()
-	{
+	private void StartListening(EventSO listenTo, UnityEvent onRaise) {
 		if (!this.listening) {
-			this.listenTo.Listeners += this.onRaise.Invoke;
+			listenTo.Listeners += onRaise.Invoke;
 			this.listening = true;
 		}
 	}

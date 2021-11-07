@@ -6,7 +6,7 @@ public class BaseEffectCollectionTests : TestCollection
 {
 	private class MockEffectRunner : IEffectRunner
 	{
-		public Action<Effect> push;
+		public Action<Effect> push = _ => throw new NotImplementedException();
 		public void Push(Effect effect) => this.push(effect);
 	}
 
@@ -14,11 +14,11 @@ public class BaseEffectCollectionTests : TestCollection
 	{
 		public MockEffectRunner runner = new MockEffectRunner();
 
-		public Action UseSection<T>(RefAction<T> action, Action fallback) {
+		public Action UseSection<T>(RefAction<T> action, Action? fallback) {
 			IEffectRunner runner = this.runner;
 			return action switch {
 				RefAction<IEffectRunner> use => () => use(ref runner),
-				_ => null,
+				_ => fallback ?? (() => throw new NotImplementedException()),
 			};
 		}
 	}
@@ -31,12 +31,11 @@ public class BaseEffectCollectionTests : TestCollection
 			where TSheet : ISections => this.create(s, t, i);
 	}
 
-	private class MockEffectCollection : BaseEffectCollection<MockSheetMB, MockEffectFactory> {}
+	private class MockEffectCollection : BaseEffectCollection<MockSheetMB, MockEffectFactory> { }
 
 
 	[Test]
-	public void ApplyUsesEffectApply()
-	{
+	public void ApplyUsesEffectApply() {
 		var called = (default(MockSheetMB), default(MockSheetMB), 0f);
 		var coll = new MockEffectCollection();
 		var factory = new MockEffectFactory();
@@ -54,8 +53,7 @@ public class BaseEffectCollectionTests : TestCollection
 	}
 
 	[Test]
-	public void ApplyUsesEffectReverse()
-	{
+	public void ApplyUsesEffectReverse() {
 		var called = false;
 		var coll = new MockEffectCollection();
 		var factory = new MockEffectFactory();
@@ -73,8 +71,7 @@ public class BaseEffectCollectionTests : TestCollection
 	}
 
 	[Test]
-	public void UseTargetAdd()
-	{
+	public void UseTargetAdd() {
 		var called = default(Effect);
 		var coll = new MockEffectCollection();
 		var factory = new MockEffectFactory();

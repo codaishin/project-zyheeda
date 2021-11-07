@@ -6,8 +6,8 @@ public abstract class BaseTargetingSO<TSheet> :
 	ScriptableObject,
 	ITargeting<TSheet, WaitForEndOfFrame>
 {
-	public UnityEvent onBeginSelect;
-	public UnityEvent onEndSelect;
+	public UnityEvent? onBeginSelect;
+	public UnityEvent? onEndSelect;
 
 	public IEnumerable<WaitForEndOfFrame> Select(
 		TSheet source,

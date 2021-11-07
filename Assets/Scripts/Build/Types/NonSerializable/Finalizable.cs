@@ -5,12 +5,15 @@ public class Finalizable : IEnumerator
 {
 	public IEnumerator wrapped;
 
-	public event Action OnFinalize;
+	public event Action? OnFinalize;
 
 	public object Current => this.wrapped.Current;
 
-	public bool MoveNext()
-	{
+	public Finalizable(IEnumerator wrapped) {
+		this.wrapped = wrapped;
+	}
+
+	public bool MoveNext() {
 		if (this.wrapped.MoveNext()) {
 			return true;
 		}

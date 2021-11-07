@@ -5,8 +5,7 @@ using NUnit.Framework;
 public class FinalizableTests : TestCollection
 {
 	[Test]
-	public void EnumerateWrapped()
-	{
+	public void EnumerateWrapped() {
 		var called = 0;
 		IEnumerator get() {
 			++called;
@@ -15,7 +14,7 @@ public class FinalizableTests : TestCollection
 			yield return null;
 		}
 
-		var managed = new Finalizable { wrapped = get() };
+		var managed = new Finalizable(get());
 
 		managed.MoveNext();
 		managed.MoveNext();
@@ -25,14 +24,13 @@ public class FinalizableTests : TestCollection
 	}
 
 	[Test]
-	public void MoveNext()
-	{
+	public void MoveNext() {
 		IEnumerator get() {
 			yield return null;
 			yield return null;
 		}
 
-		var managed = new Finalizable { wrapped = get() };
+		var managed = new Finalizable(get());
 
 		Assert.AreEqual(
 			(true, true, false),
@@ -41,14 +39,13 @@ public class FinalizableTests : TestCollection
 	}
 
 	[Test]
-	public void Current()
-	{
+	public void Current() {
 		IEnumerator get() {
 			yield return 3;
 			yield return "hello";
 		}
 
-		var managed = new Finalizable { wrapped = get() };
+		var managed = new Finalizable(get());
 
 		managed.MoveNext();
 		var a = (int)managed.Current;
@@ -59,8 +56,7 @@ public class FinalizableTests : TestCollection
 	}
 
 	[Test]
-	public void OnFinalize()
-	{
+	public void OnFinalize() {
 		var count = 0;
 		var called = 0;
 		IEnumerator get() {
@@ -70,7 +66,7 @@ public class FinalizableTests : TestCollection
 			yield return null;
 		}
 
-		var managed = new Finalizable { wrapped = get() };
+		var managed = new Finalizable(get());
 
 		managed.OnFinalize += () => called = count;
 
@@ -82,15 +78,14 @@ public class FinalizableTests : TestCollection
 	}
 
 	[Test]
-	public void OnFinalizeSetToNull()
-	{
+	public void OnFinalizeSetToNull() {
 		var called = 0;
 		IEnumerator get() {
 			yield return null;
 			yield return null;
 		}
 
-		var managed = new Finalizable { wrapped = get() };
+		var managed = new Finalizable(get());
 
 		managed.OnFinalize += () => ++called;
 
@@ -115,11 +110,10 @@ public class FinalizableTests : TestCollection
 	}
 
 	[Test]
-	public void Reset()
-	{
+	public void Reset() {
 		IEnumerator get() { yield break; }
 		var enumerator = get();
-		var managed = new Finalizable{ wrapped = enumerator };
+		var managed = new Finalizable(enumerator);
 
 		Assert.Throws<NotSupportedException>(() => managed.Reset());
 	}

@@ -3,7 +3,14 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "ScriptableObjects/Reference")]
 public class ReferenceSO : ScriptableObject
 {
-	public GameObject GameObject { get; set; }
+	private GameObject? target;
 
-	public void Clear() => this.GameObject = null;
+	public GameObject GameObject {
+		get => this.target ?? throw this.NullError();
+		set => this.target = value;
+	}
+
+	public bool IsSet => this.target != null;
+
+	public void Clear() => this.target = null;
 }

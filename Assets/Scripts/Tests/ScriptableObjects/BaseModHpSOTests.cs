@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
-using UnityEngine.TestTools;
 
 public class BaseModHpSOTests : TestCollection
 {
@@ -24,12 +23,14 @@ public class BaseModHpSOTests : TestCollection
 		public Health health;
 		public MockResistance resistance = new MockResistance();
 
-		public Action UseSection<TSection>(RefAction<TSection> action, Action fallback)
-		{
+		public Action UseSection<TSection>(
+			RefAction<TSection> action,
+			Action? fallback
+		) {
 			return action switch {
 				RefAction<Health> use => () => use(ref this.health),
 				RefAction<MockResistance> use => () => use(ref this.resistance),
-				_ => fallback,
+				_ => fallback ?? (() => throw new NotImplementedException()),
 			};
 		}
 	}
@@ -37,92 +38,92 @@ public class BaseModHpSOTests : TestCollection
 	private class MockModHpSO : BaseModHpSO<MockResistance> { }
 
 	[Test]
-	public void Apply()
-	{
-		var target = new MockSheet{ health = new Health { hp = 42 } };
+	public void Apply() {
+		var nullSheet = new MockSheet();
+		var target = new MockSheet { health = new Health { hp = 42 } };
 		var modHp = ScriptableObject.CreateInstance<MockModHpSO>();
 
-		var effect = modHp.Create(default, target, 4);
+		var effect = modHp.Create(nullSheet, target, 4);
 		effect.Apply();
 
 		Assert.AreEqual(38, target.health.hp);
 	}
 
 	[Test]
-	public void Maintain()
-	{
-		var target = new MockSheet{ health = new Health { hp = 42 } };
+	public void Maintain() {
+		var nullSheet = new MockSheet();
+		var target = new MockSheet { health = new Health { hp = 42 } };
 		var modHp = ScriptableObject.CreateInstance<MockModHpSO>();
 
-		var effect = modHp.Create(default, target, 4);
+		var effect = modHp.Create(nullSheet, target, 4);
 		effect.Maintain(1f);
 
 		Assert.AreEqual(38, target.health.hp);
 	}
 
 	[Test]
-	public void MaintainDelta()
-	{
-		var target = new MockSheet{ health = new Health { hp = 42 } };
+	public void MaintainDelta() {
+		var nullSheet = new MockSheet();
+		var target = new MockSheet { health = new Health { hp = 42 } };
 		var modHp = ScriptableObject.CreateInstance<MockModHpSO>();
 
-		var effect = modHp.Create(default, target, 4);
+		var effect = modHp.Create(nullSheet, target, 4);
 		effect.Maintain(0.5f);
 
 		Assert.AreEqual(40, target.health.hp);
 	}
 
 	[Test]
-	public void ApplyNotInverted()
-	{
-		var target = new MockSheet{ health = new Health { hp = 42 } };
+	public void ApplyNotInverted() {
+		var nullSheet = new MockSheet();
+		var target = new MockSheet { health = new Health { hp = 42 } };
 		var modHp = ScriptableObject.CreateInstance<MockModHpSO>();
 
 		modHp.invert = false;
-		var effect = modHp.Create(default, target, 4);
+		var effect = modHp.Create(nullSheet, target, 4);
 		effect.Apply();
 
 		Assert.AreEqual(46, target.health.hp);
 	}
 
 	[Test]
-	public void MaintainDeltaNotInverted()
-	{
-		var target = new MockSheet{ health = new Health { hp = 42 } };
+	public void MaintainDeltaNotInverted() {
+		var nullSheet = new MockSheet();
+		var target = new MockSheet { health = new Health { hp = 42 } };
 		var modHp = ScriptableObject.CreateInstance<MockModHpSO>();
 
 		modHp.invert = false;
-		var effect = modHp.Create(default, target, 4);
+		var effect = modHp.Create(nullSheet, target, 4);
 		effect.Maintain(0.5f);
 
 		Assert.AreEqual(44, target.health.hp);
 	}
 
 	[Test]
-	public void ApplyDamageReducedByResistance()
-	{
+	public void ApplyDamageReducedByResistance() {
+		var nullSheet = new MockSheet();
 		var target = new MockSheet();
 		var modHp = ScriptableObject.CreateInstance<MockModHpSO>();
 
 		target.health.hp = 42;
 		target.resistance[EffectTag.Heat] = 0.5f;
 		modHp.tag = EffectTag.Heat;
-		var effect = modHp.Create(default, target, 4);
+		var effect = modHp.Create(nullSheet, target, 4);
 		effect.Apply();
 
 		Assert.AreEqual(40, target.health.hp);
 	}
 
 	[Test]
-	public void MaintainDamageReducedByResistance()
-	{
+	public void MaintainDamageReducedByResistance() {
+		var nullSheet = new MockSheet();
 		var target = new MockSheet();
 		var modHp = ScriptableObject.CreateInstance<MockModHpSO>();
 
 		target.health.hp = 42;
 		target.resistance[EffectTag.Heat] = 0.7f;
 		modHp.tag = EffectTag.Heat;
-		var effect = modHp.Create(default, target, 5);
+		var effect = modHp.Create(nullSheet, target, 5);
 		effect.Maintain(2f);
 
 		Assert.AreEqual(39, target.health.hp);

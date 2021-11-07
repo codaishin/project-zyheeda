@@ -1,26 +1,28 @@
 using System;
 using System.Linq;
 using System.Collections;
+using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 
 public class CharacterSheetMBTests : TestCollection
 {
-	private class MockClass {}
+	private class MockClass { }
 
 	[Test]
-	public void UseSectionFalse()
-	{
+	public void UseSectionFalse() {
 		var sheet = new GameObject("obj").AddComponent<CharacterSheetMB>();
-		Action fallback = () => {};
+		Action fallback = () => { };
 
-		Assert.AreEqual(fallback, sheet.UseSection((ref MockClass _) => {}, fallback));
+		Assert.AreEqual(
+			fallback,
+			sheet.UseSection((ref MockClass _) => { }, fallback)
+		);
 	}
 
 	[Test]
-	public void UseHealthSection()
-	{
+	public void UseHealthSection() {
 		var sheet = new GameObject("obj").AddComponent<CharacterSheetMB>();
 		sheet.health.hp = 42;
 
@@ -31,23 +33,33 @@ public class CharacterSheetMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator UseResistanceSection()
-	{
+	public IEnumerator UseResistanceSection() {
 		var sheet = new GameObject("obj").AddComponent<CharacterSheetMB>();
 		var resistance = sheet.GetComponent<ResistanceMB>();
-		var exec = sheet.UseSection((ref Resistance r) => r[EffectTag.Physical] = 2f, default);
 
 		yield return new WaitForFixedUpdate();
 
+		var exec = sheet.UseSection(
+			(ref Resistance r) => r[EffectTag.Physical] = 2f
+		);
 		exec();
 
 		var record = resistance.resistance.First();
 		Assert.AreEqual((EffectTag.Physical, 2f), (record.key, record.value));
 	}
 
+	[Test]
+	public void ThrowWhenResistanceUsedTooEarly() {
+		var sheet = new GameObject("obj").AddComponent<CharacterSheetMB>();
+		var resistance = sheet.GetComponent<ResistanceMB>();
+
+		Assert.Throws<KeyNotFoundException>(
+			() => sheet.UseSection((ref Resistance r) => { })
+		);
+	}
+
 	[UnityTest]
-	public IEnumerator UseEffectRunnerMBSection()
-	{
+	public IEnumerator UseEffectRunnerMBSection() {
 		var got = default(IEffectRunner);
 		var sheet = new GameObject("obj").AddComponent<CharacterSheetMB>();
 		var runner = sheet.GetComponent<EffectRunnerMB>();
@@ -61,8 +73,7 @@ public class CharacterSheetMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator UseEquipmentMBSection()
-	{
+	public IEnumerator UseEquipmentMBSection() {
 		var got = default(Equipment);
 		var sheet = new GameObject("obj").AddComponent<CharacterSheetMB>();
 		var equipment = sheet.GetComponent<EquipmentMB>();
@@ -76,13 +87,22 @@ public class CharacterSheetMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator SetEquipmentMBCharacterSheet()
-	{
+	public IEnumerator SetEquipmentMBCharacterSheet() {
 		var sheet = new GameObject("obj").AddComponent<CharacterSheetMB>();
 		var equipment = sheet.GetComponent<EquipmentMB>();
 
 		yield return new WaitForFixedUpdate();
 
 		Assert.AreSame(sheet, equipment.sheet);
+	}
+
+	[Test]
+	public void ThrowWhenNoFallbackAndNoMatch() {
+		var sheet = new GameObject("obj").AddComponent<CharacterSheetMB>();
+		Action fallback = () => { };
+
+		Assert.Throws<KeyNotFoundException>(
+			() => sheet.UseSection((ref MockClass _) => { })
+		);
 	}
 }

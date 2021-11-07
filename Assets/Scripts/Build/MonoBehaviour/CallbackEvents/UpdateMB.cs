@@ -1,11 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
 public class UpdateMB : MonoBehaviour
 {
-	public UnityEvent onUpdate;
+	public UnityEvent? onUpdate;
 
 	private void Start() {
 		if (this.onUpdate == null) {
@@ -13,5 +11,5 @@ public class UpdateMB : MonoBehaviour
 		}
 	}
 
-	private void Update() => this.onUpdate.Invoke();
+	private void Update() => this.onUpdate?.Invoke();
 }

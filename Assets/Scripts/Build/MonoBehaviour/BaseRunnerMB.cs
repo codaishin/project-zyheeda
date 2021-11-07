@@ -8,7 +8,12 @@ public abstract class BaseRunnerMB<TBeginnable> :
 		class,
 		IHasBegin
 {
-	public TBeginnable Value { get; set; }
+	private TBeginnable? value;
+
+	public TBeginnable Value {
+		get => this.value ?? throw this.NullError();
+		set => this.value = value;
+	}
 
 	public void Begin() => this.Value.Begin();
 }

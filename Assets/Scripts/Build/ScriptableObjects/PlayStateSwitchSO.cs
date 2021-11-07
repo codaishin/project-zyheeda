@@ -13,10 +13,9 @@ public class PlayStateSwitchSO : ScriptableObject
 		set => this.ApplyState(value);
 	}
 
-	public event Action<PlayState> OnStateChange;
+	public event Action<PlayState>? OnStateChange;
 
-	private void ApplyState(in PlayState state)
-	{
+	private void ApplyState(in PlayState state) {
 		if (state != this.state) {
 			this.state = state;
 			this.OnStateChange?.Invoke(state);

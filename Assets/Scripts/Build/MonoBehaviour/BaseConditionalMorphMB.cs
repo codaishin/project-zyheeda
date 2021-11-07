@@ -5,32 +5,30 @@ using UnityEngine.Events;
 public abstract class BaseConditionalMorphMB<TSeed, TMorph> : MonoBehaviour
 {
 	[Serializable]
-	public class SeedEvent : UnityEvent<TSeed> {};
+	public class SeedEvent : UnityEvent<TSeed> { };
 
 	[Serializable]
-	public class MorphEvent : UnityEvent<TMorph> {};
+	public class MorphEvent : UnityEvent<TMorph> { };
 
 	[Header("Success Callbacks")]
-	public SeedEvent onSuccessSeed;
-	public MorphEvent onSuccessMorph;
+	public SeedEvent? onSuccessSeed;
+	public MorphEvent? onSuccessMorph;
 
 	[Header("Fail Callback")]
-	public SeedEvent onFailSeed;
+	public SeedEvent? onFailSeed;
 
 	public abstract bool TryMorph(TSeed seed, out TMorph morph);
 
-	public void Morph(TSeed seed)
-	{
+	public void Morph(TSeed seed) {
 		if (this.TryMorph(seed, out TMorph morph)) {
-			this.onSuccessSeed.Invoke(seed);
-			this.onSuccessMorph.Invoke(morph);
+			this.onSuccessSeed?.Invoke(seed);
+			this.onSuccessMorph?.Invoke(morph);
 		} else {
-			this.onFailSeed.Invoke(seed);
+			this.onFailSeed?.Invoke(seed);
 		}
 	}
 
-	private void Start()
-	{
+	private void Start() {
 		if (this.onSuccessSeed == null) {
 			this.onSuccessSeed = new SeedEvent();
 		}

@@ -11,7 +11,7 @@ public class BaseMapFieldToContentMBTests : TestCollection
 
 	class MockMapMB : BaseMapFieldToContentMB<int, float>
 	{
-		public Func<int, float> map;
+		public Func<int, float> map = _ => throw new NotImplementedException();
 
 		public override float MapFieldToContentValue(int fieldValue) => this.map(
 			fieldValue

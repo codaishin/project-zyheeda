@@ -10,8 +10,7 @@ public struct Reference
 	[SerializeField]
 	private ReferenceSO referenceSO;
 
-	public GameObject GameObject
-	{
+	public GameObject GameObject {
 		get {
 			if (this.gameObject) {
 				if (this.referenceSO) {

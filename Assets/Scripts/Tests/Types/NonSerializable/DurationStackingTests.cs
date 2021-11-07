@@ -7,11 +7,14 @@ using UnityEngine.TestTools;
 
 public class DurationStackingTests
 {
+	private IEnumerator EmptyEnumerator() {
+		yield break;
+	}
+
 	[Test]
-	public void AddNew()
-	{
+	public void AddNew() {
 		var routines = new List<Finalizable>();
-		var routine = new Finalizable();
+		var routine = new Finalizable(this.EmptyEnumerator());
 		var stacking = new DurationStacking();
 
 		stacking.Add(routine, routines, _ => { });
@@ -23,11 +26,10 @@ public class DurationStackingTests
 	}
 
 	[Test]
-	public void AddNewOnAdd()
-	{
+	public void AddNewOnAdd() {
 		var called = default(Finalizable);
 		var routines = new List<Finalizable>();
-		var routine = new Finalizable();
+		var routine = new Finalizable(this.EmptyEnumerator());
 		var stacking = new DurationStacking();
 
 		stacking.Add(routine, routines, a => called = a);
@@ -36,10 +38,9 @@ public class DurationStackingTests
 	}
 
 	[Test]
-	public void DontAddSecond()
-	{
+	public void DontAddSecond() {
 		var routines = new List<Finalizable>();
-		var routine = new Finalizable();
+		var routine = new Finalizable(this.EmptyEnumerator());
 		var stacking = new DurationStacking();
 
 		stacking.Add(routine, routines, _ => { });
@@ -49,16 +50,15 @@ public class DurationStackingTests
 	}
 
 	[Test]
-	public void ConcatSecond()
-	{
+	public void ConcatSecond() {
 		var called = string.Empty;
 		IEnumerator get(string v) {
 			called += v;
 			yield return null;
 		}
 		var routines = new List<Finalizable>();
-		var routineA = new Finalizable{ wrapped = get("f") };
-		var routineB = new Finalizable{ wrapped = get("s") };
+		var routineA = new Finalizable(get("f"));
+		var routineB = new Finalizable(get("s"));
 		var stacking = new DurationStacking();
 
 		stacking.Add(routineA, routines, _ => { });
@@ -72,15 +72,14 @@ public class DurationStackingTests
 	}
 
 	[Test]
-	public void FinalizeOrder()
-	{
+	public void FinalizeOrder() {
 		var called = string.Empty;
 		IEnumerator get() {
 			yield return null;
 		}
 		var routines = new List<Finalizable>();
-		var routineA = new Finalizable{ wrapped = get() };
-		var routineB = new Finalizable{ wrapped = get() };
+		var routineA = new Finalizable(get());
+		var routineB = new Finalizable(get());
 		var stacking = new DurationStacking();
 
 		stacking.Add(routineA, routines, a => a.OnFinalize += () => called += "wr");

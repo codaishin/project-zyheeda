@@ -4,15 +4,13 @@ using NUnit.Framework;
 public class RecordArrayTests : TestCollection
 {
 	[Test]
-	public void GetEmptyValue()
-	{
+	public void GetEmptyValue() {
 		var dict = new RecordArray<int, string>();
 		Assert.AreEqual(null, dict[20]);
 	}
 
 	[Test]
-	public void Records()
-	{
+	public void Records() {
 		var records = new Record<int, string>[] {
 			new Record<int, string> { key = 2, value = "two" },
 			new Record<int, string> { key = 2, value = "other two" },
@@ -23,8 +21,7 @@ public class RecordArrayTests : TestCollection
 	}
 
 	[Test]
-	public void SetValue()
-	{
+	public void SetValue() {
 		var dict = new RecordArray<int, string>();
 
 		dict[20] = "Hello";
@@ -36,8 +33,7 @@ public class RecordArrayTests : TestCollection
 	}
 
 	[Test]
-	public void UpdateValue()
-	{
+	public void UpdateValue() {
 		var dict = new RecordArray<int, string>();
 
 		dict[20] = "Hello";
@@ -50,14 +46,13 @@ public class RecordArrayTests : TestCollection
 	}
 
 	[Test]
-	public void SetNames()
-	{
+	public void SetNames() {
 		var records = new Record<int, string>[] {
 			new Record<int, string> { key = 2, value = "two" },
 			new Record<int, string> { key = 3, value = "three" },
 		};
 		var dict = new RecordArray<int, string>(records);
-		dict.SetNamesFromKeys(default);
+		dict.SetNamesFromKeys("duplicate");
 
 		CollectionAssert.AreEqual(
 			new string[] { "2", "3" },
@@ -66,8 +61,7 @@ public class RecordArrayTests : TestCollection
 	}
 
 	[Test]
-	public void SetNamesWithDuplicates()
-	{
+	public void SetNamesWithDuplicates() {
 		var records = new Record<int, string>[] {
 			new Record<int, string> { key = 2, value = "two" },
 			new Record<int, string> { key = 2, value = "other two" },
@@ -83,18 +77,7 @@ public class RecordArrayTests : TestCollection
 	}
 
 	[Test]
-	public void SetNamesDoesNotThrowWhenKeyNull()
-	{
-		var records = new Record<string, string>[] {
-			new Record<string, string> { key = null, value = "two" },
-		};
-		var dict = new RecordArray<string, string>(records);
-		Assert.DoesNotThrow(() => dict.SetNamesFromKeys("_"));
-	}
-
-	[Test]
-	public void RunOnAdd()
-	{
+	public void RunOnAdd() {
 		var passed = (string.Empty, 0f);
 		var recod = new RecordArray<string, float>();
 

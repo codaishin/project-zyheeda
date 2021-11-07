@@ -1,4 +1,4 @@
 public interface IHit
 {
-	bool Try<T>(T source, out T target);
+	Maybe<T> Try<T>(T source) where T : notnull;
 }

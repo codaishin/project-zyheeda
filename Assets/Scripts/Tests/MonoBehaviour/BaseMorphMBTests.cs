@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
@@ -12,16 +11,14 @@ public class BaseMorphMBTests : TestCollection
 	}
 
 	[Test]
-	public void OnMorphNull()
-	{
+	public void OnMorphNull() {
 		var morph = new GameObject("morph").AddComponent<MockMorph>();
 
 		Assert.Null(morph.onMorph);
 	}
 
 	[UnityTest]
-	public IEnumerator InitAfterStart()
-	{
+	public IEnumerator InitAfterStart() {
 		var morph = new GameObject("morph").AddComponent<MockMorph>();
 
 		yield return new WaitForEndOfFrame();
@@ -30,8 +27,7 @@ public class BaseMorphMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator NotInitWhenNotNull()
-	{
+	public IEnumerator NotInitWhenNotNull() {
 		var morph = new GameObject("morph").AddComponent<MockMorph>();
 		var onMorph = new MockMorph.MorphEvent();
 		morph.onMorph = onMorph;
@@ -42,8 +38,7 @@ public class BaseMorphMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator OnMorph()
-	{
+	public IEnumerator OnMorph() {
 		var called = default(Transform);
 		var morph = new GameObject("morph").AddComponent<MockMorph>();
 		var obj = new GameObject("obj");
@@ -51,7 +46,7 @@ public class BaseMorphMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		morph.onMorph.AddListener(t => called = t);
+		morph.onMorph!.AddListener(t => called = t);
 		morph.Morph(obj);
 
 		Assert.AreSame(called, obj.transform);

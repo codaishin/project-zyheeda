@@ -13,8 +13,7 @@ public class RayCastHitMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator OnHitGameObjectInitAfterStart()
-	{
+	public IEnumerator OnHitGameObjectInitAfterStart() {
 		var rayCastHitMB = new GameObject("hitter").AddComponent<RayCastHitMB>();
 		var rayProviderMB = new GameObject("ray").AddComponent<MockRayMB>();
 		rayCastHitMB.raySource = rayProviderMB;
@@ -25,8 +24,7 @@ public class RayCastHitMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator OnHitGameObjectDefaultNull()
-	{
+	public IEnumerator OnHitGameObjectDefaultNull() {
 		var rayCastHitMB = new GameObject("hitter").AddComponent<RayCastHitMB>();
 		var rayProviderMB = new GameObject("ray").AddComponent<MockRayMB>();
 		rayCastHitMB.raySource = rayProviderMB;
@@ -37,8 +35,7 @@ public class RayCastHitMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator OnHitGameObject()
-	{
+	public IEnumerator OnHitGameObject() {
 		var hit = default(RaycastHit);
 		var sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
 		var rayCastHitMB = new GameObject("hitter").AddComponent<RayCastHitMB>();
@@ -50,7 +47,7 @@ public class RayCastHitMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		rayCastHitMB.onHit.AddListener(o => hit = o);
+		rayCastHitMB.onHit!.AddListener(o => hit = o);
 
 		yield return new WaitForEndOfFrame();
 
@@ -60,8 +57,7 @@ public class RayCastHitMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator OnHitGameObjectLayer()
-	{
+	public IEnumerator OnHitGameObjectLayer() {
 		var hit = default(RaycastHit);
 		var sphereDefault = GameObject.CreatePrimitive(PrimitiveType.Sphere);
 		var cubeWater = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -76,7 +72,7 @@ public class RayCastHitMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		rayCastHitMB.onHit.AddListener(o => hit = o);
+		rayCastHitMB.onHit!.AddListener(o => hit = o);
 
 		yield return new WaitForEndOfFrame();
 

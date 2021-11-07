@@ -6,8 +6,7 @@ using UnityEngine.TestTools;
 public class OnMouseOverMBTests
 {
 	[UnityTest]
-	public IEnumerator CallbacksNotNull()
-	{
+	public IEnumerator CallbacksNotNull() {
 		var onMouseOver = new GameObject("obj").AddComponent<OnMouseOverMB>();
 
 		yield return new WaitForEndOfFrame();
@@ -22,8 +21,7 @@ public class OnMouseOverMBTests
 	}
 
 	[Test]
-	public void CallbacksNullBeforeStart()
-	{
+	public void CallbacksNullBeforeStart() {
 		var onMouseOver = new GameObject("obj").AddComponent<OnMouseOverMB>();
 		CollectionAssert.AreEqual(
 			new bool[] { false, false },
@@ -35,14 +33,13 @@ public class OnMouseOverMBTests
 	}
 
 	[UnityTest]
-	public IEnumerator OnMouseEnter()
-	{
+	public IEnumerator OnMouseEnter() {
 		var called = 0;
 		var onMouseOver = new GameObject("obj").AddComponent<OnMouseOverMB>();
 
 		yield return new WaitForEndOfFrame();
 
-		onMouseOver.onMouseEnter.AddListener(() => ++called);
+		onMouseOver.onMouseEnter!.AddListener(() => ++called);
 
 		onMouseOver.Invoke("OnMouseEnter", 0);
 
@@ -52,14 +49,13 @@ public class OnMouseOverMBTests
 	}
 
 	[UnityTest]
-	public IEnumerator OnMouseExit()
-	{
+	public IEnumerator OnMouseExit() {
 		var called = 0;
 		var onMouseOver = new GameObject("obj").AddComponent<OnMouseOverMB>();
 
 		yield return new WaitForEndOfFrame();
 
-		onMouseOver.onMouseExit.AddListener(() => ++called);
+		onMouseOver.onMouseExit!.AddListener(() => ++called);
 
 		onMouseOver.Invoke("OnMouseExit", 0);
 

@@ -7,8 +7,7 @@ using UnityEngine.TestTools;
 public class ReferenceSetterMBTests : TestCollection
 {
 	[Test]
-	public void Set()
-	{
+	public void Set() {
 		var obj = new GameObject("obj");
 		var setterMB = obj.AddComponent<ReferenceSetterMB>();
 		var referenceSO = ScriptableObject.CreateInstance<ReferenceSO>();
@@ -20,8 +19,7 @@ public class ReferenceSetterMBTests : TestCollection
 	}
 
 	[Test]
-	public void ErrorWhenGameObjectAlreadySet()
-	{
+	public void ErrorWhenGameObjectAlreadySet() {
 		var obj = new GameObject("obj");
 		var setterMB = obj.AddComponent<ReferenceSetterMB>();
 		var referenceSO = ScriptableObject.CreateInstance<ReferenceSO>();
@@ -33,8 +31,7 @@ public class ReferenceSetterMBTests : TestCollection
 	}
 
 	[Test]
-	public void ErrorWhenGameObjectAlreadySetMessage()
-	{
+	public void ErrorWhenGameObjectAlreadySetMessage() {
 		var obj = new GameObject("obj");
 		var setterMB = obj.AddComponent<ReferenceSetterMB>();
 		var referenceSO = ScriptableObject.CreateInstance<ReferenceSO>();
@@ -45,14 +42,14 @@ public class ReferenceSetterMBTests : TestCollection
 
 		try {
 			setterMB.SetReference();
-		} catch (ArgumentException e) {
+		}
+		catch (ArgumentException e) {
 			Assert.AreEqual("\"my object\" already set to \"other\"", e.Message);
 		}
 	}
 
 	[Test]
-	public void NoErrorWhenAlreadySetToSelf()
-	{
+	public void NoErrorWhenAlreadySetToSelf() {
 		var obj = new GameObject("obj");
 		var setterMB = obj.AddComponent<ReferenceSetterMB>();
 		var referenceSO = ScriptableObject.CreateInstance<ReferenceSO>();
@@ -64,8 +61,7 @@ public class ReferenceSetterMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator SetOnStart()
-	{
+	public IEnumerator SetOnStart() {
 		var obj = new GameObject("obj");
 		var setterMB = obj.AddComponent<ReferenceSetterMB>();
 		var referenceSO = ScriptableObject.CreateInstance<ReferenceSO>();
@@ -78,8 +74,7 @@ public class ReferenceSetterMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator UnsetOnDestroy()
-	{
+	public IEnumerator UnsetOnDestroy() {
 		var obj = new GameObject("obj");
 		var setterMB = obj.AddComponent<ReferenceSetterMB>();
 		var referenceSO = ScriptableObject.CreateInstance<ReferenceSO>();
@@ -92,6 +87,6 @@ public class ReferenceSetterMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		Assert.Null(referenceSO.GameObject);
+		Assert.Throws<WasNullException>(() => _ = referenceSO.GameObject);
 	}
 }

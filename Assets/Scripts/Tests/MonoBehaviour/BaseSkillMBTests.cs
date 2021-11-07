@@ -209,6 +209,7 @@ public class BaseSkillMBTests : TestCollection
 		var target = new MockSheet();
 		var skill = new GameObject("item").AddComponent<MockSkillMB>();
 		var targeting = ScriptableObject.CreateInstance<MockTargetingSO>();
+		var nullSheet = new MockSheet();
 
 		IEnumerable<WaitForEndOfFrame> selectTargets(
 			MockSheet _,
@@ -220,9 +221,9 @@ public class BaseSkillMBTests : TestCollection
 		}
 
 		IEnumerator<WaitForFixedUpdate> applyCast(MockSheet t) {
-			got.Add((default, t));
+			got.Add((nullSheet, t));
 			yield return new WaitForFixedUpdate();
-			got.Add((default, t));
+			got.Add((nullSheet, t));
 			yield return new WaitForFixedUpdate();
 		}
 
@@ -241,8 +242,8 @@ public class BaseSkillMBTests : TestCollection
 
 		CollectionAssert.AreEqual(
 			new (MockSheet, MockSheet)[] {
-				(default, target),
-				(default, target),
+				(nullSheet, target),
+				(nullSheet, target),
 				(skill.Sheet, target),
 			},
 			got

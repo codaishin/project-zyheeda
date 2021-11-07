@@ -6,8 +6,7 @@ public class Disposable<T> : IDisposable
 
 	public T Value { get; }
 
-	public Disposable(in T value, in Action<T> onDispose)
-	{
+	public Disposable(in T value, in Action<T> onDispose) {
 		this.onDispose = onDispose;
 		this.Value = value;
 	}

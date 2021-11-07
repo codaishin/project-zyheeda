@@ -1,8 +1,4 @@
 public class HitSource : IHit
 {
-	public bool Try<T>(T source, out T target)
-	{
-		target = source;
-		return true;
-	}
+	public Maybe<T> Try<T>(T source) where T : notnull => Maybe.Some(source);
 }

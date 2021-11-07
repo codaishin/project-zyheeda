@@ -10,7 +10,7 @@ public class BaseItemMBTests : TestCollection
 
 	private class MockSkillMB : MonoBehaviour, IHasBegin, IHasSheet<MockSheet>
 	{
-		public MockSheet Sheet { get; set; }
+		public MockSheet Sheet { get; set; } = new MockSheet();
 		public void Begin() => throw new System.NotImplementedException();
 	}
 

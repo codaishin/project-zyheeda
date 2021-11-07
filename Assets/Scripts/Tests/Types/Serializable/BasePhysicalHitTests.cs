@@ -9,60 +9,74 @@ public class BasePhyiscalHitTests : TestCollection
 		public Ray Ray => this.ray;
 	}
 
-	private class MockMB : MonoBehaviour {}
+	private class MockMB : MonoBehaviour { }
 
-	private class MockHit : BasePhysicsHit<MockRayProvider> {}
+	private class MockHit : BasePhysicsHit<MockRayProvider> { }
+
+	private MockMB DefaultMockMB
+		=> new GameObject("default").AddComponent<MockMB>();
 
 	[Test]
-	public void HitNothing()
-	{
-		var rayCastHit = new MockHit{ rayProvider = new MockRayProvider() };
-		Assert.AreEqual((false, default(MockMB)), (rayCastHit.Try(default, out MockMB t), t));
+	public void HitNothing() {
+		var rayCastHit = new MockHit { rayProvider = new MockRayProvider() };
+
+		rayCastHit.Try(this.DefaultMockMB).Match(
+			some: _ => Assert.Fail("hit something"),
+			none: () => Assert.Pass()
+		);
 	}
 
 	[Test]
-	public void HitTarget()
-	{
-		var rayCastHit = new MockHit{ rayProvider = new MockRayProvider() };
+	public void HitTarget() {
+		var rayCastHit = new MockHit { rayProvider = new MockRayProvider() };
 		var target = new GameObject("target").AddComponent<MockMB>();
 		target.gameObject.AddComponent<SphereCollider>();
 
-		Assert.AreEqual((true, target), (rayCastHit.Try(default, out MockMB t), t));
+		rayCastHit.Try(this.DefaultMockMB).Match(
+			some: hit => Assert.AreSame(target, hit),
+			none: () => Assert.Fail("hit nothing")
+		);
 	}
 
 	[Test]
-	public void HitNothingWhenComponentMissing()
-	{
-		var rayCastHit = new MockHit{ rayProvider = new MockRayProvider() };
+	public void HitNothingWhenComponentMissing() {
+		var rayCastHit = new MockHit { rayProvider = new MockRayProvider() };
 		var target = new GameObject("target");
 		target.gameObject.AddComponent<SphereCollider>();
 
-		Assert.AreEqual((false, default(MockMB)), (rayCastHit.Try(default, out MockMB t), t));
+		rayCastHit.Try(this.DefaultMockMB).Match(
+			some: _ => Assert.Fail("hit something"),
+			none: () => Assert.Pass()
+		);
 	}
 
 	[Test]
-	public void HitNothingWhenLayersMismatch()
-	{
-		var rayCastHit = new MockHit{ rayProvider = new MockRayProvider() };
-		var target = new GameObject("target").AddComponent<MockMB>();;
+	public void HitNothingWhenLayersMismatch() {
+		var rayCastHit = new MockHit { rayProvider = new MockRayProvider() };
+		var target = new GameObject("target").AddComponent<MockMB>(); ;
 		target.gameObject.AddComponent<SphereCollider>();
 
 		rayCastHit.layerConstraints += 1 << 19;
 		target.gameObject.layer = 20;
 
-		Assert.AreEqual((false, default(MockMB)), (rayCastHit.Try(default, out MockMB t), t));
+		rayCastHit.Try(this.DefaultMockMB).Match(
+			some: _ => Assert.Fail("hit something"),
+			none: () => Assert.Pass()
+		);
 	}
 
 	[Test]
-	public void HitTargetWhenLayersMatch()
-	{
-		var rayCastHit = new MockHit{ rayProvider = new MockRayProvider() };
-		var target = new GameObject("target").AddComponent<MockMB>();;
+	public void HitTargetWhenLayersMatch() {
+		var rayCastHit = new MockHit { rayProvider = new MockRayProvider() };
+		var target = new GameObject("target").AddComponent<MockMB>(); ;
 		target.gameObject.AddComponent<SphereCollider>();
 
 		rayCastHit.layerConstraints += 1 << 20;
 		target.gameObject.layer = 20;
 
-		Assert.AreEqual((true, target), (rayCastHit.Try(default, out MockMB t), t));
+		rayCastHit.Try(this.DefaultMockMB).Match(
+			some: hit => Assert.AreSame(target, hit),
+			none: () => Assert.Fail("hit nothing")
+		);
 	}
 }
