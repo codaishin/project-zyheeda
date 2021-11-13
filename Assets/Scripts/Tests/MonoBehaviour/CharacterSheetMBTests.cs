@@ -48,16 +48,6 @@ public class CharacterSheetMBTests : TestCollection
 		Assert.AreEqual((EffectTag.Physical, 2f), (record.key, record.value));
 	}
 
-	[Test]
-	public void ThrowWhenResistanceUsedTooEarly() {
-		var sheet = new GameObject("obj").AddComponent<CharacterSheetMB>();
-		var resistance = sheet.GetComponent<ResistanceMB>();
-
-		Assert.Throws<KeyNotFoundException>(
-			() => sheet.UseSection((ref Resistance r) => { })
-		);
-	}
-
 	[UnityTest]
 	public IEnumerator UseEffectRunnerMBSection() {
 		var got = default(IEffectRunner);

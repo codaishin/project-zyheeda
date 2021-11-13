@@ -20,7 +20,7 @@ public class CharacterSheetMB : MonoBehaviour, ISections
 		return action switch {
 			RefAction<IEffectRunner> use
 				=> () => use(ref this.effectRunner!),
-			RefAction<Resistance> use when this.resistanceMB!.resistance != null
+			RefAction<Resistance> use
 				=> () => use(ref this.resistanceMB!.resistance),
 			RefAction<Equipment> use
 				=> () => use(ref this.equipmentMB!.equipment),
