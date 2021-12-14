@@ -62,3 +62,6 @@ crashlytics-build.properties
 
 # Tmp dia files
 *.dia~
+
+# Blender backup files
+*.blend[0-9]
