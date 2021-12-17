@@ -9,7 +9,9 @@ public class Approach : BaseApproach<Vector3>
 	public override void OnPositionUpdated(
 		in Transform current,
 		in Vector3 target
-	) { }
+	) {
+		current.LookAt(target);
+	}
 }
 
 public class ApproachMB : BaseApproachMB<Approach> { }
