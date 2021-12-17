@@ -5,7 +5,7 @@ public class EventListenerMB : MonoBehaviour
 {
 	private bool listening;
 
-	public EventSO? listenTo;
+	public ChannelSO? listenTo;
 	public UnityEvent? onRaise;
 
 	private void Start() {
@@ -29,7 +29,7 @@ public class EventListenerMB : MonoBehaviour
 		}
 	}
 
-	private void StartListening(EventSO listenTo, UnityEvent onRaise) {
+	private void StartListening(ChannelSO listenTo, UnityEvent onRaise) {
 		if (!this.listening) {
 			listenTo.Listeners += onRaise.Invoke;
 			this.listening = true;

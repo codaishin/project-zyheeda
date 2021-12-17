@@ -9,7 +9,7 @@ public class EventListenerMBTests : TestCollection
 	[UnityTest]
 	public IEnumerator OnRaiseNotNullAfterStart() {
 		var listenerMB = new GameObject("obj").AddComponent<EventListenerMB>();
-		var eventSO = ScriptableObject.CreateInstance<EventSO>();
+		var eventSO = ScriptableObject.CreateInstance<ChannelSO>();
 
 		listenerMB.listenTo = eventSO;
 
@@ -31,7 +31,7 @@ public class EventListenerMBTests : TestCollection
 	public IEnumerator Listen() {
 		var called = 0;
 		var listenerMB = new GameObject("obj").AddComponent<EventListenerMB>();
-		var eventSO = ScriptableObject.CreateInstance<EventSO>();
+		var eventSO = ScriptableObject.CreateInstance<ChannelSO>();
 
 		listenerMB.listenTo = eventSO;
 
@@ -50,7 +50,7 @@ public class EventListenerMBTests : TestCollection
 	public IEnumerator NoRaiseWhenGOInactive() {
 		var called = 0;
 		var listenerMB = new GameObject("obj").AddComponent<EventListenerMB>();
-		var eventSO = ScriptableObject.CreateInstance<EventSO>();
+		var eventSO = ScriptableObject.CreateInstance<ChannelSO>();
 
 		listenerMB.listenTo = eventSO;
 
@@ -73,7 +73,7 @@ public class EventListenerMBTests : TestCollection
 	public IEnumerator NoRaiseWhenDisabled() {
 		var called = 0;
 		var listenerMB = new GameObject("obj").AddComponent<EventListenerMB>();
-		var eventSO = ScriptableObject.CreateInstance<EventSO>();
+		var eventSO = ScriptableObject.CreateInstance<ChannelSO>();
 
 		listenerMB.listenTo = eventSO;
 
@@ -95,7 +95,7 @@ public class EventListenerMBTests : TestCollection
 	[UnityTest]
 	public IEnumerator RemoveListenerOnDestroy() {
 		var listenerMB = new GameObject("obj").AddComponent<EventListenerMB>();
-		var eventSO = ScriptableObject.CreateInstance<EventSO>();
+		var eventSO = ScriptableObject.CreateInstance<ChannelSO>();
 
 		listenerMB.listenTo = eventSO;
 
@@ -112,7 +112,7 @@ public class EventListenerMBTests : TestCollection
 	public IEnumerator ListenAfterDisableAndReEnable() {
 		var called = 0;
 		var listenerMB = new GameObject("obj").AddComponent<EventListenerMB>();
-		var eventSO = ScriptableObject.CreateInstance<EventSO>();
+		var eventSO = ScriptableObject.CreateInstance<ChannelSO>();
 
 		listenerMB.listenTo = eventSO;
 

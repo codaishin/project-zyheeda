@@ -44,7 +44,7 @@ public class BaseTargetingSOTests : TestCollection
 	[Test]
 	public void RunOnBeginSelect() {
 		var called = false;
-		var trigger = ScriptableObject.CreateInstance<EventSO>();
+		var trigger = ScriptableObject.CreateInstance<ChannelSO>();
 		var targeting = ScriptableObject.CreateInstance<MockTargetingSO>();
 		targeting.onBeginSelect = new UnityEvent();
 		targeting.onBeginSelect.AddListener(() => trigger.Raise());
@@ -61,7 +61,7 @@ public class BaseTargetingSOTests : TestCollection
 	[Test]
 	public void DontRunOnBeginSelectWhenNotIterating() {
 		var called = false;
-		var trigger = ScriptableObject.CreateInstance<EventSO>();
+		var trigger = ScriptableObject.CreateInstance<ChannelSO>();
 		var targeting = ScriptableObject.CreateInstance<MockTargetingSO>();
 		targeting.onBeginSelect = new UnityEvent();
 		targeting.onBeginSelect.AddListener(() => trigger.Raise());
@@ -75,7 +75,7 @@ public class BaseTargetingSOTests : TestCollection
 	[Test]
 	public void RunOnEndSelect() {
 		var called = false;
-		var trigger = ScriptableObject.CreateInstance<EventSO>();
+		var trigger = ScriptableObject.CreateInstance<ChannelSO>();
 		var targeting = ScriptableObject.CreateInstance<MockTargetingSO>();
 		targeting.onEndSelect = new UnityEvent();
 		targeting.onEndSelect.AddListener(() => trigger.Raise());
@@ -92,7 +92,7 @@ public class BaseTargetingSOTests : TestCollection
 	[Test]
 	public void DontRunOnEndSelectBeforeLastIteration() {
 		var called = false;
-		var trigger = ScriptableObject.CreateInstance<EventSO>();
+		var trigger = ScriptableObject.CreateInstance<ChannelSO>();
 		var targeting = ScriptableObject.CreateInstance<MockTargetingSO>();
 		IEnumerable<WaitForEndOfFrame> select() {
 			yield return new WaitForEndOfFrame();

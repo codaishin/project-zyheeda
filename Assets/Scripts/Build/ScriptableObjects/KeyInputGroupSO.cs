@@ -5,7 +5,7 @@ using UnityEngine;
 public class KeyInputGroupSO : ScriptableObject
 {
 	public BaseKeyInputSO? inputSO;
-	public RecordArray<EventSO, KeyInputItem>? input;
+	public RecordArray<ChannelSO, KeyInputItem>? input;
 
 	public void Apply() => this.input
 		.GroupBy(r => r.key)
@@ -13,7 +13,7 @@ public class KeyInputGroupSO : ScriptableObject
 		.Where(this.GotInput)
 		.ForEach(KeyInputGroupSO.Raise);
 
-	private bool GotInput(Record<EventSO, KeyInputItem> record) {
+	private bool GotInput(Record<ChannelSO, KeyInputItem> record) {
 		if (this.inputSO == null) throw this.NullError();
 		return this.inputSO.GetKey(
 			record.value.keyCode,
@@ -21,7 +21,7 @@ public class KeyInputGroupSO : ScriptableObject
 		);
 	}
 
-	private static void Raise(Record<EventSO, KeyInputItem> record) {
+	private static void Raise(Record<ChannelSO, KeyInputItem> record) {
 		record.key.Raise();
 	}
 
