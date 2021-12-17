@@ -14,4 +14,4 @@ public class Approach : BaseApproach<Vector3>
 	}
 }
 
-public class ApproachMB : BaseApproachMB<Approach> { }
+public class ApproachMB : BaseApproachMB<Approach, Vector3> { }
