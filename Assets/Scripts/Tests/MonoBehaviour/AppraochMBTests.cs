@@ -22,11 +22,11 @@ public class AppraochMBTests : TestCollection
 	}
 
 	[Test]
-	public void PostUpdate() {
+	public void OnPositionUpdated() {
 		var appraoch = new Approach();
 		var transformA = new GameObject().transform;
 		var transformB = new GameObject().transform;
 
-		Assert.DoesNotThrow(() => appraoch.PostUpdate(transformA, default));
+		Assert.DoesNotThrow(() => appraoch.OnPositionUpdated(transformA, default));
 	}
 }
