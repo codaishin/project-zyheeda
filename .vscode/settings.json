@@ -5,7 +5,8 @@
 	"editor.wordWrap": "wordWrapColumn",
 	"editor.wrappingIndent": "indent",
 	"editor.wordWrapColumn": 80,
-	"bracket-pair-colorizer-2.colorMode": "Independent",
+	"editor.bracketPairColorization.enabled": true,
+	"editor.guides.bracketPairs": "active",
 	"files.insertFinalNewline": true,
 	"files.trimTrailingWhitespace": true,
 	"files.exclude": {
