@@ -1,5 +1,3 @@
-using UnityEngine;
-
 public abstract class BasePlayerAnimatorMB<TAnimator> :
 	BaseAnimatorMB<TAnimator>
 	where TAnimator : IAnimator

@@ -1,14 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using NUnit.Framework;
-using UnityEngine;
-using UnityEngine.TestTools;
 
 public class AttributesTests : TestCollection
 {
 	[Test]
-	public void Add()
-	{
+	public void Add() {
 		var a = new Attributes { body = 10, mind = 20, spirit = 44 };
 		var b = new Attributes { body = 11, mind = -5, spirit = 42 };
 		var c = a + b;
@@ -20,8 +15,7 @@ public class AttributesTests : TestCollection
 	}
 
 	[Test]
-	public void String()
-	{
+	public void String() {
 		var a = new Attributes { body = 10, mind = 20, spirit = 44 };
 
 		Assert.AreEqual("(body: 10, mind: 20, spirit: 44)", a.ToString());

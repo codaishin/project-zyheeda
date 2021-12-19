@@ -1,8 +1,6 @@
-using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
-using UnityEngine.TestTools;
 
 public class BaseKeyInputSOTests : TestCollection
 {
@@ -23,8 +21,7 @@ public class BaseKeyInputSOTests : TestCollection
 	}
 
 	[Test]
-	public void HoldSpace()
-	{
+	public void HoldSpace() {
 		var key = KeyCode.Space;
 		var state = KeyState.Hold;
 		var inputSO = ScriptableObject.CreateInstance<MockKeyInputSO>();
@@ -34,8 +31,7 @@ public class BaseKeyInputSOTests : TestCollection
 	}
 
 	[Test]
-	public void HoldSpaceFalse()
-	{
+	public void HoldSpaceFalse() {
 		var key = KeyCode.Space;
 		var state = KeyState.Hold;
 		var inputSO = ScriptableObject.CreateInstance<MockKeyInputSO>();
@@ -44,8 +40,7 @@ public class BaseKeyInputSOTests : TestCollection
 	}
 
 	[Test]
-	public void DownK()
-	{
+	public void DownK() {
 		var key = KeyCode.K;
 		var state = KeyState.Down;
 		var inputSO = ScriptableObject.CreateInstance<MockKeyInputSO>();
@@ -55,8 +50,7 @@ public class BaseKeyInputSOTests : TestCollection
 	}
 
 	[Test]
-	public void DownKFalse()
-	{
+	public void DownKFalse() {
 		var key = KeyCode.K;
 		var state = KeyState.Down;
 		var inputSO = ScriptableObject.CreateInstance<MockKeyInputSO>();
@@ -65,8 +59,7 @@ public class BaseKeyInputSOTests : TestCollection
 	}
 
 	[Test]
-	public void UpE()
-	{
+	public void UpE() {
 		var key = KeyCode.E;
 		var state = KeyState.Up;
 		var inputSO = ScriptableObject.CreateInstance<MockKeyInputSO>();
@@ -76,8 +69,7 @@ public class BaseKeyInputSOTests : TestCollection
 	}
 
 	[Test]
-	public void UpEFalse()
-	{
+	public void UpEFalse() {
 		var key = KeyCode.E;
 		var state = KeyState.Up;
 		var inputSO = ScriptableObject.CreateInstance<MockKeyInputSO>();
@@ -86,8 +78,7 @@ public class BaseKeyInputSOTests : TestCollection
 	}
 
 	[Test]
-	public void OddStateWThrows()
-	{
+	public void OddStateWThrows() {
 		var key = KeyCode.W;
 		var state = (KeyState)(-1);
 		var inputSO = ScriptableObject.CreateInstance<MockKeyInputSO>();
@@ -96,15 +87,15 @@ public class BaseKeyInputSOTests : TestCollection
 	}
 
 	[Test]
-	public void OddStateWThrowsMessage()
-	{
+	public void OddStateWThrowsMessage() {
 		var key = KeyCode.W;
 		var state = (KeyState)(-1);
 		var inputSO = ScriptableObject.CreateInstance<MockKeyInputSO>();
 
 		try {
 			inputSO.GetKey(key, state);
-		} catch (System.ArgumentException e) {
+		}
+		catch (System.ArgumentException e) {
 			Assert.AreEqual("KeyState \"-1\" not recognised", e.Message);
 		}
 	}

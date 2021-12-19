@@ -1,5 +1,3 @@
-using UnityEngine;
-
 public abstract class BaseMapValueToContentMB<TValue, TContentValue, TContent> :
 	BaseHasValueMB<TValue>
 	where TContent :
