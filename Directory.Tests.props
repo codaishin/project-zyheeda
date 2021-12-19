@@ -1,6 +1,6 @@
 <Project>
-  <PropertyGroup>
-    <Nullable>enable</Nullable>
+	<PropertyGroup>
+		<Nullable>enable</Nullable>
 		<WarningsAsErrors>CS8019</WarningsAsErrors>
-  </PropertyGroup>
+	</PropertyGroup>
 </Project>
