@@ -1,15 +1,13 @@
 using System.Collections;
-using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.TestTools;
+using UnityEngine.UI;
 
 public class UIHealthInspectorMBTests : TestCollection
 {
 	[UnityTest]
-	public IEnumerator SetText()
-	{
+	public IEnumerator SetText() {
 		var inspector = new GameObject("inspector").AddComponent<UIHealthInspectorMB>();
 		var text = new GameObject("text").AddComponent<Text>();
 		var image = new GameObject("image").AddComponent<Image>();
@@ -18,14 +16,13 @@ public class UIHealthInspectorMBTests : TestCollection
 
 		yield return new WaitForFixedUpdate();
 
-		inspector.Set(new Health{ hp = 10f, maxHp = 100f });
+		inspector.Set(new Health { hp = 10f, maxHp = 100f });
 
 		Assert.AreEqual("10.0/100.0", text.text);
 	}
 
 	[UnityTest]
-	public IEnumerator SetImageFill()
-	{
+	public IEnumerator SetImageFill() {
 		var inspector = new GameObject("inspector").AddComponent<UIHealthInspectorMB>();
 		var text = new GameObject("text").AddComponent<Text>();
 		var image = new GameObject("image").AddComponent<Image>();
@@ -34,14 +31,13 @@ public class UIHealthInspectorMBTests : TestCollection
 
 		yield return new WaitForFixedUpdate();
 
-		inspector.Set(new Health{ hp = 5f, maxHp = 25f });
+		inspector.Set(new Health { hp = 5f, maxHp = 25f });
 
 		Assert.AreEqual(5f / 25f, image.fillAmount);
 	}
 
 	[UnityTest]
-	public IEnumerator SetTextRounded()
-	{
+	public IEnumerator SetTextRounded() {
 		var inspector = new GameObject("inspector").AddComponent<UIHealthInspectorMB>();
 		var text = new GameObject("text").AddComponent<Text>();
 		var image = new GameObject("image").AddComponent<Image>();
@@ -50,7 +46,7 @@ public class UIHealthInspectorMBTests : TestCollection
 
 		yield return new WaitForFixedUpdate();
 
-		inspector.Set(new Health{ hp = 10.12f, maxHp = 99.99f });
+		inspector.Set(new Health { hp = 10.12f, maxHp = 99.99f });
 
 		Assert.AreEqual("10.1/100.0", text.text);
 	}

@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using NUnit.Framework;
 using UnityEngine;
@@ -6,11 +5,10 @@ using UnityEngine.TestTools;
 
 public class MagazineTests : TestCollection
 {
-	private class MockComponent : MonoBehaviour {}
+	private class MockComponent : MonoBehaviour { }
 
 	[Test]
-	public void InstantiatePrefab()
-	{
+	public void InstantiatePrefab() {
 		var transform = new GameObject("transform").transform;
 		var prefab = new GameObject("prefab").AddComponent<MockComponent>();
 		var magazine = new Magazine { projectileStorage = transform, projectilePrefab = prefab.gameObject };
@@ -27,8 +25,7 @@ public class MagazineTests : TestCollection
 	}
 
 	[Test]
-	public void StoreInMagazineTransform()
-	{
+	public void StoreInMagazineTransform() {
 		var transform = new GameObject("transform").transform;
 		var prefab = new GameObject("prefab");
 		var magazine = new Magazine { projectileStorage = transform, projectilePrefab = prefab };
@@ -40,8 +37,7 @@ public class MagazineTests : TestCollection
 	}
 
 	[Test]
-	public void StoreInMagazineInactive()
-	{
+	public void StoreInMagazineInactive() {
 		var transform = new GameObject("transform").transform;
 		var prefab = new GameObject("prefab");
 		var magazine = new Magazine { projectileStorage = transform, projectilePrefab = prefab };
@@ -53,8 +49,7 @@ public class MagazineTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator OnlyOneProjectile()
-	{
+	public IEnumerator OnlyOneProjectile() {
 		var transform = new GameObject("transform").transform;
 		var prefab = new GameObject("prefab");
 		var magazine = new Magazine { projectileStorage = transform, projectilePrefab = prefab };
@@ -73,8 +68,7 @@ public class MagazineTests : TestCollection
 	}
 
 	[Test]
-	public void TwoProjectile()
-	{
+	public void TwoProjectile() {
 		var transform = new GameObject("transform").transform;
 		var prefab = new GameObject("prefab");
 		var magazine = new Magazine { projectileStorage = transform, projectilePrefab = prefab };
@@ -86,8 +80,7 @@ public class MagazineTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator ProjectileActive()
-	{
+	public IEnumerator ProjectileActive() {
 		var transform = new GameObject("transform").transform;
 		var prefab = new GameObject("prefab");
 		var magazine = new Magazine { projectileStorage = transform, projectilePrefab = prefab };
@@ -106,8 +99,7 @@ public class MagazineTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator ProjectileNoParent()
-	{
+	public IEnumerator ProjectileNoParent() {
 		var transform = new GameObject("transform").transform;
 		var prefab = new GameObject("prefab");
 		var magazine = new Magazine { projectileStorage = transform, projectilePrefab = prefab };

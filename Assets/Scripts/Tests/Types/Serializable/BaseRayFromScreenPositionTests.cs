@@ -1,6 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
-using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 
@@ -12,12 +10,11 @@ public class BaseRayFromScreenPositionTests : TestCollection
 		public Vector3 Position => this.position;
 	}
 
-	private class MockRayCamToPos : BaseRayFromScreenPosition<MockScreenPos> {}
+	private class MockRayCamToPos : BaseRayFromScreenPosition<MockScreenPos> { }
 
 	[UnityTest]
-	public IEnumerator GetRayDirection()
-	{
-		var ray = new MockRayCamToPos{
+	public IEnumerator GetRayDirection() {
+		var ray = new MockRayCamToPos {
 			camera = ScriptableObject.CreateInstance<ReferenceSO>(),
 			screenPosition = new MockScreenPos(),
 		};
@@ -38,9 +35,8 @@ public class BaseRayFromScreenPositionTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator GetRayOrigin()
-	{
-		var ray = new MockRayCamToPos{
+	public IEnumerator GetRayOrigin() {
+		var ray = new MockRayCamToPos {
 			camera = ScriptableObject.CreateInstance<ReferenceSO>(),
 			screenPosition = new MockScreenPos(),
 		};

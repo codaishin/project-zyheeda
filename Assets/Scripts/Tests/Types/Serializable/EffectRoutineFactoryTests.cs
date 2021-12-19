@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
@@ -8,11 +7,10 @@ using UnityEngine.TestTools;
 public class EffectRoutineFactoryTests : TestCollection
 {
 	[Test]
-	public void CreateAndApply()
-	{
+	public void CreateAndApply() {
 		var called = false;
 		var effect = new Effect(() => called = true);
-		var routine = new EffectRoutineFactory{ intervalDelta = 0f }.Create(effect);
+		var routine = new EffectRoutineFactory { intervalDelta = 0f }.Create(effect);
 
 		routine.MoveNext();
 
@@ -20,11 +18,10 @@ public class EffectRoutineFactoryTests : TestCollection
 	}
 
 	[Test]
-	public void CreateAndMaintain()
-	{
+	public void CreateAndMaintain() {
 		var called = 0f;
 		var effect = new Effect(maintain: d => called = d);
-		var routine = new EffectRoutineFactory{ intervalDelta = 3f }.Create(effect);
+		var routine = new EffectRoutineFactory { intervalDelta = 3f }.Create(effect);
 
 		effect.duration = 10f;
 
@@ -35,11 +32,10 @@ public class EffectRoutineFactoryTests : TestCollection
 	}
 
 	[Test]
-	public void CreateAndNoMaintainWhenZeroDuration()
-	{
+	public void CreateAndNoMaintainWhenZeroDuration() {
 		var called = false;
 		var effect = new Effect(maintain: _ => called = true);
-		var routine = new EffectRoutineFactory{ intervalDelta = 3f }.Create(effect);
+		var routine = new EffectRoutineFactory { intervalDelta = 3f }.Create(effect);
 
 		routine.MoveNext();
 
@@ -47,11 +43,10 @@ public class EffectRoutineFactoryTests : TestCollection
 	}
 
 	[Test]
-	public void CreateAndMaintainForDuration()
-	{
+	public void CreateAndMaintainForDuration() {
 		var called = new List<float>();
 		var effect = new Effect(maintain: d => called.Add(d));
-		var routine = new EffectRoutineFactory{ intervalDelta = 2f }.Create(effect);
+		var routine = new EffectRoutineFactory { intervalDelta = 2f }.Create(effect);
 
 		effect.duration = 5f;
 
@@ -64,10 +59,9 @@ public class EffectRoutineFactoryTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator CreateAndWaitForIntervalDelta()
-	{
+	public IEnumerator CreateAndWaitForIntervalDelta() {
 		var effect = new Effect();
-		var routine = new EffectRoutineFactory{ intervalDelta = 0.3f }.Create(effect);
+		var routine = new EffectRoutineFactory { intervalDelta = 0.3f }.Create(effect);
 
 		effect.duration = 10f;
 		routine.MoveNext();
@@ -82,10 +76,9 @@ public class EffectRoutineFactoryTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator CreateAndWaitForRemainingCooldown()
-	{
+	public IEnumerator CreateAndWaitForRemainingCooldown() {
 		var effect = new Effect();
-		var routine = new EffectRoutineFactory{ intervalDelta = 0.3f }.Create(effect);
+		var routine = new EffectRoutineFactory { intervalDelta = 0.3f }.Create(effect);
 
 		effect.duration = 0.4f;
 		routine.MoveNext();
@@ -101,11 +94,10 @@ public class EffectRoutineFactoryTests : TestCollection
 	}
 
 	[Test]
-	public void CreateAndRevert()
-	{
+	public void CreateAndRevert() {
 		var called = false;
 		var effect = new Effect(revert: () => called = true);
-		var routine = new EffectRoutineFactory{ intervalDelta = 0f }.Create(effect);
+		var routine = new EffectRoutineFactory { intervalDelta = 0f }.Create(effect);
 
 		routine.MoveNext();
 
@@ -113,12 +105,11 @@ public class EffectRoutineFactoryTests : TestCollection
 	}
 
 	[Test]
-	public void CreateAndRevertOnlyAtEnd()
-	{
+	public void CreateAndRevertOnlyAtEnd() {
 		var called = false;
 		var calledTrack = new List<bool>();
 		var effect = new Effect(revert: () => called = true);
-		var routine = new EffectRoutineFactory{ intervalDelta = 42f }.Create(effect);
+		var routine = new EffectRoutineFactory { intervalDelta = 42f }.Create(effect);
 
 		effect.duration = 42f;
 
@@ -131,20 +122,18 @@ public class EffectRoutineFactoryTests : TestCollection
 	}
 
 	[Test]
-	public void IntervalDeltaDefaultToOne()
-	{
+	public void IntervalDeltaDefaultToOne() {
 		var routine = new EffectRoutineFactory();
 		Assert.AreEqual(1f, routine.intervalDelta);
 	}
 
 	[Test]
-	public void IntervalDeltaUntouched()
-	{
-		var factory = new EffectRoutineFactory{ intervalDelta = 0.1f };
-		var routine = factory.Create(new Effect{ duration = 10f });
+	public void IntervalDeltaUntouched() {
+		var factory = new EffectRoutineFactory { intervalDelta = 0.1f };
+		var routine = factory.Create(new Effect { duration = 10f });
 		var count = 0;
 
-		while (routine.MoveNext() && count++ < 100);
+		while (routine.MoveNext() && count++ < 100) ;
 
 		Assert.AreEqual((0.1f, 100), (factory.intervalDelta, count));
 	}

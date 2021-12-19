@@ -1,14 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
-using UnityEngine.TestTools;
 
 public class InputLayerSOTests : TestCollection
 {
 	[Test]
-	public void CheckFalseOnLayerMismatch()
-	{
+	public void CheckFalseOnLayerMismatch() {
 		var inputLayerSO = ScriptableObject.CreateInstance<InputLayerSO>();
 		inputLayerSO.CurrentInputLayer = InputLayer.SkillTargeting;
 
@@ -16,8 +12,7 @@ public class InputLayerSOTests : TestCollection
 	}
 
 	[Test]
-	public void CheckTrueOnLayerMatch()
-	{
+	public void CheckTrueOnLayerMatch() {
 		var inputLayerSO = ScriptableObject.CreateInstance<InputLayerSO>();
 		inputLayerSO.CurrentInputLayer = InputLayer.SkillTargeting;
 

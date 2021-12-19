@@ -1,12 +1,10 @@
-using System;
 using System.Collections;
 using NUnit.Framework;
 
 public class IEnumeratorExtensionsTests : TestCollection
 {
 	[Test]
-	public void Run()
-	{
+	public void Run() {
 		var count = 0;
 		IEnumerator get() {
 			++count;
@@ -21,8 +19,7 @@ public class IEnumeratorExtensionsTests : TestCollection
 	}
 
 	[Test]
-	public void Current()
-	{
+	public void Current() {
 		IEnumerator getStr() {
 			yield return "a";
 		}

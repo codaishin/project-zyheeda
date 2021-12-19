@@ -1,11 +1,9 @@
-using System;
 using NUnit.Framework;
 
 public class EffectTests : TestCollection
 {
 	[Test]
-	public void Apply()
-	{
+	public void Apply() {
 		var called = false;
 		var effect = new Effect(() => called = true);
 
@@ -15,16 +13,14 @@ public class EffectTests : TestCollection
 	}
 
 	[Test]
-	public void DefaultApplyDoesNotThrow()
-	{
+	public void DefaultApplyDoesNotThrow() {
 		var effect = new Effect();
 
 		Assert.DoesNotThrow(() => effect.Apply());
 	}
 
 	[Test]
-	public void Maintain()
-	{
+	public void Maintain() {
 		var called = 0f;
 		var effect = new Effect(maintain: d => called = d);
 
@@ -34,16 +30,14 @@ public class EffectTests : TestCollection
 	}
 
 	[Test]
-	public void DefaultMaintainDoesNotThrow()
-	{
+	public void DefaultMaintainDoesNotThrow() {
 		var effect = new Effect();
 
 		Assert.DoesNotThrow(() => effect.Maintain(0.4f));
 	}
 
 	[Test]
-	public void MaintainReducesDuration()
-	{
+	public void MaintainReducesDuration() {
 		var effect = new Effect();
 		effect.duration = 5f;
 
@@ -53,8 +47,7 @@ public class EffectTests : TestCollection
 	}
 
 	[Test]
-	public void Revert()
-	{
+	public void Revert() {
 		var called = false;
 		var effect = new Effect(revert: () => called = true);
 
@@ -64,16 +57,14 @@ public class EffectTests : TestCollection
 	}
 
 	[Test]
-	public void DefaultRevertDoesNotThrow()
-	{
+	public void DefaultRevertDoesNotThrow() {
 		var effect = new Effect();
 
 		Assert.DoesNotThrow(() => effect.Revert());
 	}
 
 	[Test]
-	public void SilenceApplyAndRevert()
-	{
+	public void SilenceApplyAndRevert() {
 		var called = (apply: false, revert: false);
 		var effect = new Effect(
 			apply: () => called.apply = true,
@@ -89,8 +80,7 @@ public class EffectTests : TestCollection
 
 
 	[Test]
-	public void SilenceMaintain()
-	{
+	public void SilenceMaintain() {
 		var called = false;
 		var effect = new Effect(maintain: d => called = true);
 		effect.silence = SilenceTag.Maintain;
@@ -101,8 +91,7 @@ public class EffectTests : TestCollection
 	}
 
 	[Test]
-	public void SilenceMaintainReduceDuration()
-	{
+	public void SilenceMaintainReduceDuration() {
 		var effect = new Effect();
 		effect.silence = SilenceTag.Maintain;
 		effect.duration = 4f;
