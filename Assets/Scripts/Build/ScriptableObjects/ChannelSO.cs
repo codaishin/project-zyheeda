@@ -1,8 +1,8 @@
 using System;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "ScriptableObjects/Event")]
-public class EventSO : ScriptableObject
+[CreateAssetMenu(menuName = "ScriptableObjects/Channel")]
+public class ChannelSO : ScriptableObject
 {
 	public event Action? Listeners;
 

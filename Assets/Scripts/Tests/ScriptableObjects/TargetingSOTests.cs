@@ -36,8 +36,8 @@ public class TargetingSOTests : TestCollection
 		var singleTarget = ScriptableObject.CreateInstance<TargetingSO>();
 		var hitter = ScriptableObject.CreateInstance<MockHitterSO>();
 		singleTarget.hitter = hitter;
-		singleTarget.selectTarget = ScriptableObject.CreateInstance<EventSO>();
-		singleTarget.cancelSelect = ScriptableObject.CreateInstance<EventSO>();
+		singleTarget.selectTarget = ScriptableObject.CreateInstance<ChannelSO>();
+		singleTarget.cancelSelect = ScriptableObject.CreateInstance<ChannelSO>();
 		hitter.hit.tryHit = _ => target;
 
 		yield return new WaitForEndOfFrame();
@@ -58,8 +58,8 @@ public class TargetingSOTests : TestCollection
 		var singleTarget = ScriptableObject.CreateInstance<TargetingSO>();
 		var hitter = ScriptableObject.CreateInstance<MockHitterSO>();
 		singleTarget.hitter = hitter;
-		singleTarget.selectTarget = ScriptableObject.CreateInstance<EventSO>();
-		singleTarget.cancelSelect = ScriptableObject.CreateInstance<EventSO>();
+		singleTarget.selectTarget = ScriptableObject.CreateInstance<ChannelSO>();
+		singleTarget.cancelSelect = ScriptableObject.CreateInstance<ChannelSO>();
 		hitter.hit.tryHit = s => s;
 
 		yield return new WaitForEndOfFrame();
@@ -80,8 +80,8 @@ public class TargetingSOTests : TestCollection
 		var singleTarget = ScriptableObject.CreateInstance<TargetingSO>();
 		var hitter = ScriptableObject.CreateInstance<MockHitterSO>();
 		singleTarget.hitter = hitter;
-		singleTarget.selectTarget = ScriptableObject.CreateInstance<EventSO>();
-		singleTarget.cancelSelect = ScriptableObject.CreateInstance<EventSO>();
+		singleTarget.selectTarget = ScriptableObject.CreateInstance<ChannelSO>();
+		singleTarget.cancelSelect = ScriptableObject.CreateInstance<ChannelSO>();
 		hitter.hit.tryHit = _ => null;
 
 		yield return new WaitForEndOfFrame();
@@ -102,8 +102,8 @@ public class TargetingSOTests : TestCollection
 		var singleTarget = ScriptableObject.CreateInstance<TargetingSO>();
 		var hitter = ScriptableObject.CreateInstance<MockHitterSO>();
 		singleTarget.hitter = hitter;
-		singleTarget.selectTarget = ScriptableObject.CreateInstance<EventSO>();
-		singleTarget.cancelSelect = ScriptableObject.CreateInstance<EventSO>();
+		singleTarget.selectTarget = ScriptableObject.CreateInstance<ChannelSO>();
+		singleTarget.cancelSelect = ScriptableObject.CreateInstance<ChannelSO>();
 		hitter.hit.tryHit = _ => target;
 
 		yield return new WaitForEndOfFrame();
@@ -123,8 +123,8 @@ public class TargetingSOTests : TestCollection
 		var singleTarget = ScriptableObject.CreateInstance<TargetingSO>();
 		var hitter = ScriptableObject.CreateInstance<MockHitterSO>();
 		singleTarget.hitter = hitter;
-		singleTarget.selectTarget = ScriptableObject.CreateInstance<EventSO>();
-		singleTarget.cancelSelect = ScriptableObject.CreateInstance<EventSO>();
+		singleTarget.selectTarget = ScriptableObject.CreateInstance<ChannelSO>();
+		singleTarget.cancelSelect = ScriptableObject.CreateInstance<ChannelSO>();
 		hitter.hit.tryHit = _ => target;
 
 		yield return new WaitForEndOfFrame();
@@ -147,8 +147,8 @@ public class TargetingSOTests : TestCollection
 		var singleTarget = ScriptableObject.CreateInstance<TargetingSO>();
 		var hitter = ScriptableObject.CreateInstance<MockHitterSO>();
 		singleTarget.hitter = hitter;
-		singleTarget.selectTarget = ScriptableObject.CreateInstance<EventSO>();
-		singleTarget.cancelSelect = ScriptableObject.CreateInstance<EventSO>();
+		singleTarget.selectTarget = ScriptableObject.CreateInstance<ChannelSO>();
+		singleTarget.cancelSelect = ScriptableObject.CreateInstance<ChannelSO>();
 		hitter.hit.tryHit = _ => null;
 
 		yield return new WaitForEndOfFrame();
@@ -175,8 +175,8 @@ public class TargetingSOTests : TestCollection
 		var singleTarget = ScriptableObject.CreateInstance<TargetingSO>();
 		var hitter = ScriptableObject.CreateInstance<MockHitterSO>();
 		singleTarget.hitter = hitter;
-		singleTarget.selectTarget = ScriptableObject.CreateInstance<EventSO>();
-		singleTarget.cancelSelect = ScriptableObject.CreateInstance<EventSO>();
+		singleTarget.selectTarget = ScriptableObject.CreateInstance<ChannelSO>();
+		singleTarget.cancelSelect = ScriptableObject.CreateInstance<ChannelSO>();
 		hitter.hit.tryHit = _ => target;
 
 		yield return new WaitForEndOfFrame();
@@ -200,8 +200,8 @@ public class TargetingSOTests : TestCollection
 		var singleTarget = ScriptableObject.CreateInstance<TargetingSO>();
 		var hitter = ScriptableObject.CreateInstance<MockHitterSO>();
 		singleTarget.hitter = hitter;
-		singleTarget.selectTarget = ScriptableObject.CreateInstance<EventSO>();
-		singleTarget.cancelSelect = ScriptableObject.CreateInstance<EventSO>();
+		singleTarget.selectTarget = ScriptableObject.CreateInstance<ChannelSO>();
+		singleTarget.cancelSelect = ScriptableObject.CreateInstance<ChannelSO>();
 		hitter.hit.tryHit = _ => target;
 
 		yield return new WaitForEndOfFrame();
@@ -223,8 +223,8 @@ public class TargetingSOTests : TestCollection
 		var singleTarget = ScriptableObject.CreateInstance<TargetingSO>();
 		var hitter = ScriptableObject.CreateInstance<MockHitterSO>();
 		singleTarget.hitter = hitter;
-		singleTarget.selectTarget = ScriptableObject.CreateInstance<EventSO>();
-		singleTarget.cancelSelect = ScriptableObject.CreateInstance<EventSO>();
+		singleTarget.selectTarget = ScriptableObject.CreateInstance<ChannelSO>();
+		singleTarget.cancelSelect = ScriptableObject.CreateInstance<ChannelSO>();
 
 		yield return new WaitForEndOfFrame();
 
@@ -247,8 +247,8 @@ public class TargetingSOTests : TestCollection
 		var singleTarget = ScriptableObject.CreateInstance<TargetingSO>();
 		var hitter = ScriptableObject.CreateInstance<MockHitterSO>();
 		singleTarget.hitter = hitter;
-		singleTarget.selectTarget = ScriptableObject.CreateInstance<EventSO>();
-		singleTarget.cancelSelect = ScriptableObject.CreateInstance<EventSO>();
+		singleTarget.selectTarget = ScriptableObject.CreateInstance<ChannelSO>();
+		singleTarget.cancelSelect = ScriptableObject.CreateInstance<ChannelSO>();
 
 		yield return new WaitForEndOfFrame();
 
@@ -278,8 +278,8 @@ public class TargetingSOTests : TestCollection
 		var singleTarget = ScriptableObject.CreateInstance<TargetingSO>();
 		var hitter = ScriptableObject.CreateInstance<MockHitterSO>();
 		singleTarget.hitter = hitter;
-		singleTarget.selectTarget = ScriptableObject.CreateInstance<EventSO>();
-		singleTarget.cancelSelect = ScriptableObject.CreateInstance<EventSO>();
+		singleTarget.selectTarget = ScriptableObject.CreateInstance<ChannelSO>();
+		singleTarget.cancelSelect = ScriptableObject.CreateInstance<ChannelSO>();
 		hitter.hit.tryHit = _ => targets[i++];
 
 		yield return new WaitForEndOfFrame();
@@ -311,8 +311,8 @@ public class TargetingSOTests : TestCollection
 		var singleTarget = ScriptableObject.CreateInstance<TargetingSO>();
 		var hitter = ScriptableObject.CreateInstance<MockHitterSO>();
 		singleTarget.hitter = hitter;
-		singleTarget.selectTarget = ScriptableObject.CreateInstance<EventSO>();
-		singleTarget.cancelSelect = ScriptableObject.CreateInstance<EventSO>();
+		singleTarget.selectTarget = ScriptableObject.CreateInstance<ChannelSO>();
+		singleTarget.cancelSelect = ScriptableObject.CreateInstance<ChannelSO>();
 		hitter.hit.tryHit = _ => targets[i++];
 
 		yield return new WaitForEndOfFrame();
@@ -341,8 +341,8 @@ public class TargetingSOTests : TestCollection
 		var singleTarget = ScriptableObject.CreateInstance<TargetingSO>();
 		var hitter = ScriptableObject.CreateInstance<MockHitterSO>();
 		singleTarget.hitter = hitter;
-		singleTarget.selectTarget = ScriptableObject.CreateInstance<EventSO>();
-		singleTarget.cancelSelect = ScriptableObject.CreateInstance<EventSO>();
+		singleTarget.selectTarget = ScriptableObject.CreateInstance<ChannelSO>();
+		singleTarget.cancelSelect = ScriptableObject.CreateInstance<ChannelSO>();
 		hitter.hit.tryHit = _ => target;
 
 		yield return new WaitForEndOfFrame();
@@ -375,8 +375,8 @@ public class TargetingSOTests : TestCollection
 		var singleTarget = ScriptableObject.CreateInstance<TargetingSO>();
 		var hitter = ScriptableObject.CreateInstance<MockHitterSO>();
 		singleTarget.hitter = hitter;
-		singleTarget.selectTarget = ScriptableObject.CreateInstance<EventSO>();
-		singleTarget.cancelSelect = ScriptableObject.CreateInstance<EventSO>();
+		singleTarget.selectTarget = ScriptableObject.CreateInstance<ChannelSO>();
+		singleTarget.cancelSelect = ScriptableObject.CreateInstance<ChannelSO>();
 		singleTarget.doubleSelectFinishes = true;
 		hitter.hit.tryHit = _ => target;
 
@@ -401,8 +401,8 @@ public class TargetingSOTests : TestCollection
 		var singleTarget = ScriptableObject.CreateInstance<TargetingSO>();
 		var hitter = ScriptableObject.CreateInstance<MockHitterSO>();
 		singleTarget.hitter = hitter;
-		singleTarget.selectTarget = ScriptableObject.CreateInstance<EventSO>();
-		singleTarget.cancelSelect = ScriptableObject.CreateInstance<EventSO>();
+		singleTarget.selectTarget = ScriptableObject.CreateInstance<ChannelSO>();
+		singleTarget.cancelSelect = ScriptableObject.CreateInstance<ChannelSO>();
 		singleTarget.doubleSelectFinishes = true;
 		hitter.hit.tryHit = _ => target;
 

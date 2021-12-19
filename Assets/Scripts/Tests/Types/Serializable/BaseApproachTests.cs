@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
@@ -7,19 +6,24 @@ public class BaseApproachTests : TestCollection
 {
 	private class MockApproach : BaseApproach<Vector3>
 	{
-		public delegate void PostUpdateFunc(in Transform t, in Vector3 v);
+		public delegate void OnPositionUpdatedDunf(in Transform t, in Vector3 v);
 
 		public float timeDelta = 1f;
-		public PostUpdateFunc postUpdate = (in Transform _, in Vector3 __) => {};
+		public OnPositionUpdatedDunf onPositionUpdated = (
+			in Transform _,
+			in Vector3 __
+		) => { };
 
 		public override Vector3 GetPosition(in Vector3 target) => target;
 		public override float GetTimeDelta() => this.timeDelta;
-		public override void PostUpdate(in Transform transform, in Vector3 target) => this.postUpdate(transform, target);
+		public override void OnPositionUpdated(
+			in Transform current,
+			in Vector3 target
+		) => this.onPositionUpdated(current, target);
 	}
 
 	[Test]
-	public void GetApproach()
-	{
+	public void GetApproach() {
 		var obj = new GameObject("obj");
 		var approach = new MockApproach();
 
@@ -30,8 +34,7 @@ public class BaseApproachTests : TestCollection
 
 
 	[Test]
-	public void GetApproachDeltaPerSecond()
-	{
+	public void GetApproachDeltaPerSecond() {
 		var obj = new GameObject("obj");
 		var approach = new MockApproach();
 
@@ -41,8 +44,7 @@ public class BaseApproachTests : TestCollection
 	}
 
 	[Test]
-	public void GetApproachDeltaPerSecondFromOffset()
-	{
+	public void GetApproachDeltaPerSecondFromOffset() {
 		var obj = new GameObject("obj");
 		var approach = new MockApproach();
 
@@ -54,10 +56,9 @@ public class BaseApproachTests : TestCollection
 	}
 
 	[Test]
-	public void GetApproachTimeDelta()
-	{
+	public void GetApproachTimeDelta() {
 		var obj = new GameObject("obj");
-		var approach = new MockApproach{ timeDelta = 0.3f };
+		var approach = new MockApproach { timeDelta = 0.3f };
 
 		approach.Apply(obj.transform, Vector3.right, 1).MoveNext();
 
@@ -65,8 +66,7 @@ public class BaseApproachTests : TestCollection
 	}
 
 	[Test]
-	public void GetApproachMultipleFrames()
-	{
+	public void GetApproachMultipleFrames() {
 		var positions = new List<Vector3>();
 		var obj = new GameObject("obj");
 		var approach = new MockApproach();
@@ -87,43 +87,46 @@ public class BaseApproachTests : TestCollection
 	}
 
 	[Test]
-	public void GetApproachTerminates()
-	{
+	public void GetApproachTerminates() {
 		var obj = new GameObject("obj");
 		var approach = new MockApproach();
 		var r = approach.Apply(obj.transform, Vector3.right, 0.51f);
 
-		Assert.AreEqual((true, true, false), (r.MoveNext(), r.MoveNext(), r.MoveNext()));
+		Assert.AreEqual(
+			(true, true, false),
+			(r.MoveNext(), r.MoveNext(), r.MoveNext())
+		);
 	}
 
 	[Test]
-	public void GetApproachPostUpdateCalled()
-	{
+	public void GetApproachOnPositionUpdatedCalled() {
 		var calledWith = new List<(Transform, Vector3)>();
 		var obj = new GameObject("obj");
 		var approach = new MockApproach();
 		var r = approach.Apply(obj.transform, Vector3.right, 0.2f);
 
-		approach.postUpdate = (in Transform t, in Vector3 v) => calledWith.Add((t, v));
+		approach.onPositionUpdated = (in Transform t, in Vector3 v) => calledWith.Add((t, v));
 
 		r.MoveNext();
 		r.MoveNext();
 
 		CollectionAssert.AreEqual(
-			new (Transform, Vector3)[] { (obj.transform, Vector3.right), (obj.transform, Vector3.right) },
+			new (Transform, Vector3)[] {
+				(obj.transform, Vector3.right),
+				(obj.transform, Vector3.right),
+			},
 			calledWith
 		);
 	}
 
 	[Test]
-	public void GetApproachPostUpdateAfterPositionUpdate()
-	{
+	public void GetApproachOnPositionUpdatedAfterPositionUpdate() {
 		var called = default(Vector3);
 		var obj = new GameObject("obj");
 		var approach = new MockApproach();
 		var r = approach.Apply(obj.transform, Vector3.right, 0.2f);
 
-		approach.postUpdate = (in Transform t, in Vector3 _) => called = t.position;
+		approach.onPositionUpdated = (in Transform t, in Vector3 _) => called = t.position;
 
 		r.MoveNext();
 

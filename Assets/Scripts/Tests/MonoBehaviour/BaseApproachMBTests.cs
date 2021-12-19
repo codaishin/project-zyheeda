@@ -9,27 +9,38 @@ public class BaseApproachMBTests : TestCollection
 {
 	private class MockApproach : IApproach<Vector3>
 	{
-		public Func<Transform, Vector3, float, IEnumerator<WaitForFixedUpdate>> apply =
-			MockApproach.DefaultApproach;
+		public Func<Transform, Vector3, float, IEnumerator<WaitForFixedUpdate>> apply = MockApproach.DefaultApproach;
 
-		public IEnumerator<WaitForFixedUpdate> Apply(Transform transform, Vector3 target, float speed) =>
-			this.apply(transform, target, speed);
+		public IEnumerator<WaitForFixedUpdate> Apply(
+			Transform transform,
+			Vector3 target,
+			float speed
+		) => this.apply(transform, target, speed);
 
-		private static IEnumerator<WaitForFixedUpdate> DefaultApproach(Transform t, Vector3 v, float f) { yield break; }
+		private static IEnumerator<WaitForFixedUpdate> DefaultApproach(
+			Transform t,
+			Vector3 v,
+			float f
+		) {
+			yield break;
+		}
 	}
 
-	private class MockApproachMB : BaseApproachMB<MockApproach> {}
+	private class MockApproachMB : BaseApproachMB<MockApproach, Vector3> { }
 
 	[UnityTest]
-	public IEnumerator CallApproach()
-	{
+	public IEnumerator CallApproach() {
 		var called = default((Transform, Vector3, float));
 		var agent = new GameObject("agent");
 		var mover = new GameObject("mover").AddComponent<MockApproachMB>();
 		mover.agent = agent;
 		mover.deltaPerSecond = 4;
 
-		IEnumerator<WaitForFixedUpdate> approach(Transform transform, Vector3 target, float speed) {
+		IEnumerator<WaitForFixedUpdate> approach(
+			Transform transform,
+			Vector3 target,
+			float speed
+		) {
 			called = (transform, target, speed);
 			yield break;
 		}
@@ -44,14 +55,17 @@ public class BaseApproachMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator KeepCallingApproach()
-	{
+	public IEnumerator KeepCallingApproach() {
 		var called = 0;
 		var agent = new GameObject("agent");
 		var mover = new GameObject("mover").AddComponent<MockApproachMB>();
 		mover.agent = agent;
 
-		IEnumerator<WaitForFixedUpdate> approach(Transform transform, Vector3 target, float speed) {
+		IEnumerator<WaitForFixedUpdate> approach(
+			Transform transform,
+			Vector3 target,
+			float speed
+		) {
 			++called;
 			yield return new WaitForFixedUpdate();
 			++called;
@@ -69,14 +83,17 @@ public class BaseApproachMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator MoveOverrideOldMove()
-	{
+	public IEnumerator MoveOverrideOldMove() {
 		var called = new List<Vector3>();
 		var agent = new GameObject("agent");
 		var mover = new GameObject("mover").AddComponent<MockApproachMB>();
 		mover.agent = agent;
 
-		IEnumerator<WaitForFixedUpdate> approach(Transform transform, Vector3 target, float speed) {
+		IEnumerator<WaitForFixedUpdate> approach(
+			Transform transform,
+			Vector3 target,
+			float speed
+		) {
 			called.Add(target);
 			yield return new WaitForFixedUpdate();
 			called.Add(target);
@@ -95,5 +112,63 @@ public class BaseApproachMBTests : TestCollection
 			new Vector3[] { Vector3.right, Vector3.left, Vector3.left },
 			called
 		);
+	}
+
+	[UnityTest]
+	public IEnumerator OnBegin() {
+		var called = 0;
+		var agent = new GameObject("agent");
+		var mover = new GameObject("mover").AddComponent<MockApproachMB>();
+		mover.agent = agent;
+
+		IEnumerator<WaitForFixedUpdate> approach(
+			Transform transform,
+			Vector3 target,
+			float speed
+		) {
+			yield return new WaitForFixedUpdate();
+			yield return new WaitForFixedUpdate();
+			yield return new WaitForFixedUpdate();
+		}
+		mover.appraoch.apply = approach;
+
+		yield return new WaitForEndOfFrame();
+
+		mover.onBegin.AddListener(() => ++called);
+		mover.Apply(new Vector3(100, 0, 0));
+
+		Assert.AreEqual(1, called);
+	}
+
+	[UnityTest]
+	public IEnumerator OnEnd() {
+		var called = 0;
+		var agent = new GameObject("agent");
+		var mover = new GameObject("mover").AddComponent<MockApproachMB>();
+		mover.agent = agent;
+
+		IEnumerator<WaitForFixedUpdate> approach(
+			Transform transform,
+			Vector3 target,
+			float speed
+		) {
+			yield return new WaitForFixedUpdate();
+			yield return new WaitForFixedUpdate();
+			yield return new WaitForFixedUpdate();
+		}
+		mover.appraoch.apply = approach;
+
+		yield return new WaitForEndOfFrame();
+
+		mover.onEnd.AddListener(() => ++called);
+		mover.Apply(new Vector3(100, 0, 0));
+
+		Assert.AreEqual(0, called);
+
+		yield return new WaitForFixedUpdate();
+		yield return new WaitForFixedUpdate();
+		yield return new WaitForFixedUpdate();
+
+		Assert.AreEqual(1, called);
 	}
 }

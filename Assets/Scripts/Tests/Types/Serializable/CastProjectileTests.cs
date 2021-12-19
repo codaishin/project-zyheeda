@@ -7,8 +7,7 @@ using UnityEngine.TestTools;
 public class CastProjectileTests : TestCollection
 {
 	[Test]
-	public void GetPosition()
-	{
+	public void GetPosition() {
 		var obj = new GameObject("obj").AddComponent<CharacterSheetMB>();
 		var appraoch = new CastProjectileApproach();
 		obj.transform.position = Vector3.down;
@@ -17,8 +16,7 @@ public class CastProjectileTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator GetTimeDelta()
-	{
+	public IEnumerator GetTimeDelta() {
 		var appraoch = new CastProjectileApproach();
 
 		yield return new WaitForFixedUpdate();
@@ -27,15 +25,14 @@ public class CastProjectileTests : TestCollection
 	}
 
 	[Test]
-	public void PostUpdate()
-	{
+	public void OnPositionUpdated() {
 		var transform = new GameObject("transform").transform;
 		var target = new GameObject("target").AddComponent<CharacterSheetMB>();
 		var appraoch = new CastProjectileApproach();
 
 		target.transform.position = Vector3.up;
 
-		appraoch.PostUpdate(transform, target);
+		appraoch.OnPositionUpdated(transform, target);
 
 		Tools.AssertEqual(
 			Quaternion.LookRotation(Vector3.up).eulerAngles,

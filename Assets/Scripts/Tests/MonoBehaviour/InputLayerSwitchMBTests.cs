@@ -7,13 +7,12 @@ using UnityEngine.TestTools;
 public class InputLayerSwitchMBTests : TestCollection
 {
 	[UnityTest]
-	public IEnumerator SetTo()
-	{
+	public IEnumerator SetTo() {
 		var layerSwitch = new GameObject("layerSwitch").AddComponent<InputLayerSwitchMB>();
 		var layer = ScriptableObject.CreateInstance<InputLayerSO>();
-		var trigger = ScriptableObject.CreateInstance<EventSO>();
+		var trigger = ScriptableObject.CreateInstance<ChannelSO>();
 		layerSwitch.setTo = InputLayer.UI;
-		layerSwitch.listenTo = new EventSO[] { trigger };
+		layerSwitch.listenTo = new ChannelSO[] { trigger };
 		layerSwitch.inputLayer = layer;
 
 		yield return new WaitForEndOfFrame();

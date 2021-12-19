@@ -22,11 +22,18 @@ public class AppraochMBTests : TestCollection
 	}
 
 	[Test]
-	public void PostUpdate() {
+	public void OnPositionUpdated() {
 		var appraoch = new Approach();
 		var transformA = new GameObject().transform;
-		var transformB = new GameObject().transform;
+		var target = Vector3.up;
 
-		Assert.DoesNotThrow(() => appraoch.PostUpdate(transformA, default));
+		transformA.position = Vector3.right;
+
+		appraoch.OnPositionUpdated(transformA, target);
+
+		Assert.AreEqual(
+			Quaternion.LookRotation(Vector3.left + Vector3.up).eulerAngles,
+			transformA.rotation.eulerAngles
+		);
 	}
 }
