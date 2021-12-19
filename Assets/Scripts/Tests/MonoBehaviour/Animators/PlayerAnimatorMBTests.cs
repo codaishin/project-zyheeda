@@ -6,7 +6,7 @@ using UnityEngine.TestTools;
 using System.Reflection;
 using System;
 
-public class PlayerAnimatorMBTests
+public class PlayerAnimatorMBTests : TestCollection
 {
 	private class MockAnimator : IAnimator
 	{
