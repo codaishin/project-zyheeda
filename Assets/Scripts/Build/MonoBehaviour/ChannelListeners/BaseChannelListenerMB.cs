@@ -2,8 +2,8 @@ using UnityEngine;
 
 public abstract class BaseChannelListenerMB : MonoBehaviour
 {
-	public abstract void StartListening();
-	public abstract void StopListening();
+	protected abstract void StartListening();
+	protected abstract void StopListening();
 
 	private bool started;
 

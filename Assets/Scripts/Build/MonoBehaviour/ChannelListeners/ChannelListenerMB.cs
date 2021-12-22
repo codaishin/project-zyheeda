@@ -1,38 +1,15 @@
-using UnityEngine;
 using UnityEngine.Events;
 
-public class ChannelListenerMB : MonoBehaviour
+public class ChannelListenerMB : BaseChannelListenerMB
 {
-	private bool listening;
-
 	public ChannelSO? listenTo;
-	public UnityEvent? onRaise;
+	public UnityEvent onRaise = new UnityEvent();
 
-	private void Start() {
-		if (this.listenTo == null) throw this.NullError();
-		if (this.onRaise == null) {
-			this.onRaise = new UnityEvent();
-		}
-		this.StartListening(this.listenTo, this.onRaise);
+	protected override void StartListening() {
+		this.listenTo!.Listeners += onRaise.Invoke;
 	}
 
-	private void OnDisable() {
-		if (this.listenTo != null) {
-			this.listenTo.Listeners -= this.onRaise!.Invoke;
-			this.listening = false;
-		}
-	}
-
-	private void OnEnable() {
-		if (this.onRaise != null && this.listenTo != null) {
-			this.StartListening(this.listenTo, this.onRaise);
-		}
-	}
-
-	private void StartListening(ChannelSO listenTo, UnityEvent onRaise) {
-		if (!this.listening) {
-			listenTo.Listeners += onRaise.Invoke;
-			this.listening = true;
-		}
+	protected override void StopListening() {
+		this.listenTo!.Listeners -= onRaise.Invoke;
 	}
 }

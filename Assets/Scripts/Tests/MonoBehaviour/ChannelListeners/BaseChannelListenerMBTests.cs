@@ -13,8 +13,8 @@ public class BaseChannelListenerMBTests : TestCollection
 
 		public IEnumerable<string> Calls => calls;
 
-		public override void StartListening() => this.calls.Add("start");
-		public override void StopListening() => this.calls.Add("stop");
+		protected override void StartListening() => this.calls.Add("start");
+		protected override void StopListening() => this.calls.Add("stop");
 	}
 
 	[UnityTest]
