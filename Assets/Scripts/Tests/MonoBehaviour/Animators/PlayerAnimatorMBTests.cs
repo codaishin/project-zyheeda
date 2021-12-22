@@ -20,9 +20,9 @@ public class PlayerAnimatorMBTests : TestCollection
 
 		player.animator = animator;
 
-		player.Walk(true);
+		player.Move(true);
 
-		Assert.AreEqual(("walk", true), called);
+		Assert.AreEqual(("move", true), called);
 	}
 
 	[Test]
@@ -33,8 +33,8 @@ public class PlayerAnimatorMBTests : TestCollection
 
 		player.animator = animator;
 
-		player.Walk(false);
+		player.Move(false);
 
-		Assert.AreEqual(("walk", false), called);
+		Assert.AreEqual(("move", false), called);
 	}
 }

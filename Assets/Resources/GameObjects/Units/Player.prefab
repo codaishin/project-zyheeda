@@ -346,8 +346,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2003645429}
-        m_TargetAssemblyTypeName: PlayerAnimatorMB, Build
-        m_MethodName: Walk
+        m_TargetAssemblyTypeName: BasePlayerAnimatorMB`1[[WAnimator, Build
+        m_MethodName: Move
         m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -361,8 +361,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2003645429}
-        m_TargetAssemblyTypeName: PlayerAnimatorMB, Build
-        m_MethodName: Walk
+        m_TargetAssemblyTypeName: BasePlayerAnimatorMB`1[[WAnimator, Build
+        m_MethodName: Move
         m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
