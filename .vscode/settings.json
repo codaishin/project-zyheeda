@@ -7,6 +7,9 @@
 	"editor.wordWrapColumn": 80,
 	"editor.bracketPairColorization.enabled": true,
 	"editor.guides.bracketPairs": "active",
+	"editor.rulers": [
+		80,
+	],
 	"files.insertFinalNewline": true,
 	"files.trimTrailingWhitespace": true,
 	"files.exclude": {

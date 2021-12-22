@@ -2,8 +2,14 @@ public abstract class BasePlayerAnimatorMB<TAnimator> :
 	BaseAnimatorMB<TAnimator>
 	where TAnimator : IAnimator
 {
-	public void Walk(bool value) {
-		this.animator!.SetBool("walk", value);
+	public void StartMove(float blendWalkRun) {
+		this.animator!.SetBool("move", true);
+		this.animator!.SetFloat("blendWalkRun", blendWalkRun);
+	}
+
+	public void StopMove() {
+		this.animator!.SetBool("move", false);
+		this.animator!.SetFloat("blendWalkRun", 0);
 	}
 }
 
