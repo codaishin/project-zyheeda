@@ -1,7 +1,7 @@
 using System;
-using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
@@ -86,7 +86,7 @@ public class SkillMBTests : TestCollection
 
 	[UnityTest]
 	public IEnumerator UseCastIterator() {
-		var stepps = 0;
+		var remainingYields = 2;
 		var skill = new GameObject("skill").AddComponent<MockSkillMB>();
 		var target = new MockSheet();
 		var targeting = ScriptableObject.CreateInstance<MockTargetingSO>();
@@ -95,8 +95,7 @@ public class SkillMBTests : TestCollection
 		skill.targeting = targeting;
 		skill.cast.apply = (_) => {
 			IEnumerator<WaitForFixedUpdate> iterator() {
-				for (int i = 0; i < 2; ++i) {
-					++stepps;
+				for (; remainingYields > 0; --remainingYields) {
 					yield return new WaitForFixedUpdate();
 				}
 			}
@@ -107,13 +106,13 @@ public class SkillMBTests : TestCollection
 
 		skill.Begin();
 
-		yield return new WaitForEndOfFrame();
-		yield return new WaitForEndOfFrame();
-		yield return new WaitForEndOfFrame();
-		yield return new WaitForEndOfFrame();
-		yield return new WaitForEndOfFrame();
+		yield return new WaitForFixedUpdate();
+		yield return new WaitForFixedUpdate();
+		yield return new WaitForFixedUpdate();
+		yield return new WaitForFixedUpdate();
+		yield return new WaitForFixedUpdate();
 
-		Assert.AreEqual(2, stepps);
+		Assert.AreEqual(0, remainingYields);
 	}
 
 
