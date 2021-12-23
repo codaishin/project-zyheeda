@@ -15,10 +15,15 @@ MonoBehaviour:
   inputSO: {fileID: 11400000, guid: 64199461d458d3542b4e790dd776d784, type: 2}
   input:
     records:
-    - name: Move (ChannelSO)
+    - name: Walk (ChannelSO)
       key: {fileID: 11400000, guid: b30b2baa09a76a541b7c2e5ff360d901, type: 2}
       value:
         keyCode: 323
+        keyState: 1
+    - name: Run (ChannelSO)
+      key: {fileID: 11400000, guid: 57e8a62e3a083e747870847fc227102c, type: 2}
+      value:
+        keyCode: 324
         keyState: 1
     - name: Shoot (ChannelSO)
       key: {fileID: 11400000, guid: f7a9ef2da0c91ea43afcda8b6ac99a1e, type: 2}
