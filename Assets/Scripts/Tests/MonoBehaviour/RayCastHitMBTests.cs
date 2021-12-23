@@ -13,30 +13,7 @@ public class RayCastHitMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator OnHitGameObjectInitAfterStart() {
-		var rayCastHitMB = new GameObject("hitter").AddComponent<RayCastHitMB>();
-		var rayProviderMB = new GameObject("ray").AddComponent<MockRayMB>();
-		rayCastHitMB.raySource = rayProviderMB;
-
-		yield return new WaitForEndOfFrame();
-
-		Assert.NotNull(rayCastHitMB.onHit);
-	}
-
-	[UnityTest]
-	public IEnumerator OnHitGameObjectDefaultNull() {
-		var rayCastHitMB = new GameObject("hitter").AddComponent<RayCastHitMB>();
-		var rayProviderMB = new GameObject("ray").AddComponent<MockRayMB>();
-		rayCastHitMB.raySource = rayProviderMB;
-
-		Assert.Null(rayCastHitMB.onHit);
-
-		yield break;
-	}
-
-	[UnityTest]
 	public IEnumerator OnHitGameObject() {
-		var hit = default(RaycastHit);
 		var sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
 		var rayCastHitMB = new GameObject("hitter").AddComponent<RayCastHitMB>();
 		var rayProviderMB = new GameObject("ray").AddComponent<MockRayMB>();
@@ -47,18 +24,14 @@ public class RayCastHitMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		rayCastHitMB.onHit!.AddListener(o => hit = o);
-
-		yield return new WaitForEndOfFrame();
-
-		rayCastHitMB.TryHit();
-
-		Assert.AreSame(sphere.transform, hit.transform);
+		rayCastHitMB.TryHit().Match(
+			some: hit => Assert.AreSame(sphere.transform, hit.transform),
+			none: () => Assert.Fail("hit nothing")
+		);
 	}
 
 	[UnityTest]
 	public IEnumerator OnHitGameObjectLayer() {
-		var hit = default(RaycastHit);
 		var sphereDefault = GameObject.CreatePrimitive(PrimitiveType.Sphere);
 		var cubeWater = GameObject.CreatePrimitive(PrimitiveType.Cube);
 		var rayCastHitMB = new GameObject("hitter").AddComponent<RayCastHitMB>();
@@ -72,12 +45,9 @@ public class RayCastHitMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		rayCastHitMB.onHit!.AddListener(o => hit = o);
-
-		yield return new WaitForEndOfFrame();
-
-		rayCastHitMB.TryHit();
-
-		Assert.AreSame(cubeWater.transform, hit.transform);
+		rayCastHitMB.TryHit().Match(
+			some: hit => Assert.AreSame(cubeWater.transform, hit.transform),
+			none: () => Assert.Fail("hit nothing")
+		);
 	}
 }
