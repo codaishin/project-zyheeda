@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-public abstract class BaseRayCastHitMaperMB<TRayCastHit, TOut> :
+public abstract class BaseRayCastHitMapperMB<TRayCastHit, TOut> :
 	MonoBehaviour
 	where TRayCastHit :
 		MonoBehaviour,

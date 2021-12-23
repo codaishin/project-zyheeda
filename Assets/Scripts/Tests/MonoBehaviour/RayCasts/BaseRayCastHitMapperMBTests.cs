@@ -14,7 +14,7 @@ public class BaseEventMapperMBTests : TestCollection
 			: Maybe.Some(this.hit.Value);
 	}
 
-	private class MockMapperMB : BaseRayCastHitMaperMB<MockRayCastHit, RaycastHit>
+	private class MockMapperMB : BaseRayCastHitMapperMB<MockRayCastHit, RaycastHit>
 	{
 		public override Maybe<RaycastHit> Map(Maybe<RaycastHit> hit) => hit;
 	}
