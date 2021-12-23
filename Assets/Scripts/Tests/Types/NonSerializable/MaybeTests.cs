@@ -44,4 +44,36 @@ public class MaybeTests
 
 		Assert.AreEqual((0f, true), (value, calledNone));
 	}
+
+	[Test]
+	public void MapSome() {
+		var value = 0;
+		var calledNone = false;
+		Maybe<string> one = Maybe.Some("1");
+		var maybe = one.Map<int>(
+			v => int.TryParse(v, out int r)
+				? Maybe.Some(r)
+				: Maybe.None<int>()
+		);
+
+		maybe.Match(some: v => value = v, none: () => calledNone = true);
+
+		Assert.AreEqual((1, false), (value, calledNone));
+	}
+
+	[Test]
+	public void MapNone() {
+		var value = 0;
+		var calledNone = false;
+		Maybe<string> one = Maybe.None<string>();
+		var maybe = one.Map<int>(
+			v => int.TryParse(v, out int r)
+				? Maybe.Some(r)
+				: Maybe.None<int>()
+		);
+
+		maybe.Match(some: v => value = v, none: () => calledNone = true);
+
+		Assert.AreEqual((0, true), (value, calledNone));
+	}
 }

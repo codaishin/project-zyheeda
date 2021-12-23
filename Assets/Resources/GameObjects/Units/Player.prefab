@@ -109,6 +109,157 @@ MonoBehaviour:
   health:
     hp: 0
     maxHp: 100
+--- !u!1 &7482813497017747595
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8005944913017033235}
+  - component: {fileID: 152502560036496669}
+  - component: {fileID: 1103547524365476883}
+  - component: {fileID: 721547222500300784}
+  - component: {fileID: 3900859996727110100}
+  m_Layer: 0
+  m_Name: Run
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8005944913017033235
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7482813497017747595}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4342272451886397414}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &152502560036496669
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7482813497017747595}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5078fb333eca7064588c2a8a4a3672de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  listenTo: {fileID: 11400000, guid: 57e8a62e3a083e747870847fc227102c, type: 2}
+  onRaise:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 721547222500300784}
+        m_TargetAssemblyTypeName: BaseEventMapperMB`1[[UnityEngine.Vector3, UnityEngine
+        m_MethodName: Apply
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &1103547524365476883
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7482813497017747595}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b5aa89a909941047bcaba63525e1e5b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  raySource:
+    gameObject: {fileID: 0}
+    referenceSO: {fileID: 11400000, guid: 7b8ba24cfd2e7fd468cdb283de5395e3, type: 2}
+  layerConstraints:
+    serializedVersion: 2
+    m_Bits: 2147483648
+--- !u!114 &721547222500300784
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7482813497017747595}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e5d1e2c1e1b8ab4cabc568343b0285e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onValueMapped:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 3900859996727110100}
+        m_TargetAssemblyTypeName: BaseApproachMB`2[[Approach, Build
+        m_MethodName: Begin
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 2003645429}
+        m_TargetAssemblyTypeName: BasePlayerAnimatorMB`1[[WAnimator, Build
+        m_MethodName: StartMove
+        m_Mode: 4
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 1
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &3900859996727110100
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7482813497017747595}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd72b2738eef8b444a80d2e3f996f96a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  agent:
+    gameObject: {fileID: 7728212569935627541}
+    referenceSO: {fileID: 0}
+  deltaPerSecond: 3
+  onEnd:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 2003645429}
+        m_TargetAssemblyTypeName: BasePlayerAnimatorMB`1[[WAnimator, Build
+        m_MethodName: StopMove
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &7728212569935627541
 GameObject:
   m_ObjectHideFlags: 0
@@ -200,6 +351,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8491564148741777252}
+  - {fileID: 8005944913017033235}
   m_Father: {fileID: 7728212569935627539}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -213,8 +365,8 @@ GameObject:
   m_Component:
   - component: {fileID: 8491564148741777252}
   - component: {fileID: 2226689738400555806}
-  - component: {fileID: 5536588867523687443}
-  - component: {fileID: 6392545696283300072}
+  - component: {fileID: 6255569645634370546}
+  - component: {fileID: 2709244360174261293}
   - component: {fileID: 7501606950871258576}
   m_Layer: 0
   m_Name: Walk
@@ -254,9 +406,9 @@ MonoBehaviour:
   onRaise:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 5536588867523687443}
-        m_TargetAssemblyTypeName: RayCastHitMB, Build
-        m_MethodName: TryHit
+      - m_Target: {fileID: 2709244360174261293}
+        m_TargetAssemblyTypeName: BaseEventMapperMB`1[[UnityEngine.Vector3, UnityEngine
+        m_MethodName: Apply
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -266,7 +418,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &5536588867523687443
+--- !u!114 &6255569645634370546
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -284,12 +436,24 @@ MonoBehaviour:
   layerConstraints:
     serializedVersion: 2
     m_Bits: 2147483648
-  onHit:
+--- !u!114 &2709244360174261293
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8253005311801877777}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e5d1e2c1e1b8ab4cabc568343b0285e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onValueMapped:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6392545696283300072}
-        m_TargetAssemblyTypeName: BaseMorphMB`2[[UnityEngine.RaycastHit, UnityEngine
-        m_MethodName: Morph
+      - m_Target: {fileID: 7501606950871258576}
+        m_TargetAssemblyTypeName: BaseApproachMB`2[[Approach, Build
+        m_MethodName: Begin
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -299,25 +463,10 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &6392545696283300072
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8253005311801877777}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 11cd456b0e32cf749856059e523ea4f8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  onMorph:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 7501606950871258576}
-        m_TargetAssemblyTypeName: BaseApproachMB`1[[Approach, Build
-        m_MethodName: Apply
-        m_Mode: 0
+      - m_Target: {fileID: 2003645429}
+        m_TargetAssemblyTypeName: BasePlayerAnimatorMB`1[[WAnimator, Build
+        m_MethodName: StartMove
+        m_Mode: 4
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -342,21 +491,6 @@ MonoBehaviour:
     gameObject: {fileID: 7728212569935627541}
     referenceSO: {fileID: 0}
   deltaPerSecond: 1.5
-  onBegin:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2003645429}
-        m_TargetAssemblyTypeName: BasePlayerAnimatorMB`1[[WAnimator, Build
-        m_MethodName: StartMove
-        m_Mode: 4
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
   onEnd:
     m_PersistentCalls:
       m_Calls:

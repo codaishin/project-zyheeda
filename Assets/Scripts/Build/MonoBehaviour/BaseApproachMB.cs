@@ -1,6 +1,6 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
-using System.Collections.Generic;
 
 public abstract class BaseApproachMB<TAppraoch, TTarget> :
 	MonoBehaviour
@@ -12,10 +12,9 @@ public abstract class BaseApproachMB<TAppraoch, TTarget> :
 	public float deltaPerSecond;
 	public TAppraoch appraoch = new TAppraoch();
 
-	public UnityEvent onBegin = new UnityEvent();
 	public UnityEvent onEnd = new UnityEvent();
 
-	public void Apply(TTarget position) {
+	public void Begin(TTarget position) {
 		this.StopAllCoroutines();
 		this.StartCoroutine(this.GetRoutine(position));
 	}
@@ -26,7 +25,6 @@ public abstract class BaseApproachMB<TAppraoch, TTarget> :
 			position,
 			this.deltaPerSecond
 		);
-		this.onBegin.Invoke();
 		while (routine.MoveNext()) {
 			yield return routine.Current;
 		}

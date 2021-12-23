@@ -15,13 +15,28 @@ MonoBehaviour:
   inputSO: {fileID: 11400000, guid: 64199461d458d3542b4e790dd776d784, type: 2}
   input:
     records:
-    - name: Move (EventSO)
+    - name: Walk (ChannelSO)
       key: {fileID: 11400000, guid: b30b2baa09a76a541b7c2e5ff360d901, type: 2}
       value:
         keyCode: 323
         keyState: 1
-    - name: Shoot (EventSO)
+    - name: Run (ChannelSO)
+      key: {fileID: 11400000, guid: 57e8a62e3a083e747870847fc227102c, type: 2}
+      value:
+        keyCode: 324
+        keyState: 1
+    - name: Shoot (ChannelSO)
       key: {fileID: 11400000, guid: f7a9ef2da0c91ea43afcda8b6ac99a1e, type: 2}
       value:
         keyCode: 49
         keyState: 1
+    - name: UITargetOverlayOn (ChannelSO)
+      key: {fileID: 11400000, guid: ae37a7168c7b7aa4d870614de69cc167, type: 2}
+      value:
+        keyCode: 9
+        keyState: 1
+    - name: UITargetOverlayOff (ChannelSO)
+      key: {fileID: 11400000, guid: 3231a52cb67842040bf347dc930f3e40, type: 2}
+      value:
+        keyCode: 9
+        keyState: 2
