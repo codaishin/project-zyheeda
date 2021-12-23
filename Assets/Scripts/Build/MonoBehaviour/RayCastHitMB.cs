@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class RayCastHitMB : MonoBehaviour
+public class RayCastHitMB : MonoBehaviour, IRayCastHit
 {
 	private BaseRayProviderMB? rayProvider;
 
