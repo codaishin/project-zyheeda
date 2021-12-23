@@ -49,7 +49,7 @@ public class BaseApproachMBTests : TestCollection
 		yield return new WaitForEndOfFrame();
 		yield return new WaitForEndOfFrame();
 
-		mover.Apply(Vector3.right);
+		mover.Begin(Vector3.right);
 
 		Assert.AreEqual((agent.transform, Vector3.right, 4f), called);
 	}
@@ -75,7 +75,7 @@ public class BaseApproachMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		mover.Apply(Vector3.right);
+		mover.Begin(Vector3.right);
 
 		yield return new WaitForSeconds(0.5f);
 
@@ -103,8 +103,8 @@ public class BaseApproachMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		mover.Apply(Vector3.right);
-		mover.Apply(Vector3.left);
+		mover.Begin(Vector3.right);
+		mover.Begin(Vector3.left);
 
 		yield return new WaitForSeconds(0.5f);
 
@@ -112,32 +112,6 @@ public class BaseApproachMBTests : TestCollection
 			new Vector3[] { Vector3.right, Vector3.left, Vector3.left },
 			called
 		);
-	}
-
-	[UnityTest]
-	public IEnumerator OnBegin() {
-		var called = 0;
-		var agent = new GameObject("agent");
-		var mover = new GameObject("mover").AddComponent<MockApproachMB>();
-		mover.agent = agent;
-
-		IEnumerator<WaitForFixedUpdate> approach(
-			Transform transform,
-			Vector3 target,
-			float speed
-		) {
-			yield return new WaitForFixedUpdate();
-			yield return new WaitForFixedUpdate();
-			yield return new WaitForFixedUpdate();
-		}
-		mover.appraoch.apply = approach;
-
-		yield return new WaitForEndOfFrame();
-
-		mover.onBegin.AddListener(() => ++called);
-		mover.Apply(new Vector3(100, 0, 0));
-
-		Assert.AreEqual(1, called);
 	}
 
 	[UnityTest]
@@ -161,7 +135,7 @@ public class BaseApproachMBTests : TestCollection
 		yield return new WaitForEndOfFrame();
 
 		mover.onEnd.AddListener(() => ++called);
-		mover.Apply(new Vector3(100, 0, 0));
+		mover.Begin(new Vector3(100, 0, 0));
 
 		Assert.AreEqual(0, called);
 
