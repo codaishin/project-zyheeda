@@ -145,4 +145,68 @@ public class BaseApproachMBTests : TestCollection
 
 		Assert.AreEqual(1, called);
 	}
+
+	[UnityTest]
+	public IEnumerator RunCoroutinesOnExternalRunner() {
+		var agent = new GameObject("agent");
+		var runner = new GameObject("runner").AddComponent<CoroutineRunnerMB>();
+		var mover = new GameObject("mover").AddComponent<MockApproachMB>();
+		mover.externalRunner = runner;
+		mover.agent = agent;
+
+		IEnumerator<WaitForFixedUpdate> approach(
+			Transform transform,
+			Vector3 target,
+			float speed
+		) {
+			while (transform.position != target) {
+				yield return new WaitForFixedUpdate();
+				transform.position = Vector3.MoveTowards(
+					transform.position,
+					target,
+					1f
+				);
+			}
+		}
+		mover.appraoch.apply = approach;
+
+		yield return new WaitForFixedUpdate();
+
+		mover.Begin(new Vector3(100, 0, 0));
+
+		yield return new WaitForFixedUpdate();
+
+		Assert.AreEqual(new Vector3(1, 0, 0), agent.transform.position);
+
+		runner.StopAllCoroutines();
+
+		yield return new WaitForFixedUpdate();
+
+		Assert.AreEqual(new Vector3(1, 0, 0), agent.transform.position);
+	}
+
+	[UnityTest]
+	public IEnumerator RunCoroutinesOnThisIfNoRunner() {
+		var agent = new GameObject("agent");
+		var mover = new GameObject("mover").AddComponent<MockApproachMB>();
+		mover.agent = agent;
+
+		IEnumerator<WaitForFixedUpdate> approach(
+			Transform transform,
+			Vector3 target,
+			float speed
+		) {
+			transform.position = target;
+			yield break;
+		}
+		mover.appraoch.apply = approach;
+
+		yield return new WaitForFixedUpdate();
+
+		mover.Begin(new Vector3(100, 0, 0));
+
+		yield return new WaitForFixedUpdate();
+
+		Assert.AreEqual(new Vector3(100, 0, 0), agent.transform.position);
+	}
 }
