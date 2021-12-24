@@ -8,15 +8,21 @@ public abstract class BaseApproachMB<TAppraoch, TTarget> :
 		IApproach<TTarget>,
 		new()
 {
+	private MonoBehaviour? runner;
+
 	public Reference agent;
 	public float deltaPerSecond;
 	public TAppraoch appraoch = new TAppraoch();
-
+	public CoroutineRunnerMB? externalRunner;
 	public UnityEvent onEnd = new UnityEvent();
 
+	private void Start() {
+		this.runner = ((MonoBehaviour?)this.externalRunner) ?? this;
+	}
+
 	public void Begin(TTarget position) {
-		this.StopAllCoroutines();
-		this.StartCoroutine(this.GetRoutine(position));
+		this.runner!.StopAllCoroutines();
+		this.runner!.StartCoroutine(this.GetRoutine(position));
 	}
 
 	private IEnumerator<WaitForFixedUpdate> GetRoutine(TTarget position) {
