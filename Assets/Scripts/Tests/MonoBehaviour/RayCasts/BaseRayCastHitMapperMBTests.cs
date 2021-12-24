@@ -14,14 +14,15 @@ public class BaseEventMapperMBTests : TestCollection
 			: Maybe.Some(this.hit.Value);
 	}
 
-	private class MockMapperMB : BaseRayCastHitMapperMB<MockRayCastHit, RaycastHit>
+	private class MockMapperMB :
+		BaseRayCastHitMapperMB<MockRayCastHit, RaycastHit>
 	{
 		public override Maybe<RaycastHit> Map(Maybe<RaycastHit> hit) => hit;
 	}
 
 	[UnityTest]
 	public IEnumerator ApplyNone() {
-		RaycastHit? called = new RaycastHit();
+		RaycastHit? called = null;
 		var mapper = new GameObject("obj").AddComponent<MockMapperMB>();
 		var hitter = mapper.gameObject.AddComponent<MockRayCastHit>();
 
