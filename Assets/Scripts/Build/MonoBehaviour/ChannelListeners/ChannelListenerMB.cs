@@ -2,7 +2,7 @@ using UnityEngine.Events;
 
 public class ChannelListenerMB : BaseChannelListenerMB
 {
-	public ChannelSO? listenTo;
+	public BaseChannelSO? listenTo;
 	public UnityEvent onRaise = new UnityEvent();
 
 	protected override void StartListening() {

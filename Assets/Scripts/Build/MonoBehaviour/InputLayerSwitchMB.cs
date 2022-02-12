@@ -5,12 +5,12 @@ public class InputLayerSwitchMB : MonoBehaviour
 {
 	public InputLayerSO? inputLayer;
 	public InputLayer setTo;
-	public ChannelSO[]? listenTo;
+	public BaseChannelSO[]? listenTo;
 
 	private void Start() {
 		if (this.listenTo == null) throw this.NullError();
 		if (this.inputLayer == null) throw this.NullError();
-		foreach (ChannelSO e in this.listenTo) {
+		foreach (BaseChannelSO e in this.listenTo) {
 			e.AddListener(this.Set(this.inputLayer));
 		}
 	}

@@ -8,8 +8,8 @@ public class TargetingSO : BaseTargetingSO<CharacterSheetMB>
 	private class Selector : IEnumerable<WaitForEndOfFrame>
 	{
 		private BaseHitSO hitter;
-		private ChannelSO selectTarget;
-		private ChannelSO cancelSelect;
+		private BaseChannelSO selectTarget;
+		private BaseChannelSO cancelSelect;
 		private List<CharacterSheetMB> targets;
 		private CharacterSheetMB source;
 		private int count;
@@ -82,8 +82,8 @@ public class TargetingSO : BaseTargetingSO<CharacterSheetMB>
 	}
 
 	public BaseHitSO? hitter;
-	public ChannelSO? selectTarget;
-	public ChannelSO? cancelSelect;
+	public BaseChannelSO? selectTarget;
+	public BaseChannelSO? cancelSelect;
 	public bool doubleSelectFinishes;
 
 	protected override IEnumerable<WaitForEndOfFrame> DoSelect(
