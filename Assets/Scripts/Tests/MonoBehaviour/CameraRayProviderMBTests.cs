@@ -1,13 +1,44 @@
+using System;
 using NUnit.Framework;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class CameraRayProviderMBTests : TestCollection
 {
-	private class MockMouseSO : BaseMouseSO
+	class MockInputAction : IInputAction
 	{
-		public Vector3 position;
+		public Vector2 position;
 
-		public override Vector3 Position => this.position;
+		public void AddOnPerformed(Action<InputAction.CallbackContext> listener) =>
+			throw new NotImplementedException();
+		public TValue ReadValue<TValue>() where TValue : struct =>
+			this.position is TValue value
+				? value
+				: new TValue();
+	}
+
+	class MockMousePositionCenterSO : BaseInputActionSO<MockInputAction>
+	{
+		public MockInputAction inputAction = new MockInputAction {
+			position = new Vector2(Screen.width / 2, Screen.height / 2)
+		};
+
+		protected override MockInputAction Wrap(InputAction _) =>
+			this.inputAction;
+
+		protected override void OnEnable() {
+			this.config = ScriptableObject.CreateInstance<PlayerInputConfigSO>();
+			base.OnEnable();
+		}
+	}
+
+	class MockCameraRayProviderMB : BaseCameraRayProviderMB<MockInputAction> { }
+
+	[Test]
+	public void BaseRequiresCamera() {
+		var camRayProviderMB = new GameObject("cam")
+			.AddComponent<MockCameraRayProviderMB>();
+		Assert.True(camRayProviderMB.TryGetComponent(out Camera _));
 	}
 
 	[Test]
@@ -20,7 +51,7 @@ public class CameraRayProviderMBTests : TestCollection
 	[Test]
 	public void ExposesRequiredCamera() {
 		var camRayProviderMB = new GameObject("cam")
-			.AddComponent<CameraRayProviderMB>();
+			.AddComponent<MockCameraRayProviderMB>();
 		Assert.AreSame(
 			camRayProviderMB.GetComponent<Camera>(),
 			camRayProviderMB.Camera
@@ -29,13 +60,13 @@ public class CameraRayProviderMBTests : TestCollection
 
 	[Test]
 	public void RayForward() {
+		var mockMousePositionSO = ScriptableObject
+			.CreateInstance<MockMousePositionCenterSO>();
 		var camRayProviderMB = new GameObject("cam")
-			.AddComponent<CameraRayProviderMB>();
+			.AddComponent<MockCameraRayProviderMB>();
 		var camera = camRayProviderMB.Camera!;
-		var mockMouseSO = ScriptableObject.CreateInstance<MockMouseSO>();
 
-		mockMouseSO.position = new Vector3(Screen.width / 2, Screen.height / 2);
-		camRayProviderMB.mouseSO = mockMouseSO;
+		camRayProviderMB.mousePosition = mockMousePositionSO;
 		camera.nearClipPlane = 0.01f;
 
 		Tools.AssertEqual(

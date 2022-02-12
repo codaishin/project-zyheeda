@@ -1,18 +1,22 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Camera))]
-public class CameraRayProviderMB : BaseRayProviderMB
+public abstract class BaseCameraRayProviderMB<TInputAction> : BaseRayProviderMB
+	where TInputAction : IInputAction
 {
-	public BaseMouseSO? mouseSO;
+	public BaseInputActionSO<TInputAction>? mousePosition;
 
 	public Camera? Camera { get; private set; }
 
-	public override Ray Ray {
-		get {
-			if (this.mouseSO == null) throw this.NullError();
-			return this.Camera!.ScreenPointToRay(this.mouseSO.Position);
-		}
-	}
+	public override Ray Ray =>
+		this
+			.Camera!
+			.ScreenPointToRay(this.mousePosition!.InputAction.ReadValue<Vector2>());
 
 	private void Awake() => this.Camera = this.GetComponent<Camera>();
 }
+
+[RequireComponent(typeof(Camera))]
+public class CameraRayProviderMB :
+	BaseCameraRayProviderMB<InputActionsWrapper>
+{ }

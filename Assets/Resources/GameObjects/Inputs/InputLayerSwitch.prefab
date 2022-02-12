@@ -9,8 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2539261051933800682}
-  - component: {fileID: 2539261051933800685}
   - component: {fileID: 2539261051933800684}
+  - component: {fileID: 578159893}
   m_Layer: 0
   m_Name: InputLayerSwitch
   m_TagString: Untagged
@@ -28,26 +28,11 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2539261051933800685
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2539261051933800687}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 82815d5225280074698a9b5851bf0167, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  inputLayer: {fileID: 11400000, guid: c99189606b359c6438087b8a34234d87, type: 2}
-  setTo: 1
-  listenTo:
-  - {fileID: 11400000, guid: bc69d7f6ecf05a741af6e12f09862784, type: 2}
 --- !u!114 &2539261051933800684
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -60,7 +45,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82815d5225280074698a9b5851bf0167, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputLayer: {fileID: 11400000, guid: c99189606b359c6438087b8a34234d87, type: 2}
   setTo: 0
+  playerInputConfig: {fileID: 11400000, guid: ad62bfe5cbf653f4293a949f2bf9abab, type: 2}
   listenTo:
+  - {fileID: 11400000, guid: fcc11de77b1f8da4f874cf42f96f0779, type: 2}
   - {fileID: 11400000, guid: 43ae0fcbb5738ff468796a2b7b521d60, type: 2}
+--- !u!114 &578159893
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2539261051933800687}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 82815d5225280074698a9b5851bf0167, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  setTo: 1
+  playerInputConfig: {fileID: 11400000, guid: ad62bfe5cbf653f4293a949f2bf9abab, type: 2}
+  listenTo:
+  - {fileID: 11400000, guid: fcc11de77b1f8da4f874cf42f96f0779, type: 2}

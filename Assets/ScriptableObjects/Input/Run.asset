@@ -9,6 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0fc870f1389ea04bbac9b5a31807a80, type: 3}
-  m_Name: Mouse
+  m_Script: {fileID: 11500000, guid: 3d956c48aa429ea4da9f198d35994575, type: 3}
+  m_Name: Run
   m_EditorClassIdentifier: 
+  inputOption: 1
+  config: {fileID: 11400000, guid: ad62bfe5cbf653f4293a949f2bf9abab, type: 2}

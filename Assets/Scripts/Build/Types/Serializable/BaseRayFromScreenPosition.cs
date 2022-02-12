@@ -2,21 +2,18 @@ using System;
 using UnityEngine;
 
 [Serializable]
-public abstract class BaseRayFromScreenPosition<TScreenPosition> :
+public abstract class BaseRayFromScreenPosition<TInputAction> :
 	IRay
-	where TScreenPosition :
-		IPosition
+	where TInputAction :
+		IInputAction
 {
 	public ReferenceSO? camera;
-	public TScreenPosition? screenPosition;
+	public BaseInputActionSO<TInputAction>? screenPosition;
 
-	public Ray Ray {
-		get {
-			if (this.camera == null) throw this.NullError();
-			if (this.screenPosition == null) throw this.NullError();
-			return this.camera.GameObject!
-				.GetComponent<Camera>()
-				.ScreenPointToRay(this.screenPosition.Position);
-		}
-	}
+	public Ray Ray =>
+		this
+			.camera!
+			.GameObject!
+			.GetComponent<Camera>()
+			.ScreenPointToRay(this.screenPosition!.InputAction.ReadValue<Vector2>());
 }
