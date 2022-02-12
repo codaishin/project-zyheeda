@@ -1,6 +1,6 @@
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
 
@@ -81,8 +81,8 @@ public class KeyInputGroupSOTests
 		var eventA = ScriptableObject.CreateInstance<ChannelSO>();
 		var eventB = ScriptableObject.CreateInstance<ChannelSO>();
 
-		eventA.Listeners += () => ++calledA;
-		eventB.Listeners += () => ++calledB;
+		eventA.AddListener(() => ++calledA);
+		eventB.AddListener(() => ++calledB);
 		inputSO.getDown = _ => true;
 		inputGroupSO.inputSO = inputSO;
 		inputGroupSO.input = new RecordArray<ChannelSO, KeyInputItem>(
@@ -133,7 +133,7 @@ public class KeyInputGroupSOTests
 		var inputGroupSO = ScriptableObject.CreateInstance<KeyInputGroupSO>();
 		var eventSO = ScriptableObject.CreateInstance<ChannelSO>();
 
-		eventSO.Listeners += () => ++called;
+		eventSO.AddListener(() => ++called);
 		inputSO.getDown = _ => true;
 		inputGroupSO.inputSO = inputSO;
 		inputGroupSO.input = new RecordArray<ChannelSO, KeyInputItem>(

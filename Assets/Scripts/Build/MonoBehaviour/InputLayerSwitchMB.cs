@@ -11,7 +11,7 @@ public class InputLayerSwitchMB : MonoBehaviour
 		if (this.listenTo == null) throw this.NullError();
 		if (this.inputLayer == null) throw this.NullError();
 		foreach (ChannelSO e in this.listenTo) {
-			e.Listeners += this.Set(this.inputLayer);
+			e.AddListener(this.Set(this.inputLayer));
 		}
 	}
 

@@ -1,6 +1,6 @@
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.Events;
@@ -48,7 +48,7 @@ public class BaseTargetingSOTests : TestCollection
 		var targeting = ScriptableObject.CreateInstance<MockTargetingSO>();
 		targeting.onBeginSelect = new UnityEvent();
 		targeting.onBeginSelect.AddListener(() => trigger.Raise());
-		trigger.Listeners += () => called = true;
+		trigger.AddListener(() => called = true);
 
 		targeting
 			.Select(MockSheet.Default, new List<MockSheet>(), default)
@@ -65,7 +65,7 @@ public class BaseTargetingSOTests : TestCollection
 		var targeting = ScriptableObject.CreateInstance<MockTargetingSO>();
 		targeting.onBeginSelect = new UnityEvent();
 		targeting.onBeginSelect.AddListener(() => trigger.Raise());
-		trigger.Listeners += () => called = true;
+		trigger.AddListener(() => called = true);
 
 		targeting.Select(MockSheet.Default, new List<MockSheet>(), default);
 
@@ -79,7 +79,7 @@ public class BaseTargetingSOTests : TestCollection
 		var targeting = ScriptableObject.CreateInstance<MockTargetingSO>();
 		targeting.onEndSelect = new UnityEvent();
 		targeting.onEndSelect.AddListener(() => trigger.Raise());
-		trigger.Listeners += () => called = true;
+		trigger.AddListener(() => called = true);
 
 		targeting
 			.Select(MockSheet.Default, new List<MockSheet>(), default)
@@ -101,7 +101,7 @@ public class BaseTargetingSOTests : TestCollection
 		targeting.doSelect = (_, __, ___) => select();
 		targeting.onEndSelect = new UnityEvent();
 		targeting.onEndSelect.AddListener(() => trigger.Raise());
-		trigger.Listeners += () => called = true;
+		trigger.AddListener(() => called = true);
 
 		var routine = targeting
 			.Select(MockSheet.Default, new List<MockSheet>(), default)

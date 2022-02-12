@@ -67,15 +67,15 @@ public class TargetingSO : BaseTargetingSO<CharacterSheetMB>
 		}
 
 		public IEnumerator<WaitForEndOfFrame> GetEnumerator() {
-			this.cancelSelect.Listeners += this.Cancel;
-			this.selectTarget.Listeners += this.TryAddTarget;
+			this.cancelSelect.AddListener(this.Cancel);
+			this.selectTarget.AddListener(this.TryAddTarget);
 
 			while (this.IsActive) {
 				yield return new WaitForEndOfFrame();
 			}
 
-			this.cancelSelect.Listeners -= this.Cancel;
-			this.selectTarget.Listeners -= this.TryAddTarget;
+			this.cancelSelect.RemoveListener(this.Cancel);
+			this.selectTarget.RemoveListener(this.TryAddTarget);
 		}
 
 		IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();

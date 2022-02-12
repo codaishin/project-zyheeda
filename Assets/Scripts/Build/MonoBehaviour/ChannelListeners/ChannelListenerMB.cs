@@ -6,10 +6,10 @@ public class ChannelListenerMB : BaseChannelListenerMB
 	public UnityEvent onRaise = new UnityEvent();
 
 	protected override void StartListening() {
-		this.listenTo!.Listeners += onRaise.Invoke;
+		this.listenTo!.AddListener(onRaise.Invoke);
 	}
 
 	protected override void StopListening() {
-		this.listenTo!.Listeners -= onRaise.Invoke;
+		this.listenTo!.RemoveListener(onRaise.Invoke);
 	}
 }

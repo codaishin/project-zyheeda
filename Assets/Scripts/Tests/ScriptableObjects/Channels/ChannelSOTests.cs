@@ -8,7 +8,7 @@ public class ChannelSOTests : TestCollection
 		var called = 0;
 		var channelSO = ScriptableObject.CreateInstance<ChannelSO>();
 
-		channelSO.Listeners += () => ++called;
+		channelSO.AddListener(() => ++called);
 		channelSO.Raise();
 
 		Assert.AreEqual(1, called);
