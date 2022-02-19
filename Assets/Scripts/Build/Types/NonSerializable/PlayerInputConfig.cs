@@ -33,7 +33,7 @@ public partial class @PlayerInputConfig : IInputActionCollection2, IDisposable
                     ""id"": ""c20a8295-3792-4402-bc43-8f6582fa13e6"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
-                    ""interactions"": ""Press"",
+                    ""interactions"": """",
                     ""initialStateCheck"": false
                 },
                 {
@@ -42,7 +42,7 @@ public partial class @PlayerInputConfig : IInputActionCollection2, IDisposable
                     ""id"": ""c8552c45-d380-4a5f-90aa-779390fd0407"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
-                    ""interactions"": ""Press"",
+                    ""interactions"": """",
                     ""initialStateCheck"": false
                 }
             ],
@@ -51,21 +51,10 @@ public partial class @PlayerInputConfig : IInputActionCollection2, IDisposable
                     ""name"": """",
                     ""id"": ""75205ba8-47ea-4350-9ccf-4c2fa979bbc5"",
                     ""path"": ""<Mouse>/leftButton"",
-                    ""interactions"": """",
+                    ""interactions"": ""RepeatHold(duration=0.01)"",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Walk"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""14fef738-4410-4415-be64-8ac51306948f"",
-                    ""path"": ""<Mouse>/leftButton"",
-                    ""interactions"": ""MultiTap"",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Run"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
