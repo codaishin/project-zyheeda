@@ -18,9 +18,9 @@ public abstract class BaseApproach<TTarget> : IApproach<TTarget>
 		float speed
 	) {
 		foreach (Vector3 position in this.Path(current, target, speed)) {
+			yield return new WaitForFixedUpdate();
 			current.position = position;
 			this.OnPositionUpdated(current, target);
-			yield return new WaitForFixedUpdate();
 		}
 	}
 
