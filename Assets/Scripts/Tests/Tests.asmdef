@@ -5,6 +5,7 @@
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
         "Build",
+        "Editor",
         "Unity.InputSystem"
     ],
     "includePlatforms": [],

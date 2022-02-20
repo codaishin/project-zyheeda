@@ -51,7 +51,7 @@ public partial class @PlayerInputConfig : IInputActionCollection2, IDisposable
                     ""name"": """",
                     ""id"": ""75205ba8-47ea-4350-9ccf-4c2fa979bbc5"",
                     ""path"": ""<Mouse>/leftButton"",
-                    ""interactions"": ""RepeatHold(duration=0.01)"",
+                    ""interactions"": ""RepeatHold(pressPoint=0.5,holdTime=0.01)"",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Walk"",
