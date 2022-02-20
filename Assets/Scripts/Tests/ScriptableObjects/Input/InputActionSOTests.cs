@@ -1,87 +1,38 @@
-using System;
-using System.Collections;
 using NUnit.Framework;
 using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.TestTools;
 
-public class InputActionSOTests
+public class InputActionSOTests : TestCollection
 {
-	class MockInputAction : IInputAction
-	{
-		public void AddOnPerformed(Action<InputAction.CallbackContext> listener) =>
-			throw new NotImplementedException();
-		public TValue ReadValue<TValue>() where TValue : struct =>
-			throw new NotImplementedException();
+	[Test]
+	public void TestWalk() {
+		var playerConf = ScriptableObject.CreateInstance<PlayerInputConfigSO>();
+		var input = ScriptableObject.CreateInstance<InputActionSO>();
+
+		input.playerConfigSO = playerConf;
+		input.inputOption = InputOption.Walk;
+
+		Assert.AreSame(playerConf.Config.Movement.Walk, input.Action);
 	}
 
-	class MockInputActionSO : BaseInputActionSO<MockInputAction>
-	{
-		public InputAction? actionParameter;
-		public MockInputAction mockWrapper = new();
+	[Test]
+	public void TestRun() {
+		var playerConf = ScriptableObject.CreateInstance<PlayerInputConfigSO>();
+		var input = ScriptableObject.CreateInstance<InputActionSO>();
 
-		protected override MockInputAction Wrap(InputAction action) {
-			this.actionParameter = action;
-			return mockWrapper;
-		}
+		input.playerConfigSO = playerConf;
+		input.inputOption = InputOption.Run;
 
-		protected override void OnEnable() {
-			this.config = ScriptableObject.CreateInstance<PlayerInputConfigSO>();
-			base.OnEnable();
-		}
+		Assert.AreSame(playerConf.Config.Movement.Run, input.Action);
 	}
 
-	class WalkInputActionSO : MockInputActionSO
-	{
-		public WalkInputActionSO() : base() =>
-			this.inputOption = InputOption.Walk;
-	}
+	[Test]
+	public void TestMousePosition() {
+		var playerConf = ScriptableObject.CreateInstance<PlayerInputConfigSO>();
+		var input = ScriptableObject.CreateInstance<InputActionSO>();
 
-	class RunInputActionSO : MockInputActionSO
-	{
-		public RunInputActionSO() : base() =>
-			this.inputOption = InputOption.Run;
-	}
+		input.playerConfigSO = playerConf;
+		input.inputOption = InputOption.MousePosition;
 
-	class MousePositionInputActionSO : MockInputActionSO
-	{
-		public MousePositionInputActionSO() : base() =>
-			this.inputOption = InputOption.MousePosition;
-	}
-
-	[UnityTest]
-	public IEnumerator GetWalk() {
-		var so = ScriptableObject.CreateInstance<WalkInputActionSO>();
-
-		yield return new WaitForEndOfFrame();
-
-		var expected = new PlayerInputConfig().Movement.Walk;
-
-		Assert.AreEqual(expected.ToString(), so.actionParameter!.ToString());
-		Assert.AreEqual(so.mockWrapper, so.InputAction);
-	}
-
-	[UnityTest]
-	public IEnumerator GetRun() {
-		var so = ScriptableObject.CreateInstance<RunInputActionSO>();
-
-		yield return new WaitForEndOfFrame();
-
-		var expected = new PlayerInputConfig().Movement.Run;
-
-		Assert.AreEqual(expected.ToString(), so.actionParameter!.ToString());
-		Assert.AreEqual(so.mockWrapper, so.InputAction);
-	}
-
-	[UnityTest]
-	public IEnumerator GetMouse() {
-		var so = ScriptableObject.CreateInstance<MousePositionInputActionSO>();
-
-		yield return new WaitForEndOfFrame();
-
-		var expected = new PlayerInputConfig().Mouse.Position;
-
-		Assert.AreEqual(expected.ToString(), so.actionParameter!.ToString());
-		Assert.AreEqual(so.mockWrapper, so.InputAction);
+		Assert.AreSame(playerConf.Config.Mouse.Position, input.Action);
 	}
 }

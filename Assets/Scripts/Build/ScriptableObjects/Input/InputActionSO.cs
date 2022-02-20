@@ -2,36 +2,20 @@ using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public abstract class BaseInputActionSO<TInputAction> : ScriptableObject
+public abstract class BaseInputActionSO : ScriptableObject
 {
-	private TInputAction? inputAction;
-
-	public InputOption inputOption;
-	public TInputAction InputAction => this.inputAction!;
-	public PlayerInputConfigSO? config;
-
-	protected abstract TInputAction Wrap(InputAction action);
-
-	private InputAction GetPlayerAction(PlayerInputConfig playerInput) {
-		return this.inputOption switch {
-			InputOption.Walk => playerInput.Movement.Walk,
-			InputOption.Run => playerInput.Movement.Run,
-			InputOption.MousePosition => playerInput.Mouse.Position,
-			_ => throw new ArgumentException(
-				$"No action matching for {this.inputOption}"
-			),
-		};
-	}
-
-	protected virtual void OnEnable() {
-		InputAction playerAction = this.GetPlayerAction(this.config!.Config);
-		this.inputAction = this.Wrap(playerAction);
-	}
+	public abstract InputAction Action { get; }
 }
 
-[CreateAssetMenu(menuName = "ScriptableObjects/InputAction")]
-public class InputActionSO : BaseInputActionSO<InputActionsWrapper>
+public class InputActionSO : BaseInputActionSO
 {
-	protected override InputActionsWrapper Wrap(InputAction action) =>
-		new InputActionsWrapper(action);
+	public PlayerInputConfigSO? playerConfigSO;
+	public InputOption inputOption;
+
+	public override InputAction Action => this.inputOption switch {
+		InputOption.Walk => this.playerConfigSO!.Config.Movement.Walk,
+		InputOption.Run => this.playerConfigSO!.Config.Movement.Run,
+		InputOption.MousePosition => this.playerConfigSO!.Config.Mouse.Position,
+		_ => throw new ArgumentException(),
+	};
 }
