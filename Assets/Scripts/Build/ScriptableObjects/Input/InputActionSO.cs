@@ -7,6 +7,7 @@ public abstract class BaseInputActionSO : ScriptableObject
 	public abstract InputAction Action { get; }
 }
 
+[CreateAssetMenu(menuName = "ScriptableObjects/InputAction")]
 public class InputActionSO : BaseInputActionSO
 {
 	public PlayerInputConfigSO? playerConfigSO;

@@ -3,20 +3,28 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
-public abstract class BaseInputListenerMB<TInputAction> : MonoBehaviour
-	where TInputAction : IInputAction
+public class InputListenerMB : MonoBehaviour
 {
-	public BaseInputActionSO<TInputAction>? inputActionSO;
+	public BaseInputActionSO? inputActionSO;
+	public UnityEvent<InputAction.CallbackContext>? OnInput;
 
-	public UnityEvent<InputAction.CallbackContext> OnInput = new();
+	private bool triggeredThisFrame = false;
 
 	private void Start() {
-		this.inputActionSO!.InputAction.AddOnPerformed(this.InvokeOnInput);
+		this.inputActionSO!.Action.performed += this.InvokeOnInput;
+		if (this.OnInput == null) {
+			this.OnInput = new();
+		}
+	}
+
+	private void LateUpdate() {
+		this.triggeredThisFrame = false;
 	}
 
 	private void InvokeOnInput(InputAction.CallbackContext context) {
-		this.OnInput.Invoke(context);
+		if (!this.triggeredThisFrame) {
+			this.OnInput!.Invoke(context);
+			this.triggeredThisFrame = true;
+		}
 	}
 }
-
-public class InputListenerMB : BaseInputListenerMB<InputActionsWrapper> { }

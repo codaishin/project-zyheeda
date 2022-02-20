@@ -1,39 +1,31 @@
-using System;
 using System.Collections;
+using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.TestTools;
 
 public class BaseRayFromScreenPositionTests : TestCollection
 {
-	class MockInputAction : IInputAction
+	class MockMousePositionCenterSO : BaseInputActionSO
 	{
-		public Vector2 position;
-
-		public void AddOnPerformed(Action<InputAction.CallbackContext> listener) =>
-			throw new NotImplementedException();
-		public TValue ReadValue<TValue>() where TValue : struct =>
-			this.position is TValue value
-				? value
-				: new TValue();
+		public InputAction? action;
+		public override InputAction Action => this.action!;
 	}
 
-	class MockMousePositionCenterSO : BaseInputActionSO<MockInputAction>
-	{
-		public MockInputAction inputAction = new MockInputAction {
-			position = new Vector2(Screen.width / 2, Screen.height / 2)
-		};
+	private class MockRayCamToPos : BaseRayFromScreenPosition { }
 
-		protected override MockInputAction Wrap(InputAction _) =>
-			this.inputAction;
+	private Mouse? mouse;
 
-		protected override void OnEnable() {
-			this.config = ScriptableObject.CreateInstance<PlayerInputConfigSO>();
-			base.OnEnable();
-		}
+	[SetUp]
+	public void SetUp() {
+		this.mouse = InputSystem.AddDevice<Mouse>();
 	}
 
-	private class MockRayCamToPos : BaseRayFromScreenPosition<MockInputAction> { }
+	[TearDown]
+	public void TearDown() {
+		InputSystem.RemoveDevice(this.mouse!);
+	}
 
 	[UnityTest]
 	public IEnumerator GetRayDirection() {
@@ -47,6 +39,17 @@ public class BaseRayFromScreenPositionTests : TestCollection
 
 		cam.transform.position = Vector3.up;
 		cam.nearClipPlane = 0.01f;
+
+		so.action = new InputAction(
+			binding: "<Mouse>/position",
+			type: InputActionType.Value
+		);
+		so.action.Enable();
+
+		InputState.Change(
+			this.mouse!.position,
+			new Vector2(Screen.width / 2, Screen.height / 2)
+		);
 
 		yield return new WaitForEndOfFrame();
 
@@ -67,11 +70,19 @@ public class BaseRayFromScreenPositionTests : TestCollection
 		var cam = new GameObject("cam").AddComponent<Camera>();
 		ray.camera.GameObject = cam.gameObject;
 
-		so.inputAction = new MockInputAction {
-			position = new Vector2(Screen.width / 2, Screen.height / 2)
-		};
 		cam.transform.position = Vector3.up;
 		cam.nearClipPlane = 0.01f;
+
+		so.action = new InputAction(
+			binding: "<Mouse>/position",
+			type: InputActionType.Value
+		);
+		so.action.Enable();
+
+		InputState.Change(
+			this.mouse!.position,
+			new Vector2(Screen.width / 2, Screen.height / 2)
+		);
 
 		yield return new WaitForEndOfFrame();
 

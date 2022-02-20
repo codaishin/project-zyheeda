@@ -1,51 +1,132 @@
-using System;
 using System.Collections;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.TestTools;
 
 public class InputListenerMBTests : TestCollection
 {
-	class MockInputAction : IInputAction
+	class MockInputActionSO : BaseInputActionSO
 	{
-		public event Action<InputAction.CallbackContext>? performed;
-
-		public void Run(InputAction.CallbackContext context) =>
-			this.performed?.Invoke(context);
-		public void AddOnPerformed(Action<InputAction.CallbackContext> listener) =>
-			this.performed += listener;
-		public TValue ReadValue<TValue>() where TValue : struct =>
-			throw new NotImplementedException();
+		public InputAction? action;
+		public override InputAction Action => this.action!;
 	}
 
-	class MockInputActionSO : BaseInputActionSO<MockInputAction>
-	{
-		MockInputAction inputAction = new();
+	private Gamepad? pad;
 
-		protected override MockInputAction Wrap(InputAction action) =>
-			this.inputAction;
-
-		protected override void OnEnable() {
-			this.config = ScriptableObject.CreateInstance<PlayerInputConfigSO>();
-			base.OnEnable();
-		}
+	[SetUp]
+	public void SetUp() {
+		this.pad = InputSystem.AddDevice<Gamepad>();
 	}
 
-	class MockInputListenerMB : BaseInputListenerMB<MockInputAction> { }
+	[TearDown]
+	public void TearDown() {
+		InputSystem.RemoveDevice(this.pad!);
+	}
 
 	[UnityTest]
 	public IEnumerator CallOnInput() {
 		var called = 0;
 		var so = ScriptableObject.CreateInstance<MockInputActionSO>();
-		var mb = new GameObject("obj").AddComponent<MockInputListenerMB>();
+		var mb = new GameObject("obj").AddComponent<InputListenerMB>();
 		mb.inputActionSO = so;
+		so.action = new InputAction(
+			binding: "<Gamepad>/leftTrigger",
+			type: InputActionType.Button
+		);
+		so.action.Enable();
 
 		yield return new WaitForEndOfFrame();
 
-		mb.OnInput.AddListener(_ => ++called);
-		so.InputAction.Run(new());
+		mb.OnInput!.AddListener(_ => ++called);
+
+		InputSystem.QueueStateEvent(
+			this.pad!,
+			new GamepadState { leftTrigger = 1f }
+		);
+
+		yield return new WaitForEndOfFrame();
 
 		Assert.AreEqual(1, called);
+	}
+
+	[UnityTest]
+	public IEnumerator CallOnInputOnlyOncePerFrame() {
+		var called = 0;
+		var so = ScriptableObject.CreateInstance<MockInputActionSO>();
+		var mb = new GameObject("obj").AddComponent<InputListenerMB>();
+		mb.inputActionSO = so;
+		so.action = new InputAction(
+			binding: "<Gamepad>/leftTrigger",
+			type: InputActionType.Button
+		);
+		so.action.Enable();
+
+		yield return new WaitForEndOfFrame();
+
+		mb.OnInput!.AddListener(_ => ++called);
+
+		InputSystem.QueueStateEvent(
+			this.pad!,
+			new GamepadState { leftTrigger = 1f }
+		);
+
+		InputSystem.QueueStateEvent(
+			this.pad!,
+			new GamepadState { leftTrigger = 0f }
+		);
+
+		InputSystem.QueueStateEvent(
+			this.pad!,
+			new GamepadState { leftTrigger = 1f }
+		);
+
+		yield return new WaitForEndOfFrame();
+
+		Assert.AreEqual(1, called);
+	}
+
+	[UnityTest]
+	public IEnumerator CallOnInputNextFrame() {
+		var called = 0;
+		var so = ScriptableObject.CreateInstance<MockInputActionSO>();
+		var mb = new GameObject("obj").AddComponent<InputListenerMB>();
+		mb.inputActionSO = so;
+		so.action = new InputAction(
+			binding: "<Gamepad>/leftTrigger",
+			type: InputActionType.Button
+		);
+		so.action.Enable();
+
+		yield return new WaitForEndOfFrame();
+
+		mb.OnInput!.AddListener(_ => ++called);
+
+		InputSystem.QueueStateEvent(
+			this.pad!,
+			new GamepadState { leftTrigger = 1f }
+		);
+
+		InputSystem.QueueStateEvent(
+			this.pad!,
+			new GamepadState { leftTrigger = 0f }
+		);
+
+		yield return new WaitForEndOfFrame();
+
+		InputSystem.QueueStateEvent(
+			this.pad!,
+			new GamepadState { leftTrigger = 1f }
+		);
+
+		InputSystem.QueueStateEvent(
+			this.pad!,
+			new GamepadState { leftTrigger = 0f }
+		);
+
+		yield return new WaitForEndOfFrame();
+
+		Assert.AreEqual(2, called);
 	}
 }

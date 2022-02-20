@@ -1,4 +1,4 @@
 using System;
 
 [Serializable]
-public class RayFromScreenMousePosition : BaseRayFromScreenPosition<InputActionsWrapper> { }
+public class RayFromScreenMousePosition : BaseRayFromScreenPosition { }
