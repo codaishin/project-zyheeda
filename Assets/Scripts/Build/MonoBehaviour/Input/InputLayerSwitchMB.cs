@@ -1,11 +1,11 @@
-using System;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class InputLayerSwitchMB : MonoBehaviour
 {
-	public ActionMap setTo;
-	public PlayerInputConfigSO? playerInputConfig;
+	public BaseInputConfigSO? inputConfig;
+	public InputEnum.Map[] enable = new InputEnum.Map[0];
 	public BaseChannelSO[] listenTo = new BaseChannelSO[0];
 
 
@@ -15,14 +15,13 @@ public class InputLayerSwitchMB : MonoBehaviour
 		}
 	}
 
+	private InputActionMap GetAction(InputEnum.Map item) {
+		return this.inputConfig![item];
+	}
+
 	private void Set() {
-		InputActionMap map = this.setTo switch {
-			ActionMap.Movement => this.playerInputConfig!.Config.Movement.Get(),
-			ActionMap.Mouse => this.playerInputConfig!.Config.Mouse.Get(),
-			_ => throw new ArgumentException(
-				$"no map configured for {this.setTo}"
-			),
-		};
-		map.Enable();
+		foreach (InputActionMap map in this.enable.Select(this.GetAction)) {
+			map.Enable();
+		}
 	}
 }

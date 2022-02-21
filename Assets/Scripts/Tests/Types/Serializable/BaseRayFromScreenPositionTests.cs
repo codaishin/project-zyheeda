@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using NUnit.Framework;
 using UnityEngine;
@@ -7,10 +8,22 @@ using UnityEngine.TestTools;
 
 public class BaseRayFromScreenPositionTests : TestCollection
 {
-	class MockMousePositionCenterSO : BaseInputActionSO
+	class MockInputConfigSO : BaseInputConfigSO
 	{
-		public InputAction? action;
-		public override InputAction Action => this.action!;
+		public InputAction action = new InputAction(
+			binding: "<Mouse>/position",
+			type: InputActionType.Value
+		);
+
+		public override InputAction this[InputEnum.Action action] => action switch {
+			InputEnum.Action when action == InputEnum.Action.MousePosition =>
+				this.action,
+			_ =>
+				throw new ArgumentException(),
+		};
+
+		public override InputActionMap this[InputEnum.Map map] =>
+			throw new NotImplementedException();
 	}
 
 	private class MockRayCamToPos : BaseRayFromScreenPosition { }
@@ -29,21 +42,15 @@ public class BaseRayFromScreenPositionTests : TestCollection
 
 	[UnityTest]
 	public IEnumerator GetRayDirection() {
-		var so = ScriptableObject.CreateInstance<MockMousePositionCenterSO>();
+		var so = ScriptableObject.CreateInstance<MockInputConfigSO>();
 		var ray = new MockRayCamToPos {
 			camera = ScriptableObject.CreateInstance<ReferenceSO>(),
-			screenPosition = so,
+			inputConfigSO = so,
 		};
 		var cam = new GameObject("cam").AddComponent<Camera>();
 		ray.camera.GameObject = cam.gameObject;
-
 		cam.transform.position = Vector3.up;
 		cam.nearClipPlane = 0.01f;
-
-		so.action = new InputAction(
-			binding: "<Mouse>/position",
-			type: InputActionType.Value
-		);
 		so.action.Enable();
 
 		InputState.Change(
@@ -62,21 +69,15 @@ public class BaseRayFromScreenPositionTests : TestCollection
 
 	[UnityTest]
 	public IEnumerator GetRayOrigin() {
-		var so = ScriptableObject.CreateInstance<MockMousePositionCenterSO>();
+		var so = ScriptableObject.CreateInstance<MockInputConfigSO>();
 		var ray = new MockRayCamToPos {
 			camera = ScriptableObject.CreateInstance<ReferenceSO>(),
-			screenPosition = so,
+			inputConfigSO = so,
 		};
 		var cam = new GameObject("cam").AddComponent<Camera>();
 		ray.camera.GameObject = cam.gameObject;
-
 		cam.transform.position = Vector3.up;
 		cam.nearClipPlane = 0.01f;
-
-		so.action = new InputAction(
-			binding: "<Mouse>/position",
-			type: InputActionType.Value
-		);
 		so.action.Enable();
 
 		InputState.Change(

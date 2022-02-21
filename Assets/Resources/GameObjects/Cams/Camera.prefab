@@ -98,7 +98,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 638d8dcaba6cc2d4b8638772aefdda95, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mousePosition: {fileID: 11400000, guid: 60cca3d2387bf7e4b9bae17b13306340, type: 2}
+  inputConfigSO: {fileID: 11400000, guid: cc25959ff6fb7d24bb7768115be8703c, type: 2}
 --- !u!114 &7841215412831498257
 MonoBehaviour:
   m_ObjectHideFlags: 0

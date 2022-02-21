@@ -15,7 +15,7 @@ MonoBehaviour:
   hit:
     rayProvider:
       camera: {fileID: 11400000, guid: 7b8ba24cfd2e7fd468cdb283de5395e3, type: 2}
-      screenPosition: {fileID: 11400000, guid: 5e0e3192f46ca5d48b429e2228903a74, type: 2}
+      inputConfigSO: {fileID: 11400000, guid: cc25959ff6fb7d24bb7768115be8703c, type: 2}
     layerConstraints:
       serializedVersion: 2
       m_Bits: 0

@@ -5,13 +5,15 @@ using UnityEngine.InputSystem;
 
 public class InputListenerMB : MonoBehaviour
 {
-	public BaseInputActionSO? inputActionSO;
+	public BaseInputConfigSO? inputConfigSO;
+	public InputEnum.Action action;
 	public UnityEvent<InputAction.CallbackContext>? OnInput;
 
 	private bool triggeredThisFrame = false;
 
 	private void Start() {
-		this.inputActionSO!.Action.performed += this.InvokeOnInput;
+		InputAction action = this.inputConfigSO![this.action];
+		action.performed += this.InvokeOnInput;
 		if (this.OnInput == null) {
 			this.OnInput = new();
 		}

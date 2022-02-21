@@ -697,7 +697,7 @@ MonoBehaviour:
     magazine:
       projectilePrefab: {fileID: 8992679554399984682}
       projectileStorage: {fileID: 1453732929}
-    projectileSpawn: {fileID: 0}
+    projectileSpawn: {fileID: 7951743037909694662}
     projectileSpeed: 10
 --- !u!114 &1453732934
 MonoBehaviour:

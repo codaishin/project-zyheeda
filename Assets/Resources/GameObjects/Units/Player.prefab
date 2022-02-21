@@ -200,7 +200,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5081523c9ace734bbde1dddebdfea4c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputActionSO: {fileID: 11400000, guid: cd434b8efe0826740a341cefb2d48c4d, type: 2}
+  inputConfigSO: {fileID: 11400000, guid: cc25959ff6fb7d24bb7768115be8703c, type: 2}
+  action: 1
   OnInput:
     m_PersistentCalls:
       m_Calls:
@@ -448,7 +449,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5081523c9ace734bbde1dddebdfea4c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputActionSO: {fileID: 11400000, guid: ffe9dc7f6349ede4291d1bdc5d83f5a7, type: 2}
+  inputConfigSO: {fileID: 11400000, guid: cc25959ff6fb7d24bb7768115be8703c, type: 2}
+  action: 0
   OnInput:
     m_PersistentCalls:
       m_Calls:

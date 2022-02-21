@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using NUnit.Framework;
 using UnityEngine;
@@ -7,10 +8,23 @@ using UnityEngine.TestTools;
 
 public class CameraRayProviderMBTests : TestCollection
 {
-	class MockMousePositionSO : BaseInputActionSO
+	class MockInputConfigSO : BaseInputConfigSO
 	{
-		public InputAction? action;
-		public override InputAction Action => this.action!;
+		public InputAction action = new InputAction(
+			binding: "<Mouse>/position",
+			type: InputActionType.Value,
+			expectedControlType: "Vector2(normalize=false)"
+		);
+
+		public override InputAction this[InputEnum.Action action] => action switch {
+			InputEnum.Action when action == InputEnum.Action.MousePosition
+				=> this.action,
+			_
+				=> throw new ArgumentException(),
+		};
+
+		public override InputActionMap this[InputEnum.Map map]
+			=> throw new NotImplementedException();
 	}
 
 	private Mouse? mouse;
@@ -51,22 +65,14 @@ public class CameraRayProviderMBTests : TestCollection
 
 	[UnityTest]
 	public IEnumerator RayForward() {
-		var mockMousePositionSO = ScriptableObject
-			.CreateInstance<MockMousePositionSO>();
+		var inputConfigSO = ScriptableObject
+			.CreateInstance<MockInputConfigSO>();
 		var camRayProviderMB = new GameObject("cam")
 			.AddComponent<CameraRayProviderMB>();
 		var camera = camRayProviderMB.Camera!;
-
-		var action = new InputAction(
-			binding: "<Mouse>/position",
-			type: InputActionType.Value,
-			expectedControlType: "Vector2(normalize=false)"
-		);
-		mockMousePositionSO.action = action;
-		camRayProviderMB.mousePosition = mockMousePositionSO;
+		camRayProviderMB.inputConfigSO = inputConfigSO;
 		camera.nearClipPlane = 0.01f;
-
-		action.Enable();
+		inputConfigSO.action.Enable();
 
 		InputState.Change(
 			this.mouse!.position,

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using NUnit.Framework;
 using UnityEngine;
@@ -7,10 +8,21 @@ using UnityEngine.TestTools;
 
 public class InputListenerMBTests : TestCollection
 {
-	class MockInputActionSO : BaseInputActionSO
+	class MockInputConfigSO : BaseInputConfigSO
 	{
-		public InputAction? action;
-		public override InputAction Action => this.action!;
+		public InputAction action = new InputAction(
+			binding: "<Gamepad>/leftTrigger",
+			type: InputActionType.Button
+		);
+		public InputEnum.Action onlyAction = InputEnum.Action.Walk;
+
+		public override InputAction this[InputEnum.Action action] => action switch {
+			InputEnum.Action when action == this.onlyAction => this.action,
+			_ => throw new ArgumentException(),
+		};
+
+		public override InputActionMap this[InputEnum.Map map] =>
+			throw new NotImplementedException();
 	}
 
 	private Gamepad? pad;
@@ -28,13 +40,34 @@ public class InputListenerMBTests : TestCollection
 	[UnityTest]
 	public IEnumerator CallOnInput() {
 		var called = 0;
-		var so = ScriptableObject.CreateInstance<MockInputActionSO>();
+		var so = ScriptableObject.CreateInstance<MockInputConfigSO>();
 		var mb = new GameObject("obj").AddComponent<InputListenerMB>();
-		mb.inputActionSO = so;
-		so.action = new InputAction(
-			binding: "<Gamepad>/leftTrigger",
-			type: InputActionType.Button
+		mb.inputConfigSO = so;
+		mb.action = InputEnum.Action.Walk;
+		so.action.Enable();
+
+		yield return new WaitForEndOfFrame();
+
+		mb.OnInput!.AddListener(_ => ++called);
+
+		InputSystem.QueueStateEvent(
+			this.pad!,
+			new GamepadState { leftTrigger = 1f }
 		);
+
+		yield return new WaitForEndOfFrame();
+
+		Assert.AreEqual(1, called);
+	}
+
+	[UnityTest]
+	public IEnumerator CallOnInputRun() {
+		var called = 0;
+		var so = ScriptableObject.CreateInstance<MockInputConfigSO>();
+		var mb = new GameObject("obj").AddComponent<InputListenerMB>();
+		mb.inputConfigSO = so;
+		mb.action = InputEnum.Action.Run;
+		so.onlyAction = InputEnum.Action.Run;
 		so.action.Enable();
 
 		yield return new WaitForEndOfFrame();
@@ -54,13 +87,10 @@ public class InputListenerMBTests : TestCollection
 	[UnityTest]
 	public IEnumerator CallOnInputOnlyOncePerFrame() {
 		var called = 0;
-		var so = ScriptableObject.CreateInstance<MockInputActionSO>();
+		var so = ScriptableObject.CreateInstance<MockInputConfigSO>();
 		var mb = new GameObject("obj").AddComponent<InputListenerMB>();
-		mb.inputActionSO = so;
-		so.action = new InputAction(
-			binding: "<Gamepad>/leftTrigger",
-			type: InputActionType.Button
-		);
+		mb.inputConfigSO = so;
+		mb.action = InputEnum.Action.Walk;
 		so.action.Enable();
 
 		yield return new WaitForEndOfFrame();
@@ -90,13 +120,10 @@ public class InputListenerMBTests : TestCollection
 	[UnityTest]
 	public IEnumerator CallOnInputNextFrame() {
 		var called = 0;
-		var so = ScriptableObject.CreateInstance<MockInputActionSO>();
+		var so = ScriptableObject.CreateInstance<MockInputConfigSO>();
 		var mb = new GameObject("obj").AddComponent<InputListenerMB>();
-		mb.inputActionSO = so;
-		so.action = new InputAction(
-			binding: "<Gamepad>/leftTrigger",
-			type: InputActionType.Button
-		);
+		mb.inputConfigSO = so;
+		mb.action = InputEnum.Action.Walk;
 		so.action.Enable();
 
 		yield return new WaitForEndOfFrame();
