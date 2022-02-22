@@ -67,4 +67,73 @@ public class InputLayerSwitchMBTests : TestCollection
 			(configSO.Config.Mouse.enabled, configSO.Config.Movement.enabled)
 		);
 	}
+	[UnityTest]
+	public IEnumerator DisableMovement() {
+		var layerSwitch = new GameObject("layerSwitch")
+			.AddComponent<InputLayerSwitchMB>();
+		var trigger = ScriptableObject.CreateInstance<ChannelSO>();
+		var configSO = ScriptableObject.CreateInstance<InputConfigSO>();
+		layerSwitch.disable = new InputEnum.Map[] { InputEnum.Map.Movement };
+		layerSwitch.listenTo = new ChannelSO[] { trigger };
+		layerSwitch.inputConfig = configSO;
+
+		configSO.Config.Movement.Enable();
+
+		yield return new WaitForEndOfFrame();
+
+		trigger.Raise();
+
+		yield return new WaitForEndOfFrame();
+
+		Assert.False(configSO.Config.Movement.enabled);
+	}
+
+	[UnityTest]
+	public IEnumerator DisableMouse() {
+		var layerSwitch = new GameObject("layerSwitch")
+			.AddComponent<InputLayerSwitchMB>();
+		var trigger = ScriptableObject.CreateInstance<ChannelSO>();
+		var configSO = ScriptableObject.CreateInstance<InputConfigSO>();
+		layerSwitch.disable = new InputEnum.Map[] { InputEnum.Map.Mouse };
+		layerSwitch.listenTo = new ChannelSO[] { trigger };
+		layerSwitch.inputConfig = configSO;
+
+		configSO.Config.Mouse.Enable();
+
+		yield return new WaitForEndOfFrame();
+
+		trigger.Raise();
+
+		yield return new WaitForEndOfFrame();
+
+		Assert.False(configSO.Config.Mouse.enabled);
+	}
+
+	[UnityTest]
+	public IEnumerator DisableMovementAndMouse() {
+		var layerSwitch = new GameObject("layerSwitch")
+			.AddComponent<InputLayerSwitchMB>();
+		var trigger = ScriptableObject.CreateInstance<ChannelSO>();
+		var configSO = ScriptableObject.CreateInstance<InputConfigSO>();
+		layerSwitch.disable = new InputEnum.Map[] {
+			InputEnum.Map.Mouse,
+			InputEnum.Map.Movement
+		};
+		layerSwitch.listenTo = new ChannelSO[] { trigger };
+		layerSwitch.inputConfig = configSO;
+
+		configSO.Config.Mouse.Enable();
+		configSO.Config.Movement.Enable();
+
+		yield return new WaitForEndOfFrame();
+
+		trigger.Raise();
+
+		yield return new WaitForEndOfFrame();
+
+		Assert.AreEqual(
+			(false, false),
+			(configSO.Config.Mouse.enabled, configSO.Config.Movement.enabled)
+		);
+	}
 }
