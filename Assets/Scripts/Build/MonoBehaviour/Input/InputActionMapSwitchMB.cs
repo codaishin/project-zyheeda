@@ -2,7 +2,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class InputLayerSwitchMB : MonoBehaviour
+public class InputActionMapSwitchMB : MonoBehaviour
 {
 	public BaseInputConfigSO? inputConfig;
 	public InputEnum.Map[] enable = new InputEnum.Map[0];

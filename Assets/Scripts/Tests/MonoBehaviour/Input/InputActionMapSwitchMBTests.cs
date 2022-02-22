@@ -3,12 +3,12 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-public class InputLayerSwitchMBTests : TestCollection
+public class InputActionMapSwitchMBTests : TestCollection
 {
 	[UnityTest]
 	public IEnumerator EnableMovement() {
 		var layerSwitch = new GameObject("layerSwitch")
-			.AddComponent<InputLayerSwitchMB>();
+			.AddComponent<InputActionMapSwitchMB>();
 		var trigger = ScriptableObject.CreateInstance<ChannelSO>();
 		var configSO = ScriptableObject.CreateInstance<InputConfigSO>();
 		layerSwitch.enable = new InputEnum.Map[] { InputEnum.Map.Movement };
@@ -27,7 +27,7 @@ public class InputLayerSwitchMBTests : TestCollection
 	[UnityTest]
 	public IEnumerator EnableMouse() {
 		var layerSwitch = new GameObject("layerSwitch")
-			.AddComponent<InputLayerSwitchMB>();
+			.AddComponent<InputActionMapSwitchMB>();
 		var trigger = ScriptableObject.CreateInstance<ChannelSO>();
 		var configSO = ScriptableObject.CreateInstance<InputConfigSO>();
 		layerSwitch.enable = new InputEnum.Map[] { InputEnum.Map.Mouse };
@@ -46,7 +46,7 @@ public class InputLayerSwitchMBTests : TestCollection
 	[UnityTest]
 	public IEnumerator EnableMovementAndMouse() {
 		var layerSwitch = new GameObject("layerSwitch")
-			.AddComponent<InputLayerSwitchMB>();
+			.AddComponent<InputActionMapSwitchMB>();
 		var trigger = ScriptableObject.CreateInstance<ChannelSO>();
 		var configSO = ScriptableObject.CreateInstance<InputConfigSO>();
 		layerSwitch.enable = new InputEnum.Map[] {
@@ -70,7 +70,7 @@ public class InputLayerSwitchMBTests : TestCollection
 	[UnityTest]
 	public IEnumerator DisableMovement() {
 		var layerSwitch = new GameObject("layerSwitch")
-			.AddComponent<InputLayerSwitchMB>();
+			.AddComponent<InputActionMapSwitchMB>();
 		var trigger = ScriptableObject.CreateInstance<ChannelSO>();
 		var configSO = ScriptableObject.CreateInstance<InputConfigSO>();
 		layerSwitch.disable = new InputEnum.Map[] { InputEnum.Map.Movement };
@@ -91,7 +91,7 @@ public class InputLayerSwitchMBTests : TestCollection
 	[UnityTest]
 	public IEnumerator DisableMouse() {
 		var layerSwitch = new GameObject("layerSwitch")
-			.AddComponent<InputLayerSwitchMB>();
+			.AddComponent<InputActionMapSwitchMB>();
 		var trigger = ScriptableObject.CreateInstance<ChannelSO>();
 		var configSO = ScriptableObject.CreateInstance<InputConfigSO>();
 		layerSwitch.disable = new InputEnum.Map[] { InputEnum.Map.Mouse };
@@ -112,7 +112,7 @@ public class InputLayerSwitchMBTests : TestCollection
 	[UnityTest]
 	public IEnumerator DisableMovementAndMouse() {
 		var layerSwitch = new GameObject("layerSwitch")
-			.AddComponent<InputLayerSwitchMB>();
+			.AddComponent<InputActionMapSwitchMB>();
 		var trigger = ScriptableObject.CreateInstance<ChannelSO>();
 		var configSO = ScriptableObject.CreateInstance<InputConfigSO>();
 		layerSwitch.disable = new InputEnum.Map[] {
