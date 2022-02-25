@@ -49,9 +49,20 @@ public partial class @PlayerInputConfig : IInputActionCollection2, IDisposable
             ""bindings"": [
                 {
                     ""name"": """",
-                    ""id"": ""75205ba8-47ea-4350-9ccf-4c2fa979bbc5"",
+                    ""id"": ""7818a16c-9e38-4a43-bef1-f8885292cf7e"",
                     ""path"": ""<Mouse>/leftButton"",
-                    ""interactions"": ""RepeatHold(pressPoint=0.5,holdTime=0.01)"",
+                    ""interactions"": ""MultiTapHoldRepeat(tapCount=1,maxTapSpacing=0.75,maxTapDuration=0.2,pressPoint=0.5,holdTime=0.1)"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Run"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d927133b-2a94-484d-b6bf-b11d7c5fff02"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": ""RepeatHold(pressPoint=0.5,holdTime=0.1,frequency=60)"",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Walk"",
