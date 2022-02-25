@@ -29,28 +29,22 @@ public class MultiTapHoldRepeatInteraction : IInputInteraction
 	}
 
 	private void Start(ref InputInteractionContext context) {
-		if (context.ControlIsActuated(this.pressPoint)) {
-			this.performedTimeout = 1f / this.frequency;
-			this.wasTappedCount = 0;
+		this.performedTimeout = 1f / this.frequency;
+		this.wasTappedCount = 0;
 
-			context.Started();
-			this.SetStateAndPressTimeout(ref context);
-		}
+		context.Started();
+		this.SetStateAndPressTimeout(ref context);
 	}
 
 	private void Release(ref InputInteractionContext context) {
-		if (!context.ControlIsActuated(this.pressPoint)) {
-			this.state = State.TapWait;
-			++this.wasTappedCount;
-			context.SetTimeout(this.maxTapSpacing);
-		}
+		this.state = State.TapWait;
+		++this.wasTappedCount;
+		context.SetTimeout(this.maxTapSpacing);
 	}
 
 	private void Press(ref InputInteractionContext context) {
-		if (context.ControlIsActuated(this.pressPoint)) {
-			this.state = State.TapHold;
-			this.SetStateAndPressTimeout(ref context);
-		}
+		this.state = State.TapHold;
+		this.SetStateAndPressTimeout(ref context);
 	}
 	private void HoldRepeat(ref InputInteractionContext context) {
 		context.PerformedAndStayPerformed();
@@ -65,17 +59,23 @@ public class MultiTapHoldRepeatInteraction : IInputInteraction
 
 	public void Process(ref InputInteractionContext context) {
 		InputAction processPhase = (context.phase, this.state) switch {
-			(InputActionPhase.Waiting, _) =>
+			(InputActionPhase.Waiting, _)
+			when context.ControlIsActuated(this.pressPoint) =>
 				this.Start,
-			(_, State.TapHold or State.TapWait) when context.timerHasExpired =>
+			(_, State.TapHold or State.TapWait)
+			when context.timerHasExpired =>
 				this.Cancel,
-			(_, State.TapHold) =>
+			(_, State.TapHold)
+			when !context.ControlIsActuated(this.pressPoint) =>
 				this.Release,
-			(_, State.TapWait) =>
+			(_, State.TapWait)
+			when context.ControlIsActuated(this.pressPoint) =>
 				this.Press,
-			(_, State.Hold) when !context.ControlIsActuated(this.pressPoint) =>
+			(_, State.Hold)
+			when !context.ControlIsActuated(this.pressPoint) =>
 				this.Cancel,
-			(_, State.Hold) when context.timerHasExpired =>
+			(_, State.Hold)
+			when context.timerHasExpired =>
 				this.HoldRepeat,
 			_ =>
 				this.DoNothing,
