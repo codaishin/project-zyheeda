@@ -13,12 +13,10 @@ public class RepeatHoldInteraction : IInputInteraction
 	private delegate void InputAction(ref InputInteractionContext context);
 
 	private void Start(ref InputInteractionContext context) {
-		if (context.ControlIsActuated(this.pressPoint)) {
-			this.performedTimeout = 1f / this.frequency;
+		this.performedTimeout = 1f / this.frequency;
 
-			context.Started();
-			context.SetTimeout(this.holdTime);
-		}
+		context.Started();
+		context.SetTimeout(this.holdTime);
 	}
 
 	private void HoldRepeat(ref InputInteractionContext context) {
@@ -34,7 +32,8 @@ public class RepeatHoldInteraction : IInputInteraction
 
 	public void Process(ref InputInteractionContext context) {
 		InputAction processPhase = context.phase switch {
-			InputActionPhase.Waiting =>
+			InputActionPhase.Waiting
+			when context.ControlIsActuated(this.pressPoint) =>
 				this.Start,
 			InputActionPhase.Started or InputActionPhase.Performed
 			when !context.ControlIsActuated(this.pressPoint) =>
