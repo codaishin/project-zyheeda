@@ -44,7 +44,7 @@ public class BaseApproachMBTests : TestCollection
 			called = (transform, target, speed);
 			yield break;
 		}
-		mover.appraoch.apply = approach;
+		mover.approach.apply = approach;
 
 		yield return new WaitForEndOfFrame();
 		yield return new WaitForEndOfFrame();
@@ -71,7 +71,7 @@ public class BaseApproachMBTests : TestCollection
 			++called;
 			yield return new WaitForFixedUpdate();
 		}
-		mover.appraoch.apply = approach;
+		mover.approach.apply = approach;
 
 		yield return new WaitForEndOfFrame();
 
@@ -99,7 +99,7 @@ public class BaseApproachMBTests : TestCollection
 			called.Add(target);
 			yield return new WaitForFixedUpdate();
 		}
-		mover.appraoch.apply = approach;
+		mover.approach.apply = approach;
 
 		yield return new WaitForEndOfFrame();
 
@@ -130,7 +130,7 @@ public class BaseApproachMBTests : TestCollection
 			yield return new WaitForFixedUpdate();
 			yield return new WaitForFixedUpdate();
 		}
-		mover.appraoch.apply = approach;
+		mover.approach.apply = approach;
 
 		yield return new WaitForEndOfFrame();
 
@@ -168,7 +168,7 @@ public class BaseApproachMBTests : TestCollection
 				);
 			}
 		}
-		mover.appraoch.apply = approach;
+		mover.approach.apply = approach;
 
 		yield return new WaitForFixedUpdate();
 
@@ -199,7 +199,7 @@ public class BaseApproachMBTests : TestCollection
 			transform.position = target;
 			yield break;
 		}
-		mover.appraoch.apply = approach;
+		mover.approach.apply = approach;
 
 		yield return new WaitForFixedUpdate();
 

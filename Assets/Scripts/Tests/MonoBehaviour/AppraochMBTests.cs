@@ -3,33 +3,33 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-public class AppraochMBTests : TestCollection
+public class ApproachMBTests : TestCollection
 {
 	[Test]
 	public void GetPosition() {
-		var appraoch = new Approach();
+		var approach = new Approach();
 
-		Assert.AreEqual(Vector3.down, appraoch.GetPosition(Vector3.down));
+		Assert.AreEqual(Vector3.down, approach.GetPosition(Vector3.down));
 	}
 
 	[UnityTest]
 	public IEnumerator GetTimeDelta() {
-		var appraoch = new Approach();
+		var approach = new Approach();
 
 		yield return new WaitForFixedUpdate();
 
-		Assert.AreEqual(Time.fixedDeltaTime, appraoch.GetTimeDelta());
+		Assert.AreEqual(Time.fixedDeltaTime, approach.GetTimeDelta());
 	}
 
 	[Test]
 	public void OnPositionUpdated() {
-		var appraoch = new Approach();
+		var approach = new Approach();
 		var transformA = new GameObject().transform;
 		var target = Vector3.up;
 
 		transformA.position = Vector3.right;
 
-		appraoch.OnPositionUpdated(transformA, target);
+		approach.OnPositionUpdated(transformA, target);
 
 		Assert.AreEqual(
 			Quaternion.LookRotation(Vector3.left + Vector3.up).eulerAngles,
