@@ -30,6 +30,7 @@ Transform:
   m_LocalRotation: {x: 0.38268343, y: -0, z: -0, w: 0.92387956}
   m_LocalPosition: {x: 0, y: 10, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7841215414448894090}
   m_RootOrder: 0
@@ -97,7 +98,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 638d8dcaba6cc2d4b8638772aefdda95, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mouseSO: {fileID: 11400000, guid: dbb9a8184dd2bc74d82536754f3ccb34, type: 2}
+  inputConfigSO: {fileID: 11400000, guid: cc25959ff6fb7d24bb7768115be8703c, type: 2}
 --- !u!114 &7841215412831498257
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -139,6 +140,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7841215414448894090}
   m_RootOrder: 1
@@ -214,6 +216,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7841215412831498259}
   - {fileID: 7841215414286169623}

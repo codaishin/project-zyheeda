@@ -1,7 +1,7 @@
 using System;
-using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
@@ -46,7 +46,7 @@ public class TargetingSOTests : TestCollection
 			.Select(this.DefaultSheet, targets)
 			.GetEnumerator();
 		routine.MoveNext();
-		singleTarget.selectTarget.Raise();
+		((ChannelSO)singleTarget.selectTarget).Raise();
 
 		CollectionAssert.AreEqual(new CharacterSheetMB[] { target }, targets);
 	}
@@ -68,7 +68,7 @@ public class TargetingSOTests : TestCollection
 			.Select(source, targets)
 			.GetEnumerator();
 		routine.MoveNext();
-		singleTarget.selectTarget.Raise();
+		((ChannelSO)singleTarget.selectTarget).Raise();
 
 		CollectionAssert.AreEqual(new CharacterSheetMB[] { source }, targets);
 	}
@@ -90,7 +90,7 @@ public class TargetingSOTests : TestCollection
 			.Select(this.DefaultSheet, targets)
 			.GetEnumerator();
 		routine.MoveNext();
-		singleTarget.selectTarget.Raise();
+		((ChannelSO)singleTarget.selectTarget).Raise();
 
 		CollectionAssert.IsEmpty(targets);
 	}
@@ -134,7 +134,7 @@ public class TargetingSOTests : TestCollection
 			.GetEnumerator();
 		yields.Add(routine.MoveNext());
 		yields.Add(routine.MoveNext());
-		singleTarget.selectTarget.Raise();
+		((ChannelSO)singleTarget.selectTarget).Raise();
 		yields.Add(routine.MoveNext());
 
 		CollectionAssert.AreEqual(new bool[] { true, true, false }, yields);
@@ -157,12 +157,12 @@ public class TargetingSOTests : TestCollection
 			.Select(this.DefaultSheet, new List<CharacterSheetMB>())
 			.GetEnumerator();
 		yields.Add(routine.MoveNext());
-		singleTarget.selectTarget.Raise();
+		((ChannelSO)singleTarget.selectTarget).Raise();
 		yields.Add(routine.MoveNext());
-		singleTarget.selectTarget.Raise();
+		((ChannelSO)singleTarget.selectTarget).Raise();
 		yields.Add(routine.MoveNext());
 		hitter.hit.tryHit = _ => target;
-		singleTarget.selectTarget.Raise();
+		((ChannelSO)singleTarget.selectTarget).Raise();
 		yields.Add(routine.MoveNext());
 
 		CollectionAssert.AreEqual(new bool[] { true, true, true, false }, yields);
@@ -186,9 +186,9 @@ public class TargetingSOTests : TestCollection
 			.GetEnumerator();
 		routine.MoveNext();
 		routine.MoveNext();
-		singleTarget.selectTarget.Raise();
+		((ChannelSO)singleTarget.selectTarget).Raise();
 		routine.MoveNext();
-		singleTarget.selectTarget.Raise();
+		((ChannelSO)singleTarget.selectTarget).Raise();
 
 		CollectionAssert.AreEqual(new CharacterSheetMB[] { target }, targets);
 	}
@@ -210,8 +210,8 @@ public class TargetingSOTests : TestCollection
 			.Select(this.DefaultSheet, targets)
 			.GetEnumerator();
 		routine.MoveNext();
-		singleTarget.selectTarget.Raise();
-		singleTarget.cancelSelect.Raise();
+		((ChannelSO)singleTarget.selectTarget).Raise();
+		((ChannelSO)singleTarget.cancelSelect).Raise();
 
 		CollectionAssert.IsEmpty(targets);
 	}
@@ -234,7 +234,7 @@ public class TargetingSOTests : TestCollection
 		yields.Add(routine.MoveNext());
 		yields.Add(routine.MoveNext());
 		yields.Add(routine.MoveNext());
-		singleTarget.cancelSelect.Raise();
+		((ChannelSO)singleTarget.cancelSelect).Raise();
 		yields.Add(routine.MoveNext());
 
 		CollectionAssert.AreEqual(new bool[] { true, true, true, false }, yields);
@@ -257,11 +257,11 @@ public class TargetingSOTests : TestCollection
 			.GetEnumerator();
 		routine.MoveNext();
 		routine.MoveNext();
-		singleTarget.cancelSelect.Raise();
+		((ChannelSO)singleTarget.cancelSelect).Raise();
 		routine.MoveNext();
 
 		targets.Add(target);
-		singleTarget.cancelSelect.Raise();
+		((ChannelSO)singleTarget.cancelSelect).Raise();
 
 		CollectionAssert.AreEqual(new CharacterSheetMB[] { target }, targets);
 	}
@@ -288,11 +288,11 @@ public class TargetingSOTests : TestCollection
 			.Select(this.DefaultSheet, selectedTargets, maxCount: 3)
 			.GetEnumerator();
 		routine.MoveNext();
-		singleTarget.selectTarget.Raise();
+		((ChannelSO)singleTarget.selectTarget).Raise();
 		routine.MoveNext();
-		singleTarget.selectTarget.Raise();
+		((ChannelSO)singleTarget.selectTarget).Raise();
 		routine.MoveNext();
-		singleTarget.selectTarget.Raise();
+		((ChannelSO)singleTarget.selectTarget).Raise();
 		routine.MoveNext();
 
 		CollectionAssert.AreEqual(targets, selectedTargets);
@@ -321,13 +321,13 @@ public class TargetingSOTests : TestCollection
 			.Select(this.DefaultSheet, selectedTargets, maxCount: 4)
 			.GetEnumerator();
 		routine.MoveNext();
-		singleTarget.selectTarget.Raise();
+		((ChannelSO)singleTarget.selectTarget).Raise();
 		routine.MoveNext();
-		singleTarget.selectTarget.Raise();
+		((ChannelSO)singleTarget.selectTarget).Raise();
 		routine.MoveNext();
-		singleTarget.selectTarget.Raise();
+		((ChannelSO)singleTarget.selectTarget).Raise();
 		routine.MoveNext();
-		singleTarget.cancelSelect.Raise();
+		((ChannelSO)singleTarget.cancelSelect).Raise();
 		routine.MoveNext();
 
 		CollectionAssert.AreEqual(targets.Take(2), selectedTargets);
@@ -351,15 +351,15 @@ public class TargetingSOTests : TestCollection
 			.Select(this.DefaultSheet, selectedTargets, maxCount: 3)
 			.GetEnumerator();
 		yields.Add(routine.MoveNext());
-		singleTarget.selectTarget.Raise();
+		((ChannelSO)singleTarget.selectTarget).Raise();
 		yields.Add(routine.MoveNext());
-		singleTarget.selectTarget.Raise();
+		((ChannelSO)singleTarget.selectTarget).Raise();
 		yields.Add(routine.MoveNext());
-		singleTarget.cancelSelect.Raise();
+		((ChannelSO)singleTarget.cancelSelect).Raise();
 		yields.Add(routine.MoveNext());
-		singleTarget.selectTarget.Raise();
+		((ChannelSO)singleTarget.selectTarget).Raise();
 		yields.Add(routine.MoveNext());
-		singleTarget.selectTarget.Raise();
+		((ChannelSO)singleTarget.selectTarget).Raise();
 		yields.Add(routine.MoveNext());
 
 		CollectionAssert.AreEqual(
@@ -386,9 +386,9 @@ public class TargetingSOTests : TestCollection
 			.Select(this.DefaultSheet, new List<CharacterSheetMB>(), maxCount: 10)
 			.GetEnumerator();
 		yields.Add(routine.MoveNext());
-		singleTarget.selectTarget.Raise();
+		((ChannelSO)singleTarget.selectTarget).Raise();
 		yields.Add(routine.MoveNext());
-		singleTarget.selectTarget.Raise();
+		((ChannelSO)singleTarget.selectTarget).Raise();
 		yields.Add(routine.MoveNext());
 
 		CollectionAssert.AreEqual(new bool[] { true, true, false }, yields);
@@ -412,9 +412,9 @@ public class TargetingSOTests : TestCollection
 			.Select(this.DefaultSheet, targets, maxCount: 10)
 			.GetEnumerator();
 		routine.MoveNext();
-		singleTarget.selectTarget.Raise();
+		((ChannelSO)singleTarget.selectTarget).Raise();
 		routine.MoveNext();
-		singleTarget.selectTarget.Raise();
+		((ChannelSO)singleTarget.selectTarget).Raise();
 		routine.MoveNext();
 
 		CollectionAssert.AreEqual(new CharacterSheetMB[] { target }, targets);

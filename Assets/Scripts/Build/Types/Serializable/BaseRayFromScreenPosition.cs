@@ -1,22 +1,33 @@
 using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 [Serializable]
-public abstract class BaseRayFromScreenPosition<TScreenPosition> :
-	IRay
-	where TScreenPosition :
-		IPosition
+public abstract class BaseRayFromScreenPosition : IRay
 {
-	public ReferenceSO? camera;
-	public TScreenPosition? screenPosition;
+	private InputAction? mousePosition;
+	private Camera? cam;
 
-	public Ray Ray {
-		get {
-			if (this.camera == null) throw this.NullError();
-			if (this.screenPosition == null) throw this.NullError();
-			return this.camera.GameObject!
-				.GetComponent<Camera>()
-				.ScreenPointToRay(this.screenPosition.Position);
-		}
+	public ReferenceSO? camera;
+	public BaseInputConfigSO? inputConfigSO;
+
+	private Camera Cam =>
+		this.cam ?? this.GetCam();
+	private InputAction MousePostion =>
+		this.mousePosition ?? this.GetMousePosition();
+
+	public Ray Ray =>
+		this
+			.Cam
+			.ScreenPointToRay(this.MousePostion.ReadValue<Vector2>());
+
+	private Camera GetCam() {
+		this.cam = this.camera!.GameObject!.RequireComponent<Camera>();
+		return this.cam;
+	}
+
+	private InputAction GetMousePosition() {
+		this.mousePosition = this.inputConfigSO![InputEnum.Action.MousePosition];
+		return this.mousePosition;
 	}
 }

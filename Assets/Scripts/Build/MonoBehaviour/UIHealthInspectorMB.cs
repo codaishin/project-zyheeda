@@ -1,3 +1,4 @@
+using System;
 using UnityEngine.UI;
 
 public class UIHealthInspectorMB : BaseUIInspectorMB<Health>
@@ -7,7 +8,11 @@ public class UIHealthInspectorMB : BaseUIInspectorMB<Health>
 
 	public override void Set(Health value) {
 		if (this.text == null || this.image == null) throw this.NullError();
-		this.text.text = $"{value.hp:F1}/{value.maxHp:F1}";
+
+		IFormatProvider usFmt = new System.Globalization.CultureInfo("en-US");
+		string hp = value.hp.ToString("F1", usFmt);
+		string maxHp = value.maxHp.ToString("F1", usFmt);
+		this.text.text = $"{hp}/{maxHp}";
 		this.image.fillAmount = value.hp / value.maxHp;
 	}
 }

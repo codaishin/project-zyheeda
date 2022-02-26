@@ -1,4 +1,4 @@
 using System;
 
 [Serializable]
-public class RayFromScreenMousePosition : BaseRayFromScreenPosition<BaseMouseSO> { }
+public class RayFromScreenMousePosition : BaseRayFromScreenPosition { }

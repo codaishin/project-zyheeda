@@ -1,13 +1,49 @@
+using System;
+using System.Collections;
 using NUnit.Framework;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.LowLevel;
+using UnityEngine.TestTools;
 
 public class CameraRayProviderMBTests : TestCollection
 {
-	private class MockMouseSO : BaseMouseSO
+	class MockInputConfigSO : BaseInputConfigSO
 	{
-		public Vector3 position;
+		public InputAction action = new InputAction(
+			binding: "<Mouse>/position",
+			type: InputActionType.Value,
+			expectedControlType: "Vector2(normalize=false)"
+		);
 
-		public override Vector3 Position => this.position;
+		public override InputAction this[InputEnum.Action action] => action switch {
+			InputEnum.Action when action == InputEnum.Action.MousePosition
+				=> this.action,
+			_
+				=> throw new ArgumentException(),
+		};
+
+		public override InputActionMap this[InputEnum.Map map]
+			=> throw new NotImplementedException();
+	}
+
+	private Mouse? mouse;
+
+	[SetUp]
+	public void SetUp() {
+		this.mouse = InputSystem.AddDevice<Mouse>();
+	}
+
+	[TearDown]
+	public void TearDown() {
+		InputSystem.RemoveDevice(this.mouse!);
+	}
+
+	[Test]
+	public void BaseRequiresCamera() {
+		var camRayProviderMB = new GameObject("cam")
+			.AddComponent<CameraRayProviderMB>();
+		Assert.True(camRayProviderMB.TryGetComponent(out Camera _));
 	}
 
 	[Test]
@@ -27,16 +63,23 @@ public class CameraRayProviderMBTests : TestCollection
 		);
 	}
 
-	[Test]
-	public void RayForward() {
+	[UnityTest]
+	public IEnumerator RayForward() {
+		var inputConfigSO = ScriptableObject
+			.CreateInstance<MockInputConfigSO>();
 		var camRayProviderMB = new GameObject("cam")
 			.AddComponent<CameraRayProviderMB>();
 		var camera = camRayProviderMB.Camera!;
-		var mockMouseSO = ScriptableObject.CreateInstance<MockMouseSO>();
-
-		mockMouseSO.position = new Vector3(Screen.width / 2, Screen.height / 2);
-		camRayProviderMB.mouseSO = mockMouseSO;
+		camRayProviderMB.inputConfigSO = inputConfigSO;
 		camera.nearClipPlane = 0.01f;
+		inputConfigSO.action.Enable();
+
+		InputState.Change(
+			this.mouse!.position,
+			new Vector2(Screen.width / 2, Screen.height / 2)
+		);
+
+		yield return new WaitForEndOfFrame();
 
 		Tools.AssertEqual(
 			Vector3.forward,
