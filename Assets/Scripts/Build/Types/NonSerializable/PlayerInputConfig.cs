@@ -51,7 +51,7 @@ public partial class @PlayerInputConfig : IInputActionCollection2, IDisposable
                     ""name"": """",
                     ""id"": ""7818a16c-9e38-4a43-bef1-f8885292cf7e"",
                     ""path"": ""<Mouse>/rightButton"",
-                    ""interactions"": ""RepeatHold(pressPoint=0.5,holdTime=0.01)"",
+                    ""interactions"": ""RepeatHold(pressPoint=0.5,holdTime=0.01,frequency=60)"",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Run"",

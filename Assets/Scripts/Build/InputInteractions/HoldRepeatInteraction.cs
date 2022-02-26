@@ -1,7 +1,10 @@
 using UnityEditor;
+using UnityEngine;
 using UnityEngine.InputSystem;
 
+#if UNITY_EDITOR
 [InitializeOnLoad]
+#endif
 public class RepeatHoldInteraction : IInputInteraction
 {
 	public float pressPoint;
@@ -50,6 +53,11 @@ public class RepeatHoldInteraction : IInputInteraction
 	public void Reset() { }
 
 	static RepeatHoldInteraction() {
+		InputSystem.RegisterInteraction<RepeatHoldInteraction>();
+	}
+
+	[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+	static void OnRuntimeMethodLoad() {
 		InputSystem.RegisterInteraction<RepeatHoldInteraction>();
 	}
 }

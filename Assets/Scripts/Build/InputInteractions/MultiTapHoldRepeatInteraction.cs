@@ -1,7 +1,10 @@
 using UnityEditor;
+using UnityEngine;
 using UnityEngine.InputSystem;
 
+#if UNITY_EDITOR
 [InitializeOnLoad]
+#endif
 public class MultiTapHoldRepeatInteraction : IInputInteraction
 {
 	private enum State { Hold, TapHold, TapWait }
@@ -86,6 +89,11 @@ public class MultiTapHoldRepeatInteraction : IInputInteraction
 	public void Reset() { }
 
 	static MultiTapHoldRepeatInteraction() {
+		InputSystem.RegisterInteraction<MultiTapHoldRepeatInteraction>();
+	}
+
+	[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+	static void OnRuntimeMethodLoad() {
 		InputSystem.RegisterInteraction<MultiTapHoldRepeatInteraction>();
 	}
 }
