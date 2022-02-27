@@ -1,6 +1,14 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+
+public enum OverrideMode
+{
+	None,
+	Own,
+	All,
+}
 
 public class InstructionsMB : MonoBehaviour
 {
@@ -10,7 +18,7 @@ public class InstructionsMB : MonoBehaviour
 	public CoroutineRunnerMB? runner;
 	public BaseInstructionsSO? instructionsSO;
 	public Reference agent;
-	public bool oneAtATime;
+	public OverrideMode overrideMode;
 
 	public UnityEvent? onBegin;
 	public UnityEvent? onEnd;
@@ -36,19 +44,27 @@ public class InstructionsMB : MonoBehaviour
 		this.onEnd!.Invoke();
 	}
 
+	private void StopNone() { }
+
+	private void StopAll() {
+		this.OnRunnerOrSelf.StopAllCoroutines();
+	}
+
+	private void StopOnw() {
+		if (this.currentCoroutine == null) return;
+
+		this.OnRunnerOrSelf.StopCoroutine(this.currentCoroutine);
+	}
+
 	public void Begin() {
-		if (this.oneAtATime) {
-			this.Cancel();
-		}
+		Action stop = this.overrideMode switch {
+			OverrideMode.All => this.StopAll,
+			OverrideMode.Own => this.StopOnw,
+			_ => this.StopNone,
+		};
+		stop();
 
 		this.currentCoroutine = this.GetCoroutine();
 		this.OnRunnerOrSelf.StartCoroutine(this.currentCoroutine);
-	}
-
-	public void Cancel() {
-		if (this.currentCoroutine == null) {
-			return;
-		}
-		this.OnRunnerOrSelf.StopCoroutine(this.currentCoroutine);
 	}
 }
