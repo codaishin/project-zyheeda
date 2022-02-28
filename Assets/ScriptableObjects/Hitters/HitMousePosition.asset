@@ -12,10 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebf727dd1f1b39a42acf766b7e036336, type: 3}
   m_Name: HitMousePosition
   m_EditorClassIdentifier: 
-  hit:
-    rayProvider:
-      camera: {fileID: 11400000, guid: 7b8ba24cfd2e7fd468cdb283de5395e3, type: 2}
-      inputConfigSO: {fileID: 11400000, guid: cc25959ff6fb7d24bb7768115be8703c, type: 2}
-    layerConstraints:
-      serializedVersion: 2
-      m_Bits: 0
+  cameraSO: {fileID: 11400000, guid: 7b8ba24cfd2e7fd468cdb283de5395e3, type: 2}
+  inputConfigSO: {fileID: 11400000, guid: cc25959ff6fb7d24bb7768115be8703c, type: 2}
+  constraint:
+    serializedVersion: 2
+    m_Bits: 0
