@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -8,8 +9,9 @@ public class HitMousePositionSO : BaseHitSO
 	public BaseInputConfigSO? inputConfigSO;
 	public LayerMask constraint;
 
-	private Camera? camera;
-	private InputAction? mousePosition;
+
+	[NonSerialized] private Camera? camera;
+	[NonSerialized] private InputAction? mousePosition;
 
 	private Camera Camera {
 		get {
