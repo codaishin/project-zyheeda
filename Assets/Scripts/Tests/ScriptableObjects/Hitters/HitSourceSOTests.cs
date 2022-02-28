@@ -1,17 +1,28 @@
 using NUnit.Framework;
+using UnityEngine;
 
 public class HitSourceSOTests : TestCollection
 {
-	private class MockClass { }
+	private class MockMB : MonoBehaviour { }
 
-	// [Test]
-	// public void TryHitHitSource() {
-	// 	var hitter = new HitSource();
-	// 	var source = new MockClass();
+	[Test]
+	public void TryHitHitSource() {
+		var hitSource = ScriptableObject.CreateInstance<HitSourceSO>();
+		var source = new GameObject().AddComponent<MockMB>();
 
-	// 	hitter.Try(source).Match(
-	// 		some: target => Assert.AreSame(source, target),
-	// 		none: () => Assert.Fail("No hit")
-	// 	);
-	// }
+		hitSource.Try(source).Match(
+			some: hit => Assert.AreSame(source, hit),
+			none: () => Assert.Fail("No hit")
+		);
+	}
+	[Test]
+	public void TryHitHitSourcePosition() {
+		var hitSource = ScriptableObject.CreateInstance<HitSourceSO>();
+		var source = new GameObject().AddComponent<MockMB>();
+
+		hitSource.TryPoint(source.transform).Match(
+			some: hit => Assert.AreEqual(source.transform.position, hit),
+			none: () => Assert.Fail("No hit")
+		);
+	}
 }
