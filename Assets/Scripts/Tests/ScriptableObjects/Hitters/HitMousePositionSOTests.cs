@@ -10,27 +10,40 @@ public class HitMousePositionSOTests : TestCollection
 {
 	class MockInputConfigSO : BaseInputConfigSO
 	{
-		public InputAction action = new InputAction(
+		private InputAction action = new InputAction(
 			binding: "<Mouse>/position",
 			type: InputActionType.Value
 		);
 
 		public override InputAction this[InputEnum.Action action] => action switch {
-			InputEnum.Action when action == InputEnum.Action.MousePosition =>
-				this.action,
-			_ =>
-				throw new ArgumentException(),
+			InputEnum.Action.MousePosition => this.action,
+			_ => throw new ArgumentException(),
 		};
 
 		public override InputActionMap this[InputEnum.Map map] =>
 			throw new NotImplementedException();
+
+		private void OnEnable() {
+			this.action.Enable();
+		}
 	}
 
+	private class MockMB : MonoBehaviour { }
+
 	private Mouse? mouse;
+	private MockInputConfigSO? inputConfSO;
+	private ReferenceSO? cameraRef;
+	private Camera? camera;
+	private MockMB DefaultMockMB => new GameObject().AddComponent<MockMB>();
 
 	[SetUp]
 	public void SetUp() {
 		this.mouse = InputSystem.AddDevice<Mouse>();
+		this.inputConfSO = ScriptableObject.CreateInstance<MockInputConfigSO>();
+		this.cameraRef = ScriptableObject.CreateInstance<ReferenceSO>();
+		this.camera = new GameObject().AddComponent<Camera>();
+		this.cameraRef.GameObject = this.camera.gameObject;
+		this.MouseToScreenMiddle();
 	}
 
 	[TearDown]
@@ -38,78 +51,174 @@ public class HitMousePositionSOTests : TestCollection
 		InputSystem.RemoveDevice(this.mouse!);
 	}
 
-	private class MockRayProvider : IRay
-	{
-		public Ray ray = new Ray(Vector3.up, Vector3.down);
-		public Ray Ray => this.ray;
+	private void MouseToScreenMiddle() {
+		InputState.Change(
+			this.mouse!.position,
+			new Vector2(Screen.width / 2, Screen.height / 2)
+		);
 	}
 
-	private class MockMB : MonoBehaviour { }
+	[UnityTest]
+	public IEnumerator HitNothing() {
+		var hitMouseSO = ScriptableObject.CreateInstance<HitMousePositionSO>();
+		hitMouseSO.cameraSO = this.cameraRef;
+		hitMouseSO.inputConfigSO = this.inputConfSO;
 
-	private MockMB DefaultMockMB
-		=> new GameObject("default").AddComponent<MockMB>();
+		yield return new WaitForEndOfFrame();
+		yield return new WaitForEndOfFrame();
 
-	// [Test]
-	// public void HitNothing() {
-	// 	var rayCastHit = new MockHit { rayProvider = new MockRayProvider() };
+		hitMouseSO.Try(this.DefaultMockMB).Match(
+			some: _ => Assert.Fail("hit something"),
+			none: () => Assert.Pass()
+		);
+	}
 
-	// 	rayCastHit.Try(this.DefaultMockMB).Match(
-	// 		some: _ => Assert.Fail("hit something"),
-	// 		none: () => Assert.Pass()
-	// 	);
-	// }
+	[UnityTest]
+	public IEnumerator HitNothingPoint() {
+		var hitMouseSO = ScriptableObject.CreateInstance<HitMousePositionSO>();
+		hitMouseSO.cameraSO = this.cameraRef;
+		hitMouseSO.inputConfigSO = this.inputConfSO;
 
-	// [Test]
-	// public void HitTarget() {
-	// 	var rayCastHit = new MockHit { rayProvider = new MockRayProvider() };
-	// 	var target = new GameObject("target").AddComponent<MockMB>();
-	// 	target.gameObject.AddComponent<SphereCollider>();
+		yield return new WaitForEndOfFrame();
+		yield return new WaitForEndOfFrame();
 
-	// 	rayCastHit.Try(this.DefaultMockMB).Match(
-	// 		some: hit => Assert.AreSame(target, hit),
-	// 		none: () => Assert.Fail("hit nothing")
-	// 	);
-	// }
+		hitMouseSO.TryPoint(this.DefaultMockMB.transform).Match(
+			some: _ => Assert.Fail("hit something"),
+			none: () => Assert.Pass()
+		);
+	}
 
-	// [Test]
-	// public void HitNothingWhenComponentMissing() {
-	// 	var rayCastHit = new MockHit { rayProvider = new MockRayProvider() };
-	// 	var target = new GameObject("target");
-	// 	target.gameObject.AddComponent<SphereCollider>();
+	[UnityTest]
+	public IEnumerator HitTarget() {
+		var hitMouseSO = ScriptableObject.CreateInstance<HitMousePositionSO>();
+		var plane = GameObject.CreatePrimitive(PrimitiveType.Plane);
+		hitMouseSO.cameraSO = this.cameraRef;
+		hitMouseSO.inputConfigSO = this.inputConfSO;
+		this.camera!.transform.position = Vector3.up;
+		this.camera!.transform.LookAt(new Vector3(1, 0, 1));
 
-	// 	rayCastHit.Try(this.DefaultMockMB).Match(
-	// 		some: _ => Assert.Fail("hit something"),
-	// 		none: () => Assert.Pass()
-	// 	);
-	// }
+		yield return new WaitForEndOfFrame();
+		yield return new WaitForEndOfFrame();
 
-	// [Test]
-	// public void HitNothingWhenLayersMismatch() {
-	// 	var rayCastHit = new MockHit { rayProvider = new MockRayProvider() };
-	// 	var target = new GameObject("target").AddComponent<MockMB>(); ;
-	// 	target.gameObject.AddComponent<SphereCollider>();
+		hitMouseSO.Try(this.DefaultMockMB.transform).Match(
+			some: hit => Assert.AreSame(plane.transform, hit),
+			none: () => Assert.Fail("hit nothing")
+		);
+	}
 
-	// 	rayCastHit.layerConstraints += 1 << 19;
-	// 	target.gameObject.layer = 20;
+	[UnityTest]
+	public IEnumerator HitTargetPoint() {
+		var hitMouseSO = ScriptableObject.CreateInstance<HitMousePositionSO>();
+		var plane = GameObject.CreatePrimitive(PrimitiveType.Plane);
+		hitMouseSO.cameraSO = this.cameraRef;
+		hitMouseSO.inputConfigSO = this.inputConfSO;
+		this.camera!.transform.position = new Vector3(1, 1, 1);
+		this.camera!.transform.LookAt(new Vector3(1, 0, 1));
 
-	// 	rayCastHit.Try(this.DefaultMockMB).Match(
-	// 		some: _ => Assert.Fail("hit something"),
-	// 		none: () => Assert.Pass()
-	// 	);
-	// }
+		yield return new WaitForEndOfFrame();
+		yield return new WaitForEndOfFrame();
 
-	// [Test]
-	// public void HitTargetWhenLayersMatch() {
-	// 	var rayCastHit = new MockHit { rayProvider = new MockRayProvider() };
-	// 	var target = new GameObject("target").AddComponent<MockMB>(); ;
-	// 	target.gameObject.AddComponent<SphereCollider>();
+		var expected = new Vector3(1, 0, 1);
+		var actual = Vector3.zero;
 
-	// 	rayCastHit.layerConstraints += 1 << 20;
-	// 	target.gameObject.layer = 20;
+		hitMouseSO.TryPoint(this.DefaultMockMB.transform).Match(
+			some: hit => actual = hit,
+			none: () => Assert.Fail("hit nothing")
+		);
 
-	// 	rayCastHit.Try(this.DefaultMockMB).Match(
-	// 		some: hit => Assert.AreSame(target, hit),
-	// 		none: () => Assert.Fail("hit nothing")
-	// 	);
-	// }
+		Assert.AreEqual(expected.x, actual.x, 0.01f);
+		Assert.AreEqual(expected.y, actual.y, 0.01f);
+		Assert.AreEqual(expected.z, actual.z, 0.01f);
+	}
+
+	[UnityTest]
+	public IEnumerator MissTargetLayerMissmatch() {
+		var hitMouseSO = ScriptableObject.CreateInstance<HitMousePositionSO>();
+		var plane = GameObject.CreatePrimitive(PrimitiveType.Plane);
+		hitMouseSO.cameraSO = this.cameraRef;
+		hitMouseSO.inputConfigSO = this.inputConfSO;
+		this.camera!.transform.position = Vector3.up;
+		this.camera!.transform.LookAt(new Vector3(1, 0, 1));
+
+		plane.gameObject.layer = 30;
+		hitMouseSO.constraint = 1 << 15;
+
+		yield return new WaitForEndOfFrame();
+		yield return new WaitForEndOfFrame();
+
+		hitMouseSO.Try(this.DefaultMockMB.transform).Match(
+			some: hit => Assert.Fail($"hit something {hit} - {hit.gameObject.layer}"),
+			none: () => Assert.Pass()
+		);
+	}
+
+	[UnityTest]
+	public IEnumerator MissTargetPointLayerMissmatch() {
+		var hitMouseSO = ScriptableObject.CreateInstance<HitMousePositionSO>();
+		var plane = GameObject.CreatePrimitive(PrimitiveType.Plane);
+		hitMouseSO.cameraSO = this.cameraRef;
+		hitMouseSO.inputConfigSO = this.inputConfSO;
+		this.camera!.transform.position = Vector3.up;
+		this.camera!.transform.LookAt(new Vector3(1, 0, 1));
+
+		plane.gameObject.layer = 30;
+		hitMouseSO.constraint += 1 << 15;
+
+		yield return new WaitForEndOfFrame();
+		yield return new WaitForEndOfFrame();
+
+		hitMouseSO.TryPoint(this.DefaultMockMB.transform).Match(
+			some: _ => Assert.Fail("hit something"),
+			none: () => Assert.Pass()
+		);
+	}
+
+	[UnityTest]
+	public IEnumerator HitTargetLayer() {
+		var hitMouseSO = ScriptableObject.CreateInstance<HitMousePositionSO>();
+		var plane = GameObject.CreatePrimitive(PrimitiveType.Plane);
+		hitMouseSO.cameraSO = this.cameraRef;
+		hitMouseSO.inputConfigSO = this.inputConfSO;
+		this.camera!.transform.position = Vector3.up;
+		this.camera!.transform.LookAt(new Vector3(1, 0, 1));
+
+		plane.gameObject.layer = 30;
+		hitMouseSO.constraint += 1 << 30;
+
+		yield return new WaitForEndOfFrame();
+		yield return new WaitForEndOfFrame();
+
+		hitMouseSO.Try(this.DefaultMockMB.transform).Match(
+			some: hit => Assert.AreSame(plane.transform, hit),
+			none: () => Assert.Fail("hit nothing")
+		);
+	}
+
+	[UnityTest]
+	public IEnumerator HitTargetPointLayer() {
+		var hitMouseSO = ScriptableObject.CreateInstance<HitMousePositionSO>();
+		var plane = GameObject.CreatePrimitive(PrimitiveType.Plane);
+		hitMouseSO.cameraSO = this.cameraRef;
+		hitMouseSO.inputConfigSO = this.inputConfSO;
+		this.camera!.transform.position = new Vector3(1, 1, 1);
+		this.camera!.transform.LookAt(new Vector3(1, 0, 1));
+
+		plane.gameObject.layer = 30;
+		hitMouseSO.constraint += 1 << 30;
+
+		yield return new WaitForEndOfFrame();
+		yield return new WaitForEndOfFrame();
+
+		var expected = new Vector3(1, 0, 1);
+		var actual = Vector3.zero;
+
+		hitMouseSO.TryPoint(this.DefaultMockMB.transform).Match(
+			some: hit => actual = hit,
+			none: () => Assert.Fail("hit nothing")
+		);
+
+		Assert.AreEqual(expected.x, actual.x, 0.01f);
+		Assert.AreEqual(expected.y, actual.y, 0.01f);
+		Assert.AreEqual(expected.z, actual.z, 0.01f);
+	}
 }
