@@ -63,7 +63,7 @@ public class TargetingSO : BaseTargetingSO<CharacterSheetMB>
 
 		private Maybe<CharacterSheetMB> TryHit() {
 			if (this.hitter == null) throw this.NullError();
-			return this.hitter.Hit.Try(this.source);
+			return this.hitter.Try(this.source);
 		}
 
 		public IEnumerator<WaitForEndOfFrame> GetEnumerator() {
