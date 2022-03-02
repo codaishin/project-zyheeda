@@ -13,24 +13,13 @@ public class HitMousePositionSO : BaseHitSO
 	[NonSerialized] private Camera? camera;
 	[NonSerialized] private InputAction? mousePosition;
 
-	private Camera Camera {
-		get {
-			if (this.camera == null) {
-				this.camera = this.cameraSO!.GameObject.RequireComponent<Camera>();
-			}
-			return this.camera;
-		}
-	}
+	private Camera Camera =>
+		this.camera ??
+		(this.camera = this.cameraSO!.GameObject.RequireComponent<Camera>());
 
-	private InputAction MousePosition {
-		get {
-			if (this.mousePosition == null) {
-				InputEnum.Action action = InputEnum.Action.MousePosition;
-				this.mousePosition = this.inputConfigSO![action];
-			}
-			return this.mousePosition;
-		}
-	}
+	private InputAction MousePosition =>
+		this.mousePosition ??
+		(this.mousePosition = this.inputConfigSO![InputEnum.Action.MousePosition]);
 
 	private bool Try(out RaycastHit hit) {
 		Vector2 mousePosition = this.MousePosition.ReadValue<Vector2>();
@@ -44,17 +33,14 @@ public class HitMousePositionSO : BaseHitSO
 			: Physics.Raycast(origin, direction, out hit, infinity, this.constraint);
 	}
 
-	public override Maybe<T> Try<T>(T source) {
-		T target;
-		RaycastHit hit;
-		return this.Try(out hit) && hit.transform.TryGetComponent(out target)
-			? Maybe.Some(target)
-			: Maybe.None<T>();
-	}
+	public override T? Try<T>(T source) where T : class =>
+		this.Try(out RaycastHit hit) && hit.transform.TryGetComponent(out T target)
+			? target
+			: null;
 
-	public override Maybe<Vector3> TryPoint(Transform source) {
-		return this.Try(out RaycastHit hit)
-			? Maybe.Some(hit.point)
-			: Maybe.None<Vector3>();
-	}
+
+	public override Vector3? TryPoint(Transform source) =>
+		this.Try(out RaycastHit hit)
+			? hit.point
+			: null;
 }

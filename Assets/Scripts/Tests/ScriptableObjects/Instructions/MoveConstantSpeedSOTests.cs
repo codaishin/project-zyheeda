@@ -10,12 +10,11 @@ public class MoveConstantSpeedSOTests : TestCollection
 	{
 		public Func<Transform, Vector3?> getPoint = _ => null;
 
-		public override Maybe<Vector3> TryPoint(Transform source) {
-			Vector3? point = this.getPoint(source);
-			return point.HasValue ? Maybe.Some(point.Value) : Maybe.None<Vector3>();
+		public override Vector3? TryPoint(Transform source) {
+			return this.getPoint(source);
 		}
 
-		public override Maybe<T> Try<T>(T source) {
+		public override T? Try<T>(T source) where T : class {
 			throw new NotImplementedException();
 		}
 	}

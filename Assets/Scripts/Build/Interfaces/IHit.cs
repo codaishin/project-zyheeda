@@ -2,6 +2,6 @@ using UnityEngine;
 
 public interface IHit
 {
-	Maybe<T> Try<T>(T source) where T : Component;
-	Maybe<Vector3> TryPoint(Transform source);
+	T? Try<T>(T source) where T : Component;
+	Vector3? TryPoint(Transform source);
 }
