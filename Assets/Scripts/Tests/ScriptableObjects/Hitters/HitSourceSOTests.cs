@@ -10,19 +10,16 @@ public class HitSourceSOTests : TestCollection
 		var hitSource = ScriptableObject.CreateInstance<HitSourceSO>();
 		var source = new GameObject().AddComponent<MockMB>();
 
-		hitSource.Try(source).Match(
-			some: hit => Assert.AreSame(source, hit),
-			none: () => Assert.Fail("No hit")
-		);
+		Assert.AreSame(source, hitSource.Try(source));
 	}
 	[Test]
 	public void TryHitHitSourcePosition() {
 		var hitSource = ScriptableObject.CreateInstance<HitSourceSO>();
 		var source = new GameObject().AddComponent<MockMB>();
 
-		hitSource.TryPoint(source.transform).Match(
-			some: hit => Assert.AreEqual(source.transform.position, hit),
-			none: () => Assert.Fail("No hit")
+		Assert.AreEqual(
+			source.transform.position,
+			hitSource.TryPoint(source.transform)
 		);
 	}
 }

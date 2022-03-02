@@ -67,10 +67,7 @@ public class HitMousePositionSOTests : TestCollection
 		yield return new WaitForEndOfFrame();
 		yield return new WaitForEndOfFrame();
 
-		hitMouseSO.Try(this.DefaultMockMB).Match(
-			some: _ => Assert.Fail("hit something"),
-			none: () => Assert.Pass()
-		);
+		Assert.Null(hitMouseSO.Try(this.DefaultMockMB.transform));
 	}
 
 	[UnityTest]
@@ -82,10 +79,7 @@ public class HitMousePositionSOTests : TestCollection
 		yield return new WaitForEndOfFrame();
 		yield return new WaitForEndOfFrame();
 
-		hitMouseSO.TryPoint(this.DefaultMockMB.transform).Match(
-			some: _ => Assert.Fail("hit something"),
-			none: () => Assert.Pass()
-		);
+		Assert.Null(hitMouseSO.TryPoint(this.DefaultMockMB.transform));
 	}
 
 	[UnityTest]
@@ -100,9 +94,9 @@ public class HitMousePositionSOTests : TestCollection
 		yield return new WaitForEndOfFrame();
 		yield return new WaitForEndOfFrame();
 
-		hitMouseSO.Try(this.DefaultMockMB.transform).Match(
-			some: hit => Assert.AreSame(plane.transform, hit),
-			none: () => Assert.Fail("hit nothing")
+		Assert.AreSame(
+			plane.transform,
+			hitMouseSO.Try(this.DefaultMockMB.transform)
 		);
 	}
 
@@ -119,16 +113,16 @@ public class HitMousePositionSOTests : TestCollection
 		yield return new WaitForEndOfFrame();
 
 		var expected = new Vector3(1, 0, 1);
-		var actual = Vector3.zero;
+		var actual = hitMouseSO.TryPoint(this.DefaultMockMB.transform);
 
-		hitMouseSO.TryPoint(this.DefaultMockMB.transform).Match(
-			some: hit => actual = hit,
-			none: () => Assert.Fail("hit nothing")
-		);
+		if (actual == null) {
+			Assert.Fail("hit nothing");
+			yield break;
+		}
 
-		Assert.AreEqual(expected.x, actual.x, 0.01f);
-		Assert.AreEqual(expected.y, actual.y, 0.01f);
-		Assert.AreEqual(expected.z, actual.z, 0.01f);
+		Assert.AreEqual(expected.x, actual.Value.x, 0.01f);
+		Assert.AreEqual(expected.y, actual.Value.y, 0.01f);
+		Assert.AreEqual(expected.z, actual.Value.z, 0.01f);
 	}
 
 	[UnityTest]
@@ -146,10 +140,7 @@ public class HitMousePositionSOTests : TestCollection
 		yield return new WaitForEndOfFrame();
 		yield return new WaitForEndOfFrame();
 
-		hitMouseSO.Try(this.DefaultMockMB.transform).Match(
-			some: hit => Assert.Fail($"hit something {hit} - {hit.gameObject.layer}"),
-			none: () => Assert.Pass()
-		);
+		Assert.Null(hitMouseSO.Try(this.DefaultMockMB.transform));
 	}
 
 	[UnityTest]
@@ -167,10 +158,7 @@ public class HitMousePositionSOTests : TestCollection
 		yield return new WaitForEndOfFrame();
 		yield return new WaitForEndOfFrame();
 
-		hitMouseSO.TryPoint(this.DefaultMockMB.transform).Match(
-			some: _ => Assert.Fail("hit something"),
-			none: () => Assert.Pass()
-		);
+		Assert.Null(hitMouseSO.TryPoint(this.DefaultMockMB.transform));
 	}
 
 	[UnityTest]
@@ -188,9 +176,9 @@ public class HitMousePositionSOTests : TestCollection
 		yield return new WaitForEndOfFrame();
 		yield return new WaitForEndOfFrame();
 
-		hitMouseSO.Try(this.DefaultMockMB.transform).Match(
-			some: hit => Assert.AreSame(plane.transform, hit),
-			none: () => Assert.Fail("hit nothing")
+		Assert.AreSame(
+			plane.transform,
+			hitMouseSO.Try(this.DefaultMockMB.transform)
 		);
 	}
 
@@ -210,15 +198,15 @@ public class HitMousePositionSOTests : TestCollection
 		yield return new WaitForEndOfFrame();
 
 		var expected = new Vector3(1, 0, 1);
-		var actual = Vector3.zero;
+		var actual = hitMouseSO.TryPoint(this.DefaultMockMB.transform);
 
-		hitMouseSO.TryPoint(this.DefaultMockMB.transform).Match(
-			some: hit => actual = hit,
-			none: () => Assert.Fail("hit nothing")
-		);
+		if (actual == null) {
+			Assert.Fail("hit nothing");
+			yield break;
+		}
 
-		Assert.AreEqual(expected.x, actual.x, 0.01f);
-		Assert.AreEqual(expected.y, actual.y, 0.01f);
-		Assert.AreEqual(expected.z, actual.z, 0.01f);
+		Assert.AreEqual(expected.x, actual.Value.x, 0.01f);
+		Assert.AreEqual(expected.y, actual.Value.y, 0.01f);
+		Assert.AreEqual(expected.z, actual.Value.z, 0.01f);
 	}
 }

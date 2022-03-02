@@ -13,7 +13,7 @@ public class MoveConstantSpeedSO : BaseInstructionsSO
 	}
 
 	private IEnumerable<WaitForFixedUpdate> Move(Transform transform) {
-		Vector3? point = this.GetPoint(transform);
+		Vector3? point = this.hitter!.TryPoint(transform);
 		if (!point.HasValue) {
 			yield break;
 		}
@@ -22,15 +22,6 @@ public class MoveConstantSpeedSO : BaseInstructionsSO
 			yield return new WaitForFixedUpdate();
 			transform.position = this.MoveTowards(transform.position, point.Value);
 		}
-	}
-
-	private Vector3? GetPoint(Transform transform) {
-		Vector3? point = null;
-		this.hitter!.TryPoint(transform).Match(
-			hit => point = hit,
-			() => { }
-		);
-		return point;
 	}
 
 	private Vector3 MoveTowards(Vector3 current, Vector3 target) {
