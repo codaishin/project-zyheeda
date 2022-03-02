@@ -54,9 +54,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1599657425759147253}
   - component: {fileID: 3681733365228671527}
-  - component: {fileID: 7763811025773944380}
-  - component: {fileID: 4774988453825274097}
-  - component: {fileID: 2981718183711450939}
   - component: {fileID: 3511556711851264634}
   m_Layer: 0
   m_Name: SheetAndCollider
@@ -95,49 +92,6 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 1, z: 0}
---- !u!114 &7763811025773944380
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3120450725131024759}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8aaed8efd175a1d41846f5bd7de01ff3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  resistance:
-    records: []
---- !u!114 &4774988453825274097
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3120450725131024759}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 79274a3630d6b7c42875838b997935ee, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  routineFactory:
-    intervalDelta: 1
---- !u!114 &2981718183711450939
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3120450725131024759}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ea012ca053b36c04caef872edc255180, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  sheet: {fileID: 3511556711851264634}
-  equipment:
-    records: []
 --- !u!114 &3511556711851264634
 MonoBehaviour:
   m_ObjectHideFlags: 0
