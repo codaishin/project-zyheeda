@@ -9,9 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 46715968de352294dbaefbc0713a6f88, type: 3}
-  m_Name: RunToMouse
+  m_Script: {fileID: 11500000, guid: 99028a81dbca0b04bb85f74083c67616, type: 3}
+  m_Name: AnimateWalk
   m_EditorClassIdentifier: 
-  onEnterOrExit: []
-  hitter: {fileID: 11400000, guid: 9370508409fd36d43b04301710bbfee6, type: 2}
-  speed: 3
+  walkOrRunWeight: 0

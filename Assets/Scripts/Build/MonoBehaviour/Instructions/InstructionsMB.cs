@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
-using UnityEngine.Events;
 
 public enum OverrideMode
 {
@@ -14,14 +14,13 @@ public class InstructionsMB : MonoBehaviour
 {
 	private IEnumerator<YieldInstruction>? currentCoroutine;
 	private CoroutineInstructions? instructions;
+	private Action? onBegin;
+	private Action? onEnd;
 
 	public CoroutineRunnerMB? runner;
 	public BaseInstructionsSO? instructionsSO;
 	public Reference agent;
 	public OverrideMode overrideMode;
-
-	public UnityEvent? onBegin;
-	public UnityEvent? onEnd;
 
 	private MonoBehaviour OnRunnerOrSelf =>
 		this.runner != null
@@ -29,19 +28,22 @@ public class InstructionsMB : MonoBehaviour
 			: this;
 
 	private void Start() {
-		if (this.onBegin == null) this.onBegin = new UnityEvent();
-		if (this.onEnd == null) this.onEnd = new UnityEvent();
-
 		GameObject agent = this.agent.GameObject;
+		this.onBegin = this.instructionsSO!.plugins
+			.Select(pl => pl.GetOnBegin(agent))
+			.Aggregate(null as Action, (l, c) => l + c);
+		this.onEnd = this.instructionsSO!.plugins
+			.Select(pl => pl.GetOnEnd(agent))
+			.Aggregate(null as Action, (l, c) => l + c);
 		this.instructions = this.instructionsSO!.InstructionsFor(agent);
 	}
 
 	private IEnumerator<YieldInstruction> GetCoroutine() {
-		this.onBegin!.Invoke();
+		this.onBegin?.Invoke();
 		foreach (YieldInstruction hold in this.instructions!.Invoke()) {
 			yield return hold;
 		}
-		this.onEnd!.Invoke();
+		this.onEnd?.Invoke();
 	}
 
 	private void StopNone() { }
