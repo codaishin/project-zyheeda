@@ -28,7 +28,7 @@ public class MoveConstantSpeedSOTests : TestCollection
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
 		var agent = new GameObject();
 		var runner = new GameObject().AddComponent<MockMB>();
-		var getRoutine = moveSO.InstructionsFor(agent);
+		var getRoutine = moveSO.GetInstructionsFor(agent);
 		moveSO.hitter = hitSO;
 		hitSO.getPoint = t => { transform = t; return null; };
 
@@ -47,7 +47,7 @@ public class MoveConstantSpeedSOTests : TestCollection
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
 		var agent = new GameObject();
 		var runner = new GameObject().AddComponent<MockMB>();
-		var getRoutine = moveSO.InstructionsFor(agent);
+		var getRoutine = moveSO.GetInstructionsFor(agent);
 		moveSO.hitter = hitSO;
 		hitSO.getPoint = _ => Vector3.right;
 
@@ -68,7 +68,7 @@ public class MoveConstantSpeedSOTests : TestCollection
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
 		var agent = new GameObject();
 		var runner = new GameObject().AddComponent<MockMB>();
-		var getRoutine = moveSO.InstructionsFor(agent);
+		var getRoutine = moveSO.GetInstructionsFor(agent);
 		moveSO.hitter = hitSO;
 		hitSO.getPoint = _ => new Vector3(1, 1, 0);
 		agent.transform.position = new Vector3(1, 0, 0);
@@ -90,7 +90,7 @@ public class MoveConstantSpeedSOTests : TestCollection
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
 		var agent = new GameObject();
 		var routineRunner = new GameObject().AddComponent<MockMB>();
-		var getRoutine = moveSO.InstructionsFor(agent);
+		var getRoutine = moveSO.GetInstructionsFor(agent);
 		moveSO.hitter = hitSO;
 		hitSO.getPoint = _ => Vector3.right;
 
@@ -115,7 +115,7 @@ public class MoveConstantSpeedSOTests : TestCollection
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
 		var agent = new GameObject();
 		var routineRunner = new GameObject().AddComponent<MockMB>();
-		var getRoutine = moveSO.InstructionsFor(agent);
+		var getRoutine = moveSO.GetInstructionsFor(agent);
 		moveSO.hitter = hitSO;
 		moveSO.speed = 2f;
 		hitSO.getPoint = _ => Vector3.right;
@@ -141,7 +141,7 @@ public class MoveConstantSpeedSOTests : TestCollection
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
 		var agent = new GameObject();
 		var routineRunner = new GameObject().AddComponent<MockMB>();
-		var getRoutine = moveSO.InstructionsFor(agent);
+		var getRoutine = moveSO.GetInstructionsFor(agent);
 		moveSO.hitter = hitSO;
 		moveSO.speed = 2f;
 		hitSO.getPoint = _ => null;
@@ -162,7 +162,7 @@ public class MoveConstantSpeedSOTests : TestCollection
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
 		var agent = new GameObject();
 		var routineRunner = new GameObject().AddComponent<MockMB>();
-		var getRoutine = moveSO.InstructionsFor(agent);
+		var getRoutine = moveSO.GetInstructionsFor(agent);
 		moveSO.hitter = hitSO;
 		moveSO.speed = float.MaxValue;
 		hitSO.getPoint = _ => Vector3.right;
@@ -186,7 +186,7 @@ public class MoveConstantSpeedSOTests : TestCollection
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
 		var agent = new GameObject();
 		var routineRunner = new GameObject().AddComponent<MockMB>();
-		var getRoutine = moveSO.InstructionsFor(agent);
+		var getRoutine = moveSO.GetInstructionsFor(agent);
 		moveSO.hitter = hitSO;
 		moveSO.speed = float.MaxValue;
 		hitSO.getPoint = _ => Vector3.right;
