@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
@@ -7,9 +6,14 @@ using UnityEngine.TestTools;
 
 public class InstructionsMBTests : TestCollection
 {
-	class MockCoroutineSO : BaseInstructionsSO
+	class MockCoroutineSO : BaseInstructionsSO<Transform>
 	{
 		public int times = 10;
+
+		protected override Transform GetConcreteAgent(GameObject agent) =>
+			agent.transform;
+		protected override CoroutineInstructions Instructions(Transform agent) =>
+			() => this.MoveUpEachFrame(agent);
 
 		private IEnumerable<YieldInstruction> MoveUpEachFrame(Transform transform) {
 			for (int i = 0; i < this.times; ++i) {
@@ -17,22 +21,6 @@ public class InstructionsMBTests : TestCollection
 				transform.position += Vector3.up;
 			}
 		}
-
-		public override CoroutineInstructions InstructionsFor(GameObject agent) {
-			Transform transform = agent.GetComponent<Transform>();
-			return () => this.MoveUpEachFrame(transform);
-		}
-	}
-
-	class MockCoroutinePluginSO : BaseInstructionsPluginSO
-	{
-		public Func<GameObject, Action> getOnBegin = _ => () => { };
-		public Func<GameObject, Action> getOnEnd = _ => () => { };
-
-		public override Action GetOnBegin(GameObject agent) =>
-			this.getOnBegin(agent);
-		public override Action GetOnEnd(GameObject agent) =>
-			this.getOnEnd(agent);
 	}
 
 	[UnityTest]
@@ -106,111 +94,6 @@ public class InstructionsMBTests : TestCollection
 
 		Assert.AreEqual(Vector3.up, agent.transform.position);
 	}
-
-	[UnityTest]
-	public IEnumerator OnBegin() {
-		var called = new List<GameObject>();
-		var agent = new GameObject();
-		var comp = new GameObject().AddComponent<InstructionsMB>();
-		var pluginASO = ScriptableObject.CreateInstance<MockCoroutinePluginSO>();
-		var pluginBSO = ScriptableObject.CreateInstance<MockCoroutinePluginSO>();
-		var instructionsSO = ScriptableObject.CreateInstance<MockCoroutineSO>();
-		comp.instructionsSO = instructionsSO;
-		comp.agent = agent;
-
-		instructionsSO.plugins = new MockCoroutinePluginSO[] {
-			pluginASO,
-			pluginBSO
-		};
-		pluginASO.getOnBegin = a => () => called.Add(a);
-		pluginBSO.getOnBegin = a => () => called.Add(a);
-
-		yield return new WaitForEndOfFrame();
-
-		comp.Begin();
-
-		CollectionAssert.AreEqual(new GameObject[] { agent, agent }, called);
-	}
-
-	[UnityTest]
-	public IEnumerator OnEnd() {
-		var called = new List<GameObject>();
-		var agent = new GameObject();
-		var comp = new GameObject().AddComponent<InstructionsMB>();
-		var pluginASO = ScriptableObject.CreateInstance<MockCoroutinePluginSO>();
-		var pluginBSO = ScriptableObject.CreateInstance<MockCoroutinePluginSO>();
-		var instructionsSO = ScriptableObject.CreateInstance<MockCoroutineSO>();
-		comp.instructionsSO = instructionsSO;
-		comp.agent = agent;
-
-		instructionsSO.plugins = new MockCoroutinePluginSO[] {
-			pluginASO,
-			pluginBSO
-		};
-		instructionsSO.times = 2;
-		pluginASO.getOnEnd = a => () => called.Add(a);
-		pluginBSO.getOnEnd = a => () => called.Add(a);
-
-		yield return new WaitForEndOfFrame();
-
-		comp.Begin();
-
-		yield return new WaitForEndOfFrame();
-		yield return new WaitForEndOfFrame();
-
-		CollectionAssert.AreEqual(new GameObject[] { agent, agent }, called);
-	}
-
-	[UnityTest]
-	public IEnumerator OnEndNotBeforeLastYield() {
-		var called = new List<GameObject>();
-		var agent = new GameObject();
-		var comp = new GameObject().AddComponent<InstructionsMB>();
-		var pluginASO = ScriptableObject.CreateInstance<MockCoroutinePluginSO>();
-		var pluginBSO = ScriptableObject.CreateInstance<MockCoroutinePluginSO>();
-		var instructionsSO = ScriptableObject.CreateInstance<MockCoroutineSO>();
-		comp.instructionsSO = instructionsSO;
-		comp.agent = agent;
-
-		instructionsSO.plugins = new MockCoroutinePluginSO[] {
-			pluginASO,
-			pluginBSO
-		};
-		instructionsSO.times = 2;
-		pluginASO.getOnEnd = a => () => called.Add(a);
-		pluginBSO.getOnEnd = a => () => called.Add(a);
-
-		yield return new WaitForEndOfFrame();
-
-		comp.Begin();
-
-		yield return new WaitForEndOfFrame();
-
-		CollectionAssert.IsEmpty(called);
-	}
-
-
-
-	// [UnityTest]
-	// public IEnumerator OnEndNotBeforeLastYield() {
-	// 	var called = false;
-	// 	var agent = new GameObject();
-	// 	var comp = new GameObject().AddComponent<InstructionsMB>();
-	// 	var external = new GameObject().AddComponent<CoroutineRunnerMB>();
-	// 	var instructionsSO = ScriptableObject.CreateInstance<MockCoroutineSO>();
-	// 	comp.instructionsSO = instructionsSO;
-	// 	comp.agent = agent;
-	// 	instructionsSO.times = 2;
-
-	// 	yield return new WaitForEndOfFrame();
-
-	// 	comp.onEnd!.AddListener(() => called = true);
-	// 	comp.Begin();
-
-	// 	yield return new WaitForEndOfFrame();
-
-	// 	Assert.False(called);
-	// }
 
 	[UnityTest]
 	public IEnumerator OverrideAll() {
