@@ -5,9 +5,9 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-public class BaseChannelListenerMBTests : TestCollection
+public class BaseListenerMBTests : TestCollection
 {
-	private class MockListenerMB : BaseChannelListenerMB
+	private class MockListenerMB : BaseListenerMB
 	{
 		private List<string> calls = new List<string>();
 

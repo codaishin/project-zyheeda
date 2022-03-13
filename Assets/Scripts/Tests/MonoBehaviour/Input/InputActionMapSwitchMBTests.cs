@@ -9,15 +9,13 @@ public class InputActionMapSwitchMBTests : TestCollection
 	public IEnumerator EnableMovement() {
 		var layerSwitch = new GameObject("layerSwitch")
 			.AddComponent<InputActionMapSwitchMB>();
-		var trigger = ScriptableObject.CreateInstance<ChannelSO>();
 		var configSO = ScriptableObject.CreateInstance<InputConfigSO>();
 		layerSwitch.enable = new InputEnum.Map[] { InputEnum.Map.Movement };
-		layerSwitch.listenTo = new ChannelSO[] { trigger };
 		layerSwitch.inputConfig = configSO;
 
 		yield return new WaitForEndOfFrame();
 
-		trigger.Raise();
+		layerSwitch.Apply();
 
 		yield return new WaitForEndOfFrame();
 
@@ -28,15 +26,13 @@ public class InputActionMapSwitchMBTests : TestCollection
 	public IEnumerator EnableMouse() {
 		var layerSwitch = new GameObject("layerSwitch")
 			.AddComponent<InputActionMapSwitchMB>();
-		var trigger = ScriptableObject.CreateInstance<ChannelSO>();
 		var configSO = ScriptableObject.CreateInstance<InputConfigSO>();
 		layerSwitch.enable = new InputEnum.Map[] { InputEnum.Map.Mouse };
-		layerSwitch.listenTo = new ChannelSO[] { trigger };
 		layerSwitch.inputConfig = configSO;
 
 		yield return new WaitForEndOfFrame();
 
-		trigger.Raise();
+		layerSwitch.Apply();
 
 		yield return new WaitForEndOfFrame();
 
@@ -47,18 +43,16 @@ public class InputActionMapSwitchMBTests : TestCollection
 	public IEnumerator EnableMovementAndMouse() {
 		var layerSwitch = new GameObject("layerSwitch")
 			.AddComponent<InputActionMapSwitchMB>();
-		var trigger = ScriptableObject.CreateInstance<ChannelSO>();
 		var configSO = ScriptableObject.CreateInstance<InputConfigSO>();
 		layerSwitch.enable = new InputEnum.Map[] {
 			InputEnum.Map.Mouse,
 			InputEnum.Map.Movement
 		};
-		layerSwitch.listenTo = new ChannelSO[] { trigger };
 		layerSwitch.inputConfig = configSO;
 
 		yield return new WaitForEndOfFrame();
 
-		trigger.Raise();
+		layerSwitch.Apply();
 
 		yield return new WaitForEndOfFrame();
 
@@ -71,17 +65,15 @@ public class InputActionMapSwitchMBTests : TestCollection
 	public IEnumerator DisableMovement() {
 		var layerSwitch = new GameObject("layerSwitch")
 			.AddComponent<InputActionMapSwitchMB>();
-		var trigger = ScriptableObject.CreateInstance<ChannelSO>();
 		var configSO = ScriptableObject.CreateInstance<InputConfigSO>();
 		layerSwitch.disable = new InputEnum.Map[] { InputEnum.Map.Movement };
-		layerSwitch.listenTo = new ChannelSO[] { trigger };
 		layerSwitch.inputConfig = configSO;
 
 		configSO.Config.Movement.Enable();
 
 		yield return new WaitForEndOfFrame();
 
-		trigger.Raise();
+		layerSwitch.Apply();
 
 		yield return new WaitForEndOfFrame();
 
@@ -92,17 +84,15 @@ public class InputActionMapSwitchMBTests : TestCollection
 	public IEnumerator DisableMouse() {
 		var layerSwitch = new GameObject("layerSwitch")
 			.AddComponent<InputActionMapSwitchMB>();
-		var trigger = ScriptableObject.CreateInstance<ChannelSO>();
 		var configSO = ScriptableObject.CreateInstance<InputConfigSO>();
 		layerSwitch.disable = new InputEnum.Map[] { InputEnum.Map.Mouse };
-		layerSwitch.listenTo = new ChannelSO[] { trigger };
 		layerSwitch.inputConfig = configSO;
 
 		configSO.Config.Mouse.Enable();
 
 		yield return new WaitForEndOfFrame();
 
-		trigger.Raise();
+		layerSwitch.Apply();
 
 		yield return new WaitForEndOfFrame();
 
@@ -113,13 +103,11 @@ public class InputActionMapSwitchMBTests : TestCollection
 	public IEnumerator DisableMovementAndMouse() {
 		var layerSwitch = new GameObject("layerSwitch")
 			.AddComponent<InputActionMapSwitchMB>();
-		var trigger = ScriptableObject.CreateInstance<ChannelSO>();
 		var configSO = ScriptableObject.CreateInstance<InputConfigSO>();
 		layerSwitch.disable = new InputEnum.Map[] {
 			InputEnum.Map.Mouse,
 			InputEnum.Map.Movement
 		};
-		layerSwitch.listenTo = new ChannelSO[] { trigger };
 		layerSwitch.inputConfig = configSO;
 
 		configSO.Config.Mouse.Enable();
@@ -127,7 +115,7 @@ public class InputActionMapSwitchMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		trigger.Raise();
+		layerSwitch.Apply();
 
 		yield return new WaitForEndOfFrame();
 

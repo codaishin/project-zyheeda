@@ -1,9 +1,8 @@
 using System;
 using System.Linq;
-using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class InputListenerMB : MonoBehaviour
+public class InputListenerMB : BaseListenerMB
 {
 	public BaseInputConfigSO? inputConfigSO;
 	public InputEnum.Action[] listenTo = new InputEnum.Action[0];
@@ -12,22 +11,13 @@ public class InputListenerMB : MonoBehaviour
 	private InputAction? input;
 	private Action? applyAll = null;
 	private bool triggeredThisFrame = false;
-	private bool listening = false;
 
-	private void StartListening() {
-		if (this.input == null || this.listening) {
-			return;
-		}
-		this.input.performed += this.InvokeOnInput;
-		this.listening = true;
+	protected override void StartListening() {
+		this.input!.performed += this.InvokeOnInput;
 	}
 
-	private void StopListening() {
-		if (this.input == null || this.listening == false) {
-			return;
-		}
-		this.input.performed -= this.InvokeOnInput;
-		this.listening = false;
+	protected override void StopListening() {
+		this.input!.performed -= this.InvokeOnInput;
 	}
 
 	private void InvokeOnInput(InputAction.CallbackContext _) {
@@ -38,20 +28,12 @@ public class InputListenerMB : MonoBehaviour
 		this.triggeredThisFrame = true;
 	}
 
-	private void Start() {
+	protected override void Start() {
 		this.input = this.inputConfigSO![this.listenTo[0]];
 		this.applyAll = this.apply
 			.Select(a => a.Value!)
 			.Aggregate(this.applyAll, (l, c) => l + c.Apply);
-		this.StartListening();
-	}
-
-	private void OnDisable() {
-		this.StopListening();
-	}
-
-	private void OnEnable() {
-		this.StartListening();
+		base.Start();
 	}
 
 	private void LateUpdate() {

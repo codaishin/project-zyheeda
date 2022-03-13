@@ -1,22 +1,22 @@
 using UnityEngine;
 
-public abstract class BaseChannelListenerMB : MonoBehaviour
+public abstract class BaseListenerMB : MonoBehaviour
 {
 	protected abstract void StartListening();
 	protected abstract void StopListening();
 
 	private bool started;
 
-	private void Start() {
+	protected virtual void Start() {
 		this.started = true;
 		this.StartListening();
 	}
 
-	private void OnDisable() {
+	protected virtual void OnDisable() {
 		this.StopListening();
 	}
 
-	private void OnEnable() {
+	protected virtual void OnEnable() {
 		if (this.started) {
 			this.StartListening();
 		}
