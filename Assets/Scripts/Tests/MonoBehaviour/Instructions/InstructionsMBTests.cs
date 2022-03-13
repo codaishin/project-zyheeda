@@ -32,7 +32,7 @@ public class InstructionsMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		comp.Begin();
+		comp.Apply();
 
 		yield return new WaitForEndOfFrame();
 
@@ -48,8 +48,8 @@ public class InstructionsMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		comp.Begin();
-		comp.Begin();
+		comp.Apply();
+		comp.Apply();
 
 		yield return new WaitForEndOfFrame();
 
@@ -65,7 +65,7 @@ public class InstructionsMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		comp.Begin();
+		comp.Apply();
 
 		yield return new WaitForEndOfFrame();
 		yield return new WaitForEndOfFrame();
@@ -84,7 +84,7 @@ public class InstructionsMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		comp.Begin();
+		comp.Apply();
 
 		yield return new WaitForEndOfFrame();
 
@@ -112,7 +112,7 @@ public class InstructionsMBTests : TestCollection
 		yield return new WaitForEndOfFrame();
 
 		comp.StartCoroutine(otherRoutine());
-		comp.Begin();
+		comp.Apply();
 
 		yield return new WaitForEndOfFrame();
 
@@ -138,7 +138,7 @@ public class InstructionsMBTests : TestCollection
 		yield return new WaitForEndOfFrame();
 
 		external.StartCoroutine(otherRoutine());
-		comp.Begin();
+		comp.Apply();
 
 		yield return new WaitForEndOfFrame();
 
@@ -162,8 +162,8 @@ public class InstructionsMBTests : TestCollection
 		yield return new WaitForEndOfFrame();
 
 		comp.StartCoroutine(otherRoutine());
-		comp.Begin();
-		comp.Begin();
+		comp.Apply();
+		comp.Apply();
 
 		yield return new WaitForEndOfFrame();
 
@@ -191,8 +191,8 @@ public class InstructionsMBTests : TestCollection
 		yield return new WaitForEndOfFrame();
 
 		external.StartCoroutine(otherRoutine());
-		comp.Begin();
-		comp.Begin();
+		comp.Apply();
+		comp.Apply();
 
 		yield return new WaitForEndOfFrame();
 

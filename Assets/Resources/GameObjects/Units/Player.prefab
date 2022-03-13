@@ -153,22 +153,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inputConfigSO: {fileID: 11400000, guid: cc25959ff6fb7d24bb7768115be8703c, type: 2}
-  action: 1
-  OnInput:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 537458123279172361}
-        m_TargetAssemblyTypeName: InstructionsMB, Build
-        m_MethodName: Begin
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+  listenTo: 01000000
+  apply:
+  - value: {fileID: 537458123279172361}
 --- !u!114 &537458123279172361
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -328,22 +315,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inputConfigSO: {fileID: 11400000, guid: cc25959ff6fb7d24bb7768115be8703c, type: 2}
-  action: 0
-  OnInput:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 26538448613842588}
-        m_TargetAssemblyTypeName: InstructionsMB, Build
-        m_MethodName: Begin
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+  listenTo: 00000000
+  apply:
+  - value: {fileID: 26538448613842588}
 --- !u!114 &26538448613842588
 MonoBehaviour:
   m_ObjectHideFlags: 0
