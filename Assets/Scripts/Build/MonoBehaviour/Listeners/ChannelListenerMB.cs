@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 
-public class ChannelListenerMB : BaseChannelListenerMB
+public class ChannelListenerMB : BaseListenerMB
 {
 	public Reference<IChannel>[] listenTo = new Reference<IChannel>[0];
 	public Reference<IApplicable>[] apply = new Reference<IApplicable>[0];
