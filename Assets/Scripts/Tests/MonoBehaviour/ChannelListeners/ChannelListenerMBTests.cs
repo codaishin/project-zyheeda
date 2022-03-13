@@ -1,43 +1,51 @@
 using System.Collections;
+using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 
 public class ChannelListenerMBTests : TestCollection
 {
+	class MockActionMB : MonoBehaviour, IApplicable
+	{
+		public int called = 0;
+		public void Apply() => ++this.called;
+	}
+
 	[UnityTest]
 	public IEnumerator StartListening() {
-		var called = 0;
 		var listenerMB = new GameObject("obj").AddComponent<ChannelListenerMB>();
+		var actionMB = new GameObject().AddComponent<MockActionMB>();
 		var channelSO = ScriptableObject.CreateInstance<ChannelSO>();
 
-		listenerMB.listenTo =
-			Reference<IChannel>.PointToScriptableObject(channelSO);
-
-		yield return new WaitForEndOfFrame();
-
-		listenerMB.onRaise!.AddListener(() => ++called);
+		listenerMB.listenTo = new Reference<IChannel>[] {
+			Reference<IChannel>.PointToScriptableObject(channelSO),
+		};
+		listenerMB.apply = new Reference<IApplicable>[]{
+			Reference<IApplicable>.PointToComponent(actionMB),
+		};
 
 		yield return new WaitForEndOfFrame();
 
 		channelSO.Raise();
 
-		Assert.AreEqual(1, called);
+		Assert.AreEqual(1, actionMB.called);
 	}
 
 	[UnityTest]
 	public IEnumerator StopListening() {
-		var called = 0;
 		var listenerMB = new GameObject("obj").AddComponent<ChannelListenerMB>();
+		var actionMB = new GameObject().AddComponent<MockActionMB>();
 		var channelSO = ScriptableObject.CreateInstance<ChannelSO>();
 
-		listenerMB.listenTo =
-			Reference<IChannel>.PointToScriptableObject(channelSO);
+		listenerMB.listenTo = new Reference<IChannel>[] {
+			Reference<IChannel>.PointToScriptableObject(channelSO),
+		};
+		listenerMB.apply = new Reference<IApplicable>[]{
+			Reference<IApplicable>.PointToComponent(actionMB),
+		};
 
 		yield return new WaitForEndOfFrame();
-
-		listenerMB.onRaise!.AddListener(() => ++called);
-
 		yield return new WaitForEndOfFrame();
 
 		listenerMB.enabled = false;
@@ -46,6 +54,84 @@ public class ChannelListenerMBTests : TestCollection
 
 		channelSO.Raise();
 
-		Assert.AreEqual(0, called);
+		Assert.AreEqual(0, actionMB.called);
+	}
+
+	[UnityTest]
+	public IEnumerator StartListeningMultiple() {
+		var listenerMB = new GameObject("obj").AddComponent<ChannelListenerMB>();
+		var actionMB = new GameObject().AddComponent<MockActionMB>();
+		var channelSOs = new ChannelSO[] {
+			ScriptableObject.CreateInstance<ChannelSO>(),
+			ScriptableObject.CreateInstance<ChannelSO>(),
+		};
+
+		listenerMB.listenTo = channelSOs
+			.Select(Reference<IChannel>.PointToScriptableObject)
+			.ToArray();
+		listenerMB.apply = new Reference<IApplicable>[]{
+			Reference<IApplicable>.PointToComponent(actionMB),
+		};
+
+		yield return new WaitForEndOfFrame();
+		yield return new WaitForEndOfFrame();
+
+		channelSOs.ForEach(c => c.Raise());
+
+		Assert.AreEqual(2, actionMB.called);
+	}
+
+	[UnityTest]
+	public IEnumerator StopListeningMultiple() {
+		var listenerMB = new GameObject("obj").AddComponent<ChannelListenerMB>();
+		var actionMB = new GameObject().AddComponent<MockActionMB>();
+		var channelSOs = new ChannelSO[] {
+			ScriptableObject.CreateInstance<ChannelSO>(),
+			ScriptableObject.CreateInstance<ChannelSO>(),
+		};
+
+		listenerMB.listenTo = channelSOs
+			.Select(Reference<IChannel>.PointToScriptableObject)
+			.ToArray();
+		listenerMB.apply = new Reference<IApplicable>[]{
+			Reference<IApplicable>.PointToComponent(actionMB),
+		};
+
+		yield return new WaitForEndOfFrame();
+		yield return new WaitForEndOfFrame();
+
+		listenerMB.enabled = false;
+
+		yield return new WaitForEndOfFrame();
+
+		channelSOs.ForEach(c => c.Raise());
+
+		Assert.AreEqual(0, actionMB.called);
+	}
+
+	[UnityTest]
+	public IEnumerator StartListeningMultipleApplies() {
+		var listenerMB = new GameObject("obj").AddComponent<ChannelListenerMB>();
+		var actionMBs = new MockActionMB[] {
+			 new GameObject().AddComponent<MockActionMB>(),
+			 new GameObject().AddComponent<MockActionMB>(),
+		};
+		var channelSO = ScriptableObject.CreateInstance<ChannelSO>();
+
+		listenerMB.listenTo = new Reference<IChannel>[] {
+			Reference<IChannel>.PointToScriptableObject(channelSO),
+		};
+		listenerMB.apply = actionMBs
+			.Select(Reference<IApplicable>.PointToComponent)
+			.ToArray();
+
+		yield return new WaitForEndOfFrame();
+
+		channelSO.Raise();
+
+		CollectionAssert.AreEqual(
+			new int[] { 1, 1 },
+			actionMBs.Select(a => a.called)
+		);
 	}
 }
