@@ -47,9 +47,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inputConfig: {fileID: 11400000, guid: cc25959ff6fb7d24bb7768115be8703c, type: 2}
   enable: 00000000
+  disable: 
   listenTo:
-  - {fileID: 11400000, guid: fcc11de77b1f8da4f874cf42f96f0779, type: 2}
-  - {fileID: 11400000, guid: 43ae0fcbb5738ff468796a2b7b521d60, type: 2}
+  - value: {fileID: 11400000, guid: fcc11de77b1f8da4f874cf42f96f0779, type: 2}
 --- !u!114 &578159893
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -64,5 +64,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inputConfig: {fileID: 11400000, guid: cc25959ff6fb7d24bb7768115be8703c, type: 2}
   enable: 01000000
+  disable: 
   listenTo:
-  - {fileID: 11400000, guid: fcc11de77b1f8da4f874cf42f96f0779, type: 2}
+  - value: {fileID: 11400000, guid: fcc11de77b1f8da4f874cf42f96f0779, type: 2}
