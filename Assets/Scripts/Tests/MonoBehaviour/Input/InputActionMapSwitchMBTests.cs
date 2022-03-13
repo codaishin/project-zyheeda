@@ -12,7 +12,9 @@ public class InputActionMapSwitchMBTests : TestCollection
 		var trigger = ScriptableObject.CreateInstance<ChannelSO>();
 		var configSO = ScriptableObject.CreateInstance<InputConfigSO>();
 		layerSwitch.enable = new InputEnum.Map[] { InputEnum.Map.Movement };
-		layerSwitch.listenTo = new ChannelSO[] { trigger };
+		layerSwitch.listenTo = new Reference<IChannel>[] {
+			Reference<IChannel>.PointToScriptableObject(trigger),
+		};
 		layerSwitch.inputConfig = configSO;
 
 		yield return new WaitForEndOfFrame();
@@ -31,7 +33,9 @@ public class InputActionMapSwitchMBTests : TestCollection
 		var trigger = ScriptableObject.CreateInstance<ChannelSO>();
 		var configSO = ScriptableObject.CreateInstance<InputConfigSO>();
 		layerSwitch.enable = new InputEnum.Map[] { InputEnum.Map.Mouse };
-		layerSwitch.listenTo = new ChannelSO[] { trigger };
+		layerSwitch.listenTo = new Reference<IChannel>[] {
+			Reference<IChannel>.PointToScriptableObject(trigger),
+		};
 		layerSwitch.inputConfig = configSO;
 
 		yield return new WaitForEndOfFrame();
@@ -53,7 +57,9 @@ public class InputActionMapSwitchMBTests : TestCollection
 			InputEnum.Map.Mouse,
 			InputEnum.Map.Movement
 		};
-		layerSwitch.listenTo = new ChannelSO[] { trigger };
+		layerSwitch.listenTo = new Reference<IChannel>[] {
+			Reference<IChannel>.PointToScriptableObject(trigger),
+		};
 		layerSwitch.inputConfig = configSO;
 
 		yield return new WaitForEndOfFrame();
@@ -74,7 +80,9 @@ public class InputActionMapSwitchMBTests : TestCollection
 		var trigger = ScriptableObject.CreateInstance<ChannelSO>();
 		var configSO = ScriptableObject.CreateInstance<InputConfigSO>();
 		layerSwitch.disable = new InputEnum.Map[] { InputEnum.Map.Movement };
-		layerSwitch.listenTo = new ChannelSO[] { trigger };
+		layerSwitch.listenTo = new Reference<IChannel>[] {
+			Reference<IChannel>.PointToScriptableObject(trigger),
+		};
 		layerSwitch.inputConfig = configSO;
 
 		configSO.Config.Movement.Enable();
@@ -95,7 +103,9 @@ public class InputActionMapSwitchMBTests : TestCollection
 		var trigger = ScriptableObject.CreateInstance<ChannelSO>();
 		var configSO = ScriptableObject.CreateInstance<InputConfigSO>();
 		layerSwitch.disable = new InputEnum.Map[] { InputEnum.Map.Mouse };
-		layerSwitch.listenTo = new ChannelSO[] { trigger };
+		layerSwitch.listenTo = new Reference<IChannel>[] {
+			Reference<IChannel>.PointToScriptableObject(trigger),
+		};
 		layerSwitch.inputConfig = configSO;
 
 		configSO.Config.Mouse.Enable();
@@ -119,7 +129,9 @@ public class InputActionMapSwitchMBTests : TestCollection
 			InputEnum.Map.Mouse,
 			InputEnum.Map.Movement
 		};
-		layerSwitch.listenTo = new ChannelSO[] { trigger };
+		layerSwitch.listenTo = new Reference<IChannel>[] {
+			Reference<IChannel>.PointToScriptableObject(trigger),
+		};
 		layerSwitch.inputConfig = configSO;
 
 		configSO.Config.Mouse.Enable();

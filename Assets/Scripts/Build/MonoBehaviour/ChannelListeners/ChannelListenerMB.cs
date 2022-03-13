@@ -2,14 +2,14 @@ using UnityEngine.Events;
 
 public class ChannelListenerMB : BaseChannelListenerMB
 {
-	public BaseChannelSO? listenTo;
+	public Reference<IChannel> listenTo;
 	public UnityEvent onRaise = new UnityEvent();
 
 	protected override void StartListening() {
-		this.listenTo!.AddListener(onRaise.Invoke);
+		this.listenTo.Value!.AddListener(onRaise.Invoke);
 	}
 
 	protected override void StopListening() {
-		this.listenTo!.RemoveListener(onRaise.Invoke);
+		this.listenTo.Value!.RemoveListener(onRaise.Invoke);
 	}
 }

@@ -11,7 +11,8 @@ public class ChannelListenerMBTests : TestCollection
 		var listenerMB = new GameObject("obj").AddComponent<ChannelListenerMB>();
 		var channelSO = ScriptableObject.CreateInstance<ChannelSO>();
 
-		listenerMB.listenTo = channelSO;
+		listenerMB.listenTo =
+			Reference<IChannel>.PointToScriptableObject(channelSO);
 
 		yield return new WaitForEndOfFrame();
 
@@ -30,7 +31,8 @@ public class ChannelListenerMBTests : TestCollection
 		var listenerMB = new GameObject("obj").AddComponent<ChannelListenerMB>();
 		var channelSO = ScriptableObject.CreateInstance<ChannelSO>();
 
-		listenerMB.listenTo = channelSO;
+		listenerMB.listenTo =
+			Reference<IChannel>.PointToScriptableObject(channelSO);
 
 		yield return new WaitForEndOfFrame();
 

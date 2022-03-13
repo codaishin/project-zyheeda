@@ -7,12 +7,12 @@ public class InputActionMapSwitchMB : MonoBehaviour
 	public BaseInputConfigSO? inputConfig;
 	public InputEnum.Map[] enable = new InputEnum.Map[0];
 	public InputEnum.Map[] disable = new InputEnum.Map[0];
-	public BaseChannelSO[] listenTo = new BaseChannelSO[0];
+	public Reference<IChannel>[] listenTo = new Reference<IChannel>[0];
 
 
 	private void Start() {
-		foreach (BaseChannelSO e in this.listenTo) {
-			e.AddListener(this.Switch);
+		foreach (Reference<IChannel> channel in this.listenTo) {
+			channel.Value!.AddListener(this.Switch);
 		}
 	}
 
