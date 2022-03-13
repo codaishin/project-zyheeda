@@ -9,7 +9,7 @@ public enum OverrideMode
 	All,
 }
 
-public class InstructionsMB : MonoBehaviour
+public class InstructionsMB : MonoBehaviour, IApplicable
 {
 	private IEnumerator<YieldInstruction>? currentCoroutine;
 	private CoroutineInstructions? instructions;
@@ -45,7 +45,7 @@ public class InstructionsMB : MonoBehaviour
 		this.OnRunnerOrSelf.StopCoroutine(this.currentCoroutine);
 	}
 
-	public void Begin() {
+	public void Apply() {
 		Action stop = this.overrideMode switch {
 			OverrideMode.All => this.StopAll,
 			OverrideMode.Own => this.StopOnw,
