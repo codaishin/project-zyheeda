@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -10,19 +11,36 @@ public class InputListenerMBTests : TestCollection
 {
 	class MockInputConfigSO : BaseInputConfigSO
 	{
-		public InputAction action = new InputAction(
-			binding: "<Gamepad>/leftTrigger",
-			type: InputActionType.Button
-		);
-		public InputEnum.Action onlyAction = InputEnum.Action.Walk;
-
-		public override InputAction this[InputEnum.Action action] => action switch {
-			InputEnum.Action when action == this.onlyAction => this.action,
-			_ => throw new ArgumentException(),
+		public Dictionary<InputEnum.Action, InputAction> actions = new() {
+			{
+				InputEnum.Action.Walk,
+				new InputAction(
+					binding: "<Gamepad>/leftTrigger",
+					type: InputActionType.Button
+				)
+			},
+			{
+				InputEnum.Action.Run,
+				new InputAction(
+					binding: "<Gamepad>/rightTrigger",
+					type: InputActionType.Button
+				)
+			}
 		};
+
+		public override InputAction this[InputEnum.Action action] =>
+			this.actions.TryGetValue(action, out InputAction input)
+				? input
+				: throw new ArgumentException();
 
 		public override InputActionMap this[InputEnum.Map map] =>
 			throw new NotImplementedException();
+	}
+
+	class MockApplicableMB : MonoBehaviour, IApplicable
+	{
+		public int called = 0;
+		public void Apply() => ++this.called;
 	}
 
 	private Gamepad? pad;
@@ -39,16 +57,17 @@ public class InputListenerMBTests : TestCollection
 
 	[UnityTest]
 	public IEnumerator CallOnInput() {
-		var called = 0;
 		var so = ScriptableObject.CreateInstance<MockInputConfigSO>();
 		var mb = new GameObject("obj").AddComponent<InputListenerMB>();
+		var apply = new GameObject("apply").AddComponent<MockApplicableMB>();
+		mb.apply = new Reference<IApplicable>[] {
+			Reference<IApplicable>.PointToComponent(apply),
+		};
 		mb.inputConfigSO = so;
-		mb.action = InputEnum.Action.Walk;
-		so.action.Enable();
+		mb.listenTo = new InputEnum.Action[] { InputEnum.Action.Walk };
+		so.actions.Values.ForEach(a => a.Enable());
 
 		yield return new WaitForEndOfFrame();
-
-		mb.OnInput!.AddListener(_ => ++called);
 
 		InputSystem.QueueStateEvent(
 			this.pad!,
@@ -57,45 +76,47 @@ public class InputListenerMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		Assert.AreEqual(1, called);
+		Assert.AreEqual(1, apply.called);
 	}
 
 	[UnityTest]
 	public IEnumerator CallOnInputRun() {
-		var called = 0;
 		var so = ScriptableObject.CreateInstance<MockInputConfigSO>();
 		var mb = new GameObject("obj").AddComponent<InputListenerMB>();
+		var apply = new GameObject("apply").AddComponent<MockApplicableMB>();
+		mb.apply = new Reference<IApplicable>[] {
+			Reference<IApplicable>.PointToComponent(apply),
+		};
 		mb.inputConfigSO = so;
-		mb.action = InputEnum.Action.Run;
-		so.onlyAction = InputEnum.Action.Run;
-		so.action.Enable();
+		mb.listenTo = new InputEnum.Action[] { InputEnum.Action.Run };
+		so.actions.Values.ForEach(a => a.Enable());
 
 		yield return new WaitForEndOfFrame();
 
-		mb.OnInput!.AddListener(_ => ++called);
-
 		InputSystem.QueueStateEvent(
 			this.pad!,
-			new GamepadState { leftTrigger = 1f }
+			new GamepadState { rightTrigger = 1f }
 		);
 
 		yield return new WaitForEndOfFrame();
 
-		Assert.AreEqual(1, called);
+		Assert.AreEqual(1, apply.called);
 	}
 
 	[UnityTest]
 	public IEnumerator CallOnInputOnlyOncePerFrame() {
-		var called = 0;
 		var so = ScriptableObject.CreateInstance<MockInputConfigSO>();
 		var mb = new GameObject("obj").AddComponent<InputListenerMB>();
+		var apply = new GameObject("apply").AddComponent<MockApplicableMB>();
+		mb.apply = new Reference<IApplicable>[] {
+			Reference<IApplicable>.PointToComponent(apply),
+		};
 		mb.inputConfigSO = so;
-		mb.action = InputEnum.Action.Walk;
-		so.action.Enable();
+		mb.listenTo = new InputEnum.Action[] { InputEnum.Action.Walk };
+		so.actions.Values.ForEach(a => a.Enable());
 
 		yield return new WaitForEndOfFrame();
 
-		mb.OnInput!.AddListener(_ => ++called);
 
 		InputSystem.QueueStateEvent(
 			this.pad!,
@@ -114,31 +135,20 @@ public class InputListenerMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		Assert.AreEqual(1, called);
+		Assert.AreEqual(1, apply.called);
 	}
 
 	[UnityTest]
 	public IEnumerator CallOnInputNextFrame() {
-		var called = 0;
 		var so = ScriptableObject.CreateInstance<MockInputConfigSO>();
 		var mb = new GameObject("obj").AddComponent<InputListenerMB>();
+		var apply = new GameObject("apply").AddComponent<MockApplicableMB>();
+		mb.apply = new Reference<IApplicable>[] {
+			Reference<IApplicable>.PointToComponent(apply),
+		};
 		mb.inputConfigSO = so;
-		mb.action = InputEnum.Action.Walk;
-		so.action.Enable();
-
-		yield return new WaitForEndOfFrame();
-
-		mb.OnInput!.AddListener(_ => ++called);
-
-		InputSystem.QueueStateEvent(
-			this.pad!,
-			new GamepadState { leftTrigger = 1f }
-		);
-
-		InputSystem.QueueStateEvent(
-			this.pad!,
-			new GamepadState { leftTrigger = 0f }
-		);
+		mb.listenTo = new InputEnum.Action[] { InputEnum.Action.Walk };
+		so.actions.Values.ForEach(a => a.Enable());
 
 		yield return new WaitForEndOfFrame();
 
@@ -154,6 +164,78 @@ public class InputListenerMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		Assert.AreEqual(2, called);
+		InputSystem.QueueStateEvent(
+			this.pad!,
+			new GamepadState { leftTrigger = 1f }
+		);
+
+		InputSystem.QueueStateEvent(
+			this.pad!,
+			new GamepadState { leftTrigger = 0f }
+		);
+
+		yield return new WaitForEndOfFrame();
+
+		Assert.AreEqual(2, apply.called);
+	}
+
+	[UnityTest]
+	public IEnumerator NoCallWhenDisabled() {
+		var so = ScriptableObject.CreateInstance<MockInputConfigSO>();
+		var mb = new GameObject("obj").AddComponent<InputListenerMB>();
+		var apply = new GameObject("apply").AddComponent<MockApplicableMB>();
+		mb.apply = new Reference<IApplicable>[] {
+			Reference<IApplicable>.PointToComponent(apply),
+		};
+		mb.inputConfigSO = so;
+		mb.listenTo = new InputEnum.Action[] { InputEnum.Action.Walk };
+		so.actions.Values.ForEach(a => a.Enable());
+
+		yield return new WaitForEndOfFrame();
+
+		mb.enabled = false;
+
+		yield return new WaitForEndOfFrame();
+
+		InputSystem.QueueStateEvent(
+			this.pad!,
+			new GamepadState { leftTrigger = 1f }
+		);
+
+		yield return new WaitForEndOfFrame();
+
+		Assert.AreEqual(0, apply.called);
+	}
+
+	[UnityTest]
+	public IEnumerator CallWhenEnabledAfterDisable() {
+		var so = ScriptableObject.CreateInstance<MockInputConfigSO>();
+		var mb = new GameObject("obj").AddComponent<InputListenerMB>();
+		var apply = new GameObject("apply").AddComponent<MockApplicableMB>();
+		mb.apply = new Reference<IApplicable>[] {
+			Reference<IApplicable>.PointToComponent(apply),
+		};
+		mb.inputConfigSO = so;
+		mb.listenTo = new InputEnum.Action[] { InputEnum.Action.Walk };
+		so.actions.Values.ForEach(a => a.Enable());
+
+		yield return new WaitForEndOfFrame();
+
+		mb.enabled = false;
+
+		yield return new WaitForEndOfFrame();
+
+		mb.enabled = true;
+
+		yield return new WaitForEndOfFrame();
+
+		InputSystem.QueueStateEvent(
+			this.pad!,
+			new GamepadState { leftTrigger = 1f }
+		);
+
+		yield return new WaitForEndOfFrame();
+
+		Assert.AreEqual(1, apply.called);
 	}
 }
