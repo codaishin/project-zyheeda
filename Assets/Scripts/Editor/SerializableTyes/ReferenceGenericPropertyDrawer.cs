@@ -28,7 +28,7 @@ public class ReferenceGenericPropertyDrawer : PropertyDrawer
 	private static Component GetComponent(GameObject obj, Type type) {
 		Component? component = obj.GetComponent(type);
 		return component ?? throw new ArgumentException(
-			$"{obj.name}: must have a component that implements '{type}'"
+			$"{obj}: must have a component that implements '{type}'"
 		);
 	}
 
@@ -36,7 +36,7 @@ public class ReferenceGenericPropertyDrawer : PropertyDrawer
 		return type.IsAssignableFrom(obj.GetType())
 			? obj
 			: throw new ArgumentException(
-				$"{obj.name}: must implement '{type}'"
+				$"{obj}: must implement '{type}'"
 			);
 	}
 
