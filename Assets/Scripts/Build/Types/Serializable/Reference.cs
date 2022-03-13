@@ -5,32 +5,28 @@ using UnityEngine;
 public struct Reference
 {
 	[SerializeField]
-	private GameObject gameObject;
+	private GameObject? gameObject;
 
 	[SerializeField]
-	private ReferenceSO referenceSO;
+	private ReferenceSO? referenceSO;
 
 	public GameObject GameObject {
 		get {
-			if (this.gameObject) {
-				if (this.referenceSO) {
-					throw new ArgumentException("\"gameObject\" and \"referenceSO\" are both set");
-				}
+			if (this.gameObject != null) {
 				return this.gameObject;
 			}
-			return this.referenceSO.GameObject;
+			if (this.referenceSO != null) {
+				return this.referenceSO.GameObject;
+			}
+			throw new NullReferenceException($"{this}: no reference set");
 		}
 	}
 
-	public static implicit operator Reference(in GameObject gameObject) =>
-		new Reference { gameObject = gameObject };
+	public static implicit operator Reference(GameObject gameObject) {
+		return new Reference { gameObject = gameObject };
+	}
 
-	public static implicit operator Reference(in Component component) =>
-		new Reference { gameObject = component.gameObject };
-
-	public static implicit operator Reference(in ReferenceSO referenceSO) =>
-		new Reference { referenceSO = referenceSO };
-
-	public static implicit operator Reference(in (GameObject, ReferenceSO) refTuple) =>
-		new Reference { gameObject = refTuple.Item1, referenceSO = refTuple.Item2 };
+	public static implicit operator Reference(ReferenceSO referenceSO) {
+		return new Reference { referenceSO = referenceSO };
+	}
 }

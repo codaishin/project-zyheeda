@@ -1,3 +1,4 @@
+using System;
 using NUnit.Framework;
 using UnityEngine;
 
@@ -6,7 +7,7 @@ public class ReferenceTests : TestCollection
 	[Test]
 	public void ExposeGameObject() {
 		var obj = new GameObject("obj");
-		var reference = (Reference)obj;
+		Reference reference = obj;
 
 		Assert.AreSame(obj, reference.GameObject);
 	}
@@ -15,32 +16,15 @@ public class ReferenceTests : TestCollection
 	public void ExposeReferenceGameObject() {
 		var obj = new GameObject("obj");
 		var referenceSO = ScriptableObject.CreateInstance<ReferenceSO>();
-		var reference = (Reference)referenceSO;
+		Reference reference = referenceSO;
 
 		referenceSO.GameObject = obj;
 		Assert.AreSame(obj, reference.GameObject);
 	}
 
 	[Test]
-	public void ExceptionWhenGameObjectAndReferenceSOSet() {
-		var obj = new GameObject("obj");
-		var referenceSO = ScriptableObject.CreateInstance<ReferenceSO>();
-		var reference = (Reference)(obj, referenceSO);
-
-		Assert.Throws<System.ArgumentException>(() => _ = reference.GameObject);
-	}
-
-	[Test]
-	public void ExceptionWhenGameObjectAndReferenceSOSetMessage() {
-		var obj = new GameObject("obj");
-		var referenceSO = ScriptableObject.CreateInstance<ReferenceSO>();
-		var reference = (Reference)(obj, referenceSO);
-
-		try {
-			_ = reference.GameObject;
-		}
-		catch (System.ArgumentException e) {
-			Assert.AreEqual("\"gameObject\" and \"referenceSO\" are both set", e.Message);
-		}
+	public void ThrowWhenNotSet() {
+		var reference = new Reference();
+		Assert.Throws<NullReferenceException>(() => _ = reference.GameObject);
 	}
 }
