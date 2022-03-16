@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.InputSystem;
 
@@ -13,7 +12,6 @@ public class InputListenerMB : BaseListenerMB
 	private InputAction? input;
 	private Action? applyAll = null;
 	private Action? releaseAll = null;
-	private bool triggeredThisFrame = false;
 
 	protected override void StartListening() {
 		this.input!.performed += this.InvokeOnInput;
@@ -26,11 +24,10 @@ public class InputListenerMB : BaseListenerMB
 	}
 
 	private void InvokeOnInput(InputAction.CallbackContext _) {
-		if (this.triggeredThisFrame || this.applyAll == null) {
+		if (this.applyAll is null) {
 			return;
 		}
 		this.applyAll();
-		this.triggeredThisFrame = true;
 	}
 
 	private void InvokeOnRelease(InputAction.CallbackContext _) {
@@ -54,18 +51,14 @@ public class InputListenerMB : BaseListenerMB
 
 	protected override void Start() {
 		this.input = this.inputConfigSO![this.listenTo[0]];
-
-		IEnumerable<IApplicable> applyItems = this.apply.Select(a => a.Value!);
-		this.applyAll = applyItems
+		this.applyAll = this.apply
+			.Values()
 			.Select(InputListenerMB.GetApply)
 			.Aggregate(null as Action, InputListenerMB.ConcatActions);
-		this.releaseAll = applyItems
+		this.releaseAll = this.apply
+			.Values()
 			.Select(InputListenerMB.GetRelease)
 			.Aggregate(null as Action, InputListenerMB.ConcatActions);
 		base.Start();
-	}
-
-	private void LateUpdate() {
-		this.triggeredThisFrame = false;
 	}
 }

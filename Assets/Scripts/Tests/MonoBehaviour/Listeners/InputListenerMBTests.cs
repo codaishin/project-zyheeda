@@ -107,41 +107,6 @@ public class InputListenerMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator CallOnInputOnlyOncePerFrame() {
-		var so = ScriptableObject.CreateInstance<MockInputConfigSO>();
-		var mb = new GameObject("obj").AddComponent<InputListenerMB>();
-		var apply = new GameObject("apply").AddComponent<MockApplicableMB>();
-		mb.apply = new Reference<IApplicable>[] {
-			Reference<IApplicable>.PointToComponent(apply),
-		};
-		mb.inputConfigSO = so;
-		mb.listenTo = new InputEnum.Action[] { InputEnum.Action.Walk };
-		so.actions.Values.ForEach(a => a.Enable());
-
-		yield return new WaitForEndOfFrame();
-
-
-		InputSystem.QueueStateEvent(
-			this.pad!,
-			new GamepadState { leftTrigger = 1f }
-		);
-
-		InputSystem.QueueStateEvent(
-			this.pad!,
-			new GamepadState { leftTrigger = 0f }
-		);
-
-		InputSystem.QueueStateEvent(
-			this.pad!,
-			new GamepadState { leftTrigger = 1f }
-		);
-
-		yield return new WaitForEndOfFrame();
-
-		Assert.AreEqual(1, apply.calledApply);
-	}
-
-	[UnityTest]
 	public IEnumerator CallOnInputNextFrame() {
 		var so = ScriptableObject.CreateInstance<MockInputConfigSO>();
 		var mb = new GameObject("obj").AddComponent<InputListenerMB>();
