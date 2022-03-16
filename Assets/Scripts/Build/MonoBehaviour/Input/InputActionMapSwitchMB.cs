@@ -20,4 +20,6 @@ public class InputActionMapSwitchMB : MonoBehaviour, IApplicable
 			map.Disable();
 		}
 	}
+
+	public void Release() { }
 }

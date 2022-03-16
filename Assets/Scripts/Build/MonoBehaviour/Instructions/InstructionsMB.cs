@@ -56,4 +56,6 @@ public class InstructionsMB : MonoBehaviour, IApplicable
 		this.currentCoroutine = this.GetCoroutine();
 		this.OnRunnerOrSelf.StartCoroutine(this.currentCoroutine);
 	}
+
+	public void Release() { }
 }

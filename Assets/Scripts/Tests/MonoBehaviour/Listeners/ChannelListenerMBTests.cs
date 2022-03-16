@@ -10,6 +10,10 @@ public class ChannelListenerMBTests : TestCollection
 	{
 		public int called = 0;
 		public void Apply() => ++this.called;
+
+		public void Release() {
+			throw new System.NotImplementedException();
+		}
 	}
 
 	[UnityTest]
