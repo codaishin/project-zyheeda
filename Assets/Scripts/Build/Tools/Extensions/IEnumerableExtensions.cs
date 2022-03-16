@@ -1,6 +1,6 @@
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 
 public static class IEnumerableExtensions
 {
@@ -30,6 +30,14 @@ public static class IEnumerableExtensions
 	public static void Apply(this IEnumerable<Action> enumerable) {
 		foreach (Action action in enumerable) {
 			action();
+		}
+	}
+
+	public static IEnumerable<TValue> Values<TValue>(
+		this IEnumerable<Reference<TValue>> references
+	) where TValue : class {
+		foreach (Reference<TValue> reference in references) {
+			yield return reference.Value!;
 		}
 	}
 }

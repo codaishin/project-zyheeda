@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
+using UnityEngine;
 
 public class IEnumerableExtensionTests : TestCollection
 {
@@ -54,5 +55,27 @@ public class IEnumerableExtensionTests : TestCollection
 		actions.Apply();
 
 		Assert.AreEqual((2, "11"), (a, b));
+	}
+
+	interface IMock { }
+	class MockMB : MonoBehaviour, IMock { }
+
+	[Test]
+	public void UnpackReferenceValues() {
+		var objects = new GameObject[] {
+			new GameObject("A"),
+			new GameObject("B"),
+			new GameObject("C"),
+			new GameObject("D"),
+		};
+		var references = objects
+			.Select(obj => obj.AddComponent<MockMB>())
+			.Select(Reference<IMock>.PointToComponent)
+			.ToArray();
+		var expected = references
+			.Select(r => r.Value!)
+			.ToArray();
+
+		CollectionAssert.AreEqual(expected, references.Values());
 	}
 }
