@@ -12,7 +12,7 @@ public enum OverrideMode
 public class InstructionsMB : MonoBehaviour, IApplicable
 {
 	private IEnumerator<YieldInstruction>? currentCoroutine;
-	private CoroutineInstructions? instructions;
+	private Func<IEnumerable<YieldInstruction>>? instructions;
 	private bool run;
 
 	public CoroutineRunnerMB? runner;

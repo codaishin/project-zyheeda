@@ -4,18 +4,22 @@ using UnityEngine;
 [CreateAssetMenu(
 	menuName = "ScriptableObjects/Instructions/Plugins/MovementAnimation"
 )]
-public class MovementAnimationPluginSO : BaseInstructionsPluginSO<MoveData>
+public class MovementAnimationPluginSO : BaseInstructionsPluginSO
 {
 	public float walkOrRunWeight;
 
-	public override Action<MoveData> GetOnBegin(GameObject agent) {
+	public override Action GetOnBegin(GameObject agent, PluginData data) {
 		IMovementAnimation animation = agent.RequireComponent<IMovementAnimation>();
 		float weight = this.walkOrRunWeight;
-		return _ => animation.Move(weight);
+		return () => animation.Move(weight);
 	}
 
-	public override Action<MoveData> GetOnEnd(GameObject agent) {
+	public override Action? GetOnUpdate(GameObject agent, PluginData data) {
+		return null;
+	}
+
+	public override Action GetOnEnd(GameObject agent, PluginData data) {
 		IMovementAnimation animation = agent.RequireComponent<IMovementAnimation>();
-		return _ => animation.Stop();
+		return () => animation.Stop();
 	}
 }

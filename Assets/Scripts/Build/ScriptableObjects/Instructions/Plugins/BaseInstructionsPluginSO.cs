@@ -1,9 +1,11 @@
 using System;
 using UnityEngine;
 
-public abstract class BaseInstructionsPluginSO<TPluginData> : ScriptableObject
-	where TPluginData : struct
+public class PluginData { }
+
+public abstract class BaseInstructionsPluginSO : ScriptableObject
 {
-	public abstract Action<TPluginData>? GetOnBegin(GameObject agent);
-	public abstract Action<TPluginData>? GetOnEnd(GameObject agent);
+	public abstract Action? GetOnBegin(GameObject agent, PluginData data);
+	public abstract Action? GetOnUpdate(GameObject agent, PluginData data);
+	public abstract Action? GetOnEnd(GameObject agent, PluginData data);
 }

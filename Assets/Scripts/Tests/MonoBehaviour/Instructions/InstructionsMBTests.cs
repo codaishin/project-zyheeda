@@ -7,9 +7,7 @@ using UnityEngine.TestTools;
 
 public class InstructionsMBTests : TestCollection
 {
-	struct MockData { }
-
-	class MockCoroutineSO : BaseInstructionsSO<Transform, MockData>
+	class MockCoroutineSO : BaseInstructionsSO<Transform>
 	{
 		public int times = 10;
 
@@ -17,12 +15,11 @@ public class InstructionsMBTests : TestCollection
 			return agent.transform;
 		}
 
-		protected override CoroutineInstructions Instructions(Transform agent) {
+		protected override CoroutineInstructions Instructions(
+			Transform agent,
+			PluginData data
+		) {
 			return () => this.MoveUpEachFrame(agent);
-		}
-
-		protected override MockData GetPluginData(GameObject agent) {
-			return default;
 		}
 
 		private IEnumerable<YieldInstruction> MoveUpEachFrame(Transform transform) {
@@ -213,18 +210,22 @@ public class InstructionsMBTests : TestCollection
 		);
 	}
 
-	class MockPluginSO : BaseInstructionsPluginSO<MockData>
+	class MockPluginSO : BaseInstructionsPluginSO
 	{
-		public Func<GameObject, Action<MockData>> getOnBegin = _ => _ => { };
-		public Func<GameObject, Action<MockData>> getOnEnd = _ => _ => { };
+		public Func<GameObject, PluginData, Action> getOnEnd = (_, __) => () => { };
 
-		public override Action<MockData> GetOnBegin(GameObject agent) {
-			return this.getOnBegin(agent);
+		public override Action? GetOnBegin(GameObject agent, PluginData data) {
+			return null;
 		}
 
-		public override Action<MockData> GetOnEnd(GameObject agent) {
-			return this.getOnEnd(agent);
+		public override Action? GetOnUpdate(GameObject agent, PluginData data) {
+			return null;
 		}
+
+		public override Action GetOnEnd(GameObject agent, PluginData data) {
+			return this.getOnEnd(agent, data);
+		}
+
 	}
 
 	[UnityTest]
@@ -240,7 +241,7 @@ public class InstructionsMBTests : TestCollection
 		comp.overrideMode = OverrideMode.Own;
 		comp.runner = external;
 
-		plugin.getOnEnd = _ => _ => ++calledEnd;
+		plugin.getOnEnd = (_, __) => () => ++calledEnd;
 		instructions.plugins = new MockPluginSO[] { plugin };
 
 		yield return new WaitForEndOfFrame();

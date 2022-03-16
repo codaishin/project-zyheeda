@@ -24,11 +24,11 @@ public class MovementAnimationPluginSOTests : TestCollection
 		instructions.walkOrRunWeight = 0;
 		agent.move = value => called = value;
 
-		var action = instructions.GetOnBegin(agent.gameObject);
+		var action = instructions.GetOnBegin(agent.gameObject, default);
 
 		yield return new WaitForEndOfFrame();
 
-		action(default);
+		action();
 
 		Assert.AreEqual(0, called);
 	}
@@ -42,11 +42,11 @@ public class MovementAnimationPluginSOTests : TestCollection
 		instructions.walkOrRunWeight = 0.324f;
 		agent.move = value => called = value;
 
-		var action = instructions.GetOnBegin(agent.gameObject);
+		var action = instructions.GetOnBegin(agent.gameObject, default);
 
 		yield return new WaitForEndOfFrame();
 
-		action(default);
+		action();
 
 		Assert.AreEqual(0.324f, called);
 	}
@@ -60,11 +60,11 @@ public class MovementAnimationPluginSOTests : TestCollection
 		instructions.walkOrRunWeight = 0.324f;
 		agent.stop = () => called = true;
 
-		var action = instructions.GetOnEnd(agent.gameObject);
+		var action = instructions.GetOnEnd(agent.gameObject, default);
 
 		yield return new WaitForEndOfFrame();
 
-		action(default);
+		action();
 
 		Assert.True(called);
 	}

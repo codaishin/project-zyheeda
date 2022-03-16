@@ -1,10 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public struct MoveData { }
 
 [CreateAssetMenu(menuName = "ScriptableObjects/Instructions/MoveConstantSpeed")]
-public class MoveConstantSpeedSO : BaseInstructionsSO<Transform, MoveData>
+public class MoveConstantSpeedSO : BaseInstructionsSO<Transform>
 {
 	public BaseHitSO? hitter;
 	public float speed = 1;
@@ -13,12 +12,11 @@ public class MoveConstantSpeedSO : BaseInstructionsSO<Transform, MoveData>
 		return agent.transform;
 	}
 
-	protected override CoroutineInstructions Instructions(Transform agent) {
+	protected override CoroutineInstructions Instructions(
+		Transform agent,
+		PluginData data
+	) {
 		return () => this.Move(agent);
-	}
-
-	protected override MoveData GetPluginData(GameObject agent) {
-		return default;
 	}
 
 	private IEnumerable<WaitForFixedUpdate> Move(Transform transform) {
