@@ -7,14 +7,23 @@ using UnityEngine.TestTools;
 
 public class InstructionsMBTests : TestCollection
 {
-	class MockCoroutineSO : BaseInstructionsSO<Transform>
+	struct MockData { }
+
+	class MockCoroutineSO : BaseInstructionsSO<Transform, MockData>
 	{
 		public int times = 10;
 
-		protected override Transform GetConcreteAgent(GameObject agent) =>
-			agent.transform;
-		protected override CoroutineInstructions Instructions(Transform agent) =>
-			() => this.MoveUpEachFrame(agent);
+		protected override Transform GetConcreteAgent(GameObject agent) {
+			return agent.transform;
+		}
+
+		protected override CoroutineInstructions Instructions(Transform agent) {
+			return () => this.MoveUpEachFrame(agent);
+		}
+
+		protected override MockData GetPluginData(GameObject agent) {
+			return default;
+		}
 
 		private IEnumerable<YieldInstruction> MoveUpEachFrame(Transform transform) {
 			for (int i = 0; i < this.times; ++i) {
@@ -204,16 +213,16 @@ public class InstructionsMBTests : TestCollection
 		);
 	}
 
-	class MockPluginSO : BaseInstructionsPluginSO
+	class MockPluginSO : BaseInstructionsPluginSO<MockData>
 	{
-		public Func<GameObject, Action?> getOnBegin = _ => () => { };
-		public Func<GameObject, Action?> getOnEnd = _ => () => { };
+		public Func<GameObject, Action<MockData>> getOnBegin = _ => _ => { };
+		public Func<GameObject, Action<MockData>> getOnEnd = _ => _ => { };
 
-		public override Action? GetOnBegin(GameObject agent) {
+		public override Action<MockData> GetOnBegin(GameObject agent) {
 			return this.getOnBegin(agent);
 		}
 
-		public override Action? GetOnEnd(GameObject agent) {
+		public override Action<MockData> GetOnEnd(GameObject agent) {
 			return this.getOnEnd(agent);
 		}
 	}
@@ -231,7 +240,7 @@ public class InstructionsMBTests : TestCollection
 		comp.overrideMode = OverrideMode.Own;
 		comp.runner = external;
 
-		plugin.getOnEnd = _ => () => ++calledEnd;
+		plugin.getOnEnd = _ => _ => ++calledEnd;
 		instructions.plugins = new MockPluginSO[] { plugin };
 
 		yield return new WaitForEndOfFrame();

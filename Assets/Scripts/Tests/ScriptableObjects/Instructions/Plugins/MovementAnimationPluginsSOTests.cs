@@ -28,7 +28,7 @@ public class MovementAnimationPluginSOTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		action();
+		action(default);
 
 		Assert.AreEqual(0, called);
 	}
@@ -46,7 +46,7 @@ public class MovementAnimationPluginSOTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		action();
+		action(default);
 
 		Assert.AreEqual(0.324f, called);
 	}
@@ -64,7 +64,7 @@ public class MovementAnimationPluginSOTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		action();
+		action(default);
 
 		Assert.True(called);
 	}

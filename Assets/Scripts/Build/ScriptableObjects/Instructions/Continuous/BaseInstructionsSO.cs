@@ -13,23 +13,28 @@ public abstract class BaseInstructionsSO : ScriptableObject
 	);
 }
 
-public abstract class BaseInstructionsSO<TAgent> : BaseInstructionsSO
+public abstract class BaseInstructionsSO<TAgent, TPluginData> :
+	BaseInstructionsSO
+	where TPluginData :
+		struct
 {
-	public BaseInstructionsPluginSO[] plugins = new BaseInstructionsPluginSO[0];
+	public BaseInstructionsPluginSO<TPluginData>[] plugins =
+		new BaseInstructionsPluginSO<TPluginData>[0];
 
 	protected abstract TAgent GetConcreteAgent(GameObject agent);
 	protected abstract CoroutineInstructions Instructions(TAgent agent);
+	protected abstract TPluginData GetPluginData(GameObject agent);
 
 	public override CoroutineInstructions GetInstructionsFor(
 		GameObject agent,
 		Func<bool>? keepRunningCheck = null
 	) {
 		TAgent concreteAgent = this.GetConcreteAgent(agent);
-		Action? onBegin = this.GetPluginBegin(agent);
-		Action? onEnd = this.GetPluginEnd(agent);
+		Action<TPluginData>? onBegin = this.GetPluginBegin(agent);
+		Action<TPluginData>? onEnd = this.GetPluginEnd(agent);
 		CoroutineInstructions instructions = this.Instructions(concreteAgent);
 
-		return () => BaseInstructionsSO<TAgent>.RunInstructions(
+		return () => BaseInstructionsSO<TAgent, TPluginData>.RunInstructions(
 			instructions,
 			onBegin,
 			onEnd,
@@ -37,32 +42,31 @@ public abstract class BaseInstructionsSO<TAgent> : BaseInstructionsSO
 		);
 	}
 
-	private Action? GetPluginEnd(GameObject agent) =>
+	private Action<TPluginData>? GetPluginEnd(GameObject agent) =>
 		this.plugins
 			.Select(plugin => plugin.GetOnEnd(agent))
-			.Aggregate(null as Action, (l, c) => l + c);
+			.Aggregate(null as Action<TPluginData>, (l, c) => l + c);
 
-	private Action? GetPluginBegin(GameObject agent) =>
+	private Action<TPluginData>? GetPluginBegin(GameObject agent) =>
 		this.plugins
 			.Select(plugin => plugin.GetOnBegin(agent))
-			.Aggregate(null as Action, (l, c) => l + c);
+			.Aggregate(null as Action<TPluginData>, (l, c) => l + c);
 
 	private static IEnumerable<YieldInstruction> RunInstructions(
 		CoroutineInstructions instructions,
-		Action? onBegin,
-		Action? onEnd,
+		Action<TPluginData>? onBegin,
+		Action<TPluginData>? onEnd,
 		Func<bool>? keepRunningCheck
 	) {
-		IEnumerable<YieldInstruction> loop =
-			keepRunningCheck is null
-				? BaseInstructionsSO<TAgent>.Loop(instructions)
-				: BaseInstructionsSO<TAgent>.Loop(instructions, keepRunningCheck);
+		IEnumerable<YieldInstruction> loop = keepRunningCheck is Func<bool> check
+			? BaseInstructionsSO<TAgent, TPluginData>.Loop(instructions, check)
+			: BaseInstructionsSO<TAgent, TPluginData>.Loop(instructions);
 
-		onBegin?.Invoke();
+		onBegin?.Invoke(default);
 		foreach (YieldInstruction hold in loop) {
 			yield return hold;
 		}
-		onEnd?.Invoke();
+		onEnd?.Invoke(default);
 	}
 
 	private static IEnumerable<YieldInstruction> Loop(
@@ -73,10 +77,10 @@ public abstract class BaseInstructionsSO<TAgent> : BaseInstructionsSO
 
 	private static IEnumerable<YieldInstruction> Loop(
 		CoroutineInstructions instructions,
-		Func<bool> keepRunningCheck
+		Func<bool> runningCheck
 	) {
 		using IEnumerator<YieldInstruction> it = instructions().GetEnumerator();
-		while (it.MoveNext() && keepRunningCheck()) {
+		while (it.MoveNext() && runningCheck()) {
 			yield return it.Current;
 		}
 	}
