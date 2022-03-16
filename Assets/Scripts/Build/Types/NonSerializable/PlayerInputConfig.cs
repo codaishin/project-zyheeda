@@ -44,14 +44,23 @@ public partial class @PlayerInputConfig : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""WalkOrRun"",
+                    ""type"": ""Button"",
+                    ""id"": ""3242fb52-d048-4d53-8d17-221ce792ad83"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
                 {
                     ""name"": """",
                     ""id"": ""7818a16c-9e38-4a43-bef1-f8885292cf7e"",
-                    ""path"": ""<Mouse>/rightButton"",
-                    ""interactions"": ""RepeatHold(pressPoint=0.5,holdTime=0.01,frequency=60)"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": ""MultiTap"",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Run"",
@@ -62,10 +71,21 @@ public partial class @PlayerInputConfig : IInputActionCollection2, IDisposable
                     ""name"": """",
                     ""id"": ""d927133b-2a94-484d-b6bf-b11d7c5fff02"",
                     ""path"": ""<Mouse>/leftButton"",
-                    ""interactions"": ""RepeatHold(pressPoint=0.5,holdTime=0.01,frequency=60)"",
+                    ""interactions"": ""Press"",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Walk"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""38c396e8-3cf3-460a-bea3-d609c9bf260a"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": ""Hold"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""WalkOrRun"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -167,6 +187,7 @@ public partial class @PlayerInputConfig : IInputActionCollection2, IDisposable
         m_Movement = asset.FindActionMap("Movement", throwIfNotFound: true);
         m_Movement_Walk = m_Movement.FindAction("Walk", throwIfNotFound: true);
         m_Movement_Run = m_Movement.FindAction("Run", throwIfNotFound: true);
+        m_Movement_WalkOrRun = m_Movement.FindAction("WalkOrRun", throwIfNotFound: true);
         // Mouse
         m_Mouse = asset.FindActionMap("Mouse", throwIfNotFound: true);
         m_Mouse_Position = m_Mouse.FindAction("Position", throwIfNotFound: true);
@@ -231,12 +252,14 @@ public partial class @PlayerInputConfig : IInputActionCollection2, IDisposable
     private IMovementActions m_MovementActionsCallbackInterface;
     private readonly InputAction m_Movement_Walk;
     private readonly InputAction m_Movement_Run;
+    private readonly InputAction m_Movement_WalkOrRun;
     public struct MovementActions
     {
         private @PlayerInputConfig m_Wrapper;
         public MovementActions(@PlayerInputConfig wrapper) { m_Wrapper = wrapper; }
         public InputAction @Walk => m_Wrapper.m_Movement_Walk;
         public InputAction @Run => m_Wrapper.m_Movement_Run;
+        public InputAction @WalkOrRun => m_Wrapper.m_Movement_WalkOrRun;
         public InputActionMap Get() { return m_Wrapper.m_Movement; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -252,6 +275,9 @@ public partial class @PlayerInputConfig : IInputActionCollection2, IDisposable
                 @Run.started -= m_Wrapper.m_MovementActionsCallbackInterface.OnRun;
                 @Run.performed -= m_Wrapper.m_MovementActionsCallbackInterface.OnRun;
                 @Run.canceled -= m_Wrapper.m_MovementActionsCallbackInterface.OnRun;
+                @WalkOrRun.started -= m_Wrapper.m_MovementActionsCallbackInterface.OnWalkOrRun;
+                @WalkOrRun.performed -= m_Wrapper.m_MovementActionsCallbackInterface.OnWalkOrRun;
+                @WalkOrRun.canceled -= m_Wrapper.m_MovementActionsCallbackInterface.OnWalkOrRun;
             }
             m_Wrapper.m_MovementActionsCallbackInterface = instance;
             if (instance != null)
@@ -262,6 +288,9 @@ public partial class @PlayerInputConfig : IInputActionCollection2, IDisposable
                 @Run.started += instance.OnRun;
                 @Run.performed += instance.OnRun;
                 @Run.canceled += instance.OnRun;
+                @WalkOrRun.started += instance.OnWalkOrRun;
+                @WalkOrRun.performed += instance.OnWalkOrRun;
+                @WalkOrRun.canceled += instance.OnWalkOrRun;
             }
         }
     }
@@ -348,6 +377,7 @@ public partial class @PlayerInputConfig : IInputActionCollection2, IDisposable
     {
         void OnWalk(InputAction.CallbackContext context);
         void OnRun(InputAction.CallbackContext context);
+        void OnWalkOrRun(InputAction.CallbackContext context);
     }
     public interface IMouseActions
     {

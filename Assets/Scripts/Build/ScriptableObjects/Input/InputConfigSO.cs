@@ -24,6 +24,7 @@ public class InputConfigSO : BaseInputConfigSO
 	public override InputAction this[InputEnum.Action action] => action switch {
 		InputEnum.Action.Walk => this.Config.Movement.Walk,
 		InputEnum.Action.Run => this.Config.Movement.Run,
+		InputEnum.Action.WalkOrRun => this.Config.Movement.WalkOrRun,
 		InputEnum.Action.MousePosition => this.Config.Mouse.Position,
 		_ => throw new ArgumentException(),
 	};

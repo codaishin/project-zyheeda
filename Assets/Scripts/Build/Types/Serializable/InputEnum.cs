@@ -5,6 +5,7 @@ public static class InputEnum
 	{
 		Walk,
 		Run,
+		WalkOrRun,
 		MousePosition,
 	}
 
