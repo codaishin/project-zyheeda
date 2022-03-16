@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
@@ -172,6 +173,7 @@ public class InstructionsMBTests : TestCollection
 			(agent.transform.position, calledOther)
 		);
 	}
+
 	[UnityTest]
 	public IEnumerator OverrideOwnOnExternal() {
 		var calledOther = false;
@@ -200,5 +202,51 @@ public class InstructionsMBTests : TestCollection
 			(Vector3.up, true),
 			(agent.transform.position, calledOther)
 		);
+	}
+
+	class MockPluginSO : BaseInstructionsPluginSO
+	{
+		public Func<GameObject, Action?> getOnBegin = _ => () => { };
+		public Func<GameObject, Action?> getOnEnd = _ => () => { };
+
+		public override Action? GetOnBegin(GameObject agent) {
+			return this.getOnBegin(agent);
+		}
+
+		public override Action? GetOnEnd(GameObject agent) {
+			return this.getOnEnd(agent);
+		}
+	}
+
+	[UnityTest]
+	public IEnumerator Release() {
+		var calledEnd = 0;
+		var agent = new GameObject();
+		var comp = new GameObject().AddComponent<InstructionsMB>();
+		var external = new GameObject().AddComponent<CoroutineRunnerMB>();
+		var plugin = ScriptableObject.CreateInstance<MockPluginSO>();
+		var instructions = ScriptableObject.CreateInstance<MockCoroutineSO>();
+		comp.instructionsSO = instructions;
+		comp.agent = agent;
+		comp.overrideMode = OverrideMode.Own;
+		comp.runner = external;
+
+		plugin.getOnEnd = _ => () => ++calledEnd;
+		instructions.plugins = new MockPluginSO[] { plugin };
+
+		yield return new WaitForEndOfFrame();
+
+		comp.Apply();
+
+		yield return new WaitForEndOfFrame();
+
+		comp.Release();
+
+		yield return new WaitForEndOfFrame();
+		yield return new WaitForEndOfFrame();
+		yield return new WaitForEndOfFrame();
+		yield return new WaitForEndOfFrame();
+
+		Assert.AreEqual((Vector3.up * 2, 1), (agent.transform.position, calledEnd));
 	}
 }
