@@ -13,6 +13,7 @@ public class InstructionsMB : MonoBehaviour, IApplicable
 {
 	private IEnumerator<YieldInstruction>? currentCoroutine;
 	private CoroutineInstructions? instructions;
+	private bool run;
 
 	public CoroutineRunnerMB? runner;
 	public BaseInstructionsSO? instructionsSO;
@@ -26,7 +27,10 @@ public class InstructionsMB : MonoBehaviour, IApplicable
 
 	private void Start() {
 		GameObject agent = this.agent.GameObject;
-		this.instructions = this.instructionsSO!.GetInstructionsFor(agent);
+		this.instructions = this.instructionsSO!.GetInstructionsFor(
+			agent,
+			this.KeepRunning
+		);
 	}
 
 	private IEnumerator<YieldInstruction> GetCoroutine() {
@@ -45,6 +49,10 @@ public class InstructionsMB : MonoBehaviour, IApplicable
 		this.OnRunnerOrSelf.StopCoroutine(this.currentCoroutine);
 	}
 
+	private bool KeepRunning() {
+		return this.run;
+	}
+
 	public void Apply() {
 		Action stop = this.overrideMode switch {
 			OverrideMode.All => this.StopAll,
@@ -53,7 +61,12 @@ public class InstructionsMB : MonoBehaviour, IApplicable
 		};
 		stop();
 
+		this.run = true;
 		this.currentCoroutine = this.GetCoroutine();
 		this.OnRunnerOrSelf.StartCoroutine(this.currentCoroutine);
+	}
+
+	public void Release() {
+		this.run = false;
 	}
 }

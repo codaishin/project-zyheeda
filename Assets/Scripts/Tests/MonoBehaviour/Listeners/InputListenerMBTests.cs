@@ -41,6 +41,9 @@ public class InputListenerMBTests : TestCollection
 	{
 		public int called = 0;
 		public void Apply() => ++this.called;
+		public void Release() {
+			throw new NotImplementedException();
+		}
 	}
 
 	private Gamepad? pad;

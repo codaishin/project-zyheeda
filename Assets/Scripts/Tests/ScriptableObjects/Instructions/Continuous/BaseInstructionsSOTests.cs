@@ -216,4 +216,34 @@ public class BaseInstructionsSOTests : TestCollection
 
 		Assert.AreEqual(2, called);
 	}
+
+	[Test]
+	public void GracefullRelease() {
+		var called = 0;
+		var iterations = 0;
+		var run = true;
+		var agent = new GameObject();
+		var instructionsSO = ScriptableObject.CreateInstance<MockInstructionSO>();
+		var plugin = ScriptableObject.CreateInstance<MockPluginSO>();
+
+		IEnumerable<UnityEngine.YieldInstruction> instructionFunc() {
+			for (iterations = 0; iterations < 100; ++iterations) {
+				yield return new WaitForEndOfFrame();
+			}
+		}
+
+		plugin.getOnEnd = _ => () => ++called;
+		instructionsSO.plugins = new MockPluginSO[] { plugin }; ;
+		instructionsSO.insructions = _ => instructionFunc;
+
+		var insructions = instructionsSO.GetInstructionsFor(agent, () => run);
+
+		foreach (var _ in insructions()) {
+			if (iterations == 9) {
+				run = false;
+			};
+		};
+
+		Assert.AreEqual((10, 1), (iterations, called));
+	}
 }
