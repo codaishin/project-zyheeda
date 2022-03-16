@@ -7,7 +7,10 @@ public delegate IEnumerable<YieldInstruction> CoroutineInstructions();
 
 public abstract class BaseInstructionsSO : ScriptableObject
 {
-	public abstract CoroutineInstructions GetInstructionsFor(GameObject agent);
+	public abstract CoroutineInstructions GetInstructionsFor(
+		GameObject agent,
+		Func<bool>? keepRunningCheck = null
+	);
 }
 
 public abstract class BaseInstructionsSO<TAgent> : BaseInstructionsSO
@@ -17,13 +20,21 @@ public abstract class BaseInstructionsSO<TAgent> : BaseInstructionsSO
 	protected abstract TAgent GetConcreteAgent(GameObject agent);
 	protected abstract CoroutineInstructions Instructions(TAgent agent);
 
-	public override CoroutineInstructions GetInstructionsFor(GameObject agent) {
+	public override CoroutineInstructions GetInstructionsFor(
+		GameObject agent,
+		Func<bool>? keepRunningCheck = null
+	) {
 		TAgent concreteAgent = this.GetConcreteAgent(agent);
 		Action? onBegin = this.GetPluginBegin(agent);
 		Action? onEnd = this.GetPluginEnd(agent);
 		CoroutineInstructions instructions = this.Instructions(concreteAgent);
 
-		return () => this.RunInstructions(instructions, onBegin, onEnd);
+		return () => BaseInstructionsSO<TAgent>.RunInstructions(
+			instructions,
+			onBegin,
+			onEnd,
+			keepRunningCheck
+		);
 	}
 
 	private Action? GetPluginEnd(GameObject agent) =>
@@ -36,15 +47,37 @@ public abstract class BaseInstructionsSO<TAgent> : BaseInstructionsSO
 			.Select(plugin => plugin.GetOnBegin(agent))
 			.Aggregate(null as Action, (l, c) => l + c);
 
-	private IEnumerable<YieldInstruction> RunInstructions(
+	private static IEnumerable<YieldInstruction> RunInstructions(
 		CoroutineInstructions instructions,
 		Action? onBegin,
-		Action? onEnd
+		Action? onEnd,
+		Func<bool>? keepRunningCheck
 	) {
+		IEnumerable<YieldInstruction> loop =
+			keepRunningCheck is null
+				? BaseInstructionsSO<TAgent>.Loop(instructions)
+				: BaseInstructionsSO<TAgent>.Loop(instructions, keepRunningCheck);
+
 		onBegin?.Invoke();
-		foreach (YieldInstruction hold in instructions()) {
+		foreach (YieldInstruction hold in loop) {
 			yield return hold;
 		}
 		onEnd?.Invoke();
+	}
+
+	private static IEnumerable<YieldInstruction> Loop(
+		CoroutineInstructions instructions
+	) {
+		return instructions();
+	}
+
+	private static IEnumerable<YieldInstruction> Loop(
+		CoroutineInstructions instructions,
+		Func<bool> keepRunningCheck
+	) {
+		using IEnumerator<YieldInstruction> it = instructions().GetEnumerator();
+		while (it.MoveNext() && keepRunningCheck()) {
+			yield return it.Current;
+		}
 	}
 }
