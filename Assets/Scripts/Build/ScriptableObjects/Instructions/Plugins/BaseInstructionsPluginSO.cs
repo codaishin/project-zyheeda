@@ -1,7 +1,10 @@
 using System;
 using UnityEngine;
 
-public class PluginData { }
+public class PluginData
+{
+	public float weight;
+}
 
 public abstract class BaseInstructionsPluginSO : ScriptableObject
 {

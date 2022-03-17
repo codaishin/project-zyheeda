@@ -6,12 +6,9 @@ using UnityEngine;
 )]
 public class MovementAnimationPluginSO : BaseInstructionsPluginSO
 {
-	public float walkOrRunWeight;
-
 	public override Action GetOnBegin(GameObject agent, PluginData data) {
 		IMovementAnimation animation = agent.RequireComponent<IMovementAnimation>();
-		float weight = this.walkOrRunWeight;
-		return () => animation.Move(weight);
+		return () => animation.Move(data.weight);
 	}
 
 	public override Action? GetOnUpdate(GameObject agent, PluginData data) {

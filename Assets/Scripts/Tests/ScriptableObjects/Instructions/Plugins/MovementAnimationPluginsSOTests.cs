@@ -21,10 +21,9 @@ public class MovementAnimationPluginSOTests : TestCollection
 		var agent = new GameObject().AddComponent<MockMovementAnimationMB>();
 		var instructions = ScriptableObject.CreateInstance<MovementAnimationPluginSO>();
 
-		instructions.walkOrRunWeight = 0;
 		agent.move = value => called = value;
 
-		var action = instructions.GetOnBegin(agent.gameObject, default);
+		var action = instructions.GetOnBegin(agent.gameObject, new PluginData());
 
 		yield return new WaitForEndOfFrame();
 
@@ -39,10 +38,12 @@ public class MovementAnimationPluginSOTests : TestCollection
 		var agent = new GameObject().AddComponent<MockMovementAnimationMB>();
 		var instructions = ScriptableObject.CreateInstance<MovementAnimationPluginSO>();
 
-		instructions.walkOrRunWeight = 0.324f;
 		agent.move = value => called = value;
 
-		var action = instructions.GetOnBegin(agent.gameObject, default);
+		var action = instructions.GetOnBegin(
+			agent.gameObject,
+			new PluginData { weight = 0.324f }
+		);
 
 		yield return new WaitForEndOfFrame();
 
@@ -57,10 +58,12 @@ public class MovementAnimationPluginSOTests : TestCollection
 		var agent = new GameObject().AddComponent<MockMovementAnimationMB>();
 		var instructions = ScriptableObject.CreateInstance<MovementAnimationPluginSO>();
 
-		instructions.walkOrRunWeight = 0.324f;
 		agent.stop = () => called = true;
 
-		var action = instructions.GetOnEnd(agent.gameObject, default);
+		var action = instructions.GetOnEnd(
+			agent.gameObject,
+			new PluginData { weight = 0.324f }
+		);
 
 		yield return new WaitForEndOfFrame();
 
