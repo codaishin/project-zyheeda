@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: RunToMouse
   m_EditorClassIdentifier: 
   plugins:
-  - {fileID: 11400000, guid: 71792a986b0ff5e46b19e3765477a8aa, type: 2}
+  - {fileID: 11400000, guid: 3a4adbab139152542b6a7712055a4ced, type: 2}
   hitter: {fileID: 11400000, guid: 9370508409fd36d43b04301710bbfee6, type: 2}
   speed: 3
+  weight: 1
