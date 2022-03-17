@@ -11,8 +11,9 @@ public class MovementAnimationPluginSO : BaseInstructionsPluginSO
 		return () => animation.Move(data.weight);
 	}
 
-	public override Action? GetOnUpdate(GameObject agent, PluginData data) {
-		return null;
+	public override Action GetOnUpdate(GameObject agent, PluginData data) {
+		IMovementAnimation animation = agent.RequireComponent<IMovementAnimation>();
+		return () => animation.Move(data.weight);
 	}
 
 	public override Action GetOnEnd(GameObject agent, PluginData data) {

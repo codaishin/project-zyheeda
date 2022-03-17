@@ -53,6 +53,43 @@ public class MovementAnimationPluginSOTests : TestCollection
 	}
 
 	[UnityTest]
+	public IEnumerator OnUpdateWalk() {
+		var called = -1f;
+		var agent = new GameObject().AddComponent<MockMovementAnimationMB>();
+		var instructions = ScriptableObject.CreateInstance<MovementAnimationPluginSO>();
+
+		agent.move = value => called = value;
+
+		var action = instructions.GetOnUpdate(agent.gameObject, new PluginData());
+
+		yield return new WaitForEndOfFrame();
+
+		action();
+
+		Assert.AreEqual(0, called);
+	}
+
+	[UnityTest]
+	public IEnumerator OnUpdateWalkWeight() {
+		var called = -1f;
+		var agent = new GameObject().AddComponent<MockMovementAnimationMB>();
+		var instructions = ScriptableObject.CreateInstance<MovementAnimationPluginSO>();
+
+		agent.move = value => called = value;
+
+		var action = instructions.GetOnUpdate(
+			agent.gameObject,
+			new PluginData { weight = 0.111f }
+		);
+
+		yield return new WaitForEndOfFrame();
+
+		action();
+
+		Assert.AreEqual(0.111f, called);
+	}
+
+	[UnityTest]
 	public IEnumerator OnEndStop() {
 		var called = false;
 		var agent = new GameObject().AddComponent<MockMovementAnimationMB>();
