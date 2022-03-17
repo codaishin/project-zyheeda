@@ -21,14 +21,14 @@ public class MoveConstantSO : BaseInstructionsSO<Transform>
 		return () => this.Move(agent);
 	}
 
-	private IEnumerable<WaitForFixedUpdate> Move(Transform transform) {
+	private IEnumerable<WaitForEndOfFrame> Move(Transform transform) {
 		Vector3? point = this.hitter!.TryPoint(transform);
 		if (!point.HasValue) {
 			yield break;
 		}
 		transform.LookAt(point.Value);
 		while (transform.position != point.Value) {
-			yield return new WaitForFixedUpdate();
+			yield return new WaitForEndOfFrame();
 			transform.position = this.MoveTowards(transform.position, point.Value);
 		}
 	}

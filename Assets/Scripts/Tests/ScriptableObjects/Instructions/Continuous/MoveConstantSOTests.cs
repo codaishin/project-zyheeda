@@ -57,9 +57,9 @@ public class MoveConstantSOTests : TestCollection
 
 		runner.StartCoroutine(getRoutine().GetEnumerator());
 
-		var delta = Time.fixedDeltaTime;
+		yield return new WaitForEndOfFrame();
 
-		yield return new WaitForFixedUpdate();
+		var delta = Time.deltaTime;
 
 		Assert.AreEqual(Vector3.right * delta, agent.transform.position);
 	}
@@ -79,9 +79,9 @@ public class MoveConstantSOTests : TestCollection
 
 		runner.StartCoroutine(getRoutine().GetEnumerator());
 
-		var delta = Time.fixedDeltaTime;
+		yield return new WaitForEndOfFrame();
 
-		yield return new WaitForFixedUpdate();
+		var delta = Time.deltaTime;
 
 		Assert.AreEqual(new Vector3(1, delta, 0), agent.transform.position);
 	}
@@ -100,13 +100,13 @@ public class MoveConstantSOTests : TestCollection
 
 		routineRunner.StartCoroutine(getRoutine().GetEnumerator());
 
-		var delta = Time.fixedDeltaTime;
+		yield return new WaitForEndOfFrame();
 
-		yield return new WaitForFixedUpdate();
+		var delta = Time.deltaTime;
 
-		delta += Time.fixedDeltaTime;
+		yield return new WaitForEndOfFrame();
 
-		yield return new WaitForFixedUpdate();
+		delta += Time.deltaTime;
 
 		Assert.AreEqual(Vector3.right * delta, agent.transform.position);
 	}
@@ -126,13 +126,13 @@ public class MoveConstantSOTests : TestCollection
 
 		routineRunner.StartCoroutine(getRoutine().GetEnumerator());
 
-		var delta = Time.fixedDeltaTime;
+		yield return new WaitForEndOfFrame();
 
-		yield return new WaitForFixedUpdate();
+		var delta = Time.deltaTime;
 
-		delta += Time.fixedDeltaTime;
+		yield return new WaitForEndOfFrame();
 
-		yield return new WaitForFixedUpdate();
+		delta += Time.deltaTime;
 
 		Assert.AreEqual(Vector3.right * delta * 2, agent.transform.position);
 	}
@@ -153,7 +153,7 @@ public class MoveConstantSOTests : TestCollection
 
 		routineRunner.StartCoroutine(getRoutine().GetEnumerator());
 
-		yield return new WaitForFixedUpdate();
+		yield return new WaitForEndOfFrame();
 
 		Assert.AreEqual(Vector3.up, agent.transform.position);
 	}
@@ -173,11 +173,11 @@ public class MoveConstantSOTests : TestCollection
 
 		routineRunner.StartCoroutine(getRoutine().GetEnumerator());
 
-		yield return new WaitForFixedUpdate();
+		yield return new WaitForEndOfFrame();
 
 		agent.transform.position = Vector3.zero;
 
-		yield return new WaitForFixedUpdate();
+		yield return new WaitForEndOfFrame();
 
 		Assert.AreEqual(Vector3.zero, agent.transform.position);
 	}
