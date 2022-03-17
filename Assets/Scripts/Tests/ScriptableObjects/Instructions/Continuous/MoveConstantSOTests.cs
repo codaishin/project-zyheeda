@@ -1,10 +1,12 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-public class MoveConstantSpeedSOTests : TestCollection
+public class MoveConstantSOTests : TestCollection
 {
 	class MockHitSO : BaseHitSO
 	{
@@ -24,7 +26,7 @@ public class MoveConstantSpeedSOTests : TestCollection
 	[UnityTest]
 	public IEnumerator PassTransformToHitter() {
 		Transform? transform = null;
-		var moveSO = ScriptableObject.CreateInstance<MoveConstantSpeedSO>();
+		var moveSO = ScriptableObject.CreateInstance<MoveConstantSO>();
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
 		var agent = new GameObject();
 		var runner = new GameObject().AddComponent<MockMB>();
@@ -43,7 +45,7 @@ public class MoveConstantSpeedSOTests : TestCollection
 
 	[UnityTest]
 	public IEnumerator MoveRight() {
-		var moveSO = ScriptableObject.CreateInstance<MoveConstantSpeedSO>();
+		var moveSO = ScriptableObject.CreateInstance<MoveConstantSO>();
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
 		var agent = new GameObject();
 		var runner = new GameObject().AddComponent<MockMB>();
@@ -64,7 +66,7 @@ public class MoveConstantSpeedSOTests : TestCollection
 
 	[UnityTest]
 	public IEnumerator MoveFromOffCenterRight() {
-		var moveSO = ScriptableObject.CreateInstance<MoveConstantSpeedSO>();
+		var moveSO = ScriptableObject.CreateInstance<MoveConstantSO>();
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
 		var agent = new GameObject();
 		var runner = new GameObject().AddComponent<MockMB>();
@@ -86,7 +88,7 @@ public class MoveConstantSpeedSOTests : TestCollection
 
 	[UnityTest]
 	public IEnumerator MoveRightTwice() {
-		var moveSO = ScriptableObject.CreateInstance<MoveConstantSpeedSO>();
+		var moveSO = ScriptableObject.CreateInstance<MoveConstantSO>();
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
 		var agent = new GameObject();
 		var routineRunner = new GameObject().AddComponent<MockMB>();
@@ -111,7 +113,7 @@ public class MoveConstantSpeedSOTests : TestCollection
 
 	[UnityTest]
 	public IEnumerator MoveRightTwiceFaster() {
-		var moveSO = ScriptableObject.CreateInstance<MoveConstantSpeedSO>();
+		var moveSO = ScriptableObject.CreateInstance<MoveConstantSO>();
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
 		var agent = new GameObject();
 		var routineRunner = new GameObject().AddComponent<MockMB>();
@@ -137,7 +139,7 @@ public class MoveConstantSpeedSOTests : TestCollection
 
 	[UnityTest]
 	public IEnumerator NoMoveWhenNoHit() {
-		var moveSO = ScriptableObject.CreateInstance<MoveConstantSpeedSO>();
+		var moveSO = ScriptableObject.CreateInstance<MoveConstantSO>();
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
 		var agent = new GameObject();
 		var routineRunner = new GameObject().AddComponent<MockMB>();
@@ -158,7 +160,7 @@ public class MoveConstantSpeedSOTests : TestCollection
 
 	[UnityTest]
 	public IEnumerator StopWhenOnTarget() {
-		var moveSO = ScriptableObject.CreateInstance<MoveConstantSpeedSO>();
+		var moveSO = ScriptableObject.CreateInstance<MoveConstantSO>();
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
 		var agent = new GameObject();
 		var routineRunner = new GameObject().AddComponent<MockMB>();
@@ -182,7 +184,7 @@ public class MoveConstantSpeedSOTests : TestCollection
 
 	[UnityTest]
 	public IEnumerator FaceTarget() {
-		var moveSO = ScriptableObject.CreateInstance<MoveConstantSpeedSO>();
+		var moveSO = ScriptableObject.CreateInstance<MoveConstantSO>();
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
 		var agent = new GameObject();
 		var routineRunner = new GameObject().AddComponent<MockMB>();
@@ -201,5 +203,56 @@ public class MoveConstantSpeedSOTests : TestCollection
 			Vector3.right == agent.transform.forward,
 			$"{Vector3.right} vs {agent.transform.forward}"
 		);
+	}
+
+	class MockPluginSO : BaseInstructionsPluginSO
+	{
+		public Func<GameObject, PluginData, Action?> getOnBegin = (_, __) => null;
+		public Func<GameObject, PluginData, Action?> getOnUpdate = (_, __) => null;
+		public Func<GameObject, PluginData, Action?> getOnEnd = (_, __) => null;
+
+		public override Action? GetOnBegin(GameObject agent, PluginData data) {
+			return this.getOnBegin(agent, data);
+		}
+
+		public override Action? GetOnEnd(GameObject agent, PluginData data) {
+			return this.getOnEnd(agent, data);
+		}
+
+		public override Action? GetOnUpdate(GameObject agent, PluginData data) {
+			return this.getOnUpdate(agent, data);
+		}
+	}
+
+	[UnityTest]
+	public IEnumerator WeightToPluginDataWeight() {
+		var weights = new List<float>();
+		var moveSO = ScriptableObject.CreateInstance<MoveConstantSO>();
+		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
+		var agent = new GameObject();
+		var routineRunner = new GameObject().AddComponent<MockMB>();
+		var pluginSO = ScriptableObject.CreateInstance<MockPluginSO>();
+		moveSO.hitter = hitSO;
+		moveSO.speed = 1;
+		moveSO.weight = 0.0112f;
+		moveSO.plugins = new MockPluginSO[] { pluginSO };
+
+		hitSO.getPoint = _ => Vector3.right * 100;
+
+		pluginSO.getOnBegin = (_, d) => () => weights.Add(d.weight);
+		pluginSO.getOnUpdate = (_, d) => () => weights.Add(d.weight);
+		pluginSO.getOnEnd = (_, d) => () => weights.Add(d.weight);
+
+		yield return new WaitForEndOfFrame();
+
+		var getRoutine = moveSO.GetInstructionsFor(agent);
+		routineRunner.StartCoroutine(getRoutine().GetEnumerator());
+
+		yield return new WaitForEndOfFrame();
+		yield return new WaitForEndOfFrame();
+		yield return new WaitForEndOfFrame();
+		yield return new WaitForEndOfFrame();
+
+		Assert.True(weights.All(w => w == 0.0112f));
 	}
 }

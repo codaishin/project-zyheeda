@@ -3,10 +3,11 @@ using UnityEngine;
 
 
 [CreateAssetMenu(menuName = "ScriptableObjects/Instructions/MoveConstantSpeed")]
-public class MoveConstantSpeedSO : BaseInstructionsSO<Transform>
+public class MoveConstantSO : BaseInstructionsSO<Transform>
 {
 	public BaseHitSO? hitter;
 	public float speed = 1;
+	public float weight = 1;
 
 	protected override Transform GetConcreteAgent(GameObject agent) {
 		return agent.transform;
@@ -16,6 +17,7 @@ public class MoveConstantSpeedSO : BaseInstructionsSO<Transform>
 		Transform agent,
 		PluginData data
 	) {
+		data.weight = this.weight;
 		return () => this.Move(agent);
 	}
 
