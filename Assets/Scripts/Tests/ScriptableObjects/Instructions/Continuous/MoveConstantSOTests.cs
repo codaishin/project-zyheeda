@@ -182,29 +182,6 @@ public class MoveConstantSOTests : TestCollection
 		Assert.AreEqual(Vector3.zero, agent.transform.position);
 	}
 
-	[UnityTest]
-	public IEnumerator FaceTarget() {
-		var moveSO = ScriptableObject.CreateInstance<MoveConstantSO>();
-		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
-		var agent = new GameObject();
-		var routineRunner = new GameObject().AddComponent<MockMB>();
-		var getRoutine = moveSO.GetInstructionsFor(agent);
-		moveSO.hitter = hitSO;
-		moveSO.speed = float.MaxValue;
-		hitSO.getPoint = _ => Vector3.right;
-
-		yield return new WaitForEndOfFrame();
-
-		routineRunner.StartCoroutine(getRoutine().GetEnumerator());
-
-		yield return new WaitForEndOfFrame();
-
-		Assert.True(
-			Vector3.right == agent.transform.forward,
-			$"{Vector3.right} vs {agent.transform.forward}"
-		);
-	}
-
 	class MockPluginSO : BaseInstructionsPluginSO
 	{
 		public Func<GameObject, PluginData, PluginCallbacks> getCallbacks

@@ -188,44 +188,6 @@ public class MoveDynamicSOTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator AllwaysFaceTarget() {
-		var moveSO = ScriptableObject.CreateInstance<MoveDynamicSO>();
-		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
-		var agent = new GameObject();
-		var runner = new GameObject().AddComponent<MockMB>();
-		moveSO.hitter = hitSO;
-		moveSO.min = new MoveDynamicSO.ValueSet {
-			speed = 1,
-			distance = 1,
-		};
-		moveSO.max = new MoveDynamicSO.ValueSet {
-			speed = 10,
-			distance = 10,
-		};
-
-		yield return new WaitForEndOfFrame();
-
-		var getRoutine = moveSO.GetInstructionsFor(agent);
-		runner.StartCoroutine(getRoutine().GetEnumerator());
-
-		hitSO.getPoint = _ => Vector3.up * 100;
-
-		yield return new WaitForEndOfFrame();
-
-		Tools.AssertEqual(agent.transform.forward, Vector3.up);
-		hitSO.getPoint = _ => agent.transform.position + Vector3.right * 100;
-
-		yield return new WaitForEndOfFrame();
-
-		Tools.AssertEqual(agent.transform.forward, Vector3.right);
-		hitSO.getPoint = _ => agent.transform.position + Vector3.down * 100;
-
-		yield return new WaitForEndOfFrame();
-
-		Tools.AssertEqual(agent.transform.forward, Vector3.down);
-	}
-
-	[UnityTest]
 	public IEnumerator MoveChanginPositionUseLastIfCurrentlyNoHit() {
 		var moveSO = ScriptableObject.CreateInstance<MoveDynamicSO>();
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();

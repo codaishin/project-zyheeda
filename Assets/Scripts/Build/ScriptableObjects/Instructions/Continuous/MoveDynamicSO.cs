@@ -33,7 +33,6 @@ public class MoveDynamicSO : BaseInstructionsSO<Transform>
 		do {
 			yield return new WaitForEndOfFrame();
 			target = this.hitter!.TryPoint(agent) ?? target;
-			agent.LookAt(target);
 			this.MoveFrame(agent, data, target);
 		} while (agent.position != target);
 	}

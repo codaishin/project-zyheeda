@@ -26,7 +26,6 @@ public class MoveConstantSO : BaseInstructionsSO<Transform>
 		if (!point.HasValue) {
 			yield break;
 		}
-		transform.LookAt(point.Value);
 		while (transform.position != point.Value) {
 			yield return new WaitForEndOfFrame();
 			transform.position = this.MoveTowards(transform.position, point.Value);
