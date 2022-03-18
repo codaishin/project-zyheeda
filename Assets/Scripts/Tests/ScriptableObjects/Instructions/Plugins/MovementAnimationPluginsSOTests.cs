@@ -23,7 +23,9 @@ public class MovementAnimationPluginSOTests : TestCollection
 
 		agent.move = value => called = value;
 
-		var action = instructions.GetOnBegin(agent.gameObject, new PluginData());
+		var action = instructions
+			.GetCallbacks(agent.gameObject, new PluginData())
+			.onBegin!;
 
 		yield return new WaitForEndOfFrame();
 
@@ -40,10 +42,9 @@ public class MovementAnimationPluginSOTests : TestCollection
 
 		agent.move = value => called = value;
 
-		var action = instructions.GetOnBegin(
-			agent.gameObject,
-			new PluginData { weight = 0.324f }
-		);
+		var action = instructions
+			.GetCallbacks(agent.gameObject, new PluginData { weight = 0.324f })
+			.onBegin!;
 
 		yield return new WaitForEndOfFrame();
 
@@ -60,7 +61,9 @@ public class MovementAnimationPluginSOTests : TestCollection
 
 		agent.move = value => called = value;
 
-		var action = instructions.GetOnUpdate(agent.gameObject, new PluginData());
+		var action = instructions
+			.GetCallbacks(agent.gameObject, new PluginData())
+			.onUpdate!;
 
 		yield return new WaitForEndOfFrame();
 
@@ -77,10 +80,9 @@ public class MovementAnimationPluginSOTests : TestCollection
 
 		agent.move = value => called = value;
 
-		var action = instructions.GetOnUpdate(
-			agent.gameObject,
-			new PluginData { weight = 0.111f }
-		);
+		var action = instructions
+			.GetCallbacks(agent.gameObject, new PluginData { weight = 0.111f })
+			.onUpdate!;
 
 		yield return new WaitForEndOfFrame();
 
@@ -97,10 +99,9 @@ public class MovementAnimationPluginSOTests : TestCollection
 
 		agent.stop = () => called = true;
 
-		var action = instructions.GetOnEnd(
-			agent.gameObject,
-			new PluginData { weight = 0.324f }
-		);
+		var action = instructions
+			.GetCallbacks(agent.gameObject, new PluginData { weight = 0.324f })
+			.onEnd!;
 
 		yield return new WaitForEndOfFrame();
 

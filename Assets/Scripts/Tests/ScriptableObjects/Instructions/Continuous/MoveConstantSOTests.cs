@@ -207,20 +207,14 @@ public class MoveConstantSOTests : TestCollection
 
 	class MockPluginSO : BaseInstructionsPluginSO
 	{
-		public Func<GameObject, PluginData, Action?> getOnBegin = (_, __) => null;
-		public Func<GameObject, PluginData, Action?> getOnUpdate = (_, __) => null;
-		public Func<GameObject, PluginData, Action?> getOnEnd = (_, __) => null;
+		public Func<GameObject, PluginData, PluginCallbacks> getCallbacks
+			= (_, __) => new PluginCallbacks();
 
-		public override Action? GetOnBegin(GameObject agent, PluginData data) {
-			return this.getOnBegin(agent, data);
-		}
-
-		public override Action? GetOnEnd(GameObject agent, PluginData data) {
-			return this.getOnEnd(agent, data);
-		}
-
-		public override Action? GetOnUpdate(GameObject agent, PluginData data) {
-			return this.getOnUpdate(agent, data);
+		public override PluginCallbacks GetCallbacks(
+			GameObject agent,
+			PluginData data
+		) {
+			return this.getCallbacks(agent, data);
 		}
 	}
 
@@ -239,9 +233,11 @@ public class MoveConstantSOTests : TestCollection
 
 		hitSO.getPoint = _ => Vector3.right * 100;
 
-		pluginSO.getOnBegin = (_, d) => () => weights.Add(d.weight);
-		pluginSO.getOnUpdate = (_, d) => () => weights.Add(d.weight);
-		pluginSO.getOnEnd = (_, d) => () => weights.Add(d.weight);
+		pluginSO.getCallbacks = (_, d) => new PluginCallbacks {
+			onBegin = () => weights.Add(d.weight),
+			onUpdate = () => weights.Add(d.weight),
+			onEnd = () => weights.Add(d.weight),
+		};
 
 		yield return new WaitForEndOfFrame();
 

@@ -8,23 +8,14 @@ public class BaseInstructionsSOTests : TestCollection
 {
 	class MockPluginSO : BaseInstructionsPluginSO
 	{
-		public Func<GameObject, PluginData, Action> getOnBegin =
-			(_, __) => () => { };
-		public Func<GameObject, PluginData, Action> getOnUpdate =
-			(_, __) => () => { };
-		public Func<GameObject, PluginData, Action> getOnEnd =
-			(_, __) => () => { };
+		public Func<GameObject, PluginData, PluginCallbacks> getCallbacks =
+			(_, __) => new PluginCallbacks();
 
-		public override Action GetOnBegin(GameObject agent, PluginData data) {
-			return this.getOnBegin(agent, data);
-		}
-
-		public override Action GetOnUpdate(GameObject agent, PluginData data) {
-			return this.getOnUpdate(agent, data);
-		}
-
-		public override Action GetOnEnd(GameObject agent, PluginData data) {
-			return this.getOnEnd(agent, data);
+		public override PluginCallbacks GetCallbacks(
+			GameObject agent,
+			PluginData data
+		) {
+			return this.getCallbacks(agent, data);
 		}
 	}
 
@@ -87,27 +78,54 @@ public class BaseInstructionsSOTests : TestCollection
 		Assert.AreEqual(Vector3.up * 3, agent.transform.position);
 	}
 
-	[Test]
-	public void GetOnBegin() {
+	public void GetCallbacks() {
 		var called = new List<GameObject>();
 		var agent = new GameObject();
+		var data = new PluginData();
 		var instructionsSO = ScriptableObject.CreateInstance<MockInstructionSO>();
 
-		Action getOnBegin(GameObject agent, PluginData data) {
-			called!.Add(agent);
-			return () => { };
+		PluginCallbacks getCallbacks(GameObject agent, PluginData _) {
+			called.Add(agent);
+			return new PluginCallbacks();
 		}
 
 		var plugins = new MockPluginSO[] {
 			ScriptableObject.CreateInstance<MockPluginSO>(),
 			ScriptableObject.CreateInstance<MockPluginSO>(),
 		};
-		plugins.ForEach(plugin => plugin.getOnBegin = getOnBegin);
+		plugins.ForEach(plugin => plugin.getCallbacks = getCallbacks);
 		instructionsSO.plugins = plugins;
 
-		var insructions = instructionsSO.GetInstructionsFor(agent);
+		var insructions = instructionsSO.GetInstructionsFor(agent, data);
 
-		CollectionAssert.AreEqual(new GameObject[] { agent, agent }, called);
+		Assert.AreEqual((agent, agent), (called[0], called[1]));
+	}
+
+	[Test]
+	public void GetCallbacksWithData() {
+		var calledObj = new List<GameObject>();
+		var calledData = new List<PluginData>();
+		var agent = new GameObject();
+		var data = new PluginData();
+		var instructionsSO = ScriptableObject.CreateInstance<MockInstructionSO>();
+
+		PluginCallbacks getCallbacks(GameObject agent, PluginData data) {
+			calledObj.Add(agent);
+			calledData.Add(data);
+			return new PluginCallbacks();
+		}
+
+		var plugins = new MockPluginSO[] {
+			ScriptableObject.CreateInstance<MockPluginSO>(),
+			ScriptableObject.CreateInstance<MockPluginSO>(),
+		};
+		plugins.ForEach(plugin => plugin.getCallbacks = getCallbacks);
+		instructionsSO.plugins = plugins;
+
+		var insructions = instructionsSO.GetInstructionsFor(agent, data);
+
+		Assert.AreEqual((agent, agent), (calledObj[0], calledObj[1]));
+		Assert.AreEqual((data, data), (calledData[0], calledData[1]));
 	}
 
 	[Test]
@@ -116,13 +134,15 @@ public class BaseInstructionsSOTests : TestCollection
 		var agent = new GameObject();
 		var instructionsSO = ScriptableObject.CreateInstance<MockInstructionSO>();
 
-		Action getOnBegin(GameObject agent, PluginData data) => () => ++called;
+		PluginCallbacks getCallbacks(GameObject agent, PluginData data) {
+			return new PluginCallbacks { onBegin = () => ++called };
+		}
 
 		var plugins = new MockPluginSO[] {
 			ScriptableObject.CreateInstance<MockPluginSO>(),
 			ScriptableObject.CreateInstance<MockPluginSO>(),
 		};
-		plugins.ForEach(pl => pl.getOnBegin = getOnBegin);
+		plugins.ForEach(pl => pl.getCallbacks = getCallbacks);
 		instructionsSO.plugins = plugins;
 		instructionsSO.insructions = (_, __) => () => new YieldInstruction[] {
 			new WaitForEndOfFrame(),
@@ -140,29 +160,6 @@ public class BaseInstructionsSOTests : TestCollection
 	}
 
 	[Test]
-	public void GetOnEnd() {
-		var called = new List<GameObject>();
-		var agent = new GameObject();
-		var instructionsSO = ScriptableObject.CreateInstance<MockInstructionSO>();
-
-		Action getOnEnd(GameObject agent, PluginData data) {
-			called!.Add(agent);
-			return () => { };
-		}
-
-		var plugins = new MockPluginSO[] {
-			ScriptableObject.CreateInstance<MockPluginSO>(),
-			ScriptableObject.CreateInstance<MockPluginSO>(),
-		};
-		plugins.ForEach(plugin => plugin.getOnEnd = getOnEnd);
-		instructionsSO.plugins = plugins;
-
-		var insructions = instructionsSO.GetInstructionsFor(agent);
-
-		CollectionAssert.AreEqual(new GameObject[] { agent, agent }, called);
-	}
-
-	[Test]
 	public void PluginDataAllSame() {
 		var data = new List<PluginData>();
 		var agent = new GameObject();
@@ -172,18 +169,17 @@ public class BaseInstructionsSOTests : TestCollection
 			ScriptableObject.CreateInstance<MockPluginSO>(),
 			ScriptableObject.CreateInstance<MockPluginSO>(),
 		};
-		plugins.ForEach(pl => pl.getOnBegin = (_, d) => () => data.Add(d));
-		plugins.ForEach(pl => pl.getOnUpdate = (_, d) => () => data.Add(d));
-		plugins.ForEach(pl => pl.getOnEnd = (_, d) => () => data.Add(d));
+		plugins.ForEach(pl => pl.getCallbacks = (_, d) => {
+			data.Add(d);
+			return new PluginCallbacks();
+		});
 		instructionsSO.insructions = (_, d) => () => {
 			data.Add(d);
-			return new YieldInstruction[] { new WaitForEndOfFrame() };
+			return new YieldInstruction[0];
 		};
 		instructionsSO.plugins = plugins;
 
 		var insructions = instructionsSO.GetInstructionsFor(agent);
-
-		foreach (var _ in insructions()) ;
 
 		Assert.AreEqual(1, data.Distinct().Count());
 	}
@@ -194,13 +190,14 @@ public class BaseInstructionsSOTests : TestCollection
 		var agent = new GameObject();
 		var instructionsSO = ScriptableObject.CreateInstance<MockInstructionSO>();
 
-		Action getOnEnd(GameObject agent, PluginData data) => () => ++called;
+		PluginCallbacks getCallbacks(GameObject agent, PluginData data) =>
+			new PluginCallbacks { onEnd = () => ++called };
 
 		var plugins = new MockPluginSO[] {
 			ScriptableObject.CreateInstance<MockPluginSO>(),
 			ScriptableObject.CreateInstance<MockPluginSO>(),
 		};
-		plugins.ForEach(pl => pl.getOnEnd = getOnEnd);
+		plugins.ForEach(pl => pl.getCallbacks = getCallbacks);
 		instructionsSO.plugins = plugins;
 		instructionsSO.insructions = (_, __) => () => new YieldInstruction[] {
 			new WaitForEndOfFrame(),
@@ -218,29 +215,6 @@ public class BaseInstructionsSOTests : TestCollection
 	}
 
 	[Test]
-	public void GetOnUpdate() {
-		var called = new List<GameObject>();
-		var agent = new GameObject();
-		var instructionsSO = ScriptableObject.CreateInstance<MockInstructionSO>();
-		var plugins = new MockPluginSO[] {
-			ScriptableObject.CreateInstance<MockPluginSO>(),
-			ScriptableObject.CreateInstance<MockPluginSO>(),
-		};
-
-		Action getOnUpdate(GameObject agent, PluginData data) {
-			called!.Add(agent);
-			return () => { };
-		}
-
-		plugins.ForEach(plugin => plugin.getOnUpdate = getOnUpdate);
-		instructionsSO.plugins = plugins;
-
-		var insructions = instructionsSO.GetInstructionsFor(agent);
-
-		CollectionAssert.AreEqual(new GameObject[] { agent, agent }, called);
-	}
-
-	[Test]
 	public void GracefullRelease() {
 		var called = 0;
 		var iterations = 0;
@@ -254,7 +228,8 @@ public class BaseInstructionsSOTests : TestCollection
 			}
 		}
 
-		plugin.getOnEnd = (_, __) => () => ++called;
+		plugin.getCallbacks =
+			(_, __) => new PluginCallbacks { onEnd = () => ++called };
 		instructionsSO.plugins = new MockPluginSO[] { plugin }; ;
 		instructionsSO.insructions = (_, __) => instructionFunc;
 

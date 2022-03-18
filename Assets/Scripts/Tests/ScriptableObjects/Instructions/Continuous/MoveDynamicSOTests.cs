@@ -24,18 +24,14 @@ public class MoveDynamicSOTests : TestCollection
 
 	class MockPluginSO : BaseInstructionsPluginSO
 	{
-		public Func<GameObject, PluginData, Action?> getOnUpdate = (_, __) => null;
+		public Func<GameObject, PluginData, PluginCallbacks> getCallbacks =
+			(_, __) => new PluginCallbacks();
 
-		public override Action? GetOnBegin(GameObject agent, PluginData data) {
-			return null;
-		}
-
-		public override Action? GetOnEnd(GameObject agent, PluginData data) {
-			return null;
-		}
-
-		public override Action? GetOnUpdate(GameObject agent, PluginData data) {
-			return this.getOnUpdate(agent, data);
+		public override PluginCallbacks GetCallbacks(
+			GameObject agent,
+			PluginData data
+		) {
+			return this.getCallbacks(agent, data);
 		}
 	}
 
@@ -370,7 +366,9 @@ public class MoveDynamicSOTests : TestCollection
 
 		moveSO.plugins = new MockPluginSO[] { plugin };
 
-		plugin.getOnUpdate = (_, d) => () => weights.Add(d.weight);
+		plugin.getCallbacks = (_, d) => new PluginCallbacks {
+			onUpdate = () => weights.Add(d.weight)
+		};
 
 		yield return new WaitForEndOfFrame();
 

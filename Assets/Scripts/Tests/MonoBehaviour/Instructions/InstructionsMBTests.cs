@@ -212,20 +212,15 @@ public class InstructionsMBTests : TestCollection
 
 	class MockPluginSO : BaseInstructionsPluginSO
 	{
-		public Func<GameObject, PluginData, Action> getOnEnd = (_, __) => () => { };
+		public Func<GameObject, PluginData, PluginCallbacks> getCallbacks =
+			(_, __) => new PluginCallbacks();
 
-		public override Action? GetOnBegin(GameObject agent, PluginData data) {
-			return null;
+		public override PluginCallbacks GetCallbacks(
+			GameObject agent,
+			PluginData data
+		) {
+			return this.getCallbacks(agent, data);
 		}
-
-		public override Action? GetOnUpdate(GameObject agent, PluginData data) {
-			return null;
-		}
-
-		public override Action GetOnEnd(GameObject agent, PluginData data) {
-			return this.getOnEnd(agent, data);
-		}
-
 	}
 
 	[UnityTest]
@@ -241,7 +236,8 @@ public class InstructionsMBTests : TestCollection
 		comp.overrideMode = OverrideMode.Own;
 		comp.runner = external;
 
-		plugin.getOnEnd = (_, __) => () => ++calledEnd;
+		plugin.getCallbacks =
+			(_, __) => new PluginCallbacks { onEnd = () => ++calledEnd };
 		instructions.plugins = new MockPluginSO[] { plugin };
 
 		yield return new WaitForEndOfFrame();
@@ -257,6 +253,6 @@ public class InstructionsMBTests : TestCollection
 		yield return new WaitForEndOfFrame();
 		yield return new WaitForEndOfFrame();
 
-		Assert.AreEqual((Vector3.up * 2, 1), (agent.transform.position, calledEnd));
+		Assert.AreEqual((Vector3.up, 1), (agent.transform.position, calledEnd));
 	}
 }

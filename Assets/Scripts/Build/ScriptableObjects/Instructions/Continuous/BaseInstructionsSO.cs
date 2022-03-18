@@ -57,32 +57,24 @@ public abstract class BaseInstructionsSO<TAgent> : BaseInstructionsSO
 	) {
 		data = data ?? new PluginData { run = true };
 		TAgent concreteAgent = this.GetConcreteAgent(agent);
-		Action? onBegin = this.GetPluginBegin(agent, data);
-		Action? onUpdate = this.GetPluginUpdate(agent, data);
-		Action? onEnd = this.GetPluginEnd(agent, data);
+		PluginCallbacks callbacks = this.PluginCallbacks(agent, data);
 		CoroutineInstructions instructions = this.Instructions(concreteAgent, data);
 
 		return () => BaseInstructionsSO.RunInstructions(
 			instructions,
-			onBegin,
-			onUpdate,
-			onEnd,
+			callbacks.onBegin,
+			callbacks.onUpdate,
+			callbacks.onEnd,
 			data
 		);
 	}
 
-	private Action? GetPluginEnd(GameObject agent, PluginData data) =>
+	private PluginCallbacks PluginCallbacks(GameObject agent, PluginData data) =>
 		this.plugins
-			.Select(plugin => plugin.GetOnEnd(agent, data))
-			.Aggregate(null as Action, (l, c) => l + c);
-
-	private Action? GetPluginUpdate(GameObject agent, PluginData data) =>
-		this.plugins
-			.Select(plugin => plugin.GetOnUpdate(agent, data))
-			.Aggregate(null as Action, (l, c) => l + c);
-
-	private Action? GetPluginBegin(GameObject agent, PluginData data) =>
-		this.plugins
-			.Select(plugin => plugin.GetOnBegin(agent, data))
-			.Aggregate(null as Action, (l, c) => l + c);
+			.Select(plugin => plugin.GetCallbacks(agent, data))
+			.Aggregate(new PluginCallbacks(), (l, c) => new PluginCallbacks {
+				onBegin = l.onBegin + c.onBegin,
+				onUpdate = l.onUpdate + c.onUpdate,
+				onEnd = l.onEnd + c.onEnd,
+			});
 }

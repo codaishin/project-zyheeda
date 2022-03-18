@@ -7,9 +7,17 @@ public class PluginData
 	public float weight;
 }
 
+public struct PluginCallbacks
+{
+	public Action? onBegin;
+	public Action? onUpdate;
+	public Action? onEnd;
+}
+
 public abstract class BaseInstructionsPluginSO : ScriptableObject
 {
-	public abstract Action? GetOnBegin(GameObject agent, PluginData data);
-	public abstract Action? GetOnUpdate(GameObject agent, PluginData data);
-	public abstract Action? GetOnEnd(GameObject agent, PluginData data);
+	public abstract PluginCallbacks GetCallbacks(
+		GameObject agent,
+		PluginData data
+	);
 }
