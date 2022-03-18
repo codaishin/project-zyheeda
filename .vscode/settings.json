@@ -66,6 +66,8 @@
 		"Temp/": true
 	},
 	"cSpell.words": [
+		"lerp",
+		"Mathf",
 		"MonoBehaviour"
 	],
 }

@@ -1,25 +1,33 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
 [CreateAssetMenu(menuName = "ScriptableObjects/Instructions/MoveConstantSpeed")]
-public class MoveConstantSpeedSO : BaseInstructionsSO<Transform>
+public class MoveConstantSO : BaseInstructionsSO<Transform>
 {
 	public BaseHitSO? hitter;
 	public float speed = 1;
+	public float weight = 1;
 
-	protected override Transform GetConcreteAgent(GameObject agent) =>
-		agent.transform;
-	protected override CoroutineInstructions Instructions(Transform agent) =>
-		() => this.Move(agent);
+	protected override Transform GetConcreteAgent(GameObject agent) {
+		return agent.transform;
+	}
 
-	private IEnumerable<WaitForFixedUpdate> Move(Transform transform) {
+	protected override CoroutineInstructions Instructions(
+		Transform agent,
+		PluginData data
+	) {
+		data.weight = this.weight;
+		return () => this.Move(agent);
+	}
+
+	private IEnumerable<WaitForEndOfFrame> Move(Transform transform) {
 		Vector3? point = this.hitter!.TryPoint(transform);
 		if (!point.HasValue) {
 			yield break;
 		}
-		transform.LookAt(point.Value);
 		while (transform.position != point.Value) {
-			yield return new WaitForFixedUpdate();
+			yield return new WaitForEndOfFrame();
 			transform.position = this.MoveTowards(transform.position, point.Value);
 		}
 	}

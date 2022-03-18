@@ -21,10 +21,11 @@ public class MovementAnimationPluginSOTests : TestCollection
 		var agent = new GameObject().AddComponent<MockMovementAnimationMB>();
 		var instructions = ScriptableObject.CreateInstance<MovementAnimationPluginSO>();
 
-		instructions.walkOrRunWeight = 0;
 		agent.move = value => called = value;
 
-		var action = instructions.GetOnBegin(agent.gameObject);
+		var action = instructions
+			.GetCallbacks(agent.gameObject, new PluginData())
+			.onBegin!;
 
 		yield return new WaitForEndOfFrame();
 
@@ -39,10 +40,11 @@ public class MovementAnimationPluginSOTests : TestCollection
 		var agent = new GameObject().AddComponent<MockMovementAnimationMB>();
 		var instructions = ScriptableObject.CreateInstance<MovementAnimationPluginSO>();
 
-		instructions.walkOrRunWeight = 0.324f;
 		agent.move = value => called = value;
 
-		var action = instructions.GetOnBegin(agent.gameObject);
+		var action = instructions
+			.GetCallbacks(agent.gameObject, new PluginData { weight = 0.324f })
+			.onBegin!;
 
 		yield return new WaitForEndOfFrame();
 
@@ -52,15 +54,54 @@ public class MovementAnimationPluginSOTests : TestCollection
 	}
 
 	[UnityTest]
+	public IEnumerator OnUpdateWalk() {
+		var called = -1f;
+		var agent = new GameObject().AddComponent<MockMovementAnimationMB>();
+		var instructions = ScriptableObject.CreateInstance<MovementAnimationPluginSO>();
+
+		agent.move = value => called = value;
+
+		var action = instructions
+			.GetCallbacks(agent.gameObject, new PluginData())
+			.onAfterYield!;
+
+		yield return new WaitForEndOfFrame();
+
+		action();
+
+		Assert.AreEqual(0, called);
+	}
+
+	[UnityTest]
+	public IEnumerator OnUpdateWalkWeight() {
+		var called = -1f;
+		var agent = new GameObject().AddComponent<MockMovementAnimationMB>();
+		var instructions = ScriptableObject.CreateInstance<MovementAnimationPluginSO>();
+
+		agent.move = value => called = value;
+
+		var action = instructions
+			.GetCallbacks(agent.gameObject, new PluginData { weight = 0.111f })
+			.onAfterYield!;
+
+		yield return new WaitForEndOfFrame();
+
+		action();
+
+		Assert.AreEqual(0.111f, called);
+	}
+
+	[UnityTest]
 	public IEnumerator OnEndStop() {
 		var called = false;
 		var agent = new GameObject().AddComponent<MockMovementAnimationMB>();
 		var instructions = ScriptableObject.CreateInstance<MovementAnimationPluginSO>();
 
-		instructions.walkOrRunWeight = 0.324f;
 		agent.stop = () => called = true;
 
-		var action = instructions.GetOnEnd(agent.gameObject);
+		var action = instructions
+			.GetCallbacks(agent.gameObject, new PluginData { weight = 0.324f })
+			.onEnd!;
 
 		yield return new WaitForEndOfFrame();
 

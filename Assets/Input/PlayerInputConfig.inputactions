@@ -22,14 +22,23 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "WalkOrRun",
+                    "type": "Button",
+                    "id": "3242fb52-d048-4d53-8d17-221ce792ad83",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
                 {
                     "name": "",
                     "id": "7818a16c-9e38-4a43-bef1-f8885292cf7e",
-                    "path": "<Mouse>/rightButton",
-                    "interactions": "RepeatHold(pressPoint=0.5,holdTime=0.01,frequency=60)",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "MultiTap",
                     "processors": "",
                     "groups": "",
                     "action": "Run",
@@ -40,10 +49,21 @@
                     "name": "",
                     "id": "d927133b-2a94-484d-b6bf-b11d7c5fff02",
                     "path": "<Mouse>/leftButton",
-                    "interactions": "RepeatHold(pressPoint=0.5,holdTime=0.01,frequency=60)",
+                    "interactions": "Press",
                     "processors": "",
                     "groups": "",
                     "action": "Walk",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "38c396e8-3cf3-460a-bea3-d609c9bf260a",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "Hold",
+                    "processors": "",
+                    "groups": "",
+                    "action": "WalkOrRun",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

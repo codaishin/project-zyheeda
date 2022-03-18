@@ -11,10 +11,16 @@ public class InstructionsMBTests : TestCollection
 	{
 		public int times = 10;
 
-		protected override Transform GetConcreteAgent(GameObject agent) =>
-			agent.transform;
-		protected override CoroutineInstructions Instructions(Transform agent) =>
-			() => this.MoveUpEachFrame(agent);
+		protected override Transform GetConcreteAgent(GameObject agent) {
+			return agent.transform;
+		}
+
+		protected override CoroutineInstructions Instructions(
+			Transform agent,
+			PluginData data
+		) {
+			return () => this.MoveUpEachFrame(agent);
+		}
 
 		private IEnumerable<YieldInstruction> MoveUpEachFrame(Transform transform) {
 			for (int i = 0; i < this.times; ++i) {
@@ -206,15 +212,14 @@ public class InstructionsMBTests : TestCollection
 
 	class MockPluginSO : BaseInstructionsPluginSO
 	{
-		public Func<GameObject, Action?> getOnBegin = _ => () => { };
-		public Func<GameObject, Action?> getOnEnd = _ => () => { };
+		public Func<GameObject, PluginData, PluginCallbacks> getCallbacks =
+			(_, __) => new PluginCallbacks();
 
-		public override Action? GetOnBegin(GameObject agent) {
-			return this.getOnBegin(agent);
-		}
-
-		public override Action? GetOnEnd(GameObject agent) {
-			return this.getOnEnd(agent);
+		public override PluginCallbacks GetCallbacks(
+			GameObject agent,
+			PluginData data
+		) {
+			return this.getCallbacks(agent, data);
 		}
 	}
 
@@ -231,7 +236,8 @@ public class InstructionsMBTests : TestCollection
 		comp.overrideMode = OverrideMode.Own;
 		comp.runner = external;
 
-		plugin.getOnEnd = _ => () => ++calledEnd;
+		plugin.getCallbacks =
+			(_, __) => new PluginCallbacks { onEnd = () => ++calledEnd };
 		instructions.plugins = new MockPluginSO[] { plugin };
 
 		yield return new WaitForEndOfFrame();
@@ -247,6 +253,6 @@ public class InstructionsMBTests : TestCollection
 		yield return new WaitForEndOfFrame();
 		yield return new WaitForEndOfFrame();
 
-		Assert.AreEqual((Vector3.up * 2, 1), (agent.transform.position, calledEnd));
+		Assert.AreEqual((Vector3.up, 1), (agent.transform.position, calledEnd));
 	}
 }

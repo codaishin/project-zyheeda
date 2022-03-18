@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 [CreateAssetMenu(
@@ -6,16 +5,15 @@ using UnityEngine;
 )]
 public class MovementAnimationPluginSO : BaseInstructionsPluginSO
 {
-	public float walkOrRunWeight;
-
-	public override Action GetOnBegin(GameObject agent) {
+	public override PluginCallbacks GetCallbacks(
+		GameObject agent,
+		PluginData data
+	) {
 		IMovementAnimation animation = agent.RequireComponent<IMovementAnimation>();
-		float weight = this.walkOrRunWeight;
-		return () => animation.Move(weight);
-	}
-
-	public override Action GetOnEnd(GameObject agent) {
-		IMovementAnimation animation = agent.RequireComponent<IMovementAnimation>();
-		return () => animation.Stop();
+		return new PluginCallbacks {
+			onBegin = () => animation.Move(data.weight),
+			onAfterYield = () => animation.Move(data.weight),
+			onEnd = () => animation.Stop(),
+		};
 	}
 }
