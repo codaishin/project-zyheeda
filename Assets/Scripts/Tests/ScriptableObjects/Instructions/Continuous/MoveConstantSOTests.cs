@@ -235,7 +235,7 @@ public class MoveConstantSOTests : TestCollection
 
 		pluginSO.getCallbacks = (_, d) => new PluginCallbacks {
 			onBegin = () => weights.Add(d.weight),
-			onUpdate = () => weights.Add(d.weight),
+			onAfterYield = () => weights.Add(d.weight),
 			onEnd = () => weights.Add(d.weight),
 		};
 

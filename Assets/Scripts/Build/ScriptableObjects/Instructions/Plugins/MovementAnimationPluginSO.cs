@@ -12,7 +12,7 @@ public class MovementAnimationPluginSO : BaseInstructionsPluginSO
 		IMovementAnimation animation = agent.RequireComponent<IMovementAnimation>();
 		return new PluginCallbacks {
 			onBegin = () => animation.Move(data.weight),
-			onUpdate = () => animation.Move(data.weight),
+			onAfterYield = () => animation.Move(data.weight),
 			onEnd = () => animation.Stop(),
 		};
 	}

@@ -367,7 +367,7 @@ public class MoveDynamicSOTests : TestCollection
 		moveSO.plugins = new MockPluginSO[] { plugin };
 
 		plugin.getCallbacks = (_, d) => new PluginCallbacks {
-			onUpdate = () => weights.Add(d.weight)
+			onAfterYield = () => weights.Add(d.weight)
 		};
 
 		yield return new WaitForEndOfFrame();

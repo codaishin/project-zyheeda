@@ -13,27 +13,29 @@ public abstract class BaseInstructionsSO : ScriptableObject
 	protected static IEnumerable<YieldInstruction> RunInstructions(
 		CoroutineInstructions instructions,
 		Action? onBegin,
-		Action? onUpdate,
+		Action? onBeforeYield,
+		Action? onAfterYield,
 		Action? onEnd,
-		PluginData data
+		Func<bool> run
 	) {
 
 		IEnumerable<YieldInstruction> loop =
-			BaseInstructionsSO.Loop(instructions, data);
+			BaseInstructionsSO.Loop(instructions, run);
 		onBegin?.Invoke();
 		foreach (YieldInstruction hold in loop) {
+			onBeforeYield?.Invoke();
 			yield return hold;
-			onUpdate?.Invoke();
+			onAfterYield?.Invoke();
 		}
 		onEnd?.Invoke();
 	}
 
 	protected static IEnumerable<YieldInstruction> Loop(
 		CoroutineInstructions instructions,
-		PluginData data
+		Func<bool> run
 	) {
 		using IEnumerator<YieldInstruction> it = instructions().GetEnumerator();
-		while (data.run && it.MoveNext()) {
+		while (run() && it.MoveNext()) {
 			yield return it.Current;
 		}
 	}
@@ -63,18 +65,15 @@ public abstract class BaseInstructionsSO<TAgent> : BaseInstructionsSO
 		return () => BaseInstructionsSO.RunInstructions(
 			instructions,
 			callbacks.onBegin,
-			callbacks.onUpdate,
+			callbacks.onBeforeYield,
+			callbacks.onAfterYield,
 			callbacks.onEnd,
-			data
+			() => data.run
 		);
 	}
 
 	private PluginCallbacks PluginCallbacks(GameObject agent, PluginData data) =>
 		this.plugins
 			.Select(plugin => plugin.GetCallbacks(agent, data))
-			.Aggregate(new PluginCallbacks(), (l, c) => new PluginCallbacks {
-				onBegin = l.onBegin + c.onBegin,
-				onUpdate = l.onUpdate + c.onUpdate,
-				onEnd = l.onEnd + c.onEnd,
-			});
+			.Aggregate(new PluginCallbacks(), (l, c) => l + c);
 }

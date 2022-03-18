@@ -63,7 +63,7 @@ public class MovementAnimationPluginSOTests : TestCollection
 
 		var action = instructions
 			.GetCallbacks(agent.gameObject, new PluginData())
-			.onUpdate!;
+			.onAfterYield!;
 
 		yield return new WaitForEndOfFrame();
 
@@ -82,7 +82,7 @@ public class MovementAnimationPluginSOTests : TestCollection
 
 		var action = instructions
 			.GetCallbacks(agent.gameObject, new PluginData { weight = 0.111f })
-			.onUpdate!;
+			.onAfterYield!;
 
 		yield return new WaitForEndOfFrame();
 
