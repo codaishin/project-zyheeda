@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   plugins:
   - {fileID: 11400000, guid: 3a4adbab139152542b6a7712055a4ced, type: 2}
+  - {fileID: 11400000, guid: aa435f6ef9bfffa409a9c7306b58f253, type: 2}
   hitter: {fileID: 11400000, guid: 9370508409fd36d43b04301710bbfee6, type: 2}
   min:
     distance: 1
