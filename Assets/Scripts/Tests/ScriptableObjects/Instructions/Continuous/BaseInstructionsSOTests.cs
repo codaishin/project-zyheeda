@@ -244,7 +244,6 @@ public class BaseInstructionsSOTests : TestCollection
 	public void GracefullRelease() {
 		var called = 0;
 		var iterations = 0;
-		var run = true;
 		var agent = new GameObject();
 		var instructionsSO = ScriptableObject.CreateInstance<MockInstructionSO>();
 		var plugin = ScriptableObject.CreateInstance<MockPluginSO>();
@@ -259,14 +258,15 @@ public class BaseInstructionsSOTests : TestCollection
 		instructionsSO.plugins = new MockPluginSO[] { plugin }; ;
 		instructionsSO.insructions = (_, __) => instructionFunc;
 
-		var insructions = instructionsSO.GetInstructionsFor(agent, () => run);
+		var pluginData = new PluginData { run = true };
+		var insructions = instructionsSO.GetInstructionsFor(agent, pluginData);
 
 		foreach (var _ in insructions()) {
 			if (iterations == 9) {
-				run = false;
+				pluginData.run = false;
 			};
 		};
 
-		Assert.AreEqual((10, 1), (iterations, called));
+		Assert.AreEqual((9, 1), (iterations, called));
 	}
 }

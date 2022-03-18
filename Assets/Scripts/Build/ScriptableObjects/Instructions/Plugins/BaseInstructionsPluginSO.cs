@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class PluginData
 {
+	public bool run;
 	public float weight;
 }
 
