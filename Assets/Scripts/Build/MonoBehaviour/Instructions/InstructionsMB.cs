@@ -13,7 +13,7 @@ public class InstructionsMB : MonoBehaviour, IApplicable
 {
 	private IEnumerator<YieldInstruction>? currentCoroutine;
 	private Func<IEnumerable<YieldInstruction>>? instructions;
-	private PluginData pluginData = new PluginData();
+	private bool running;
 
 	public CoroutineRunnerMB? runner;
 	public BaseInstructionsSO? instructionsSO;
@@ -28,7 +28,7 @@ public class InstructionsMB : MonoBehaviour, IApplicable
 	private void Start() {
 		this.instructions = this.instructionsSO!.GetInstructionsFor(
 			this.agent.GameObject,
-			this.pluginData
+			this.IsRunning
 		);
 	}
 
@@ -48,6 +48,10 @@ public class InstructionsMB : MonoBehaviour, IApplicable
 		this.OnRunnerOrSelf.StopCoroutine(this.currentCoroutine);
 	}
 
+	private bool IsRunning() {
+		return this.running;
+	}
+
 	public void Apply() {
 		Action stop = this.overrideMode switch {
 			OverrideMode.All => this.StopAll,
@@ -56,12 +60,12 @@ public class InstructionsMB : MonoBehaviour, IApplicable
 		};
 		stop();
 
-		this.pluginData.run = true;
+		this.running = true;
 		this.currentCoroutine = this.GetCoroutine();
 		this.OnRunnerOrSelf.StartCoroutine(this.currentCoroutine);
 	}
 
 	public void Release() {
-		this.pluginData.run = false;
+		this.running = false;
 	}
 }

@@ -6,35 +6,35 @@ public class BasePluginInstructionSOTests : TestCollection
 	public void PluginCallbacksAdd() {
 		var called = "";
 		var a = new PluginCallbacks() {
-			onBegin = () => called += "a",
-			onBeforeYield = () => called += "a",
-			onAfterYield = () => called += "a",
-			onEnd = () => called += "a",
+			onBegin = _ => called += "a",
+			onBeforeYield = _ => called += "a",
+			onAfterYield = _ => called += "a",
+			onEnd = _ => called += "a",
 		};
 		var b = new PluginCallbacks() {
-			onBegin = () => called += "b",
-			onBeforeYield = () => called += "b",
-			onAfterYield = () => called += "b",
-			onEnd = () => called += "b",
+			onBegin = _ => called += "b",
+			onBeforeYield = _ => called += "b",
+			onAfterYield = _ => called += "b",
+			onEnd = _ => called += "b",
 		};
 		var c = a + b;
 
-		c.onBegin?.Invoke();
+		c.onBegin?.Invoke(new PluginData());
 
 		Assert.AreEqual("ab", called);
 
 		called = "";
-		c.onBeforeYield?.Invoke();
+		c.onBeforeYield?.Invoke(new PluginData());
 
 		Assert.AreEqual("ab", called);
 
 		called = "";
-		c.onAfterYield?.Invoke();
+		c.onAfterYield?.Invoke(new PluginData());
 
 		Assert.AreEqual("ab", called);
 
 		called = "";
-		c.onEnd?.Invoke();
+		c.onEnd?.Invoke(new PluginData());
 
 		Assert.AreEqual("ab", called);
 	}

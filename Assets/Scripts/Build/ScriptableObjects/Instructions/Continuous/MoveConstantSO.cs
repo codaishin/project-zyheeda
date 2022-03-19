@@ -13,16 +13,17 @@ public class MoveConstantSO : BaseInstructionsSO<Transform>
 		return agent.transform;
 	}
 
-	protected override CoroutineInstructions Instructions(
-		Transform agent,
-		PluginData data
-	) {
-		data.weight = this.weight;
-		return () => this.Move(agent);
+	protected override RawInstructions Instructions(Transform agent) {
+		return data => this.Move(agent, data);
 	}
 
-	private IEnumerable<WaitForEndOfFrame> Move(Transform transform) {
+	private IEnumerable<WaitForEndOfFrame> Move(
+		Transform transform,
+		PluginData data
+	) {
 		Vector3? point = this.hitter!.TryPoint(transform);
+
+		data.weight = this.weight;
 		if (!point.HasValue) {
 			yield break;
 		}

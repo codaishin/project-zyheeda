@@ -23,13 +23,11 @@ public class MovementAnimationPluginSOTests : TestCollection
 
 		agent.move = value => called = value;
 
-		var action = instructions
-			.GetCallbacks(agent.gameObject, new PluginData())
-			.onBegin!;
+		var action = instructions.GetCallbacks(agent.gameObject).onBegin!;
 
 		yield return new WaitForEndOfFrame();
 
-		action();
+		action(new PluginData());
 
 		Assert.AreEqual(0, called);
 	}
@@ -42,13 +40,11 @@ public class MovementAnimationPluginSOTests : TestCollection
 
 		agent.move = value => called = value;
 
-		var action = instructions
-			.GetCallbacks(agent.gameObject, new PluginData { weight = 0.324f })
-			.onBegin!;
+		var action = instructions.GetCallbacks(agent.gameObject).onBegin!;
 
 		yield return new WaitForEndOfFrame();
 
-		action();
+		action(new PluginData { weight = 0.324f });
 
 		Assert.AreEqual(0.324f, called);
 	}
@@ -61,13 +57,11 @@ public class MovementAnimationPluginSOTests : TestCollection
 
 		agent.move = value => called = value;
 
-		var action = instructions
-			.GetCallbacks(agent.gameObject, new PluginData())
-			.onAfterYield!;
+		var action = instructions.GetCallbacks(agent.gameObject).onAfterYield!;
 
 		yield return new WaitForEndOfFrame();
 
-		action();
+		action(new PluginData());
 
 		Assert.AreEqual(0, called);
 	}
@@ -80,13 +74,11 @@ public class MovementAnimationPluginSOTests : TestCollection
 
 		agent.move = value => called = value;
 
-		var action = instructions
-			.GetCallbacks(agent.gameObject, new PluginData { weight = 0.111f })
-			.onAfterYield!;
+		var action = instructions.GetCallbacks(agent.gameObject).onAfterYield!;
 
 		yield return new WaitForEndOfFrame();
 
-		action();
+		action(new PluginData { weight = 0.111f });
 
 		Assert.AreEqual(0.111f, called);
 	}
@@ -99,13 +91,11 @@ public class MovementAnimationPluginSOTests : TestCollection
 
 		agent.stop = () => called = true;
 
-		var action = instructions
-			.GetCallbacks(agent.gameObject, new PluginData { weight = 0.324f })
-			.onEnd!;
+		var action = instructions.GetCallbacks(agent.gameObject).onEnd!;
 
 		yield return new WaitForEndOfFrame();
 
-		action();
+		action(new PluginData { weight = 0.324f });
 
 		Assert.True(called);
 	}

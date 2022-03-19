@@ -21,11 +21,8 @@ public class MoveDynamicSO : BaseInstructionsSO<Transform>
 		return agent.transform;
 	}
 
-	protected override CoroutineInstructions Instructions(
-		Transform agent,
-		PluginData data
-	) {
-		return () => this.Move(agent, data);
+	protected override RawInstructions Instructions(Transform agent) {
+		return data => this.Move(agent, data);
 	}
 
 	private IEnumerable<YieldInstruction> Move(Transform agent, PluginData data) {

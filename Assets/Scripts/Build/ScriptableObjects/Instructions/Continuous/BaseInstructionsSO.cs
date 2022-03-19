@@ -7,34 +7,39 @@ public abstract class BaseInstructionsSO : ScriptableObject
 {
 	public abstract Func<IEnumerable<YieldInstruction>> GetInstructionsFor(
 		GameObject agent,
-		PluginData? data = null
+		Func<bool>? run = null
 	);
 
 	protected static IEnumerable<YieldInstruction> RunInstructions(
-		CoroutineInstructions instructions,
-		Action? onBegin,
-		Action? onBeforeYield,
-		Action? onAfterYield,
-		Action? onEnd,
-		Func<bool> run
+		RawInstructions instructions,
+		Action<PluginData>? onBegin,
+		Action<PluginData>? onBeforeYield,
+		Action<PluginData>? onAfterYield,
+		Action<PluginData>? onEnd,
+		Func<bool>? run
 	) {
-
-		IEnumerable<YieldInstruction> loop =
-			BaseInstructionsSO.Loop(instructions, run);
-		onBegin?.Invoke();
+		PluginData pluginData = new PluginData { run = true };
+		Func<bool> runCheck = run is null
+			? () => pluginData.run
+			: () => pluginData.run && run();
+		IEnumerable<YieldInstruction> loop = BaseInstructionsSO.Loop(
+			instructions(pluginData),
+			runCheck
+		);
+		onBegin?.Invoke(pluginData);
 		foreach (YieldInstruction hold in loop) {
-			onBeforeYield?.Invoke();
+			onBeforeYield?.Invoke(pluginData);
 			yield return hold;
-			onAfterYield?.Invoke();
+			onAfterYield?.Invoke(pluginData);
 		}
-		onEnd?.Invoke();
+		onEnd?.Invoke(pluginData);
 	}
 
 	protected static IEnumerable<YieldInstruction> Loop(
-		CoroutineInstructions instructions,
+		IEnumerable<YieldInstruction> instructions,
 		Func<bool> run
 	) {
-		using IEnumerator<YieldInstruction> it = instructions().GetEnumerator();
+		using IEnumerator<YieldInstruction> it = instructions.GetEnumerator();
 		while (run() && it.MoveNext()) {
 			yield return it.Current;
 		}
@@ -42,25 +47,22 @@ public abstract class BaseInstructionsSO : ScriptableObject
 }
 
 public delegate IEnumerable<YieldInstruction> CoroutineInstructions();
+public delegate IEnumerable<YieldInstruction> RawInstructions(PluginData data);
 
 public abstract class BaseInstructionsSO<TAgent> : BaseInstructionsSO
 {
 	public BaseInstructionsPluginSO[] plugins = new BaseInstructionsPluginSO[0];
 
 	protected abstract TAgent GetConcreteAgent(GameObject agent);
-	protected abstract CoroutineInstructions Instructions(
-		TAgent agent,
-		PluginData data
-	);
+	protected abstract RawInstructions Instructions(TAgent agent);
 
 	public override Func<IEnumerable<YieldInstruction>> GetInstructionsFor(
 		GameObject agent,
-		PluginData? data = null
+		Func<bool>? run = null
 	) {
-		data = data ?? new PluginData { run = true };
 		TAgent concreteAgent = this.GetConcreteAgent(agent);
-		PluginCallbacks callbacks = this.PluginCallbacks(agent, data);
-		CoroutineInstructions instructions = this.Instructions(concreteAgent, data);
+		PluginCallbacks callbacks = this.PluginCallbacks(agent);
+		RawInstructions instructions = this.Instructions(concreteAgent);
 
 		return () => BaseInstructionsSO.RunInstructions(
 			instructions,
@@ -68,12 +70,13 @@ public abstract class BaseInstructionsSO<TAgent> : BaseInstructionsSO
 			callbacks.onBeforeYield,
 			callbacks.onAfterYield,
 			callbacks.onEnd,
-			() => data.run
+			run
 		);
 	}
 
-	private PluginCallbacks PluginCallbacks(GameObject agent, PluginData data) =>
-		this.plugins
-			.Select(plugin => plugin.GetCallbacks(agent, data))
+	private PluginCallbacks PluginCallbacks(GameObject agent) {
+		return this.plugins
+			.Select(plugin => plugin.GetCallbacks(agent))
 			.Aggregate(new PluginCallbacks(), (l, c) => l + c);
+	}
 }
