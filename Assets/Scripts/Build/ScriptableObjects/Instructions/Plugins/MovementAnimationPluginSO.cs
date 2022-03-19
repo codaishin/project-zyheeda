@@ -5,15 +5,12 @@ using UnityEngine;
 )]
 public class MovementAnimationPluginSO : BaseInstructionsPluginSO
 {
-	public override PluginCallbacks GetCallbacks(
-		GameObject agent,
-		PluginData data
-	) {
+	public override PluginCallbacks GetCallbacks(GameObject agent) {
 		IMovementAnimation animation = agent.RequireComponent<IMovementAnimation>();
 		return new PluginCallbacks {
-			onBegin = () => animation.Move(data.weight),
-			onAfterYield = () => animation.Move(data.weight),
-			onEnd = () => animation.Stop(),
+			onBegin = data => animation.Move(data.weight),
+			onAfterYield = data => animation.Move(data.weight),
+			onEnd = _ => animation.Stop(),
 		};
 	}
 }

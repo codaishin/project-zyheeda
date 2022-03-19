@@ -1,7 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
@@ -184,20 +182,17 @@ public class MoveConstantSOTests : TestCollection
 
 	class MockPluginSO : BaseInstructionsPluginSO
 	{
-		public Func<GameObject, PluginData, PluginCallbacks> getCallbacks
-			= (_, __) => new PluginCallbacks();
+		public Func<GameObject, PluginCallbacks> getCallbacks =
+			_ => new PluginCallbacks();
 
-		public override PluginCallbacks GetCallbacks(
-			GameObject agent,
-			PluginData data
-		) {
-			return this.getCallbacks(agent, data);
+		public override PluginCallbacks GetCallbacks(GameObject agent) {
+			return this.getCallbacks(agent);
 		}
 	}
 
 	[UnityTest]
 	public IEnumerator WeightToPluginDataWeight() {
-		var weights = new List<float>();
+		var data = null as PluginData;
 		var moveSO = ScriptableObject.CreateInstance<MoveConstantSO>();
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
 		var agent = new GameObject();
@@ -210,10 +205,8 @@ public class MoveConstantSOTests : TestCollection
 
 		hitSO.getPoint = _ => Vector3.right * 100;
 
-		pluginSO.getCallbacks = (_, d) => new PluginCallbacks {
-			onBegin = () => weights.Add(d.weight),
-			onAfterYield = () => weights.Add(d.weight),
-			onEnd = () => weights.Add(d.weight),
+		pluginSO.getCallbacks = _ => new PluginCallbacks {
+			onBegin = d => data = d
 		};
 
 		yield return new WaitForEndOfFrame();
@@ -226,6 +219,6 @@ public class MoveConstantSOTests : TestCollection
 		yield return new WaitForEndOfFrame();
 		yield return new WaitForEndOfFrame();
 
-		Assert.True(weights.All(w => w == 0.0112f));
+		Assert.AreEqual(0.0112f, data!.weight);
 	}
 }

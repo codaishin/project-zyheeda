@@ -9,10 +9,10 @@ public class PluginData
 
 public struct PluginCallbacks
 {
-	public Action? onBegin;
-	public Action? onBeforeYield;
-	public Action? onAfterYield;
-	public Action? onEnd;
+	public Action<PluginData>? onBegin;
+	public Action<PluginData>? onBeforeYield;
+	public Action<PluginData>? onAfterYield;
+	public Action<PluginData>? onEnd;
 
 	public static PluginCallbacks operator +(
 		PluginCallbacks a,
@@ -29,8 +29,5 @@ public struct PluginCallbacks
 
 public abstract class BaseInstructionsPluginSO : ScriptableObject
 {
-	public abstract PluginCallbacks GetCallbacks(
-		GameObject agent,
-		PluginData data
-	);
+	public abstract PluginCallbacks GetCallbacks(GameObject agent);
 }

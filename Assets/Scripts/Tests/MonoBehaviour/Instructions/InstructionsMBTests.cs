@@ -15,11 +15,8 @@ public class InstructionsMBTests : TestCollection
 			return agent.transform;
 		}
 
-		protected override CoroutineInstructions Instructions(
-			Transform agent,
-			PluginData data
-		) {
-			return () => this.MoveUpEachFrame(agent);
+		protected override RawInstructions Instructions(Transform agent) {
+			return _ => this.MoveUpEachFrame(agent);
 		}
 
 		private IEnumerable<YieldInstruction> MoveUpEachFrame(Transform transform) {
@@ -212,14 +209,11 @@ public class InstructionsMBTests : TestCollection
 
 	class MockPluginSO : BaseInstructionsPluginSO
 	{
-		public Func<GameObject, PluginData, PluginCallbacks> getCallbacks =
-			(_, __) => new PluginCallbacks();
+		public Func<GameObject, PluginCallbacks> getCallbacks =
+			_ => new PluginCallbacks();
 
-		public override PluginCallbacks GetCallbacks(
-			GameObject agent,
-			PluginData data
-		) {
-			return this.getCallbacks(agent, data);
+		public override PluginCallbacks GetCallbacks(GameObject agent) {
+			return this.getCallbacks(agent);
 		}
 	}
 
@@ -236,8 +230,7 @@ public class InstructionsMBTests : TestCollection
 		comp.overrideMode = OverrideMode.Own;
 		comp.runner = external;
 
-		plugin.getCallbacks =
-			(_, __) => new PluginCallbacks { onEnd = () => ++calledEnd };
+		plugin.getCallbacks = _ => new PluginCallbacks { onEnd = _ => ++calledEnd };
 		instructions.plugins = new MockPluginSO[] { plugin };
 
 		yield return new WaitForEndOfFrame();
