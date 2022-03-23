@@ -96,6 +96,34 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "Equipment",
+            "id": "b3d2e2c4-1721-4556-903d-0cd294aabefe",
+            "actions": [
+                {
+                    "name": "CircleLoadout",
+                    "type": "Button",
+                    "id": "c6bb7f4e-528a-4fd1-a4b5-23a239ae989a",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "70e025f0-0984-47c7-bd47-e82aaa234847",
+                    "path": "<Keyboard>/tab",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "CircleLoadout",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": [
