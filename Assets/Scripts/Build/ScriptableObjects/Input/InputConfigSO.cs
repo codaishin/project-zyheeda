@@ -18,6 +18,7 @@ public class InputConfigSO : BaseInputConfigSO
 	public override InputActionMap this[InputEnum.Map map] => map switch {
 		InputEnum.Map.Movement => this.Config.Movement.Get(),
 		InputEnum.Map.Mouse => this.Config.Mouse.Get(),
+		InputEnum.Map.Equipment => this.Config.Equipment.Get(),
 		_ => throw new ArgumentException(),
 	};
 
@@ -26,6 +27,7 @@ public class InputConfigSO : BaseInputConfigSO
 		InputEnum.Action.Run => this.Config.Movement.Run,
 		InputEnum.Action.WalkOrRun => this.Config.Movement.WalkOrRun,
 		InputEnum.Action.MousePosition => this.Config.Mouse.Position,
+		InputEnum.Action.CircleLoadout => this.Config.Equipment.CircleLoadout,
 		_ => throw new ArgumentException(),
 	};
 

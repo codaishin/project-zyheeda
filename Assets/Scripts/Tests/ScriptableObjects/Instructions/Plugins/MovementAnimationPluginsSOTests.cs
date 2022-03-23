@@ -8,20 +8,22 @@ public class MovementAnimationPluginSOTests : TestCollection
 {
 	class MockMovementAnimationMB : MonoBehaviour, IMovementAnimation
 	{
-		public Action<float> move = _ => { };
+		public Action move = () => { };
+		public Action<float> walkOrRunBlend = _ => { };
 		public Action stop = () => { };
 
-		public void Move(float walkOrRunWeight) => this.move(walkOrRunWeight);
-		public void Stop() => this.stop();
+		public void Begin() => this.move();
+		public void WalkOrRunBlend(float value) => this.walkOrRunBlend(value);
+		public void End() => this.stop();
 	}
 
 	[UnityTest]
 	public IEnumerator OnBeginWalk() {
-		var called = -1f;
+		var called = 0;
 		var agent = new GameObject().AddComponent<MockMovementAnimationMB>();
 		var instructions = ScriptableObject.CreateInstance<MovementAnimationPluginSO>();
 
-		agent.move = value => called = value;
+		agent.move = () => ++called;
 
 		var action = instructions.GetCallbacks(agent.gameObject).onBegin!;
 
@@ -29,7 +31,7 @@ public class MovementAnimationPluginSOTests : TestCollection
 
 		action(new PluginData());
 
-		Assert.AreEqual(0, called);
+		Assert.AreEqual(1, called);
 	}
 
 	[UnityTest]
@@ -38,7 +40,7 @@ public class MovementAnimationPluginSOTests : TestCollection
 		var agent = new GameObject().AddComponent<MockMovementAnimationMB>();
 		var instructions = ScriptableObject.CreateInstance<MovementAnimationPluginSO>();
 
-		agent.move = value => called = value;
+		agent.walkOrRunBlend = value => called = value;
 
 		var action = instructions.GetCallbacks(agent.gameObject).onBegin!;
 
@@ -50,29 +52,12 @@ public class MovementAnimationPluginSOTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator OnUpdateWalk() {
-		var called = -1f;
-		var agent = new GameObject().AddComponent<MockMovementAnimationMB>();
-		var instructions = ScriptableObject.CreateInstance<MovementAnimationPluginSO>();
-
-		agent.move = value => called = value;
-
-		var action = instructions.GetCallbacks(agent.gameObject).onAfterYield!;
-
-		yield return new WaitForEndOfFrame();
-
-		action(new PluginData());
-
-		Assert.AreEqual(0, called);
-	}
-
-	[UnityTest]
 	public IEnumerator OnUpdateWalkWeight() {
 		var called = -1f;
 		var agent = new GameObject().AddComponent<MockMovementAnimationMB>();
 		var instructions = ScriptableObject.CreateInstance<MovementAnimationPluginSO>();
 
-		agent.move = value => called = value;
+		agent.walkOrRunBlend = value => called = value;
 
 		var action = instructions.GetCallbacks(agent.gameObject).onAfterYield!;
 

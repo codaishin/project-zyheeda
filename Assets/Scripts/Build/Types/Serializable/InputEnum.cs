@@ -7,11 +7,13 @@ public static class InputEnum
 		Run,
 		WalkOrRun,
 		MousePosition,
+		CircleLoadout,
 	}
 
 	public enum Map
 	{
 		Movement,
 		Mouse,
+		Equipment
 	}
 }

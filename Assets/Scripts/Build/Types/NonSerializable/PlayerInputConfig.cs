@@ -118,6 +118,34 @@ public partial class @PlayerInputConfig : IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Equipment"",
+            ""id"": ""b3d2e2c4-1721-4556-903d-0cd294aabefe"",
+            ""actions"": [
+                {
+                    ""name"": ""CircleLoadout"",
+                    ""type"": ""Button"",
+                    ""id"": ""c6bb7f4e-528a-4fd1-a4b5-23a239ae989a"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""70e025f0-0984-47c7-bd47-e82aaa234847"",
+                    ""path"": ""<Keyboard>/tab"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""CircleLoadout"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -191,6 +219,9 @@ public partial class @PlayerInputConfig : IInputActionCollection2, IDisposable
         // Mouse
         m_Mouse = asset.FindActionMap("Mouse", throwIfNotFound: true);
         m_Mouse_Position = m_Mouse.FindAction("Position", throwIfNotFound: true);
+        // Equipment
+        m_Equipment = asset.FindActionMap("Equipment", throwIfNotFound: true);
+        m_Equipment_CircleLoadout = m_Equipment.FindAction("CircleLoadout", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -328,6 +359,39 @@ public partial class @PlayerInputConfig : IInputActionCollection2, IDisposable
         }
     }
     public MouseActions @Mouse => new MouseActions(this);
+
+    // Equipment
+    private readonly InputActionMap m_Equipment;
+    private IEquipmentActions m_EquipmentActionsCallbackInterface;
+    private readonly InputAction m_Equipment_CircleLoadout;
+    public struct EquipmentActions
+    {
+        private @PlayerInputConfig m_Wrapper;
+        public EquipmentActions(@PlayerInputConfig wrapper) { m_Wrapper = wrapper; }
+        public InputAction @CircleLoadout => m_Wrapper.m_Equipment_CircleLoadout;
+        public InputActionMap Get() { return m_Wrapper.m_Equipment; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(EquipmentActions set) { return set.Get(); }
+        public void SetCallbacks(IEquipmentActions instance)
+        {
+            if (m_Wrapper.m_EquipmentActionsCallbackInterface != null)
+            {
+                @CircleLoadout.started -= m_Wrapper.m_EquipmentActionsCallbackInterface.OnCircleLoadout;
+                @CircleLoadout.performed -= m_Wrapper.m_EquipmentActionsCallbackInterface.OnCircleLoadout;
+                @CircleLoadout.canceled -= m_Wrapper.m_EquipmentActionsCallbackInterface.OnCircleLoadout;
+            }
+            m_Wrapper.m_EquipmentActionsCallbackInterface = instance;
+            if (instance != null)
+            {
+                @CircleLoadout.started += instance.OnCircleLoadout;
+                @CircleLoadout.performed += instance.OnCircleLoadout;
+                @CircleLoadout.canceled += instance.OnCircleLoadout;
+            }
+        }
+    }
+    public EquipmentActions @Equipment => new EquipmentActions(this);
     private int m_KeyboardMouseSchemeIndex = -1;
     public InputControlScheme KeyboardMouseScheme
     {
@@ -382,5 +446,9 @@ public partial class @PlayerInputConfig : IInputActionCollection2, IDisposable
     public interface IMouseActions
     {
         void OnPosition(InputAction.CallbackContext context);
+    }
+    public interface IEquipmentActions
+    {
+        void OnCircleLoadout(InputAction.CallbackContext context);
     }
 }
