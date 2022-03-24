@@ -18,6 +18,7 @@ public static class Animation
 	{
 		Idle = 0,
 		WalkOrRun = 1,
+		ShootRifle = 2,
 	}
 
 	public enum BlendState
