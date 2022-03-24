@@ -6,6 +6,14 @@ using UnityEngine.TestTools;
 
 public class LoadoutMBTests : TestCollection
 {
+	class MockItemMB : MonoBehaviour, IItem
+	{
+		public Animation.Stance stance;
+		public Animation.Stance IdleStance => this.stance;
+
+		public Animation.State ActiveState => throw new NotImplementedException();
+	}
+
 	class MockStanceAnimator : MonoBehaviour, IAnimationStance
 	{
 		public Action<Animation.Stance, bool> set = (_, __) => { };
@@ -15,43 +23,43 @@ public class LoadoutMBTests : TestCollection
 
 	[UnityTest]
 	public IEnumerator Enable() {
-		var rifle = new GameObject();
+		var rifle = new GameObject().AddComponent<MockItemMB>();
 		var slot = new GameObject();
 		var set = new GameObject().AddComponent<LoadoutMB>();
 
-		set.weapon = rifle.transform;
-		rifle.SetActive(false);
+		set.weapon = Reference<IItem>.PointToComponent(rifle);
+		rifle.gameObject.SetActive(false);
 
 		yield return new WaitForEndOfFrame();
 
 		set.Equip(slot.transform);
 
-		Assert.True(rifle.activeSelf);
+		Assert.True(rifle.gameObject.activeSelf);
 	}
 	[UnityTest]
 	public IEnumerator Disable() {
-		var rifle = new GameObject();
+		var rifle = new GameObject().AddComponent<MockItemMB>();
 		var slot = new GameObject();
 		var set = new GameObject().AddComponent<LoadoutMB>();
 
-		set.weapon = rifle.transform;
-		rifle.SetActive(false);
+		set.weapon = Reference<IItem>.PointToComponent(rifle);
+		rifle.gameObject.SetActive(false);
 
 		yield return new WaitForEndOfFrame();
 
 		set.Equip(slot.transform);
 		set.UnEquip();
 
-		Assert.False(rifle.activeSelf);
+		Assert.False(rifle.gameObject.activeSelf);
 	}
 
 	[UnityTest]
 	public IEnumerator ChildToSlot() {
-		var rifle = new GameObject();
+		var rifle = new GameObject().AddComponent<MockItemMB>();
 		var slot = new GameObject();
 		var set = new GameObject().AddComponent<LoadoutMB>();
 
-		set.weapon = rifle.transform;
+		set.weapon = Reference<IItem>.PointToComponent(rifle);
 
 		yield return new WaitForEndOfFrame();
 
@@ -62,11 +70,11 @@ public class LoadoutMBTests : TestCollection
 
 	[UnityTest]
 	public IEnumerator ChildToSlotPositionAndRotation() {
-		var rifle = new GameObject();
+		var rifle = new GameObject().AddComponent<MockItemMB>();
 		var slot = new GameObject();
 		var set = new GameObject().AddComponent<LoadoutMB>();
 
-		set.weapon = rifle.transform;
+		set.weapon = Reference<IItem>.PointToComponent(rifle);
 		slot.transform.forward = Vector3.down;
 		slot.transform.position = Vector3.up;
 
@@ -80,11 +88,11 @@ public class LoadoutMBTests : TestCollection
 
 	[UnityTest]
 	public IEnumerator ChildToSlotRetainLossyScale() {
-		var rifle = new GameObject();
+		var rifle = new GameObject().AddComponent<MockItemMB>();
 		var slot = new GameObject();
 		var set = new GameObject().AddComponent<LoadoutMB>();
 
-		set.weapon = rifle.transform;
+		set.weapon = Reference<IItem>.PointToComponent(rifle);
 		slot.transform.localScale *= 0.1f;
 		rifle.transform.localScale = new Vector3(1, 2, 3);
 
@@ -100,8 +108,6 @@ public class LoadoutMBTests : TestCollection
 		var slot = new GameObject();
 		var set = new GameObject().AddComponent<LoadoutMB>();
 
-		set.weapon = null;
-
 		yield return new WaitForEndOfFrame();
 
 		Assert.DoesNotThrow(() => set.Equip(slot.transform));
@@ -110,12 +116,12 @@ public class LoadoutMBTests : TestCollection
 	[UnityTest]
 	public IEnumerator ResetParent() {
 		var parent = new GameObject();
-		var rifle = new GameObject();
+		var rifle = new GameObject().AddComponent<MockItemMB>();
 		var slot = new GameObject();
 		var set = new GameObject().AddComponent<LoadoutMB>();
 
 		rifle.transform.parent = parent.transform;
-		set.weapon = rifle.transform;
+		set.weapon = Reference<IItem>.PointToComponent(rifle);
 
 		yield return new WaitForEndOfFrame();
 
@@ -129,11 +135,11 @@ public class LoadoutMBTests : TestCollection
 	[UnityTest]
 	public IEnumerator ResetPositionAndRotation() {
 		var parent = new GameObject();
-		var rifle = new GameObject();
+		var rifle = new GameObject().AddComponent<MockItemMB>();
 		var slot = new GameObject();
 		var set = new GameObject().AddComponent<LoadoutMB>();
 
-		set.weapon = rifle.transform;
+		set.weapon = Reference<IItem>.PointToComponent(rifle);
 		rifle.transform.parent = parent.transform;
 		parent.transform.forward = Vector3.down;
 		parent.transform.position = Vector3.up;
@@ -150,11 +156,11 @@ public class LoadoutMBTests : TestCollection
 	[UnityTest]
 	public IEnumerator ResetRetainLossyScale() {
 		var parent = new GameObject();
-		var rifle = new GameObject();
+		var rifle = new GameObject().AddComponent<MockItemMB>();
 		var slot = new GameObject();
 		var set = new GameObject().AddComponent<LoadoutMB>();
 
-		set.weapon = rifle.transform;
+		set.weapon = Reference<IItem>.PointToComponent(rifle);
 		rifle.transform.parent = parent.transform;
 		slot.transform.localScale *= 0.1f;
 		rifle.transform.localScale = new Vector3(1, 2, 3);
@@ -172,8 +178,6 @@ public class LoadoutMBTests : TestCollection
 		var slot = new GameObject();
 		var set = new GameObject().AddComponent<LoadoutMB>();
 
-		set.weapon = null;
-
 		yield return new WaitForEndOfFrame();
 
 		set.Equip(slot.transform);
@@ -184,10 +188,10 @@ public class LoadoutMBTests : TestCollection
 	[UnityTest]
 	public IEnumerator ResetParentNull() {
 		var slot = new GameObject();
-		var rifle = new GameObject();
+		var rifle = new GameObject().AddComponent<MockItemMB>();
 		var set = new GameObject().AddComponent<LoadoutMB>();
 
-		set.weapon = rifle.transform;
+		set.weapon = Reference<IItem>.PointToComponent(rifle);
 
 		yield return new WaitForEndOfFrame();
 
@@ -201,12 +205,12 @@ public class LoadoutMBTests : TestCollection
 	public IEnumerator SetStanceTrue() {
 		var called = (Animation.Stance.Default, false);
 		var slot = new GameObject();
-		var rifle = new GameObject();
+		var rifle = new GameObject().AddComponent<MockItemMB>();
 		var set = new GameObject().AddComponent<LoadoutMB>();
 		var animationLayer = new GameObject().AddComponent<MockStanceAnimator>();
 
-		set.stance = Animation.Stance.HoldRifle;
-		set.weapon = rifle.transform;
+		rifle.stance = Animation.Stance.HoldRifle;
+		set.weapon = Reference<IItem>.PointToComponent(rifle);
 		set.SetAnimator(animationLayer);
 		animationLayer.set = (l, w) => called = (l, w);
 
@@ -221,12 +225,12 @@ public class LoadoutMBTests : TestCollection
 	public IEnumerator SetStanceFalse() {
 		var called = (Animation.Stance.Default, true);
 		var slot = new GameObject();
-		var rifle = new GameObject();
+		var rifle = new GameObject().AddComponent<MockItemMB>();
 		var set = new GameObject().AddComponent<LoadoutMB>();
 		var animationLayer = new GameObject().AddComponent<MockStanceAnimator>();
 
-		set.stance = Animation.Stance.HoldRifle;
-		set.weapon = rifle.transform;
+		rifle.stance = Animation.Stance.HoldRifle;
+		set.weapon = Reference<IItem>.PointToComponent(rifle);
 		set.SetAnimator(animationLayer);
 
 		yield return new WaitForEndOfFrame();

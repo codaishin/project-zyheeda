@@ -10,8 +10,7 @@ public interface ILoadout
 
 public class LoadoutMB : MonoBehaviour, ILoadout
 {
-	public Transform? weapon;
-	public Animation.Stance stance;
+	public Reference<IItem> weapon;
 
 	private Transform? originalParent;
 	private IAnimationStance? animator;
@@ -19,11 +18,11 @@ public class LoadoutMB : MonoBehaviour, ILoadout
 	public void Equip(Transform slot) {
 		this.SetStance(true);
 
-		if (this.weapon == null) {
+		if (this.weapon.Value == null) {
 			return;
 		}
 
-		this.originalParent = this.weapon.parent;
+		this.originalParent = this.weapon.Value.transform.parent;
 		this.UpdateWeapon(slot, true);
 	}
 
@@ -33,27 +32,29 @@ public class LoadoutMB : MonoBehaviour, ILoadout
 	}
 
 	private void SetStance(bool value) {
-		if (this.animator == null) {
+		if (this.animator == null || this.weapon.Value == null) {
 			return;
 		}
-		this.animator.Set(this.stance, value);
+		this.animator.Set(this.weapon.Value.IdleStance, value);
 	}
 
 	private void UpdateWeapon(Transform? parent, bool active) {
-		if (this.weapon == null) {
+		if (this.weapon.Value == null) {
 			return;
 		}
 
-		this.weapon.parent = null;
-		this.weapon.gameObject.SetActive(active);
+		Transform transform = this.weapon.Value.transform;
+
+		transform.parent = null;
+		transform.gameObject.SetActive(active);
 
 		if (parent == null) {
 			return;
 		}
 
-		this.weapon.position = parent.position;
-		this.weapon.rotation = parent.rotation;
-		this.weapon.parent = parent;
+		transform.position = parent.position;
+		transform.rotation = parent.rotation;
+		transform.parent = parent;
 	}
 
 	public void SetAnimator(IAnimationStance animator) {
