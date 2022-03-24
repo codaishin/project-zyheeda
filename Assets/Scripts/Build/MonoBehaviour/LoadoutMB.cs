@@ -3,7 +3,7 @@ using UnityEngine;
 
 public interface ILoadout
 {
-	void SetStanceAnimator(IStanceAnimation stanceAnimator);
+	void SetAnimator(IAnimationLayers animator);
 	void Equip(Transform slot);
 	void UnEquip();
 }
@@ -11,10 +11,10 @@ public interface ILoadout
 public class LoadoutMB : MonoBehaviour, ILoadout
 {
 	public Transform? weapon;
-	public Stance stance;
+	public Animation.Layer useLayer;
 
 	private Transform? originalParent;
-	private IStanceAnimation? stanceAnimator;
+	private IAnimationLayers? animator;
 
 	public void Equip(Transform slot) {
 		this.UpdateStance(1f);
@@ -33,10 +33,10 @@ public class LoadoutMB : MonoBehaviour, ILoadout
 	}
 
 	private void UpdateStance(float weight) {
-		if (this.stanceAnimator == null) {
+		if (this.animator == null) {
 			return;
 		}
-		this.stanceAnimator.Set(this.stance, weight);
+		this.animator.Set(this.useLayer, weight);
 	}
 
 	private void UpdateWeapon(Transform? parent, bool active) {
@@ -56,7 +56,7 @@ public class LoadoutMB : MonoBehaviour, ILoadout
 		this.weapon.parent = parent;
 	}
 
-	public void SetStanceAnimator(IStanceAnimation stanceAnimator) {
-		this.stanceAnimator = stanceAnimator;
+	public void SetAnimator(IAnimationLayers animator) {
+		this.animator = animator;
 	}
 }

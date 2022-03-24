@@ -6,7 +6,7 @@ using UnityEngine;
 public class MovementAnimationPluginSO : BaseInstructionsPluginSO
 {
 	public override PluginCallbacks GetCallbacks(GameObject agent) {
-		IAnimation animation = agent.RequireComponent<IAnimation>(true);
+		IAnimationStates animation = agent.RequireComponent<IAnimationStates>(true);
 		return new PluginCallbacks {
 			onBegin = data => {
 				animation.Set(Animation.State.WalkOrRun);

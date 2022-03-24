@@ -11,19 +11,19 @@ public class LoadoutCircleMBTests : TestCollection
 	{
 		public Action<Transform> assignTo = _ => { };
 		public Action reset = () => { };
-		public Action<IStanceAnimation> setAnimationLayer = _ => { };
+		public Action<IAnimationLayers> setAnimator = _ => { };
 
 		public void Equip(Transform slot) =>
 			this.assignTo(slot);
 		public void UnEquip() =>
 			this.reset();
-		public void SetStanceAnimator(IStanceAnimation animationLayer) =>
-			this.setAnimationLayer(animationLayer);
+		public void SetAnimator(IAnimationLayers animator) =>
+			this.setAnimator(animator);
 	}
 
-	class MockStanceAnimatorMB : MonoBehaviour, IStanceAnimation
+	class MockStanceAnimatorMB : MonoBehaviour, IAnimationLayers
 	{
-		public void Set(Stance layer, float weight) {
+		public void Set(Animation.Layer layer, float weight) {
 			throw new NotImplementedException();
 		}
 	}
@@ -174,19 +174,19 @@ public class LoadoutCircleMBTests : TestCollection
 
 	[UnityTest]
 	public IEnumerator loadoutstanceAnimator() {
-		var called = null as IStanceAnimation;
+		var called = null as IAnimationLayers;
 		var animation = new GameObject().AddComponent<MockStanceAnimatorMB>();
 		var set = new GameObject().AddComponent<MockLoadoutMB>();
 		var slot = new GameObject();
 		var loadout = new GameObject().AddComponent<LoadoutCircleMB>();
 		loadout.slot = slot.transform;
-		loadout.stanceAnimator =
-			Reference<IStanceAnimation>.PointToComponent(animation);
+		loadout.animator =
+			Reference<IAnimationLayers>.PointToComponent(animation);
 		loadout.loadouts = new Reference<ILoadout>[] {
 			Reference<ILoadout>.PointToComponent(set),
 		};
 
-		set.setAnimationLayer = a => called = a;
+		set.setAnimator = a => called = a;
 
 		yield return new WaitForEndOfFrame();
 
@@ -204,7 +204,7 @@ public class LoadoutCircleMBTests : TestCollection
 			Reference<ILoadout>.PointToComponent(set),
 		};
 
-		set.setAnimationLayer = _ => ++called;
+		set.setAnimator = _ => ++called;
 
 		yield return new WaitForEndOfFrame();
 

@@ -5,7 +5,7 @@ using UnityEngine;
 public class LoadoutCircleMB : MonoBehaviour, IApplicable
 {
 	public Transform? slot;
-	public Reference<IStanceAnimation> stanceAnimator;
+	public Reference<IAnimationLayers> animator;
 
 	private IEnumerator<ILoadout> loadout =
 		Enumerable
@@ -19,11 +19,11 @@ public class LoadoutCircleMB : MonoBehaviour, IApplicable
 		this.loadout.MoveNext();
 		this.loadout.Current.Equip(this.slot!);
 
-		if (this.stanceAnimator.Value == null) {
+		if (this.animator.Value == null) {
 			return;
 		}
 		foreach (ILoadout loadout in this.loadouts.Values()) {
-			loadout.SetStanceAnimator(this.stanceAnimator.Value);
+			loadout.SetAnimator(this.animator.Value);
 		}
 	}
 
