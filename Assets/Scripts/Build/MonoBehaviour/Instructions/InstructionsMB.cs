@@ -17,7 +17,7 @@ public class InstructionsMB : MonoBehaviour, IApplicable
 
 	public CoroutineRunnerMB? runner;
 	public BaseInstructionsSO? instructionsSO;
-	public Reference agent;
+	public Reference<IAgent> agent;
 	public OverrideMode overrideMode;
 
 	private MonoBehaviour OnRunnerOrSelf =>
@@ -27,7 +27,7 @@ public class InstructionsMB : MonoBehaviour, IApplicable
 
 	private void Start() {
 		this.instructions = this.instructionsSO!.GetInstructionsFor(
-			this.agent.GameObject,
+			this.agent.Value!.Agent,
 			this.IsRunning
 		);
 	}

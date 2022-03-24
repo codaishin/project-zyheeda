@@ -27,12 +27,17 @@ public class InstructionsMBTests : TestCollection
 		}
 	}
 
+	class MockAgentMB : MonoBehaviour, IAgent
+	{
+		public GameObject Agent => this.gameObject;
+	}
+
 	[UnityTest]
 	public IEnumerator RunCoroutineOnce() {
-		var agent = new GameObject();
+		var agent = new GameObject().AddComponent<MockAgentMB>();
 		var comp = new GameObject().AddComponent<InstructionsMB>();
 		comp.instructionsSO = ScriptableObject.CreateInstance<MockCoroutineSO>();
-		comp.agent = agent;
+		comp.agent = Reference<IAgent>.PointToComponent(agent);
 
 		yield return new WaitForEndOfFrame();
 
@@ -45,10 +50,10 @@ public class InstructionsMBTests : TestCollection
 
 	[UnityTest]
 	public IEnumerator RunCoroutineMultipleAtATime() {
-		var agent = new GameObject();
+		var agent = new GameObject().AddComponent<MockAgentMB>();
 		var comp = new GameObject().AddComponent<InstructionsMB>();
 		comp.instructionsSO = ScriptableObject.CreateInstance<MockCoroutineSO>();
-		comp.agent = agent;
+		comp.agent = Reference<IAgent>.PointToComponent(agent);
 
 		yield return new WaitForEndOfFrame();
 
@@ -62,10 +67,10 @@ public class InstructionsMBTests : TestCollection
 
 	[UnityTest]
 	public IEnumerator RunCoroutineTwice() {
-		var agent = new GameObject();
+		var agent = new GameObject().AddComponent<MockAgentMB>(); ;
 		var comp = new GameObject().AddComponent<InstructionsMB>();
 		comp.instructionsSO = ScriptableObject.CreateInstance<MockCoroutineSO>();
-		comp.agent = agent;
+		comp.agent = Reference<IAgent>.PointToComponent(agent);
 
 		yield return new WaitForEndOfFrame();
 
@@ -79,11 +84,11 @@ public class InstructionsMBTests : TestCollection
 
 	[UnityTest]
 	public IEnumerator RunCoroutineOnExternalRunner() {
-		var agent = new GameObject();
+		var agent = new GameObject().AddComponent<MockAgentMB>(); ;
 		var comp = new GameObject().AddComponent<InstructionsMB>();
 		var external = new GameObject().AddComponent<CoroutineRunnerMB>();
 		comp.instructionsSO = ScriptableObject.CreateInstance<MockCoroutineSO>();
-		comp.agent = agent;
+		comp.agent = Reference<IAgent>.PointToComponent(agent);
 		comp.runner = external;
 
 		yield return new WaitForEndOfFrame();
@@ -102,10 +107,10 @@ public class InstructionsMBTests : TestCollection
 	[UnityTest]
 	public IEnumerator OverrideAll() {
 		var calledOther = false;
-		var agent = new GameObject();
+		var agent = new GameObject().AddComponent<MockAgentMB>(); ;
 		var comp = new GameObject().AddComponent<InstructionsMB>();
 		comp.instructionsSO = ScriptableObject.CreateInstance<MockCoroutineSO>();
-		comp.agent = agent;
+		comp.agent = Reference<IAgent>.PointToComponent(agent);
 		comp.overrideMode = OverrideMode.All;
 
 		IEnumerator otherRoutine() {
@@ -126,11 +131,11 @@ public class InstructionsMBTests : TestCollection
 	[UnityTest]
 	public IEnumerator OverrideAllOnExternal() {
 		var calledOther = false;
-		var agent = new GameObject();
+		var agent = new GameObject().AddComponent<MockAgentMB>(); ;
 		var comp = new GameObject().AddComponent<InstructionsMB>();
 		var external = new GameObject().AddComponent<CoroutineRunnerMB>();
 		comp.instructionsSO = ScriptableObject.CreateInstance<MockCoroutineSO>();
-		comp.agent = agent;
+		comp.agent = Reference<IAgent>.PointToComponent(agent);
 		comp.overrideMode = OverrideMode.All;
 		comp.runner = external;
 
@@ -152,10 +157,10 @@ public class InstructionsMBTests : TestCollection
 	[UnityTest]
 	public IEnumerator OverrideOwn() {
 		var calledOther = false;
-		var agent = new GameObject();
+		var agent = new GameObject().AddComponent<MockAgentMB>(); ;
 		var comp = new GameObject().AddComponent<InstructionsMB>();
 		comp.instructionsSO = ScriptableObject.CreateInstance<MockCoroutineSO>();
-		comp.agent = agent;
+		comp.agent = Reference<IAgent>.PointToComponent(agent);
 		comp.overrideMode = OverrideMode.Own;
 
 		IEnumerator otherRoutine() {
@@ -180,11 +185,11 @@ public class InstructionsMBTests : TestCollection
 	[UnityTest]
 	public IEnumerator OverrideOwnOnExternal() {
 		var calledOther = false;
-		var agent = new GameObject();
+		var agent = new GameObject().AddComponent<MockAgentMB>(); ;
 		var comp = new GameObject().AddComponent<InstructionsMB>();
 		var external = new GameObject().AddComponent<CoroutineRunnerMB>();
 		comp.instructionsSO = ScriptableObject.CreateInstance<MockCoroutineSO>();
-		comp.agent = agent;
+		comp.agent = Reference<IAgent>.PointToComponent(agent);
 		comp.overrideMode = OverrideMode.Own;
 		comp.runner = external;
 
@@ -220,13 +225,13 @@ public class InstructionsMBTests : TestCollection
 	[UnityTest]
 	public IEnumerator Release() {
 		var calledEnd = 0;
-		var agent = new GameObject();
+		var agent = new GameObject().AddComponent<MockAgentMB>(); ;
 		var comp = new GameObject().AddComponent<InstructionsMB>();
 		var external = new GameObject().AddComponent<CoroutineRunnerMB>();
 		var plugin = ScriptableObject.CreateInstance<MockPluginSO>();
 		var instructions = ScriptableObject.CreateInstance<MockCoroutineSO>();
 		comp.instructionsSO = instructions;
-		comp.agent = agent;
+		comp.agent = Reference<IAgent>.PointToComponent(agent);
 		comp.overrideMode = OverrideMode.Own;
 		comp.runner = external;
 
