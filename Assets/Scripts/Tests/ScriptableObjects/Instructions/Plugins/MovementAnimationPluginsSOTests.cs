@@ -6,24 +6,24 @@ using UnityEngine.TestTools;
 
 public class MovementAnimationPluginSOTests : TestCollection
 {
-	class MockMovementAnimationMB : MonoBehaviour, IMovementAnimation
+	class MockAnimationMB : MonoBehaviour, IAnimation
 	{
-		public Action move = () => { };
-		public Action<float> walkOrRunBlend = _ => { };
-		public Action stop = () => { };
+		public Action<Animation.State> set = _ => { };
+		public Action<Animation.BlendState, float> blend = (_, __) => { };
 
-		public void Begin() => this.move();
-		public void WalkOrRunBlend(float value) => this.walkOrRunBlend(value);
-		public void End() => this.stop();
+		public void Set(Animation.State state) =>
+			this.set(state);
+		public void Blend(Animation.BlendState state, float weight) =>
+			this.blend(state, weight);
 	}
 
 	[UnityTest]
 	public IEnumerator OnBeginWalk() {
-		var called = 0;
-		var agent = new GameObject().AddComponent<MockMovementAnimationMB>();
+		var called = (Animation.State)(-1);
+		var agent = new GameObject().AddComponent<MockAnimationMB>();
 		var instructions = ScriptableObject.CreateInstance<MovementAnimationPluginSO>();
 
-		agent.move = () => ++called;
+		agent.set = s => called = s;
 
 		var action = instructions.GetCallbacks(agent.gameObject).onBegin!;
 
@@ -31,16 +31,35 @@ public class MovementAnimationPluginSOTests : TestCollection
 
 		action(new PluginData());
 
-		Assert.AreEqual(1, called);
+		Assert.AreEqual(Animation.State.WalkOrRun, called);
+	}
+
+	[UnityTest]
+	public IEnumerator OnBeginWalkWithAnimationOnChild() {
+		var called = (Animation.State)(-1);
+		var agent = new GameObject();
+		var child = new GameObject().AddComponent<MockAnimationMB>();
+		var instructions = ScriptableObject.CreateInstance<MovementAnimationPluginSO>();
+
+		child.transform.parent = agent.transform;
+		child.set = s => called = s;
+
+		var action = instructions.GetCallbacks(agent.gameObject).onBegin!;
+
+		yield return new WaitForEndOfFrame();
+
+		action(new PluginData());
+
+		Assert.AreEqual(Animation.State.WalkOrRun, called);
 	}
 
 	[UnityTest]
 	public IEnumerator OnBeginWalkWeight() {
-		var called = -1f;
-		var agent = new GameObject().AddComponent<MockMovementAnimationMB>();
+		var called = ((Animation.BlendState)(-1), -1f);
+		var agent = new GameObject().AddComponent<MockAnimationMB>();
 		var instructions = ScriptableObject.CreateInstance<MovementAnimationPluginSO>();
 
-		agent.walkOrRunBlend = value => called = value;
+		agent.blend = (state, value) => called = (state, value);
 
 		var action = instructions.GetCallbacks(agent.gameObject).onBegin!;
 
@@ -48,16 +67,16 @@ public class MovementAnimationPluginSOTests : TestCollection
 
 		action(new PluginData { weight = 0.324f });
 
-		Assert.AreEqual(0.324f, called);
+		Assert.AreEqual((Animation.BlendState.WalkOrRun, 0.324f), called);
 	}
 
 	[UnityTest]
 	public IEnumerator OnUpdateWalkWeight() {
-		var called = -1f;
-		var agent = new GameObject().AddComponent<MockMovementAnimationMB>();
+		var called = ((Animation.BlendState)(-1), -1f);
+		var agent = new GameObject().AddComponent<MockAnimationMB>();
 		var instructions = ScriptableObject.CreateInstance<MovementAnimationPluginSO>();
 
-		agent.walkOrRunBlend = value => called = value;
+		agent.blend = (state, value) => called = (state, value);
 
 		var action = instructions.GetCallbacks(agent.gameObject).onAfterYield!;
 
@@ -65,16 +84,16 @@ public class MovementAnimationPluginSOTests : TestCollection
 
 		action(new PluginData { weight = 0.111f });
 
-		Assert.AreEqual(0.111f, called);
+		Assert.AreEqual((Animation.BlendState.WalkOrRun, 0.111f), called);
 	}
 
 	[UnityTest]
 	public IEnumerator OnEndStop() {
-		var called = false;
-		var agent = new GameObject().AddComponent<MockMovementAnimationMB>();
+		var called = (Animation.State)(-1);
+		var agent = new GameObject().AddComponent<MockAnimationMB>();
 		var instructions = ScriptableObject.CreateInstance<MovementAnimationPluginSO>();
 
-		agent.stop = () => called = true;
+		agent.set = s => called = s;
 
 		var action = instructions.GetCallbacks(agent.gameObject).onEnd!;
 
@@ -82,6 +101,6 @@ public class MovementAnimationPluginSOTests : TestCollection
 
 		action(new PluginData { weight = 0.324f });
 
-		Assert.True(called);
+		Assert.AreEqual(Animation.State.Idle, called);
 	}
 }

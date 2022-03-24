@@ -6,18 +6,17 @@ using UnityEngine;
 public class MovementAnimationPluginSO : BaseInstructionsPluginSO
 {
 	public override PluginCallbacks GetCallbacks(GameObject agent) {
-		IMovementAnimation moveAnimation =
-			agent.RequireComponent<IMovementAnimation>();
+		IAnimation animation = agent.RequireComponent<IAnimation>(true);
 		return new PluginCallbacks {
 			onBegin = data => {
-				moveAnimation.Begin();
-				moveAnimation.WalkOrRunBlend(data.weight);
+				animation.Set(Animation.State.WalkOrRun);
+				animation.Blend(Animation.BlendState.WalkOrRun, data.weight);
 			},
 			onAfterYield = data => {
-				moveAnimation.WalkOrRunBlend(data.weight);
+				animation.Blend(Animation.BlendState.WalkOrRun, data.weight);
 			},
 			onEnd = _ => {
-				moveAnimation.End();
+				animation.Set(Animation.State.Idle);
 			},
 		};
 	}
