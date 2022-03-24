@@ -334,8 +334,7 @@ MonoBehaviour:
   runner: {fileID: 8328515223519877874}
   instructionsSO: {fileID: 11400000, guid: dc90fcd556d48664c80ab166bdfa2087, type: 2}
   agent:
-    gameObject: {fileID: 7584915075398348528}
-    referenceSO: {fileID: 0}
+    value: {fileID: 511523847885116978}
   overrideMode: 2
 --- !u!1 &3120450725131024759
 GameObject:
@@ -467,8 +466,7 @@ MonoBehaviour:
   runner: {fileID: 8328515223519877874}
   instructionsSO: {fileID: 11400000, guid: d42a1e74102d06946a27674dc56c2481, type: 2}
   agent:
-    gameObject: {fileID: 7584915075398348528}
-    referenceSO: {fileID: 0}
+    value: {fileID: 511523847885116978}
   overrideMode: 2
 --- !u!114 &313092049
 MonoBehaviour:
@@ -493,6 +491,7 @@ GameObject:
   - component: {fileID: 7584915075398348534}
   - component: {fileID: 7584915075398348529}
   - component: {fileID: 470864595324476530}
+  - component: {fileID: 511523847885116978}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -544,6 +543,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 4250072016682791608}
+--- !u!114 &511523847885116978
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7584915075398348528}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 057a523ca5fb5de44ad6bc1bfb59e6f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7793497629419029189
 GameObject:
   m_ObjectHideFlags: 0
@@ -644,8 +655,7 @@ MonoBehaviour:
   runner: {fileID: 8328515223519877874}
   instructionsSO: {fileID: 11400000, guid: 56f212e2f9f9e2b4785eb2c7649aa2cc, type: 2}
   agent:
-    gameObject: {fileID: 7584915075398348528}
-    referenceSO: {fileID: 0}
+    value: {fileID: 511523847885116978}
   overrideMode: 2
 --- !u!1 &8735026594236031251
 GameObject:
