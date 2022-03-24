@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weapon: {fileID: 692240666992486304}
-  stance: 1
+  useLayer: 0
 --- !u!1 &1086542861
 GameObject:
   m_ObjectHideFlags: 0
@@ -123,7 +123,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weapon: {fileID: 0}
-  stance: 0
+  useLayer: 0
 --- !u!1 &1287581792
 GameObject:
   m_ObjectHideFlags: 0
@@ -220,8 +220,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slot: {fileID: 6834114029933911244}
-  stanceAnimator:
-    value: {fileID: 313092049}
+  animator:
+    value: {fileID: 0}
   loadouts:
   - value: {fileID: 1236917148}
   - value: {fileID: 758864992}
@@ -470,18 +470,6 @@ MonoBehaviour:
     gameObject: {fileID: 7584915075398348528}
     referenceSO: {fileID: 0}
   overrideMode: 2
---- !u!114 &313092049
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7444649758959415928}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: de014dbe582567a43927a490c31f6447, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1338006734
 MonoBehaviour:
   m_ObjectHideFlags: 0

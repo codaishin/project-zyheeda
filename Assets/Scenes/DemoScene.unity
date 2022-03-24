@@ -182,6 +182,17 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &379358074 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1338006734, guid: bf447ba10ce81fc409c8597b6aa35a6e, type: 3}
+  m_PrefabInstance: {fileID: 511523847885116976}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c281cc3491e9fe408c107dbd3549d60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -457,6 +468,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 758864992, guid: bf447ba10ce81fc409c8597b6aa35a6e, type: 3}
+      propertyPath: useLayer
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1399585304, guid: bf447ba10ce81fc409c8597b6aa35a6e, type: 3}
+      propertyPath: animator.value
+      value: 
+      objectReference: {fileID: 379358074}
     - target: {fileID: 2981718183711450939, guid: bf447ba10ce81fc409c8597b6aa35a6e, type: 3}
       propertyPath: equipment.records.Array.size
       value: 1
@@ -517,7 +536,8 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 313092049, guid: bf447ba10ce81fc409c8597b6aa35a6e, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: bf447ba10ce81fc409c8597b6aa35a6e, type: 3}
 --- !u!1001 &2539261052480362510
 PrefabInstance:
