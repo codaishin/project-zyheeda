@@ -7,9 +7,9 @@ public interface IAnimationStates
 	void Blend(Animation.BlendState state, float weight);
 }
 
-public interface IAnimationLayers
+public interface IAnimationStance
 {
-	void Set(Animation.Layer layer, float weight);
+	void Set(Animation.Stance layer, bool value);
 }
 
 public static class Animation
@@ -36,18 +36,18 @@ public static class Animation
 				: throw new System.ArgumentException();
 	}
 
-	public enum Layer
+	public enum Stance
 	{
 		Default = default,
 		HoldRifle,
 	}
 
-	private static Dictionary<Layer, string> layerNameMap = new() {
-		{ Layer.Default, "Base Layer" },
-		{ Layer.HoldRifle, "Hold Rifle Layer" },
+	private static Dictionary<Stance, string> layerNameMap = new() {
+		{ Stance.Default, "default" },
+		{ Stance.HoldRifle, "holdRifle" },
 	};
 
-	public static string Name(this Layer layer) {
+	public static string Name(this Stance layer) {
 		return Animation.layerNameMap
 			.TryGetValue(layer, out string value)
 				? value
@@ -56,7 +56,7 @@ public static class Animation
 }
 
 [RequireComponent(typeof(Animator))]
-public class AnimationMB : MonoBehaviour, IAnimationStates, IAnimationLayers
+public class AnimationMB : MonoBehaviour, IAnimationStates, IAnimationStance
 {
 	private Animator? animator;
 
@@ -68,9 +68,15 @@ public class AnimationMB : MonoBehaviour, IAnimationStates, IAnimationLayers
 		this.animator!.SetInteger("state", (int)state);
 	}
 
-	public void Set(Animation.Layer layer, float weight) {
-		int index = this.animator!.GetLayerIndex(layer.Name());
-		this.animator!.SetLayerWeight(index, weight);
+	public void Set(Animation.Stance stance, bool value) {
+		if (stance == Animation.Stance.Default) {
+			return;
+		}
+		string name = stance.Name();
+		int index = this.animator!.GetLayerIndex(name);
+
+		this.animator!.SetLayerWeight(index, value ? 1 : 0);
+		this.animator!.SetBool(name, value);
 	}
 
 	public void Blend(Animation.BlendState state, float weight) {

@@ -5,7 +5,7 @@ using UnityEngine;
 public class LoadoutCircleMB : MonoBehaviour, IApplicable
 {
 	public Transform? slot;
-	public Reference<IAnimationLayers> animator;
+	public Reference<IAnimationStance> animator;
 
 	private IEnumerator<ILoadout> loadout =
 		Enumerable

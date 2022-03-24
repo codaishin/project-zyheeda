@@ -11,19 +11,19 @@ public class LoadoutCircleMBTests : TestCollection
 	{
 		public Action<Transform> assignTo = _ => { };
 		public Action reset = () => { };
-		public Action<IAnimationLayers> setAnimator = _ => { };
+		public Action<IAnimationStance> setAnimator = _ => { };
 
 		public void Equip(Transform slot) =>
 			this.assignTo(slot);
 		public void UnEquip() =>
 			this.reset();
-		public void SetAnimator(IAnimationLayers animator) =>
+		public void SetAnimator(IAnimationStance animator) =>
 			this.setAnimator(animator);
 	}
 
-	class MockStanceAnimatorMB : MonoBehaviour, IAnimationLayers
+	class MockStanceAnimatorMB : MonoBehaviour, IAnimationStance
 	{
-		public void Set(Animation.Layer layer, float weight) {
+		public void Set(Animation.Stance stance, bool value) {
 			throw new NotImplementedException();
 		}
 	}
@@ -174,14 +174,14 @@ public class LoadoutCircleMBTests : TestCollection
 
 	[UnityTest]
 	public IEnumerator loadoutstanceAnimator() {
-		var called = null as IAnimationLayers;
+		var called = null as IAnimationStance;
 		var animation = new GameObject().AddComponent<MockStanceAnimatorMB>();
 		var set = new GameObject().AddComponent<MockLoadoutMB>();
 		var slot = new GameObject();
 		var loadout = new GameObject().AddComponent<LoadoutCircleMB>();
 		loadout.slot = slot.transform;
 		loadout.animator =
-			Reference<IAnimationLayers>.PointToComponent(animation);
+			Reference<IAnimationStance>.PointToComponent(animation);
 		loadout.loadouts = new Reference<ILoadout>[] {
 			Reference<ILoadout>.PointToComponent(set),
 		};

@@ -6,11 +6,11 @@ using UnityEngine.TestTools;
 
 public class LoadoutMBTests : TestCollection
 {
-	class MockStanceAnimator : MonoBehaviour, IAnimationLayers
+	class MockStanceAnimator : MonoBehaviour, IAnimationStance
 	{
-		public Action<Animation.Layer, float> set = (_, __) => { };
-		public void Set(Animation.Layer layer, float weight) =>
-			this.set(layer, weight);
+		public Action<Animation.Stance, bool> set = (_, __) => { };
+		public void Set(Animation.Stance layer, bool value) =>
+			this.set(layer, value);
 	}
 
 	[UnityTest]
@@ -198,14 +198,14 @@ public class LoadoutMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator SetStanceWeightOne() {
-		var called = (Animation.Layer.Default, 0f);
+	public IEnumerator SetStanceTrue() {
+		var called = (Animation.Stance.Default, false);
 		var slot = new GameObject();
 		var rifle = new GameObject();
 		var set = new GameObject().AddComponent<LoadoutMB>();
 		var animationLayer = new GameObject().AddComponent<MockStanceAnimator>();
 
-		set.useLayer = Animation.Layer.HoldRifle;
+		set.stance = Animation.Stance.HoldRifle;
 		set.weapon = rifle.transform;
 		set.SetAnimator(animationLayer);
 		animationLayer.set = (l, w) => called = (l, w);
@@ -214,18 +214,18 @@ public class LoadoutMBTests : TestCollection
 
 		set.Equip(slot.transform);
 
-		Assert.AreEqual((Animation.Layer.HoldRifle, 1f), called);
+		Assert.AreEqual((Animation.Stance.HoldRifle, true), called);
 	}
 
 	[UnityTest]
-	public IEnumerator SetStanceWeightZero() {
-		var called = (Animation.Layer.Default, 1f);
+	public IEnumerator SetStanceFalse() {
+		var called = (Animation.Stance.Default, true);
 		var slot = new GameObject();
 		var rifle = new GameObject();
 		var set = new GameObject().AddComponent<LoadoutMB>();
 		var animationLayer = new GameObject().AddComponent<MockStanceAnimator>();
 
-		set.useLayer = Animation.Layer.HoldRifle;
+		set.stance = Animation.Stance.HoldRifle;
 		set.weapon = rifle.transform;
 		set.SetAnimator(animationLayer);
 
@@ -235,6 +235,6 @@ public class LoadoutMBTests : TestCollection
 		animationLayer.set = (l, w) => called = (l, w);
 		set.UnEquip();
 
-		Assert.AreEqual((Animation.Layer.HoldRifle, 0f), called);
+		Assert.AreEqual((Animation.Stance.HoldRifle, false), called);
 	}
 }
