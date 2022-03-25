@@ -56,8 +56,11 @@ public static class Animation
 	}
 }
 
+public interface IAnimation : IAnimationStates, IAnimationStance { }
+
+
 [RequireComponent(typeof(Animator))]
-public class AnimationMB : MonoBehaviour, IAnimationStates, IAnimationStance
+public class AnimationMB : MonoBehaviour, IAnimation
 {
 	private Animator? animator;
 

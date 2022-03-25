@@ -7,11 +7,13 @@ using UnityEngine.TestTools;
 
 public class LoadoutCircleMBTests : TestCollection
 {
-	class MockLoadoutMB : MonoBehaviour, ILoadout
+	class MockLoadoutMB : MonoBehaviour, IEquipableLoadout
 	{
 		public Action<Transform> assignTo = _ => { };
 		public Action reset = () => { };
 		public Action<IAnimationStance> setAnimator = _ => { };
+
+		public IItem? Item => throw new NotImplementedException();
 
 		public void Equip(Transform slot) =>
 			this.assignTo(slot);
@@ -35,8 +37,8 @@ public class LoadoutCircleMBTests : TestCollection
 		var slot = new GameObject();
 		var loadout = new GameObject().AddComponent<LoadoutCircleMB>();
 		loadout.slot = slot.transform;
-		loadout.loadouts = new Reference<ILoadout>[] {
-			Reference<ILoadout>.PointToComponent(set),
+		loadout.loadouts = new Reference<IEquipableLoadout>[] {
+			Reference<IEquipableLoadout>.PointToComponent(set),
 		};
 
 		set.assignTo = s => called = s;
@@ -57,7 +59,7 @@ public class LoadoutCircleMBTests : TestCollection
 		var loadout = new GameObject().AddComponent<LoadoutCircleMB>();
 		loadout.slot = slot.transform;
 		loadout.loadouts = loadouts
-			.Select(Reference<ILoadout>.PointToComponent)
+			.Select(Reference<IEquipableLoadout>.PointToComponent)
 			.ToArray();
 
 		loadouts[1].assignTo = s => called = s;
@@ -80,7 +82,7 @@ public class LoadoutCircleMBTests : TestCollection
 		var loadout = new GameObject().AddComponent<LoadoutCircleMB>();
 		loadout.slot = slot.transform;
 		loadout.loadouts = loadouts
-			.Select(Reference<ILoadout>.PointToComponent)
+			.Select(Reference<IEquipableLoadout>.PointToComponent)
 			.ToArray();
 
 		loadouts[0].reset = () => ++called;
@@ -105,7 +107,7 @@ public class LoadoutCircleMBTests : TestCollection
 		var loadout = new GameObject().AddComponent<LoadoutCircleMB>();
 		loadout.slot = slot.transform;
 		loadout.loadouts = loadouts
-			.Select(Reference<ILoadout>.PointToComponent)
+			.Select(Reference<IEquipableLoadout>.PointToComponent)
 			.ToArray();
 
 		loadouts[3].assignTo = s => called = s;
@@ -132,7 +134,7 @@ public class LoadoutCircleMBTests : TestCollection
 		var loadout = new GameObject().AddComponent<LoadoutCircleMB>();
 		loadout.slot = slot.transform;
 		loadout.loadouts = loadouts
-			.Select(Reference<ILoadout>.PointToComponent)
+			.Select(Reference<IEquipableLoadout>.PointToComponent)
 			.ToArray();
 
 		loadouts[2].reset = () => ++called;
@@ -158,7 +160,7 @@ public class LoadoutCircleMBTests : TestCollection
 		var loadout = new GameObject().AddComponent<LoadoutCircleMB>();
 		loadout.slot = slot.transform;
 		loadout.loadouts = loadouts
-			.Select(Reference<ILoadout>.PointToComponent)
+			.Select(Reference<IEquipableLoadout>.PointToComponent)
 			.ToArray();
 
 		loadouts[0].assignTo = s => called = s;
@@ -182,8 +184,8 @@ public class LoadoutCircleMBTests : TestCollection
 		loadout.slot = slot.transform;
 		loadout.animator =
 			Reference<IAnimationStance>.PointToComponent(animation);
-		loadout.loadouts = new Reference<ILoadout>[] {
-			Reference<ILoadout>.PointToComponent(set),
+		loadout.loadouts = new Reference<IEquipableLoadout>[] {
+			Reference<IEquipableLoadout>.PointToComponent(set),
 		};
 
 		set.setAnimator = a => called = a;
@@ -200,8 +202,8 @@ public class LoadoutCircleMBTests : TestCollection
 		var slot = new GameObject();
 		var loadout = new GameObject().AddComponent<LoadoutCircleMB>();
 		loadout.slot = slot.transform;
-		loadout.loadouts = new Reference<ILoadout>[] {
-			Reference<ILoadout>.PointToComponent(set),
+		loadout.loadouts = new Reference<IEquipableLoadout>[] {
+			Reference<IEquipableLoadout>.PointToComponent(set),
 		};
 
 		set.setAnimator = _ => ++called;
@@ -209,5 +211,21 @@ public class LoadoutCircleMBTests : TestCollection
 		yield return new WaitForEndOfFrame();
 
 		Assert.AreEqual(0, called);
+	}
+
+
+	[UnityTest]
+	public IEnumerator CurrentLoadout() {
+		var set = new GameObject().AddComponent<MockLoadoutMB>();
+		var slot = new GameObject();
+		var loadout = new GameObject().AddComponent<LoadoutCircleMB>();
+		loadout.slot = slot.transform;
+		loadout.loadouts = new Reference<IEquipableLoadout>[] {
+			Reference<IEquipableLoadout>.PointToComponent(set),
+		};
+
+		yield return new WaitForEndOfFrame();
+
+		Assert.AreSame(set, loadout.Current);
 	}
 }

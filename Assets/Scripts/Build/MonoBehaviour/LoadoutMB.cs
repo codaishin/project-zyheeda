@@ -1,28 +1,36 @@
 using UnityEngine;
 
-
 public interface ILoadout
+{
+	IItem? Item { get; }
+}
+
+public interface IEquipable
 {
 	void SetAnimator(IAnimationStance animator);
 	void Equip(Transform slot);
 	void UnEquip();
 }
 
-public class LoadoutMB : MonoBehaviour, ILoadout
+public interface IEquipableLoadout : IEquipable, ILoadout { }
+
+public class LoadoutMB : MonoBehaviour, IEquipableLoadout
 {
-	public Reference<IItem> weapon;
+	public Reference<IComplexItem> item;
 
 	private Transform? originalParent;
 	private IAnimationStance? animator;
 
+	public IItem? Item => this.item.Value;
+
 	public void Equip(Transform slot) {
 		this.SetStance(true);
 
-		if (this.weapon.Value == null) {
+		if (this.item.Value == null) {
 			return;
 		}
 
-		this.originalParent = this.weapon.Value.transform.parent;
+		this.originalParent = this.item.Value.transform.parent;
 		this.UpdateWeapon(slot, true);
 	}
 
@@ -32,18 +40,18 @@ public class LoadoutMB : MonoBehaviour, ILoadout
 	}
 
 	private void SetStance(bool value) {
-		if (this.animator == null || this.weapon.Value == null) {
+		if (this.animator == null || this.item.Value == null) {
 			return;
 		}
-		this.animator.Set(this.weapon.Value.IdleStance, value);
+		this.animator.Set(this.item.Value.IdleStance, value);
 	}
 
 	private void UpdateWeapon(Transform? parent, bool active) {
-		if (this.weapon.Value == null) {
+		if (this.item.Value == null) {
 			return;
 		}
 
-		Transform transform = this.weapon.Value.transform;
+		Transform transform = this.item.Value.transform;
 
 		transform.parent = null;
 		transform.gameObject.SetActive(active);

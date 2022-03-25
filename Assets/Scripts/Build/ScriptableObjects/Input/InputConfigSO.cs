@@ -19,6 +19,7 @@ public class InputConfigSO : BaseInputConfigSO
 		InputEnum.Map.Movement => this.Config.Movement.Get(),
 		InputEnum.Map.Mouse => this.Config.Mouse.Get(),
 		InputEnum.Map.Equipment => this.Config.Equipment.Get(),
+		InputEnum.Map.Skill => this.Config.Skills.Get(),
 		_ => throw new ArgumentException(),
 	};
 
@@ -28,6 +29,7 @@ public class InputConfigSO : BaseInputConfigSO
 		InputEnum.Action.WalkOrRun => this.Config.Movement.WalkOrRun,
 		InputEnum.Action.MousePosition => this.Config.Mouse.Position,
 		InputEnum.Action.CircleLoadout => this.Config.Equipment.CircleLoadout,
+		InputEnum.Action.Shoot => this.Config.Skills.Shoot,
 		_ => throw new ArgumentException(),
 	};
 
