@@ -35,7 +35,7 @@ TagManager:
   - 
   - 
   - 
-  - 
+  - ItemTarget
   - Ground
   m_SortingLayers:
   - name: Default
