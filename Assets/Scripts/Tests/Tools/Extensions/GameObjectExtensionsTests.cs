@@ -3,11 +3,10 @@ using UnityEngine;
 
 public class GameObjectExtensionsTests : TestCollection
 {
-	private class MockMB : MonoBehaviour {}
+	private class MockMB : MonoBehaviour { }
 
 	[Test]
-	public void RequireComponent()
-	{
+	public void RequireComponent() {
 		var obj = new GameObject("obj");
 		var cmp = obj.AddComponent<MockMB>();
 
@@ -15,19 +14,31 @@ public class GameObjectExtensionsTests : TestCollection
 	}
 
 	[Test]
-	public void RequireComponentMissing()
-	{
+	public void RequireComponentIncludeChildren() {
 		var obj = new GameObject("obj");
-		Assert.Throws<MissingComponentException>(() => obj.RequireComponent<MockMB>());
+		var chield = new GameObject("chield");
+		var cmp = chield.AddComponent<MockMB>();
+
+		chield.transform.parent = obj.transform;
+
+		Assert.AreSame(cmp, obj.RequireComponent<MockMB>(true));
 	}
 
 	[Test]
-	public void RequireComponentMissingMessage()
-	{
+	public void RequireComponentMissing() {
+		var obj = new GameObject("obj");
+		Assert.Throws<MissingComponentException>(
+			() => obj.RequireComponent<MockMB>()
+		);
+	}
+
+	[Test]
+	public void RequireComponentMissingMessage() {
 		var obj = new GameObject("obj");
 		try {
 			obj.RequireComponent<MockMB>();
-		} catch (MissingComponentException e) {
+		}
+		catch (MissingComponentException e) {
 			Assert.AreEqual(
 				"GameObject \"obj\" does not have a Component of type \"GameObjectExtensionsTests+MockMB\"",
 				e.Message

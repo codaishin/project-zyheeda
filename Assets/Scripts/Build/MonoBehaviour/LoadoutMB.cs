@@ -1,62 +1,71 @@
 using UnityEngine;
 
-
 public interface ILoadout
 {
-	void SetStanceAnimator(IStanceAnimation stanceAnimator);
+	IItem? Item { get; }
+}
+
+public interface IEquipable
+{
+	void SetAnimator(IAnimationStance animator);
 	void Equip(Transform slot);
 	void UnEquip();
 }
 
-public class LoadoutMB : MonoBehaviour, ILoadout
+public interface IEquipableLoadout : IEquipable, ILoadout { }
+
+public class LoadoutMB : MonoBehaviour, IEquipableLoadout
 {
-	public Transform? weapon;
-	public Stance stance;
+	public Reference<IComplexItem> item;
 
 	private Transform? originalParent;
-	private IStanceAnimation? stanceAnimator;
+	private IAnimationStance? animator;
+
+	public IItem? Item => this.item.Value;
 
 	public void Equip(Transform slot) {
-		this.UpdateStance(1f);
+		this.SetStance(true);
 
-		if (this.weapon == null) {
+		if (this.item.Value == null) {
 			return;
 		}
 
-		this.originalParent = this.weapon.parent;
+		this.originalParent = this.item.Value.transform.parent;
 		this.UpdateWeapon(slot, true);
 	}
 
 	public void UnEquip() {
-		this.UpdateStance(0f);
+		this.SetStance(false);
 		this.UpdateWeapon(this.originalParent, false);
 	}
 
-	private void UpdateStance(float weight) {
-		if (this.stanceAnimator == null) {
+	private void SetStance(bool value) {
+		if (this.animator == null || this.item.Value == null) {
 			return;
 		}
-		this.stanceAnimator.Set(this.stance, weight);
+		this.animator.Set(this.item.Value.IdleStance, value);
 	}
 
 	private void UpdateWeapon(Transform? parent, bool active) {
-		if (this.weapon == null) {
+		if (this.item.Value == null) {
 			return;
 		}
 
-		this.weapon.parent = null;
-		this.weapon.gameObject.SetActive(active);
+		Transform transform = this.item.Value.transform;
+
+		transform.parent = null;
+		transform.gameObject.SetActive(active);
 
 		if (parent == null) {
 			return;
 		}
 
-		this.weapon.position = parent.position;
-		this.weapon.rotation = parent.rotation;
-		this.weapon.parent = parent;
+		transform.position = parent.position;
+		transform.rotation = parent.rotation;
+		transform.parent = parent;
 	}
 
-	public void SetStanceAnimator(IStanceAnimation stanceAnimator) {
-		this.stanceAnimator = stanceAnimator;
+	public void SetAnimator(IAnimationStance animator) {
+		this.animator = animator;
 	}
 }

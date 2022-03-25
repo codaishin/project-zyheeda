@@ -2,34 +2,43 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class LoadoutCircleMB : MonoBehaviour, IApplicable
+public interface ILoadoutManager
+{
+	ILoadout Current { get; }
+}
+
+public interface ILoadoutCircle : IApplicable, ILoadoutManager { }
+
+public class LoadoutCircleMB : MonoBehaviour, ILoadoutCircle
 {
 	public Transform? slot;
-	public Reference<IStanceAnimation> stanceAnimator;
+	public Reference<IAnimationStance> animator;
 
-	private IEnumerator<ILoadout> loadout =
+	private IEnumerator<IEquipableLoadout> loadout =
 		Enumerable
-			.Empty<ILoadout>()
+			.Empty<IEquipableLoadout>()
 			.GetEnumerator();
 
-	public Reference<ILoadout>[] loadouts = new Reference<ILoadout>[0];
+	public Reference<IEquipableLoadout>[] loadouts = new Reference<IEquipableLoadout>[0];
+
+	public ILoadout Current => this.loadout.Current;
 
 	private void Start() {
 		this.loadout = this.LoadoutIterator();
 		this.loadout.MoveNext();
 		this.loadout.Current.Equip(this.slot!);
 
-		if (this.stanceAnimator.Value == null) {
+		if (this.animator.Value == null) {
 			return;
 		}
-		foreach (ILoadout loadout in this.loadouts.Values()) {
-			loadout.SetStanceAnimator(this.stanceAnimator.Value);
+		foreach (IEquipable loadout in this.loadouts.Values()) {
+			loadout.SetAnimator(this.animator.Value);
 		}
 	}
 
-	private IEnumerator<ILoadout> LoadoutIterator() {
+	private IEnumerator<IEquipableLoadout> LoadoutIterator() {
 		while (true) {
-			foreach (Reference<ILoadout> loadout in this.loadouts) {
+			foreach (Reference<IEquipableLoadout> loadout in this.loadouts) {
 				yield return loadout.Value!;
 			}
 		}

@@ -146,6 +146,34 @@ public partial class @PlayerInputConfig : IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Skills"",
+            ""id"": ""058b8a5d-7921-49d7-bc27-8c59fbbfca03"",
+            ""actions"": [
+                {
+                    ""name"": ""Shoot"",
+                    ""type"": ""Button"",
+                    ""id"": ""f6e9b625-95ea-4452-b8ea-1db4522419e1"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""1104907e-a008-4fb9-982d-51f9d29d8b3b"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Shoot"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -222,6 +250,9 @@ public partial class @PlayerInputConfig : IInputActionCollection2, IDisposable
         // Equipment
         m_Equipment = asset.FindActionMap("Equipment", throwIfNotFound: true);
         m_Equipment_CircleLoadout = m_Equipment.FindAction("CircleLoadout", throwIfNotFound: true);
+        // Skills
+        m_Skills = asset.FindActionMap("Skills", throwIfNotFound: true);
+        m_Skills_Shoot = m_Skills.FindAction("Shoot", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -392,6 +423,39 @@ public partial class @PlayerInputConfig : IInputActionCollection2, IDisposable
         }
     }
     public EquipmentActions @Equipment => new EquipmentActions(this);
+
+    // Skills
+    private readonly InputActionMap m_Skills;
+    private ISkillsActions m_SkillsActionsCallbackInterface;
+    private readonly InputAction m_Skills_Shoot;
+    public struct SkillsActions
+    {
+        private @PlayerInputConfig m_Wrapper;
+        public SkillsActions(@PlayerInputConfig wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Shoot => m_Wrapper.m_Skills_Shoot;
+        public InputActionMap Get() { return m_Wrapper.m_Skills; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(SkillsActions set) { return set.Get(); }
+        public void SetCallbacks(ISkillsActions instance)
+        {
+            if (m_Wrapper.m_SkillsActionsCallbackInterface != null)
+            {
+                @Shoot.started -= m_Wrapper.m_SkillsActionsCallbackInterface.OnShoot;
+                @Shoot.performed -= m_Wrapper.m_SkillsActionsCallbackInterface.OnShoot;
+                @Shoot.canceled -= m_Wrapper.m_SkillsActionsCallbackInterface.OnShoot;
+            }
+            m_Wrapper.m_SkillsActionsCallbackInterface = instance;
+            if (instance != null)
+            {
+                @Shoot.started += instance.OnShoot;
+                @Shoot.performed += instance.OnShoot;
+                @Shoot.canceled += instance.OnShoot;
+            }
+        }
+    }
+    public SkillsActions @Skills => new SkillsActions(this);
     private int m_KeyboardMouseSchemeIndex = -1;
     public InputControlScheme KeyboardMouseScheme
     {
@@ -450,5 +514,9 @@ public partial class @PlayerInputConfig : IInputActionCollection2, IDisposable
     public interface IEquipmentActions
     {
         void OnCircleLoadout(InputAction.CallbackContext context);
+    }
+    public interface ISkillsActions
+    {
+        void OnShoot(InputAction.CallbackContext context);
     }
 }

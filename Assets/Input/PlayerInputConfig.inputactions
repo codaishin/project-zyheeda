@@ -124,6 +124,34 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "Skills",
+            "id": "058b8a5d-7921-49d7-bc27-8c59fbbfca03",
+            "actions": [
+                {
+                    "name": "Shoot",
+                    "type": "Button",
+                    "id": "f6e9b625-95ea-4452-b8ea-1db4522419e1",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "1104907e-a008-4fb9-982d-51f9d29d8b3b",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Shoot",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": [
