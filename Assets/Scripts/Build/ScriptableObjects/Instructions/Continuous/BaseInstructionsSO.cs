@@ -32,6 +32,7 @@ public abstract class BaseInstructionsSO<TAgent> : BaseInstructionsSO
 
 	protected abstract TAgent GetConcreteAgent(GameObject agent);
 	protected abstract InstructionsPluginFunc Instructions(TAgent agent);
+	protected virtual void ExtendPluginData(PluginData pluginData) { }
 
 	public override InstructionsFunc GetInstructionsFor(
 		GameObject agent,
@@ -72,6 +73,8 @@ public abstract class BaseInstructionsSO<TAgent> : BaseInstructionsSO
 
 	private CorePluginData GetPluginData() {
 		CorePluginData pluginData = new PluginData().Extent<CorePluginData>();
+
+		this.ExtendPluginData(pluginData);
 		foreach (BaseInstructionsPluginSO plugin in this.plugins) {
 			plugin.ExtendPluginData(pluginData);
 		}

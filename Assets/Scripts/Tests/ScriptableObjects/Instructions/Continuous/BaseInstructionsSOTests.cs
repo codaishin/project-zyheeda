@@ -28,6 +28,8 @@ public class BaseInstructionsSOTests : TestCollection
 			agent => agent.transform;
 		public Func<Transform, InstructionsPluginFunc> insructions =
 			_ => _ => new YieldInstruction[0];
+		public Action<PluginData> extendPluginData =
+			_ => { };
 
 		protected override Transform GetConcreteAgent(GameObject agent) {
 			return this.getConcreteAgent(agent);
@@ -35,6 +37,10 @@ public class BaseInstructionsSOTests : TestCollection
 
 		protected override InstructionsPluginFunc Instructions(Transform agent) {
 			return this.insructions(agent);
+		}
+
+		protected override void ExtendPluginData(PluginData pluginData) {
+			this.extendPluginData(pluginData);
 		}
 	}
 
@@ -375,7 +381,7 @@ public class BaseInstructionsSOTests : TestCollection
 	class MockPluginDataB : PluginData { }
 
 	[Test]
-	public void DecoratePluginData() {
+	public void ExtendPluginDataFromPlugins() {
 		var data = null as PluginData;
 		var agent = new GameObject();
 		var instructionsSO = ScriptableObject.CreateInstance<MockInstructionSO>();
@@ -397,6 +403,25 @@ public class BaseInstructionsSOTests : TestCollection
 		foreach (var _ in insructions()!) ;
 
 		Assert.NotNull(data!.As<MockPluginDataA>());
+		Assert.NotNull(data!.As<MockPluginDataB>());
+
+	}
+
+	[Test]
+	public void ExtendPluginDataFromInstruction() {
+		var data = null as PluginData;
+		var agent = new GameObject();
+		var instructionsSO = ScriptableObject.CreateInstance<MockInstructionSO>();
+		var plugin = ScriptableObject.CreateInstance<MockPluginSO>();
+
+		plugin.getCallbacks = _ => new PluginCallbacks { onBegin = d => data = d };
+		instructionsSO.plugins = new MockPluginSO[] { plugin };
+		instructionsSO.extendPluginData = d => d.Extent<MockPluginDataB>();
+
+		var insructions = instructionsSO.GetInstructionsFor(agent);
+
+		foreach (var _ in insructions()!) ;
+
 		Assert.NotNull(data!.As<MockPluginDataB>());
 	}
 }
