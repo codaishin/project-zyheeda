@@ -16,45 +16,46 @@ public class UseItemSO : BaseInstructionsSO<ItemAgent>
 	public Reference<IHit> hitter;
 
 	protected override ItemAgent GetConcreteAgent(GameObject agent) {
+		if (this.hitter.Value == null) {
+			throw new NullReferenceException(
+				$"hitter on {this} must be set, but was null"
+			);
+		}
 		return new ItemAgent {
 			loadout = agent.RequireComponent<ILoadoutManager>(true),
 			animation = agent.RequireComponent<IAnimationStates>(true),
-			findTarget = () => this.hitter.Value!.Try(agent.transform),
+			findTarget = () => this.hitter.Value.Try(agent.transform),
 		};
 	}
 
-	protected override RawInstructions Instructions(ItemAgent agent) {
-		IEnumerable<WaitForSeconds> useItem(PluginData _) {
+	protected override InstructionsPluginFunc Instructions(ItemAgent agent) {
+		IEnumerable<WaitForSeconds>? useItem(PluginData _) {
 			IItem? item = agent.loadout.Current.Item;
 			Transform? target = agent.findTarget();
 			Action? use;
 
 			if (target == null || item == null) {
-				yield break;
+				return null;
 			}
 
 			use = item.GetUseOn(target);
 			if (use == null) {
-				yield break;
+				return null;
 			}
 
-			IEnumerable<WaitForSeconds> run = UseItemSO.GetRun(
+			return UseItemSO.Instructions(
 				() => agent.animation.Set(item.ActiveState),
 				() => agent.animation.Set(Animation.State.Idle),
 				use,
 				item.UseAfterSeconds,
 				item.LeaveActiveStateAfterSeconds
 			);
-
-			foreach (WaitForSeconds wait in run) {
-				yield return wait;
-			}
 		};
 
 		return useItem;
 	}
 
-	private static IEnumerable<WaitForSeconds> GetRun(
+	private static IEnumerable<WaitForSeconds> Instructions(
 		Action animationStart,
 		Action animationEnd,
 		Action use,

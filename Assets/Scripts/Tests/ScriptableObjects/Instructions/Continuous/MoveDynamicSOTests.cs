@@ -44,8 +44,8 @@ public class MoveDynamicSOTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		var getRoutine = moveSO.GetInstructionsFor(agent);
-		runner.StartCoroutine(getRoutine().GetEnumerator());
+		var getRoutine = moveSO.GetInstructionsFor(agent)!;
+		runner.StartCoroutine(getRoutine()!.GetEnumerator());
 
 		yield return new WaitForEndOfFrame();
 
@@ -71,8 +71,8 @@ public class MoveDynamicSOTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		var getRoutine = moveSO.GetInstructionsFor(agent);
-		runner.StartCoroutine(getRoutine().GetEnumerator());
+		var getRoutine = moveSO.GetInstructionsFor(agent)!;
+		runner.StartCoroutine(getRoutine()!.GetEnumerator());
 
 		yield return new WaitForEndOfFrame();
 
@@ -98,8 +98,8 @@ public class MoveDynamicSOTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		var getRoutine = moveSO.GetInstructionsFor(agent);
-		runner.StartCoroutine(getRoutine().GetEnumerator());
+		var getRoutine = moveSO.GetInstructionsFor(agent)!;
+		runner.StartCoroutine(getRoutine()!.GetEnumerator());
 
 		yield return new WaitForEndOfFrame();
 
@@ -125,8 +125,8 @@ public class MoveDynamicSOTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		var getRoutine = moveSO.GetInstructionsFor(agent);
-		runner.StartCoroutine(getRoutine().GetEnumerator());
+		var getRoutine = moveSO.GetInstructionsFor(agent)!;
+		runner.StartCoroutine(getRoutine()!.GetEnumerator());
 
 		yield return new WaitForEndOfFrame();
 
@@ -161,8 +161,8 @@ public class MoveDynamicSOTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		var getRoutine = moveSO.GetInstructionsFor(agent);
-		runner.StartCoroutine(getRoutine().GetEnumerator());
+		var getRoutine = moveSO.GetInstructionsFor(agent)!;
+		runner.StartCoroutine(getRoutine()!.GetEnumerator());
 
 		hitSO.getPoint = _ => Vector3.up * 100;
 
@@ -202,8 +202,8 @@ public class MoveDynamicSOTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		var getRoutine = moveSO.GetInstructionsFor(agent);
-		runner.StartCoroutine(getRoutine().GetEnumerator());
+		var getRoutine = moveSO.GetInstructionsFor(agent)!;
+		runner.StartCoroutine(getRoutine()!.GetEnumerator());
 
 		hitSO.getPoint = _ => Vector3.up * 100;
 
@@ -242,8 +242,8 @@ public class MoveDynamicSOTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		var getRoutine = moveSO.GetInstructionsFor(agent);
-		runner.StartCoroutine(getRoutine().GetEnumerator());
+		var getRoutine = moveSO.GetInstructionsFor(agent)!;
+		runner.StartCoroutine(getRoutine()!.GetEnumerator());
 
 
 		hitSO.getPoint = _ => Vector3.left * 100;
@@ -281,8 +281,8 @@ public class MoveDynamicSOTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		var getRoutine = moveSO.GetInstructionsFor(agent);
-		runner.StartCoroutine(getRoutine().GetEnumerator());
+		var getRoutine = moveSO.GetInstructionsFor(agent)!;
+		runner.StartCoroutine(getRoutine()!.GetEnumerator());
 
 		hitSO.getPoint = _ => agent.transform.position + Vector3.left * 600;
 
@@ -331,8 +331,8 @@ public class MoveDynamicSOTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		var getRoutine = moveSO.GetInstructionsFor(agent);
-		runner.StartCoroutine(getRoutine().GetEnumerator());
+		var getRoutine = moveSO.GetInstructionsFor(agent)!;
+		runner.StartCoroutine(getRoutine()!.GetEnumerator());
 
 		hitSO.getPoint = _ => agent.transform.position + Vector3.left * 5000;
 
