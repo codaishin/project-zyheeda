@@ -24,5 +24,5 @@ public struct PluginCallbacks
 public abstract class BaseInstructionsPluginSO : ScriptableObject
 {
 	public abstract PluginCallbacks GetCallbacks(GameObject agent);
-	public virtual PluginData ExtendPluginData(PluginData data) => data;
+	public virtual void ExtendPluginData(PluginData data) { }
 }

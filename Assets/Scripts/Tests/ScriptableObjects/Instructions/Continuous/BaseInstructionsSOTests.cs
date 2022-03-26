@@ -11,15 +11,14 @@ public class BaseInstructionsSOTests : TestCollection
 		public Func<GameObject, PluginCallbacks> getCallbacks =
 			_ => new PluginCallbacks();
 
-		public Func<PluginData, PluginData> extendPlugin =
-			d => d;
+		public Action<PluginData> extendPlugin = _ => { };
 
 		public override PluginCallbacks GetCallbacks(GameObject agent) {
 			return this.getCallbacks(agent);
 		}
 
-		public override PluginData ExtendPluginData(PluginData data) {
-			return this.extendPlugin(data);
+		public override void ExtendPluginData(PluginData data) {
+			this.extendPlugin(data);
 		}
 	}
 
@@ -386,8 +385,8 @@ public class BaseInstructionsSOTests : TestCollection
 			ScriptableObject.CreateInstance<MockPluginSO>(),
 		};
 
-		plugins[0].extendPlugin = d => PluginData.Add<MockPluginDataA>(d);
-		plugins[1].extendPlugin = d => PluginData.Add<MockPluginDataB>(d);
+		plugins[0].extendPlugin = d => d.Extent<MockPluginDataA>();
+		plugins[1].extendPlugin = d => d.Extent<MockPluginDataB>();
 		plugins[2].getCallbacks = _ => new PluginCallbacks {
 			onBegin = d => data = d
 		};

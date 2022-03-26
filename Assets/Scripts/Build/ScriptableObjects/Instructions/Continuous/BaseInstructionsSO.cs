@@ -71,13 +71,11 @@ public abstract class BaseInstructionsSO<TAgent> : BaseInstructionsSO
 	}
 
 	private CorePluginData GetPluginData() {
-		PluginData pluginData = new PluginData();
+		CorePluginData pluginData = new PluginData().Extent<CorePluginData>();
 		foreach (BaseInstructionsPluginSO plugin in this.plugins) {
-			pluginData = plugin.ExtendPluginData(pluginData);
+			plugin.ExtendPluginData(pluginData);
 		}
-		return PluginData
-			.Add<CorePluginData>(pluginData)
-			.As<CorePluginData>()!;
+		return pluginData;
 	}
 
 	private Func<Func<PluginData, PluginData>, Func<PluginData, PluginData>, Func<PluginData, PluginData>> Pipe() {
