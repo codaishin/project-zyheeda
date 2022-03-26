@@ -19,22 +19,22 @@ public class BasePluginInstructionSOTests : TestCollection
 		};
 		var c = a + b;
 
-		c.onBegin?.Invoke(new PluginData());
+		c.onBegin?.Invoke(new CorePluginData());
 
 		Assert.AreEqual("ab", called);
 
 		called = "";
-		c.onBeforeYield?.Invoke(new PluginData());
+		c.onBeforeYield?.Invoke(new CorePluginData());
 
 		Assert.AreEqual("ab", called);
 
 		called = "";
-		c.onAfterYield?.Invoke(new PluginData());
+		c.onAfterYield?.Invoke(new CorePluginData());
 
 		Assert.AreEqual("ab", called);
 
 		called = "";
-		c.onEnd?.Invoke(new PluginData());
+		c.onEnd?.Invoke(new CorePluginData());
 
 		Assert.AreEqual("ab", called);
 	}

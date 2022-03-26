@@ -96,7 +96,7 @@ public class BaseInstructionsSOTests : TestCollection
 
 	[Test]
 	public void OnBeginBeforeFirstYield() {
-		var called = null as PluginData;
+		var called = null as CorePluginData;
 		var agent = new GameObject();
 		var instructionsSO = ScriptableObject.CreateInstance<MockInstructionSO>();
 
@@ -127,7 +127,7 @@ public class BaseInstructionsSOTests : TestCollection
 
 	[Test]
 	public void PluginDataAllSame() {
-		var data = new List<PluginData>();
+		var data = new List<CorePluginData>();
 		var agent = new GameObject();
 		var instructionsSO = ScriptableObject.CreateInstance<MockInstructionSO>();
 		var plugins = new MockPluginSO[] {
@@ -265,7 +265,7 @@ public class BaseInstructionsSOTests : TestCollection
 		var instructionsSO = ScriptableObject.CreateInstance<MockInstructionSO>();
 		var plugin = ScriptableObject.CreateInstance<MockPluginSO>();
 
-		IEnumerable<UnityEngine.YieldInstruction> instructionFunc(PluginData _) {
+		IEnumerable<UnityEngine.YieldInstruction> instructionFunc(CorePluginData _) {
 			for (iterations = 0; iterations < 100; ++iterations) {
 				yield return new WaitForEndOfFrame();
 			}
@@ -296,12 +296,12 @@ public class BaseInstructionsSOTests : TestCollection
 		var instructionsSO = ScriptableObject.CreateInstance<MockInstructionSO>();
 		var plugin = ScriptableObject.CreateInstance<MockPluginSO>();
 
-		IEnumerable<UnityEngine.YieldInstruction> instructionFunc(PluginData _) {
+		IEnumerable<UnityEngine.YieldInstruction> instructionFunc(CorePluginData _) {
 			for (iterations = 0; iterations < 100; ++iterations) {
 				yield return new WaitForEndOfFrame();
 			}
 		}
-		var pluginData = null as PluginData;
+		var pluginData = null as CorePluginData;
 		plugin.getCallbacks = _ => new PluginCallbacks {
 			onBegin = d => pluginData = d,
 			onEnd = _ => ++called
@@ -329,12 +329,12 @@ public class BaseInstructionsSOTests : TestCollection
 		var run = true;
 		var plugin = ScriptableObject.CreateInstance<MockPluginSO>();
 
-		IEnumerable<UnityEngine.YieldInstruction> instructionFunc(PluginData _) {
+		IEnumerable<UnityEngine.YieldInstruction> instructionFunc(CorePluginData _) {
 			for (iterations = 0; iterations < 100; ++iterations) {
 				yield return new WaitForEndOfFrame();
 			}
 		}
-		var pluginData = null as PluginData;
+		var pluginData = null as CorePluginData;
 		plugin.getCallbacks = _ => new PluginCallbacks {
 			onBegin = d => pluginData = d,
 			onEnd = _ => ++called

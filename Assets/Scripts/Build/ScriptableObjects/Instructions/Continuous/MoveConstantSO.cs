@@ -19,7 +19,7 @@ public class MoveConstantSO : BaseInstructionsSO<Transform>
 
 	private IEnumerable<WaitForEndOfFrame> Move(
 		Transform transform,
-		PluginData data
+		CorePluginData data
 	) {
 		Vector3? point = this.hitter!.TryPoint(transform);
 

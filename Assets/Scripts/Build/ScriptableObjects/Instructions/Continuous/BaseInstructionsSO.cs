@@ -4,10 +4,13 @@ using System.Linq;
 using UnityEngine;
 
 using Instructions =
-	System.Collections.Generic.IEnumerable<UnityEngine.YieldInstruction?>;
+	System
+		.Collections
+		.Generic
+		.IEnumerable<UnityEngine.YieldInstruction?>;
 
 public delegate Instructions? InstructionsFunc();
-public delegate Instructions? InstructionsPluginFunc(PluginData pluginData);
+public delegate Instructions? InstructionsPluginFunc(CorePluginData pluginData);
 
 public abstract class BaseInstructionsSO : ScriptableObject
 {
@@ -26,29 +29,26 @@ public abstract class BaseInstructionsSO<TAgent> : BaseInstructionsSO
 
 	public override InstructionsFunc GetInstructionsFor(
 		GameObject agent,
-		Func<bool>? run = null
+		Func<bool>? runCheck = null
 	) {
 		TAgent concreteAgent = this.GetConcreteAgent(agent);
-		PluginCallbacks callbacks = this.PluginCallbacks(agent);
-		InstructionsPluginFunc instructionsFunc = this.Instructions(concreteAgent);
+		PluginCallbacks pluginCallbacks = this.PluginCallbacks(agent);
+		InstructionsPluginFunc instructions = this.Instructions(concreteAgent);
 
 		return () => {
-			PluginData pluginData = new PluginData { run = true };
-			Instructions? instructions = instructionsFunc(pluginData);
-			Func<bool> runCheck = run is null
-				? (() => pluginData.run)
-				: (() => pluginData.run && run());
+			CorePluginData pluginData = new CorePluginData { run = true };
+			Instructions? loop = instructions(pluginData);
 
-			if (instructions == null) {
+			if (loop == null) {
 				return null;
 			}
-			return BaseInstructionsSO<TAgent>.Loop(
-				instructions,
-				() => callbacks.onBegin?.Invoke(pluginData),
-				() => callbacks.onBeforeYield?.Invoke(pluginData),
-				() => callbacks.onAfterYield?.Invoke(pluginData),
-				() => callbacks.onEnd?.Invoke(pluginData),
-				runCheck
+			return this.RunLoop(
+				loop,
+				() => pluginCallbacks.onBegin?.Invoke(pluginData),
+				() => pluginCallbacks.onBeforeYield?.Invoke(pluginData),
+				() => pluginCallbacks.onAfterYield?.Invoke(pluginData),
+				() => pluginCallbacks.onEnd?.Invoke(pluginData),
+				runCheck + (() => pluginData.run)
 			);
 		};
 	}
@@ -59,7 +59,7 @@ public abstract class BaseInstructionsSO<TAgent> : BaseInstructionsSO
 			.Aggregate(new PluginCallbacks(), (l, c) => l + c);
 	}
 
-	private static Instructions Loop(
+	private Instructions RunLoop(
 		Instructions instructions,
 		Action onBegin,
 		Action onBeforeYield,
@@ -67,12 +67,8 @@ public abstract class BaseInstructionsSO<TAgent> : BaseInstructionsSO
 		Action onEnd,
 		Func<bool> runCheck
 	) {
-		IEnumerable<YieldInstruction?> loop = BaseInstructionsSO<TAgent>.Loop(
-			instructions,
-			runCheck
-		);
 		onBegin();
-		foreach (YieldInstruction? hold in loop) {
+		foreach (YieldInstruction? hold in this.RunLoop(instructions, runCheck)) {
 			onBeforeYield();
 			yield return hold;
 			onAfterYield();
@@ -80,10 +76,7 @@ public abstract class BaseInstructionsSO<TAgent> : BaseInstructionsSO
 		onEnd();
 	}
 
-	private static Instructions Loop(
-		Instructions instructions,
-		Func<bool> runCheck
-	) {
+	private Instructions RunLoop(Instructions instructions, Func<bool> runCheck) {
 		using IEnumerator<YieldInstruction?> it = instructions.GetEnumerator();
 		while (runCheck() && it.MoveNext()) {
 			yield return it.Current;

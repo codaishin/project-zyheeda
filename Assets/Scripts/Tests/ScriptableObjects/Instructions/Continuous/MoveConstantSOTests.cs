@@ -192,7 +192,7 @@ public class MoveConstantSOTests : TestCollection
 
 	[UnityTest]
 	public IEnumerator WeightToPluginDataWeight() {
-		var data = null as PluginData;
+		var data = null as CorePluginData;
 		var moveSO = ScriptableObject.CreateInstance<MoveConstantSO>();
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
 		var agent = new GameObject();
