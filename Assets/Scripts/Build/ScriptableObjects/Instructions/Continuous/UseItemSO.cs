@@ -16,10 +16,15 @@ public class UseItemSO : BaseInstructionsSO<ItemAgent>
 	public Reference<IHit> hitter;
 
 	protected override ItemAgent GetConcreteAgent(GameObject agent) {
+		if (this.hitter.Value == null) {
+			throw new NullReferenceException(
+				$"hitter on {this} must be set, but was null"
+			);
+		}
 		return new ItemAgent {
 			loadout = agent.RequireComponent<ILoadoutManager>(true),
 			animation = agent.RequireComponent<IAnimationStates>(true),
-			findTarget = () => this.hitter.Value!.Try(agent.transform),
+			findTarget = () => this.hitter.Value.Try(agent.transform),
 		};
 	}
 
