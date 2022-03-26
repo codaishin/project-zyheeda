@@ -12,7 +12,7 @@ public enum OverrideMode
 public class InstructionsMB : MonoBehaviour, IApplicable
 {
 	private IEnumerator<YieldInstruction?>? currentCoroutine;
-	private Func<IEnumerable<YieldInstruction?>>? instructions;
+	private InstructionsFunc? instructions;
 	private bool running;
 
 	public CoroutineRunnerMB? runner;
@@ -32,8 +32,12 @@ public class InstructionsMB : MonoBehaviour, IApplicable
 		);
 	}
 
-	private IEnumerator<YieldInstruction?> GetCoroutine() {
-		return this.instructions!.Invoke().GetEnumerator();
+	private IEnumerator<YieldInstruction?>? GetCoroutine() {
+		IEnumerable<YieldInstruction?>? routine = this.instructions!();
+		if (routine == null) {
+			return null;
+		}
+		return routine.GetEnumerator();
 	}
 
 	private void StopNone() { }
@@ -53,6 +57,12 @@ public class InstructionsMB : MonoBehaviour, IApplicable
 	}
 
 	public void Apply() {
+		IEnumerator<YieldInstruction?>? newRoutine = this.GetCoroutine();
+
+		if (newRoutine == null) {
+			return;
+		}
+
 		Action stop = this.overrideMode switch {
 			OverrideMode.All => this.StopAll,
 			OverrideMode.Own => this.StopOnw,
@@ -61,7 +71,7 @@ public class InstructionsMB : MonoBehaviour, IApplicable
 		stop();
 
 		this.running = true;
-		this.currentCoroutine = this.GetCoroutine();
+		this.currentCoroutine = newRoutine;
 		this.OnRunnerOrSelf.StartCoroutine(this.currentCoroutine);
 	}
 

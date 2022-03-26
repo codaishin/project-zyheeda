@@ -28,38 +28,34 @@ public class UseItemSO : BaseInstructionsSO<ItemAgent>
 		};
 	}
 
-	protected override RawInstructions Instructions(ItemAgent agent) {
-		IEnumerable<WaitForSeconds> useItem(PluginData _) {
+	protected override InstructionsPluginFunc Instructions(ItemAgent agent) {
+		IEnumerable<WaitForSeconds>? useItem(PluginData _) {
 			IItem? item = agent.loadout.Current.Item;
 			Transform? target = agent.findTarget();
 			Action? use;
 
 			if (target == null || item == null) {
-				yield break;
+				return null;
 			}
 
 			use = item.GetUseOn(target);
 			if (use == null) {
-				yield break;
+				return null;
 			}
 
-			IEnumerable<WaitForSeconds> run = UseItemSO.GetRun(
+			return UseItemSO.Instructions(
 				() => agent.animation.Set(item.ActiveState),
 				() => agent.animation.Set(Animation.State.Idle),
 				use,
 				item.UseAfterSeconds,
 				item.LeaveActiveStateAfterSeconds
 			);
-
-			foreach (WaitForSeconds wait in run) {
-				yield return wait;
-			}
 		};
 
 		return useItem;
 	}
 
-	private static IEnumerable<WaitForSeconds> GetRun(
+	private static IEnumerable<WaitForSeconds> Instructions(
 		Action animationStart,
 		Action animationEnd,
 		Action use,

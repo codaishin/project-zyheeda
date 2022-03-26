@@ -34,7 +34,7 @@ public class MoveConstantSOTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		runner.StartCoroutine(getRoutine().GetEnumerator());
+		runner.StartCoroutine(getRoutine()!.GetEnumerator());
 
 		yield return new WaitForEndOfFrame();
 
@@ -53,7 +53,7 @@ public class MoveConstantSOTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		runner.StartCoroutine(getRoutine().GetEnumerator());
+		runner.StartCoroutine(getRoutine()!.GetEnumerator());
 
 		yield return new WaitForEndOfFrame();
 
@@ -75,7 +75,7 @@ public class MoveConstantSOTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		runner.StartCoroutine(getRoutine().GetEnumerator());
+		runner.StartCoroutine(getRoutine()!.GetEnumerator());
 
 		yield return new WaitForEndOfFrame();
 
@@ -96,7 +96,7 @@ public class MoveConstantSOTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		routineRunner.StartCoroutine(getRoutine().GetEnumerator());
+		routineRunner.StartCoroutine(getRoutine()!.GetEnumerator());
 
 		yield return new WaitForEndOfFrame();
 
@@ -122,7 +122,7 @@ public class MoveConstantSOTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		routineRunner.StartCoroutine(getRoutine().GetEnumerator());
+		routineRunner.StartCoroutine(getRoutine()!.GetEnumerator());
 
 		yield return new WaitForEndOfFrame();
 
@@ -149,7 +149,7 @@ public class MoveConstantSOTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		routineRunner.StartCoroutine(getRoutine().GetEnumerator());
+		routineRunner.StartCoroutine(getRoutine()!.GetEnumerator());
 
 		yield return new WaitForEndOfFrame();
 
@@ -169,7 +169,7 @@ public class MoveConstantSOTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		routineRunner.StartCoroutine(getRoutine().GetEnumerator());
+		routineRunner.StartCoroutine(getRoutine()!.GetEnumerator());
 
 		yield return new WaitForEndOfFrame();
 
@@ -212,7 +212,7 @@ public class MoveConstantSOTests : TestCollection
 		yield return new WaitForEndOfFrame();
 
 		var getRoutine = moveSO.GetInstructionsFor(agent)!;
-		routineRunner.StartCoroutine(getRoutine().GetEnumerator());
+		routineRunner.StartCoroutine(getRoutine()!.GetEnumerator());
 
 		yield return new WaitForEndOfFrame();
 		yield return new WaitForEndOfFrame();

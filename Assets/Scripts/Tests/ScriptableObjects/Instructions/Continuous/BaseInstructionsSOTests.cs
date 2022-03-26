@@ -20,14 +20,14 @@ public class BaseInstructionsSOTests : TestCollection
 	{
 		public Func<GameObject, Transform> getConcreteAgent =
 			agent => agent.transform;
-		public Func<Transform, RawInstructions?> insructions =
+		public Func<Transform, InstructionsPluginFunc> insructions =
 			_ => _ => new YieldInstruction[0];
 
 		protected override Transform GetConcreteAgent(GameObject agent) {
 			return this.getConcreteAgent(agent);
 		}
 
-		protected override RawInstructions? Instructions(Transform agent) {
+		protected override InstructionsPluginFunc Instructions(Transform agent) {
 			return this.insructions(agent);
 		}
 	}
@@ -65,9 +65,9 @@ public class BaseInstructionsSOTests : TestCollection
 
 		instructionsSO.insructions = agent => _ => moveUp(agent);
 
-		var insructions = instructionsSO.GetInstructionsFor(agent)!;
+		var insructions = instructionsSO.GetInstructionsFor(agent);
 
-		foreach (var _ in insructions()) { }
+		foreach (var _ in insructions()!) { }
 
 		Assert.AreEqual(Vector3.up * 3, agent.transform.position);
 	}
@@ -116,11 +116,11 @@ public class BaseInstructionsSOTests : TestCollection
 			new WaitForEndOfFrame(),
 		};
 
-		var insructions = instructionsSO.GetInstructionsFor(agent)!;
+		var insructions = instructionsSO.GetInstructionsFor(agent);
 
 		Assert.IsNull(called);
 
-		foreach (var hold in insructions()) break;
+		foreach (var hold in insructions()!) break;
 
 		Assert.NotNull(called);
 	}
@@ -153,9 +153,9 @@ public class BaseInstructionsSOTests : TestCollection
 			new WaitForEndOfFrame(),
 		};
 
-		var insructions = instructionsSO.GetInstructionsFor(agent)!;
+		var insructions = instructionsSO.GetInstructionsFor(agent);
 
-		foreach (var _ in insructions()) ;
+		foreach (var _ in insructions()!) ;
 
 		Assert.AreEqual(1, data.Distinct().Count());
 	}
@@ -182,10 +182,10 @@ public class BaseInstructionsSOTests : TestCollection
 			new WaitForEndOfFrame(),
 		};
 
-		var insructions = instructionsSO.GetInstructionsFor(agent)!;
+		var insructions = instructionsSO.GetInstructionsFor(agent);
 
 		var i = 0;
-		foreach (var _ in insructions()) {
+		foreach (var _ in insructions()!) {
 			Assert.AreEqual(i, called);
 			i += 2;
 		};
@@ -215,10 +215,10 @@ public class BaseInstructionsSOTests : TestCollection
 			new WaitForEndOfFrame(),
 		};
 
-		var insructions = instructionsSO.GetInstructionsFor(agent)!;
+		var insructions = instructionsSO.GetInstructionsFor(agent);
 
 		var i = 0;
-		foreach (var _ in insructions()) {
+		foreach (var _ in insructions()!) {
 			i += 2;
 			Assert.AreEqual(i, called);
 		};
@@ -247,9 +247,9 @@ public class BaseInstructionsSOTests : TestCollection
 			new WaitForEndOfFrame(),
 		};
 
-		var insructions = instructionsSO.GetInstructionsFor(agent)!;
+		var insructions = instructionsSO.GetInstructionsFor(agent);
 
-		foreach (var _ in insructions()) {
+		foreach (var _ in insructions()!) {
 			Assert.AreEqual(0, called);
 		};
 
@@ -277,9 +277,9 @@ public class BaseInstructionsSOTests : TestCollection
 		instructionsSO.plugins = new MockPluginSO[] { plugin }; ;
 		instructionsSO.insructions = _ => instructionFunc;
 
-		var insructions = instructionsSO.GetInstructionsFor(agent, () => run)!;
+		var insructions = instructionsSO.GetInstructionsFor(agent, () => run);
 
-		foreach (var _ in insructions()) {
+		foreach (var _ in insructions()!) {
 			if (iterations == 9) {
 				run = false;
 			};
@@ -309,9 +309,9 @@ public class BaseInstructionsSOTests : TestCollection
 		instructionsSO.plugins = new MockPluginSO[] { plugin }; ;
 		instructionsSO.insructions = _ => instructionFunc;
 
-		var insructions = instructionsSO.GetInstructionsFor(agent)!;
+		var insructions = instructionsSO.GetInstructionsFor(agent);
 
-		foreach (var _ in insructions()) {
+		foreach (var _ in insructions()!) {
 			if (iterations == 9) {
 				pluginData!.run = false;
 			};
@@ -342,14 +342,26 @@ public class BaseInstructionsSOTests : TestCollection
 		instructionsSO.plugins = new MockPluginSO[] { plugin }; ;
 		instructionsSO.insructions = _ => instructionFunc;
 
-		var insructions = instructionsSO.GetInstructionsFor(agent, () => run)!;
+		var insructions = instructionsSO.GetInstructionsFor(agent, () => run);
 
-		foreach (var _ in insructions()) {
+		foreach (var _ in insructions()!) {
 			if (iterations == 9) {
 				pluginData!.run = false;
 			};
 		};
 
 		Assert.AreEqual((9, 1), (iterations, called));
+	}
+
+	[Test]
+	public void ReturnNullWhenInstructionsNull() {
+		var agent = new GameObject();
+		var instructionsSO = ScriptableObject.CreateInstance<MockInstructionSO>();
+
+		instructionsSO.insructions = _ => _ => null;
+
+		var insructions = instructionsSO.GetInstructionsFor(agent);
+
+		Assert.Null(insructions());
 	}
 }

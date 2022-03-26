@@ -3,80 +3,90 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+using Instructions =
+	System.Collections.Generic.IEnumerable<UnityEngine.YieldInstruction?>;
+
+public delegate Instructions? InstructionsFunc();
+public delegate Instructions? InstructionsPluginFunc(PluginData pluginData);
+
 public abstract class BaseInstructionsSO : ScriptableObject
 {
-	public abstract Func<IEnumerable<YieldInstruction?>>? GetInstructionsFor(
+	public abstract InstructionsFunc GetInstructionsFor(
 		GameObject agent,
 		Func<bool>? run = null
 	);
-
-	protected static IEnumerable<YieldInstruction?> RunInstructions(
-		RawInstructions instructions,
-		Action<PluginData>? onBegin,
-		Action<PluginData>? onBeforeYield,
-		Action<PluginData>? onAfterYield,
-		Action<PluginData>? onEnd,
-		Func<bool>? run
-	) {
-		PluginData pluginData = new PluginData { run = true };
-		Func<bool> runCheck = run is null
-			? () => pluginData.run
-			: () => pluginData.run && run();
-		IEnumerable<YieldInstruction?> loop = BaseInstructionsSO.Loop(
-			instructions(pluginData),
-			runCheck
-		);
-		onBegin?.Invoke(pluginData);
-		foreach (YieldInstruction? hold in loop) {
-			onBeforeYield?.Invoke(pluginData);
-			yield return hold;
-			onAfterYield?.Invoke(pluginData);
-		}
-		onEnd?.Invoke(pluginData);
-	}
-
-	protected static IEnumerable<YieldInstruction?> Loop(
-		IEnumerable<YieldInstruction?> instructions,
-		Func<bool> run
-	) {
-		using IEnumerator<YieldInstruction?> it = instructions.GetEnumerator();
-		while (run() && it.MoveNext()) {
-			yield return it.Current;
-		}
-	}
 }
-
-public delegate IEnumerable<YieldInstruction?> CoroutineInstructions();
-public delegate IEnumerable<YieldInstruction?> RawInstructions(PluginData data);
 
 public abstract class BaseInstructionsSO<TAgent> : BaseInstructionsSO
 {
 	public BaseInstructionsPluginSO[] plugins = new BaseInstructionsPluginSO[0];
 
 	protected abstract TAgent GetConcreteAgent(GameObject agent);
-	protected abstract RawInstructions? Instructions(TAgent agent);
+	protected abstract InstructionsPluginFunc Instructions(TAgent agent);
 
-	public override Func<IEnumerable<YieldInstruction?>>? GetInstructionsFor(
+	public override InstructionsFunc GetInstructionsFor(
 		GameObject agent,
 		Func<bool>? run = null
 	) {
 		TAgent concreteAgent = this.GetConcreteAgent(agent);
 		PluginCallbacks callbacks = this.PluginCallbacks(agent);
-		RawInstructions? instructions = this.Instructions(concreteAgent);
+		InstructionsPluginFunc instructionsFunc = this.Instructions(concreteAgent);
 
-		return instructions == null ? null : () => BaseInstructionsSO.RunInstructions(
-			instructions,
-			callbacks.onBegin,
-			callbacks.onBeforeYield,
-			callbacks.onAfterYield,
-			callbacks.onEnd,
-			run
-		);
+		return () => {
+			PluginData pluginData = new PluginData { run = true };
+			Instructions? instructions = instructionsFunc(pluginData);
+			Func<bool> runCheck = run is null
+				? (() => pluginData.run)
+				: (() => pluginData.run && run());
+
+			if (instructions == null) {
+				return null;
+			}
+			return BaseInstructionsSO<TAgent>.Loop(
+				instructions,
+				() => callbacks.onBegin?.Invoke(pluginData),
+				() => callbacks.onBeforeYield?.Invoke(pluginData),
+				() => callbacks.onAfterYield?.Invoke(pluginData),
+				() => callbacks.onEnd?.Invoke(pluginData),
+				runCheck
+			);
+		};
 	}
 
 	private PluginCallbacks PluginCallbacks(GameObject agent) {
 		return this.plugins
 			.Select(plugin => plugin.GetCallbacks(agent))
 			.Aggregate(new PluginCallbacks(), (l, c) => l + c);
+	}
+
+	private static Instructions Loop(
+		Instructions instructions,
+		Action onBegin,
+		Action onBeforeYield,
+		Action onAfterYield,
+		Action onEnd,
+		Func<bool> runCheck
+	) {
+		IEnumerable<YieldInstruction?> loop = BaseInstructionsSO<TAgent>.Loop(
+			instructions,
+			runCheck
+		);
+		onBegin();
+		foreach (YieldInstruction? hold in loop) {
+			onBeforeYield();
+			yield return hold;
+			onAfterYield();
+		}
+		onEnd();
+	}
+
+	private static Instructions Loop(
+		Instructions instructions,
+		Func<bool> runCheck
+	) {
+		using IEnumerator<YieldInstruction?> it = instructions.GetEnumerator();
+		while (runCheck() && it.MoveNext()) {
+			yield return it.Current;
+		}
 	}
 }

@@ -7,32 +7,30 @@ using UnityEngine.TestTools;
 
 public class InstructionsMBTests : TestCollection
 {
-	class MockCoroutineSO : BaseInstructionsSO<Transform>
+	class MockCoroutineSO : BaseInstructionsSO
 	{
-		public int times = 10;
+		public Func<GameObject, Func<bool>?, InstructionsFunc> getInstructions =
+			(_, __) => () => new YieldInstruction[0];
 
-		protected override Transform GetConcreteAgent(GameObject agent) {
-			return agent.transform;
-		}
-
-		protected override RawInstructions Instructions(Transform agent) {
-			return _ => this.MoveUpEachFrame(agent);
-		}
-
-		private IEnumerable<YieldInstruction> MoveUpEachFrame(Transform transform) {
-			for (int i = 0; i < this.times; ++i) {
-				yield return new WaitForEndOfFrame();
-				transform.position += Vector3.up;
-			}
-		}
+		public override InstructionsFunc GetInstructionsFor(
+			GameObject agent,
+			Func<bool>? run = null
+		) => this.getInstructions(agent, run);
 	}
 
 	[UnityTest]
-	public IEnumerator RunCoroutineOnce() {
+	public IEnumerator RunCoroutine() {
+		var called = null as GameObject;
 		var agent = new GameObject();
 		var comp = new GameObject().AddComponent<InstructionsMB>();
-		comp.instructionsSO = ScriptableObject.CreateInstance<MockCoroutineSO>();
+		var instructions = ScriptableObject.CreateInstance<MockCoroutineSO>();
+		comp.instructionsSO = instructions;
 		comp.agent = agent;
+
+		instructions.getInstructions = (agent, run) => {
+			called = agent;
+			return () => new YieldInstruction[0];
+		};
 
 		yield return new WaitForEndOfFrame();
 
@@ -40,16 +38,23 @@ public class InstructionsMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		Assert.AreEqual(Vector3.up, agent.transform.position);
+		Assert.AreSame(agent, called);
 	}
 
 	[UnityTest]
 	public IEnumerator RunCoroutineMultipleAtATime() {
+		var called = 0;
 		var agent = new GameObject();
 		var comp = new GameObject().AddComponent<InstructionsMB>();
-		comp.instructionsSO = ScriptableObject.CreateInstance<MockCoroutineSO>();
+		var instructions = ScriptableObject.CreateInstance<MockCoroutineSO>();
+		comp.instructionsSO = instructions;
 		comp.agent = agent;
 
+		instructions.getInstructions = (_, __) => () => {
+			++called;
+			return new YieldInstruction[0];
+		};
+
 		yield return new WaitForEndOfFrame();
 
 		comp.Apply();
@@ -57,15 +62,26 @@ public class InstructionsMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		Assert.AreEqual(Vector3.up * 2, agent.transform.position);
+		Assert.AreEqual(2, called);
 	}
 
 	[UnityTest]
 	public IEnumerator RunCoroutineTwice() {
+		var called = 0;
 		var agent = new GameObject();
 		var comp = new GameObject().AddComponent<InstructionsMB>();
-		comp.instructionsSO = ScriptableObject.CreateInstance<MockCoroutineSO>();
+		var instructions = ScriptableObject.CreateInstance<MockCoroutineSO>();
+		comp.instructionsSO = instructions;
 		comp.agent = agent;
+
+		IEnumerable<YieldInstruction> run() {
+			yield return new WaitForEndOfFrame();
+			++called;
+			yield return new WaitForEndOfFrame();
+			++called;
+		}
+
+		instructions.getInstructions = (_, __) => run;
 
 		yield return new WaitForEndOfFrame();
 
@@ -74,17 +90,28 @@ public class InstructionsMBTests : TestCollection
 		yield return new WaitForEndOfFrame();
 		yield return new WaitForEndOfFrame();
 
-		Assert.AreEqual(Vector3.up * 2, agent.transform.position);
+		Assert.AreEqual(2, called);
 	}
 
 	[UnityTest]
 	public IEnumerator RunCoroutineOnExternalRunner() {
+		var called = 0;
 		var agent = new GameObject();
 		var comp = new GameObject().AddComponent<InstructionsMB>();
 		var external = new GameObject().AddComponent<CoroutineRunnerMB>();
-		comp.instructionsSO = ScriptableObject.CreateInstance<MockCoroutineSO>();
+		var instructions = ScriptableObject.CreateInstance<MockCoroutineSO>();
+		comp.instructionsSO = instructions;
 		comp.agent = agent;
 		comp.runner = external;
+
+		IEnumerable<YieldInstruction> run() {
+			yield return new WaitForEndOfFrame();
+			++called;
+			yield return new WaitForEndOfFrame();
+			++called;
+		}
+
+		instructions.getInstructions = (_, __) => run;
 
 		yield return new WaitForEndOfFrame();
 
@@ -96,7 +123,7 @@ public class InstructionsMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		Assert.AreEqual(Vector3.up, agent.transform.position);
+		Assert.AreEqual(1, called);
 	}
 
 	[UnityTest]
@@ -151,16 +178,29 @@ public class InstructionsMBTests : TestCollection
 
 	[UnityTest]
 	public IEnumerator OverrideOwn() {
-		var calledOther = false;
+		var called = 0;
+		var calledOther = 0;
 		var agent = new GameObject();
 		var comp = new GameObject().AddComponent<InstructionsMB>();
-		comp.instructionsSO = ScriptableObject.CreateInstance<MockCoroutineSO>();
+		var instructions = ScriptableObject.CreateInstance<MockCoroutineSO>();
+		comp.instructionsSO = instructions;
 		comp.agent = agent;
 		comp.overrideMode = OverrideMode.Own;
 
+		IEnumerable<YieldInstruction> run() {
+			yield return new WaitForEndOfFrame();
+			++called;
+			yield return new WaitForEndOfFrame();
+			++called;
+		}
+
+		instructions.getInstructions = (_, __) => run;
+
 		IEnumerator otherRoutine() {
 			yield return new WaitForEndOfFrame();
-			calledOther = true;
+			++calledOther;
+			yield return new WaitForEndOfFrame();
+			++calledOther;
 		}
 
 		yield return new WaitForEndOfFrame();
@@ -170,27 +210,39 @@ public class InstructionsMBTests : TestCollection
 		comp.Apply();
 
 		yield return new WaitForEndOfFrame();
+		yield return new WaitForEndOfFrame();
+		yield return new WaitForEndOfFrame();
 
-		Assert.AreEqual(
-			(Vector3.up, true),
-			(agent.transform.position, calledOther)
-		);
+		Assert.AreEqual((2, 2), (called, calledOther));
 	}
 
 	[UnityTest]
 	public IEnumerator OverrideOwnOnExternal() {
-		var calledOther = false;
+		var called = 0;
+		var calledOther = 0;
 		var agent = new GameObject();
 		var comp = new GameObject().AddComponent<InstructionsMB>();
 		var external = new GameObject().AddComponent<CoroutineRunnerMB>();
-		comp.instructionsSO = ScriptableObject.CreateInstance<MockCoroutineSO>();
+		var instructions = ScriptableObject.CreateInstance<MockCoroutineSO>();
+		comp.instructionsSO = instructions;
 		comp.agent = agent;
 		comp.overrideMode = OverrideMode.Own;
 		comp.runner = external;
 
+		IEnumerable<YieldInstruction> run() {
+			yield return new WaitForEndOfFrame();
+			++called;
+			yield return new WaitForEndOfFrame();
+			++called;
+		}
+
+		instructions.getInstructions = (_, __) => run;
+
 		IEnumerator otherRoutine() {
 			yield return new WaitForEndOfFrame();
-			calledOther = true;
+			++calledOther;
+			yield return new WaitForEndOfFrame();
+			++calledOther;
 		}
 
 		yield return new WaitForEndOfFrame();
@@ -200,38 +252,65 @@ public class InstructionsMBTests : TestCollection
 		comp.Apply();
 
 		yield return new WaitForEndOfFrame();
+		yield return new WaitForEndOfFrame();
+		yield return new WaitForEndOfFrame();
 
-		Assert.AreEqual(
-			(Vector3.up, true),
-			(agent.transform.position, calledOther)
-		);
-	}
-
-	class MockPluginSO : BaseInstructionsPluginSO
-	{
-		public Func<GameObject, PluginCallbacks> getCallbacks =
-			_ => new PluginCallbacks();
-
-		public override PluginCallbacks GetCallbacks(GameObject agent) {
-			return this.getCallbacks(agent);
-		}
+		Assert.AreEqual((2, 2), (called, calledOther));
 	}
 
 	[UnityTest]
 	public IEnumerator Release() {
-		var calledEnd = 0;
+		var runChecks = new List<bool>();
 		var agent = new GameObject();
 		var comp = new GameObject().AddComponent<InstructionsMB>();
 		var external = new GameObject().AddComponent<CoroutineRunnerMB>();
-		var plugin = ScriptableObject.CreateInstance<MockPluginSO>();
 		var instructions = ScriptableObject.CreateInstance<MockCoroutineSO>();
 		comp.instructionsSO = instructions;
 		comp.agent = agent;
 		comp.overrideMode = OverrideMode.Own;
 		comp.runner = external;
 
-		plugin.getCallbacks = _ => new PluginCallbacks { onEnd = _ => ++calledEnd };
-		instructions.plugins = new MockPluginSO[] { plugin };
+		InstructionsFunc getInstructions(GameObject _, Func<bool>? runCheck) {
+			IEnumerable<YieldInstruction> instructions() {
+				bool keepRunning;
+				do {
+					yield return new WaitForEndOfFrame();
+					keepRunning = runCheck!();
+					runChecks.Add(keepRunning);
+				} while (keepRunning);
+			}
+			return instructions;
+		}
+
+		instructions.getInstructions = getInstructions;
+
+		yield return new WaitForEndOfFrame();
+
+		comp.Apply();
+
+		yield return new WaitForEndOfFrame();
+		yield return new WaitForEndOfFrame();
+		yield return new WaitForEndOfFrame();
+
+		comp.Release();
+
+		yield return new WaitForEndOfFrame();
+
+		CollectionAssert.AreEqual(
+			new bool[] { true, true, true, false },
+			runChecks
+		);
+	}
+
+	[UnityTest]
+	public IEnumerator IgnoreNullRoutine() {
+		var agent = new GameObject();
+		var comp = new GameObject().AddComponent<InstructionsMB>();
+		var instructions = ScriptableObject.CreateInstance<MockCoroutineSO>();
+		comp.instructionsSO = instructions;
+		comp.agent = agent;
+
+		instructions.getInstructions = (_, __) => () => null;
 
 		yield return new WaitForEndOfFrame();
 
@@ -239,13 +318,39 @@ public class InstructionsMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		comp.Release();
+		// we are good here, if no exception was thrown during update
+	}
+
+	[UnityTest]
+	public IEnumerator NoOverrideWhenNullRoutine() {
+		var called = 0;
+		var agent = new GameObject();
+		var comp = new GameObject().AddComponent<InstructionsMB>();
+		var instructions = ScriptableObject.CreateInstance<MockCoroutineSO>();
+		comp.instructionsSO = instructions;
+		comp.agent = agent;
+		comp.overrideMode = OverrideMode.All;
+
+		instructions.getInstructions = (_, __) => () => null;
+
+		IEnumerator<YieldInstruction> otherRoutine() {
+			yield return new WaitForEndOfFrame();
+			++called;
+			yield return new WaitForEndOfFrame();
+			++called;
+			yield return new WaitForEndOfFrame();
+			++called;
+		}
+
+		yield return new WaitForEndOfFrame();
+
+		comp.StartCoroutine(otherRoutine());
+		comp.Apply();
 
 		yield return new WaitForEndOfFrame();
 		yield return new WaitForEndOfFrame();
 		yield return new WaitForEndOfFrame();
-		yield return new WaitForEndOfFrame();
 
-		Assert.AreEqual((Vector3.up, 1), (agent.transform.position, calledEnd));
+		Assert.AreEqual(3, called);
 	}
 }

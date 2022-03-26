@@ -74,7 +74,7 @@ public class UseItemSOTests : TestCollection
 		yield return new WaitForEndOfFrame();
 
 		var getRoutine = instructions.GetInstructionsFor(agent)!;
-		run.StartCoroutine(getRoutine().GetEnumerator());
+		run.StartCoroutine(getRoutine()!.GetEnumerator());
 
 		yield return new WaitForEndOfFrame();
 
@@ -105,7 +105,7 @@ public class UseItemSOTests : TestCollection
 		yield return new WaitForEndOfFrame();
 
 		var getRoutine = instructions.GetInstructionsFor(agent)!;
-		run.StartCoroutine(getRoutine().GetEnumerator());
+		run.StartCoroutine(getRoutine()!.GetEnumerator());
 
 		yield return new WaitForEndOfFrame();
 
@@ -140,7 +140,7 @@ public class UseItemSOTests : TestCollection
 		yield return new WaitForEndOfFrame();
 
 		var getRoutine = instructions.GetInstructionsFor(agent)!;
-		run.StartCoroutine(getRoutine().GetEnumerator());
+		run.StartCoroutine(getRoutine()!.GetEnumerator());
 
 		yield return new WaitForEndOfFrame();
 
@@ -171,7 +171,7 @@ public class UseItemSOTests : TestCollection
 		yield return new WaitForEndOfFrame();
 
 		var getRoutine = instructions.GetInstructionsFor(agent)!;
-		run.StartCoroutine(getRoutine().GetEnumerator());
+		run.StartCoroutine(getRoutine()!.GetEnumerator());
 
 		yield return new WaitForEndOfFrame();
 
@@ -207,7 +207,7 @@ public class UseItemSOTests : TestCollection
 		yield return new WaitForEndOfFrame();
 
 		var getRoutine = instructions.GetInstructionsFor(agent)!;
-		run.StartCoroutine(getRoutine().GetEnumerator());
+		run.StartCoroutine(getRoutine()!.GetEnumerator());
 
 		yield return new WaitForEndOfFrame();
 
@@ -248,7 +248,7 @@ public class UseItemSOTests : TestCollection
 		yield return new WaitForEndOfFrame();
 
 		var getRoutine = instructions.GetInstructionsFor(agent)!;
-		run.StartCoroutine(getRoutine().GetEnumerator());
+		run.StartCoroutine(getRoutine()!.GetEnumerator());
 
 		yield return new WaitForEndOfFrame();
 
@@ -302,7 +302,7 @@ public class UseItemSOTests : TestCollection
 		yield return new WaitForEndOfFrame();
 
 		var getRoutine = instructions.GetInstructionsFor(agent)!;
-		run.StartCoroutine(getRoutine().GetEnumerator());
+		run.StartCoroutine(getRoutine()!.GetEnumerator());
 
 		yield return new WaitForEndOfFrame();
 
@@ -327,74 +327,49 @@ public class UseItemSOTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator WhenNoHitDoNotRun() {
-		var called = 0;
+	public IEnumerator WhenNoHitReturnNull() {
 		var instructions = ScriptableObject.CreateInstance<UseItemSO>();
 		var run = new GameObject().AddComponent<MockMB>();
 
 		var hitter = ScriptableObject.CreateInstance<MockHitterSO>();
 		var agent = new GameObject();
-		var child = new GameObject();
-		var loadout = child.AddComponent<MockLoadoutManagerMB>();
-		var animation = child.AddComponent<MockAnimationMB>();
-		var item = ((MockItem)loadout.Current.Item!);
-
-		child.transform.parent = agent.transform;
+		var loadout = agent.AddComponent<MockLoadoutManagerMB>();
+		var animation = agent.AddComponent<MockAnimationMB>();
 
 		instructions.hitter = Reference<IHit>.PointToScriptableObject(hitter);
 
 		hitter.tryComponent = _ => null;
-		animation.set = _ => ++called;
-		item.getUse = _ => () => ++called;
-
-		item.ActiveState = Animation.State.WalkOrRun;
 
 		yield return new WaitForEndOfFrame();
 
-		var getRoutine = instructions.GetInstructionsFor(agent)!;
-		run.StartCoroutine(getRoutine().GetEnumerator());
-
-		yield return new WaitForEndOfFrame();
-
-		Assert.AreEqual(0, called);
+		var getRoutine = instructions.GetInstructionsFor(agent);
+		Assert.Null(getRoutine());
 	}
 
 
 	[UnityTest]
-	public IEnumerator WhenItemCantUseTransformDoNotRun() {
-		var called = 0;
+	public IEnumerator WhenItemCantUseTransformReturnNull() {
 		var instructions = ScriptableObject.CreateInstance<UseItemSO>();
-		var run = new GameObject().AddComponent<MockMB>();
 
 		var hitter = ScriptableObject.CreateInstance<MockHitterSO>();
 		var agent = new GameObject();
-		var child = new GameObject();
-		var loadout = child.AddComponent<MockLoadoutManagerMB>();
-		var animation = child.AddComponent<MockAnimationMB>();
+		var loadout = agent.AddComponent<MockLoadoutManagerMB>();
+		var animation = agent.AddComponent<MockAnimationMB>();
 		var item = ((MockItem)loadout.Current.Item!);
-
-		child.transform.parent = agent.transform;
 
 		instructions.hitter = Reference<IHit>.PointToScriptableObject(hitter);
 
 		hitter.tryComponent = _ => new GameObject().transform;
-		animation.set = _ => ++called;
 		item.getUse = _ => null;
 
-		item.ActiveState = Animation.State.WalkOrRun;
-
 		yield return new WaitForEndOfFrame();
 
-		var getRoutine = instructions.GetInstructionsFor(agent)!;
-		run.StartCoroutine(getRoutine().GetEnumerator());
-
-		yield return new WaitForEndOfFrame();
-
-		Assert.AreEqual(0, called);
+		var getRoutine = instructions.GetInstructionsFor(agent);
+		Assert.Null(getRoutine());
 	}
 
 	[UnityTest]
-	public IEnumerator NoThrowWhenNoItem() {
+	public IEnumerator WhenNotItemSetReturnNull() {
 		var instructions = ScriptableObject.CreateInstance<UseItemSO>();
 
 		var hitter = ScriptableObject.CreateInstance<MockHitterSO>();
@@ -408,10 +383,8 @@ public class UseItemSOTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		Assert.DoesNotThrow(() => {
-			var runRoutine = instructions.GetInstructionsFor(agent)!;
-			foreach (var _ in runRoutine()) ;
-		});
+		var getRoutine = instructions.GetInstructionsFor(agent);
+		Assert.Null(getRoutine());
 	}
 
 	[Test]
@@ -438,15 +411,17 @@ public class UseItemSOTests : TestCollection
 		var agent = new GameObject();
 		var loadout = agent.AddComponent<MockLoadoutManagerMB>();
 		var animation = agent.AddComponent<MockAnimationMB>();
+		var item = ((MockItem)loadout.Current.Item!);
 
 		instructions.hitter = Reference<IHit>.PointToScriptableObject(hitter);
 
-		hitter.tryComponent = t => { called = t; return null; };
+		hitter.tryComponent = t => { called = t; return t; };
+		item.getUse = _ => () => { };
 
 		yield return new WaitForEndOfFrame();
 
 		var getRoutine = instructions.GetInstructionsFor(agent)!;
-		run.StartCoroutine(getRoutine().GetEnumerator());
+		run.StartCoroutine(getRoutine()!.GetEnumerator());
 
 		yield return new WaitForEndOfFrame();
 
