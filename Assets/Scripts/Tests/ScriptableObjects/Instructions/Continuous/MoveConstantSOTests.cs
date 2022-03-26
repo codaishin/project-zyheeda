@@ -206,7 +206,7 @@ public class MoveConstantSOTests : TestCollection
 		hitSO.getPoint = _ => Vector3.right * 100;
 
 		pluginSO.getCallbacks = _ => new PluginCallbacks {
-			onBegin = d => data = d
+			onBegin = d => data = d.As<CorePluginData>()
 		};
 
 		yield return new WaitForEndOfFrame();

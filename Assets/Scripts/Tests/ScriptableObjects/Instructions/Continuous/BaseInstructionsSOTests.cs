@@ -11,8 +11,15 @@ public class BaseInstructionsSOTests : TestCollection
 		public Func<GameObject, PluginCallbacks> getCallbacks =
 			_ => new PluginCallbacks();
 
+		public Func<PluginData, PluginData> extendPlugin =
+			d => d;
+
 		public override PluginCallbacks GetCallbacks(GameObject agent) {
 			return this.getCallbacks(agent);
+		}
+
+		public override PluginData ExtendPluginData(PluginData data) {
+			return this.extendPlugin(data);
 		}
 	}
 
@@ -96,7 +103,7 @@ public class BaseInstructionsSOTests : TestCollection
 
 	[Test]
 	public void OnBeginBeforeFirstYield() {
-		var called = null as CorePluginData;
+		var called = null as PluginData;
 		var agent = new GameObject();
 		var instructionsSO = ScriptableObject.CreateInstance<MockInstructionSO>();
 
@@ -127,7 +134,7 @@ public class BaseInstructionsSOTests : TestCollection
 
 	[Test]
 	public void PluginDataAllSame() {
-		var data = new List<CorePluginData>();
+		var data = new List<PluginData>();
 		var agent = new GameObject();
 		var instructionsSO = ScriptableObject.CreateInstance<MockInstructionSO>();
 		var plugins = new MockPluginSO[] {
@@ -265,7 +272,7 @@ public class BaseInstructionsSOTests : TestCollection
 		var instructionsSO = ScriptableObject.CreateInstance<MockInstructionSO>();
 		var plugin = ScriptableObject.CreateInstance<MockPluginSO>();
 
-		IEnumerable<UnityEngine.YieldInstruction> instructionFunc(CorePluginData _) {
+		IEnumerable<YieldInstruction> instructionFunc(PluginData _) {
 			for (iterations = 0; iterations < 100; ++iterations) {
 				yield return new WaitForEndOfFrame();
 			}
@@ -296,14 +303,14 @@ public class BaseInstructionsSOTests : TestCollection
 		var instructionsSO = ScriptableObject.CreateInstance<MockInstructionSO>();
 		var plugin = ScriptableObject.CreateInstance<MockPluginSO>();
 
-		IEnumerable<UnityEngine.YieldInstruction> instructionFunc(CorePluginData _) {
+		IEnumerable<UnityEngine.YieldInstruction> instructionFunc(PluginData _) {
 			for (iterations = 0; iterations < 100; ++iterations) {
 				yield return new WaitForEndOfFrame();
 			}
 		}
 		var pluginData = null as CorePluginData;
 		plugin.getCallbacks = _ => new PluginCallbacks {
-			onBegin = d => pluginData = d,
+			onBegin = d => pluginData = d.As<CorePluginData>(),
 			onEnd = _ => ++called
 		};
 		instructionsSO.plugins = new MockPluginSO[] { plugin }; ;
@@ -329,14 +336,14 @@ public class BaseInstructionsSOTests : TestCollection
 		var run = true;
 		var plugin = ScriptableObject.CreateInstance<MockPluginSO>();
 
-		IEnumerable<UnityEngine.YieldInstruction> instructionFunc(CorePluginData _) {
+		IEnumerable<UnityEngine.YieldInstruction> instructionFunc(PluginData _) {
 			for (iterations = 0; iterations < 100; ++iterations) {
 				yield return new WaitForEndOfFrame();
 			}
 		}
 		var pluginData = null as CorePluginData;
 		plugin.getCallbacks = _ => new PluginCallbacks {
-			onBegin = d => pluginData = d,
+			onBegin = d => pluginData = d.As<CorePluginData>(),
 			onEnd = _ => ++called
 		};
 		instructionsSO.plugins = new MockPluginSO[] { plugin }; ;
@@ -363,5 +370,34 @@ public class BaseInstructionsSOTests : TestCollection
 		var insructions = instructionsSO.GetInstructionsFor(agent);
 
 		Assert.Null(insructions());
+	}
+
+	class MockPluginDataA : PluginData { }
+	class MockPluginDataB : PluginData { }
+
+	[Test]
+	public void DecoratePluginData() {
+		var data = null as PluginData;
+		var agent = new GameObject();
+		var instructionsSO = ScriptableObject.CreateInstance<MockInstructionSO>();
+		var plugins = new MockPluginSO[] {
+			ScriptableObject.CreateInstance<MockPluginSO>(),
+			ScriptableObject.CreateInstance<MockPluginSO>(),
+			ScriptableObject.CreateInstance<MockPluginSO>(),
+		};
+
+		plugins[0].extendPlugin = d => PluginData.Add<MockPluginDataA>(d);
+		plugins[1].extendPlugin = d => PluginData.Add<MockPluginDataB>(d);
+		plugins[2].getCallbacks = _ => new PluginCallbacks {
+			onBegin = d => data = d
+		};
+		instructionsSO.plugins = plugins;
+
+		var insructions = instructionsSO.GetInstructionsFor(agent);
+
+		foreach (var _ in insructions()!) ;
+
+		Assert.NotNull(data!.As<MockPluginDataA>());
+		Assert.NotNull(data!.As<MockPluginDataB>());
 	}
 }

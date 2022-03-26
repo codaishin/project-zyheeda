@@ -10,7 +10,7 @@ using Instructions =
 		.IEnumerable<UnityEngine.YieldInstruction?>;
 
 public delegate Instructions? InstructionsFunc();
-public delegate Instructions? InstructionsPluginFunc(CorePluginData pluginData);
+public delegate Instructions? InstructionsPluginFunc(PluginData pluginData);
 
 public abstract class BaseInstructionsSO : ScriptableObject
 {
@@ -18,6 +18,12 @@ public abstract class BaseInstructionsSO : ScriptableObject
 		GameObject agent,
 		Func<bool>? run = null
 	);
+}
+
+public class CorePluginData : PluginData
+{
+	public bool run;
+	public float weight;
 }
 
 public abstract class BaseInstructionsSO<TAgent> : BaseInstructionsSO
@@ -36,19 +42,24 @@ public abstract class BaseInstructionsSO<TAgent> : BaseInstructionsSO
 		InstructionsPluginFunc instructions = this.Instructions(concreteAgent);
 
 		return () => {
-			CorePluginData pluginData = new CorePluginData { run = true };
-			Instructions? loop = instructions(pluginData);
+			CorePluginData pluginData = this.GetPluginData();
+			Instructions? loopWithPluginData = instructions(pluginData);
+			Func<bool> runCheckWithPluginData = runCheck is null
+					? (() => pluginData.run)
+					: (() => pluginData.run && runCheck());
 
-			if (loop == null) {
+			if (loopWithPluginData is null) {
 				return null;
 			}
+
+			pluginData.run = true;
 			return this.RunLoop(
-				loop,
+				loopWithPluginData,
 				() => pluginCallbacks.onBegin?.Invoke(pluginData),
 				() => pluginCallbacks.onBeforeYield?.Invoke(pluginData),
 				() => pluginCallbacks.onAfterYield?.Invoke(pluginData),
 				() => pluginCallbacks.onEnd?.Invoke(pluginData),
-				runCheck + (() => pluginData.run)
+				runCheckWithPluginData
 			);
 		};
 	}
@@ -57,6 +68,20 @@ public abstract class BaseInstructionsSO<TAgent> : BaseInstructionsSO
 		return this.plugins
 			.Select(plugin => plugin.GetCallbacks(agent))
 			.Aggregate(new PluginCallbacks(), (l, c) => l + c);
+	}
+
+	private CorePluginData GetPluginData() {
+		PluginData pluginData = new PluginData();
+		foreach (BaseInstructionsPluginSO plugin in this.plugins) {
+			pluginData = plugin.ExtendPluginData(pluginData);
+		}
+		return PluginData
+			.Add<CorePluginData>(pluginData)
+			.As<CorePluginData>()!;
+	}
+
+	private Func<Func<PluginData, PluginData>, Func<PluginData, PluginData>, Func<PluginData, PluginData>> Pipe() {
+		return (l, c) => d => c(l(d));
 	}
 
 	private Instructions RunLoop(

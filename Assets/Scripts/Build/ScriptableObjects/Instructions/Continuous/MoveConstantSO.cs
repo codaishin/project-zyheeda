@@ -19,11 +19,11 @@ public class MoveConstantSO : BaseInstructionsSO<Transform>
 
 	private IEnumerable<WaitForEndOfFrame> Move(
 		Transform transform,
-		CorePluginData data
+		PluginData data
 	) {
 		Vector3? point = this.hitter!.TryPoint(transform);
 
-		data.weight = this.weight;
+		data.As<CorePluginData>()!.weight = this.weight;
 		if (!point.HasValue) {
 			yield break;
 		}

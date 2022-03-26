@@ -10,9 +10,9 @@ public class AllignForwardWithMovementSO : BaseInstructionsPluginSO
 		Transform transform = agent.transform;
 		Vector3 lastPosition = agent.transform.position;
 
-		Action<CorePluginData> trackPosition =
+		Action<PluginData> trackPosition =
 			_ => lastPosition = transform.position;
-		Action<CorePluginData> setDirection =
+		Action<PluginData> setDirection =
 			_ => {
 				if (transform.position == lastPosition) {
 					return;

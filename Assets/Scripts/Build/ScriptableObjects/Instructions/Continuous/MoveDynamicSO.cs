@@ -25,7 +25,7 @@ public class MoveDynamicSO : BaseInstructionsSO<Transform>
 		return data => this.Move(agent, data);
 	}
 
-	private IEnumerable<YieldInstruction> Move(Transform agent, CorePluginData data) {
+	private IEnumerable<YieldInstruction> Move(Transform agent, PluginData data) {
 		Vector3 target = agent.transform.position;
 		do {
 			yield return new WaitForEndOfFrame();
@@ -34,10 +34,10 @@ public class MoveDynamicSO : BaseInstructionsSO<Transform>
 		} while (agent.position != target);
 	}
 
-	private void MoveFrame(Transform agent, CorePluginData data, Vector3 target) {
+	private void MoveFrame(Transform agent, PluginData data, Vector3 target) {
 		float lerp = this.GetLerp(agent.position, target);
 		agent.position = this.MoveTowards(agent.position, target, lerp);
-		data.weight = this.GetWeight(lerp);
+		data.As<CorePluginData>()!.weight = this.GetWeight(lerp);
 	}
 
 	private Vector3 MoveTowards(Vector3 current, Vector3 target, float lerp) {

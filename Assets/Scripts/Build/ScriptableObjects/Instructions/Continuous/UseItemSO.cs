@@ -29,7 +29,7 @@ public class UseItemSO : BaseInstructionsSO<ItemAgent>
 	}
 
 	protected override InstructionsPluginFunc Instructions(ItemAgent agent) {
-		IEnumerable<WaitForSeconds>? useItem(CorePluginData _) {
+		IEnumerable<WaitForSeconds>? useItem(PluginData _) {
 			IItem? item = agent.loadout.Current.Item;
 			Transform? target = agent.findTarget();
 			Action? use;

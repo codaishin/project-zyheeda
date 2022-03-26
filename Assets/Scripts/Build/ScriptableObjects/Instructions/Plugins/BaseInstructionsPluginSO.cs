@@ -1,18 +1,12 @@
 using System;
 using UnityEngine;
 
-public class CorePluginData : PluginData
-{
-	public bool run;
-	public float weight;
-}
-
 public struct PluginCallbacks
 {
-	public Action<CorePluginData>? onBegin;
-	public Action<CorePluginData>? onBeforeYield;
-	public Action<CorePluginData>? onAfterYield;
-	public Action<CorePluginData>? onEnd;
+	public Action<PluginData>? onBegin;
+	public Action<PluginData>? onBeforeYield;
+	public Action<PluginData>? onAfterYield;
+	public Action<PluginData>? onEnd;
 
 	public static PluginCallbacks operator +(
 		PluginCallbacks a,
@@ -30,5 +24,5 @@ public struct PluginCallbacks
 public abstract class BaseInstructionsPluginSO : ScriptableObject
 {
 	public abstract PluginCallbacks GetCallbacks(GameObject agent);
-	public virtual Func<PluginData, PluginData>? GetPluginDecorators() => null;
+	public virtual PluginData ExtendPluginData(PluginData data) => data;
 }
