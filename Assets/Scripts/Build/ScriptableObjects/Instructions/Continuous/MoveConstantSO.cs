@@ -23,7 +23,7 @@ public class MoveConstantSO : BaseInstructionsSO<Transform>
 	) {
 		Vector3? point = this.hitter!.TryPoint(transform);
 
-		data.weight = this.weight;
+		data.As<CorePluginData>()!.weight = this.weight;
 		if (!point.HasValue) {
 			yield break;
 		}

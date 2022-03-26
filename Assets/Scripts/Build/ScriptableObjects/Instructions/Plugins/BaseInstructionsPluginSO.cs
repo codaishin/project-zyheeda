@@ -1,12 +1,6 @@
 using System;
 using UnityEngine;
 
-public class PluginData
-{
-	public bool run;
-	public float weight;
-}
-
 public struct PluginCallbacks
 {
 	public Action<PluginData>? onBegin;
@@ -30,4 +24,5 @@ public struct PluginCallbacks
 public abstract class BaseInstructionsPluginSO : ScriptableObject
 {
 	public abstract PluginCallbacks GetCallbacks(GameObject agent);
+	public virtual void ExtendPluginData(PluginData data) { }
 }

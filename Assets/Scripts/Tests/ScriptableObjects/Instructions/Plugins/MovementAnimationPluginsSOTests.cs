@@ -29,7 +29,7 @@ public class MovementAnimationPluginSOTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		action(new PluginData());
+		action(new CorePluginData());
 
 		Assert.AreEqual(Animation.State.WalkOrRun, called);
 	}
@@ -48,7 +48,7 @@ public class MovementAnimationPluginSOTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		action(new PluginData());
+		action(new CorePluginData());
 
 		Assert.AreEqual(Animation.State.WalkOrRun, called);
 	}
@@ -65,7 +65,7 @@ public class MovementAnimationPluginSOTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		action(new PluginData { weight = 0.324f });
+		action(new CorePluginData { weight = 0.324f });
 
 		Assert.AreEqual((Animation.BlendState.WalkOrRun, 0.324f), called);
 	}
@@ -82,7 +82,7 @@ public class MovementAnimationPluginSOTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		action(new PluginData { weight = 0.111f });
+		action(new CorePluginData { weight = 0.111f });
 
 		Assert.AreEqual((Animation.BlendState.WalkOrRun, 0.111f), called);
 	}
@@ -99,7 +99,7 @@ public class MovementAnimationPluginSOTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		action(new PluginData { weight = 0.324f });
+		action(new CorePluginData { weight = 0.324f });
 
 		Assert.AreEqual(Animation.State.Idle, called);
 	}

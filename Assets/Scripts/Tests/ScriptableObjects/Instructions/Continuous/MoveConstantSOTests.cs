@@ -192,7 +192,7 @@ public class MoveConstantSOTests : TestCollection
 
 	[UnityTest]
 	public IEnumerator WeightToPluginDataWeight() {
-		var data = null as PluginData;
+		var data = null as CorePluginData;
 		var moveSO = ScriptableObject.CreateInstance<MoveConstantSO>();
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
 		var agent = new GameObject();
@@ -206,7 +206,7 @@ public class MoveConstantSOTests : TestCollection
 		hitSO.getPoint = _ => Vector3.right * 100;
 
 		pluginSO.getCallbacks = _ => new PluginCallbacks {
-			onBegin = d => data = d
+			onBegin = d => data = d.As<CorePluginData>()
 		};
 
 		yield return new WaitForEndOfFrame();

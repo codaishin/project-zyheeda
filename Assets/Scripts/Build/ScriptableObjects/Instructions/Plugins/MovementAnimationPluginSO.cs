@@ -10,10 +10,16 @@ public class MovementAnimationPluginSO : BaseInstructionsPluginSO
 		return new PluginCallbacks {
 			onBegin = data => {
 				animation.Set(Animation.State.WalkOrRun);
-				animation.Blend(Animation.BlendState.WalkOrRun, data.weight);
+				animation.Blend(
+					Animation.BlendState.WalkOrRun,
+					data.As<CorePluginData>()!.weight
+				);
 			},
 			onAfterYield = data => {
-				animation.Blend(Animation.BlendState.WalkOrRun, data.weight);
+				animation.Blend(
+					Animation.BlendState.WalkOrRun,
+					data.As<CorePluginData>()!.weight
+				);
 			},
 			onEnd = _ => {
 				animation.Set(Animation.State.Idle);

@@ -37,7 +37,7 @@ public class MoveDynamicSO : BaseInstructionsSO<Transform>
 	private void MoveFrame(Transform agent, PluginData data, Vector3 target) {
 		float lerp = this.GetLerp(agent.position, target);
 		agent.position = this.MoveTowards(agent.position, target, lerp);
-		data.weight = this.GetWeight(lerp);
+		data.As<CorePluginData>()!.weight = this.GetWeight(lerp);
 	}
 
 	private Vector3 MoveTowards(Vector3 current, Vector3 target, float lerp) {

@@ -4,7 +4,10 @@ using System.Linq;
 using UnityEngine;
 
 using Instructions =
-	System.Collections.Generic.IEnumerable<UnityEngine.YieldInstruction?>;
+	System
+		.Collections
+		.Generic
+		.IEnumerable<UnityEngine.YieldInstruction?>;
 
 public delegate Instructions? InstructionsFunc();
 public delegate Instructions? InstructionsPluginFunc(PluginData pluginData);
@@ -17,38 +20,47 @@ public abstract class BaseInstructionsSO : ScriptableObject
 	);
 }
 
+public class CorePluginData : PluginData
+{
+	public bool run;
+	public float weight;
+}
+
 public abstract class BaseInstructionsSO<TAgent> : BaseInstructionsSO
 {
 	public BaseInstructionsPluginSO[] plugins = new BaseInstructionsPluginSO[0];
 
 	protected abstract TAgent GetConcreteAgent(GameObject agent);
 	protected abstract InstructionsPluginFunc Instructions(TAgent agent);
+	protected virtual void ExtendPluginData(PluginData pluginData) { }
 
 	public override InstructionsFunc GetInstructionsFor(
 		GameObject agent,
-		Func<bool>? run = null
+		Func<bool>? runCheck = null
 	) {
 		TAgent concreteAgent = this.GetConcreteAgent(agent);
-		PluginCallbacks callbacks = this.PluginCallbacks(agent);
-		InstructionsPluginFunc instructionsFunc = this.Instructions(concreteAgent);
+		PluginCallbacks pluginCallbacks = this.PluginCallbacks(agent);
+		InstructionsPluginFunc instructions = this.Instructions(concreteAgent);
 
 		return () => {
-			PluginData pluginData = new PluginData { run = true };
-			Instructions? instructions = instructionsFunc(pluginData);
-			Func<bool> runCheck = run is null
-				? (() => pluginData.run)
-				: (() => pluginData.run && run());
+			CorePluginData pluginData = this.GetPluginData();
+			Instructions? loopWithPluginData = instructions(pluginData);
+			Func<bool> runCheckWithPluginData = runCheck is null
+					? (() => pluginData.run)
+					: (() => pluginData.run && runCheck());
 
-			if (instructions == null) {
+			if (loopWithPluginData is null) {
 				return null;
 			}
-			return BaseInstructionsSO<TAgent>.Loop(
-				instructions,
-				() => callbacks.onBegin?.Invoke(pluginData),
-				() => callbacks.onBeforeYield?.Invoke(pluginData),
-				() => callbacks.onAfterYield?.Invoke(pluginData),
-				() => callbacks.onEnd?.Invoke(pluginData),
-				runCheck
+
+			pluginData.run = true;
+			return this.RunLoop(
+				loopWithPluginData,
+				() => pluginCallbacks.onBegin?.Invoke(pluginData),
+				() => pluginCallbacks.onBeforeYield?.Invoke(pluginData),
+				() => pluginCallbacks.onAfterYield?.Invoke(pluginData),
+				() => pluginCallbacks.onEnd?.Invoke(pluginData),
+				runCheckWithPluginData
 			);
 		};
 	}
@@ -59,7 +71,21 @@ public abstract class BaseInstructionsSO<TAgent> : BaseInstructionsSO
 			.Aggregate(new PluginCallbacks(), (l, c) => l + c);
 	}
 
-	private static Instructions Loop(
+	private CorePluginData GetPluginData() {
+		CorePluginData pluginData = new PluginData().Extent<CorePluginData>();
+
+		this.ExtendPluginData(pluginData);
+		foreach (BaseInstructionsPluginSO plugin in this.plugins) {
+			plugin.ExtendPluginData(pluginData);
+		}
+		return pluginData;
+	}
+
+	private Func<Func<PluginData, PluginData>, Func<PluginData, PluginData>, Func<PluginData, PluginData>> Pipe() {
+		return (l, c) => d => c(l(d));
+	}
+
+	private Instructions RunLoop(
 		Instructions instructions,
 		Action onBegin,
 		Action onBeforeYield,
@@ -67,12 +93,8 @@ public abstract class BaseInstructionsSO<TAgent> : BaseInstructionsSO
 		Action onEnd,
 		Func<bool> runCheck
 	) {
-		IEnumerable<YieldInstruction?> loop = BaseInstructionsSO<TAgent>.Loop(
-			instructions,
-			runCheck
-		);
 		onBegin();
-		foreach (YieldInstruction? hold in loop) {
+		foreach (YieldInstruction? hold in this.RunLoop(instructions, runCheck)) {
 			onBeforeYield();
 			yield return hold;
 			onAfterYield();
@@ -80,10 +102,7 @@ public abstract class BaseInstructionsSO<TAgent> : BaseInstructionsSO
 		onEnd();
 	}
 
-	private static Instructions Loop(
-		Instructions instructions,
-		Func<bool> runCheck
-	) {
+	private Instructions RunLoop(Instructions instructions, Func<bool> runCheck) {
 		using IEnumerator<YieldInstruction?> it = instructions.GetEnumerator();
 		while (runCheck() && it.MoveNext()) {
 			yield return it.Current;
