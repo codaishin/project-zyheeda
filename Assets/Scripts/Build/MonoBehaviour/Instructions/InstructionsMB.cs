@@ -11,8 +11,8 @@ public enum OverrideMode
 
 public class InstructionsMB : MonoBehaviour, IApplicable
 {
-	private IEnumerator<YieldInstruction>? currentCoroutine;
-	private Func<IEnumerable<YieldInstruction>>? instructions;
+	private IEnumerator<YieldInstruction?>? currentCoroutine;
+	private Func<IEnumerable<YieldInstruction?>>? instructions;
 	private bool running;
 
 	public CoroutineRunnerMB? runner;
@@ -32,7 +32,7 @@ public class InstructionsMB : MonoBehaviour, IApplicable
 		);
 	}
 
-	private IEnumerator<YieldInstruction> GetCoroutine() {
+	private IEnumerator<YieldInstruction?> GetCoroutine() {
 		return this.instructions!.Invoke().GetEnumerator();
 	}
 

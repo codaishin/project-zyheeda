@@ -416,7 +416,7 @@ public class UseItemSOTests : TestCollection
 		yield return new WaitForEndOfFrame();
 
 		Assert.DoesNotThrow(() => {
-			var runRoutine = instructions.GetInstructionsFor(agent);
+			var runRoutine = instructions.GetInstructionsFor(agent)!;
 			foreach (var _ in runRoutine()) ;
 		});
 	}

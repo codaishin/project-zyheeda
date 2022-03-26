@@ -20,14 +20,14 @@ public class BaseInstructionsSOTests : TestCollection
 	{
 		public Func<GameObject, Transform> getConcreteAgent =
 			agent => agent.transform;
-		public Func<Transform, RawInstructions> insructions =
+		public Func<Transform, RawInstructions?> insructions =
 			_ => _ => new YieldInstruction[0];
 
 		protected override Transform GetConcreteAgent(GameObject agent) {
 			return this.getConcreteAgent(agent);
 		}
 
-		protected override RawInstructions Instructions(Transform agent) {
+		protected override RawInstructions? Instructions(Transform agent) {
 			return this.insructions(agent);
 		}
 	}
@@ -65,7 +65,7 @@ public class BaseInstructionsSOTests : TestCollection
 
 		instructionsSO.insructions = agent => _ => moveUp(agent);
 
-		var insructions = instructionsSO.GetInstructionsFor(agent);
+		var insructions = instructionsSO.GetInstructionsFor(agent)!;
 
 		foreach (var _ in insructions()) { }
 
@@ -89,7 +89,7 @@ public class BaseInstructionsSOTests : TestCollection
 		plugins.ForEach(plugin => plugin.getCallbacks = getCallbacks);
 		instructionsSO.plugins = plugins;
 
-		var insructions = instructionsSO.GetInstructionsFor(agent);
+		var insructions = instructionsSO.GetInstructionsFor(agent)!;
 
 		Assert.AreEqual((agent, agent), (called[0], called[1]));
 	}
@@ -116,7 +116,7 @@ public class BaseInstructionsSOTests : TestCollection
 			new WaitForEndOfFrame(),
 		};
 
-		var insructions = instructionsSO.GetInstructionsFor(agent);
+		var insructions = instructionsSO.GetInstructionsFor(agent)!;
 
 		Assert.IsNull(called);
 
@@ -153,7 +153,7 @@ public class BaseInstructionsSOTests : TestCollection
 			new WaitForEndOfFrame(),
 		};
 
-		var insructions = instructionsSO.GetInstructionsFor(agent);
+		var insructions = instructionsSO.GetInstructionsFor(agent)!;
 
 		foreach (var _ in insructions()) ;
 
@@ -182,7 +182,7 @@ public class BaseInstructionsSOTests : TestCollection
 			new WaitForEndOfFrame(),
 		};
 
-		var insructions = instructionsSO.GetInstructionsFor(agent);
+		var insructions = instructionsSO.GetInstructionsFor(agent)!;
 
 		var i = 0;
 		foreach (var _ in insructions()) {
@@ -215,7 +215,7 @@ public class BaseInstructionsSOTests : TestCollection
 			new WaitForEndOfFrame(),
 		};
 
-		var insructions = instructionsSO.GetInstructionsFor(agent);
+		var insructions = instructionsSO.GetInstructionsFor(agent)!;
 
 		var i = 0;
 		foreach (var _ in insructions()) {
@@ -247,7 +247,7 @@ public class BaseInstructionsSOTests : TestCollection
 			new WaitForEndOfFrame(),
 		};
 
-		var insructions = instructionsSO.GetInstructionsFor(agent);
+		var insructions = instructionsSO.GetInstructionsFor(agent)!;
 
 		foreach (var _ in insructions()) {
 			Assert.AreEqual(0, called);
@@ -277,7 +277,7 @@ public class BaseInstructionsSOTests : TestCollection
 		instructionsSO.plugins = new MockPluginSO[] { plugin }; ;
 		instructionsSO.insructions = _ => instructionFunc;
 
-		var insructions = instructionsSO.GetInstructionsFor(agent, () => run);
+		var insructions = instructionsSO.GetInstructionsFor(agent, () => run)!;
 
 		foreach (var _ in insructions()) {
 			if (iterations == 9) {
@@ -309,7 +309,7 @@ public class BaseInstructionsSOTests : TestCollection
 		instructionsSO.plugins = new MockPluginSO[] { plugin }; ;
 		instructionsSO.insructions = _ => instructionFunc;
 
-		var insructions = instructionsSO.GetInstructionsFor(agent);
+		var insructions = instructionsSO.GetInstructionsFor(agent)!;
 
 		foreach (var _ in insructions()) {
 			if (iterations == 9) {
@@ -342,7 +342,7 @@ public class BaseInstructionsSOTests : TestCollection
 		instructionsSO.plugins = new MockPluginSO[] { plugin }; ;
 		instructionsSO.insructions = _ => instructionFunc;
 
-		var insructions = instructionsSO.GetInstructionsFor(agent, () => run);
+		var insructions = instructionsSO.GetInstructionsFor(agent, () => run)!;
 
 		foreach (var _ in insructions()) {
 			if (iterations == 9) {

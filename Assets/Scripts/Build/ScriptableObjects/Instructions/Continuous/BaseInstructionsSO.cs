@@ -5,12 +5,12 @@ using UnityEngine;
 
 public abstract class BaseInstructionsSO : ScriptableObject
 {
-	public abstract Func<IEnumerable<YieldInstruction>> GetInstructionsFor(
+	public abstract Func<IEnumerable<YieldInstruction?>>? GetInstructionsFor(
 		GameObject agent,
 		Func<bool>? run = null
 	);
 
-	protected static IEnumerable<YieldInstruction> RunInstructions(
+	protected static IEnumerable<YieldInstruction?> RunInstructions(
 		RawInstructions instructions,
 		Action<PluginData>? onBegin,
 		Action<PluginData>? onBeforeYield,
@@ -22,12 +22,12 @@ public abstract class BaseInstructionsSO : ScriptableObject
 		Func<bool> runCheck = run is null
 			? () => pluginData.run
 			: () => pluginData.run && run();
-		IEnumerable<YieldInstruction> loop = BaseInstructionsSO.Loop(
+		IEnumerable<YieldInstruction?> loop = BaseInstructionsSO.Loop(
 			instructions(pluginData),
 			runCheck
 		);
 		onBegin?.Invoke(pluginData);
-		foreach (YieldInstruction hold in loop) {
+		foreach (YieldInstruction? hold in loop) {
 			onBeforeYield?.Invoke(pluginData);
 			yield return hold;
 			onAfterYield?.Invoke(pluginData);
@@ -35,36 +35,36 @@ public abstract class BaseInstructionsSO : ScriptableObject
 		onEnd?.Invoke(pluginData);
 	}
 
-	protected static IEnumerable<YieldInstruction> Loop(
-		IEnumerable<YieldInstruction> instructions,
+	protected static IEnumerable<YieldInstruction?> Loop(
+		IEnumerable<YieldInstruction?> instructions,
 		Func<bool> run
 	) {
-		using IEnumerator<YieldInstruction> it = instructions.GetEnumerator();
+		using IEnumerator<YieldInstruction?> it = instructions.GetEnumerator();
 		while (run() && it.MoveNext()) {
 			yield return it.Current;
 		}
 	}
 }
 
-public delegate IEnumerable<YieldInstruction> CoroutineInstructions();
-public delegate IEnumerable<YieldInstruction> RawInstructions(PluginData data);
+public delegate IEnumerable<YieldInstruction?> CoroutineInstructions();
+public delegate IEnumerable<YieldInstruction?> RawInstructions(PluginData data);
 
 public abstract class BaseInstructionsSO<TAgent> : BaseInstructionsSO
 {
 	public BaseInstructionsPluginSO[] plugins = new BaseInstructionsPluginSO[0];
 
 	protected abstract TAgent GetConcreteAgent(GameObject agent);
-	protected abstract RawInstructions Instructions(TAgent agent);
+	protected abstract RawInstructions? Instructions(TAgent agent);
 
-	public override Func<IEnumerable<YieldInstruction>> GetInstructionsFor(
+	public override Func<IEnumerable<YieldInstruction?>>? GetInstructionsFor(
 		GameObject agent,
 		Func<bool>? run = null
 	) {
 		TAgent concreteAgent = this.GetConcreteAgent(agent);
 		PluginCallbacks callbacks = this.PluginCallbacks(agent);
-		RawInstructions instructions = this.Instructions(concreteAgent);
+		RawInstructions? instructions = this.Instructions(concreteAgent);
 
-		return () => BaseInstructionsSO.RunInstructions(
+		return instructions == null ? null : () => BaseInstructionsSO.RunInstructions(
 			instructions,
 			callbacks.onBegin,
 			callbacks.onBeforeYield,
