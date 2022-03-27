@@ -21,7 +21,7 @@ public class MoveDynamicSO : BaseInstructionsSO<Transform>
 		return agent.transform;
 	}
 
-	protected override InstructionsPluginFunc Instructions(Transform agent) {
+	protected override PartialInstructionFunc Instructions(Transform agent) {
 		return data => this.Move(agent, data);
 	}
 

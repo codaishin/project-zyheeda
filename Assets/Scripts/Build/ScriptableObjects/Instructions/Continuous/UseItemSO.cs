@@ -28,7 +28,7 @@ public class UseItemSO : BaseInstructionsSO<ItemAgent>
 		};
 	}
 
-	protected override InstructionsPluginFunc Instructions(ItemAgent agent) {
+	protected override PartialInstructionFunc Instructions(ItemAgent agent) {
 		IEnumerable<WaitForSeconds>? useItem(PluginData _) {
 			IItem? item = agent.loadout.Current.Item;
 			Transform? target = agent.findTarget();

@@ -3,26 +3,31 @@ using UnityEngine;
 [CreateAssetMenu(
 	menuName = "ScriptableObjects/Instructions/Plugins/MovementAnimation"
 )]
-public class MovementAnimationPluginSO : BaseInstructionsPluginSO
+public class MovementAnimationPluginSO :
+	BaseInstructionsPluginSO<IAnimationStates, CorePluginData>
 {
-	public override PluginCallbacks GetCallbacks(GameObject agent) {
-		IAnimationStates animation = agent.RequireComponent<IAnimationStates>(true);
+	public override IAnimationStates GetConcreteAgent(GameObject agent) {
+		return agent.RequireComponent<IAnimationStates>(true);
+	}
+
+	public override CorePluginData GetPluginData(PluginData data) {
+		return data.As<CorePluginData>()!;
+	}
+
+	protected override PluginCallbacks GetCallbacks(
+		IAnimationStates agent,
+		CorePluginData data
+	) {
 		return new PluginCallbacks {
-			onBegin = data => {
-				animation.Set(Animation.State.WalkOrRun);
-				animation.Blend(
-					Animation.BlendState.WalkOrRun,
-					data.As<CorePluginData>()!.weight
-				);
+			onBegin = () => {
+				agent.Set(Animation.State.WalkOrRun);
+				agent.Blend(Animation.BlendState.WalkOrRun, data.weight);
 			},
-			onAfterYield = data => {
-				animation.Blend(
-					Animation.BlendState.WalkOrRun,
-					data.As<CorePluginData>()!.weight
-				);
+			onAfterYield = () => {
+				agent.Blend(Animation.BlendState.WalkOrRun, data.weight);
 			},
-			onEnd = _ => {
-				animation.Set(Animation.State.Idle);
+			onEnd = () => {
+				agent.Set(Animation.State.Idle);
 			},
 		};
 	}

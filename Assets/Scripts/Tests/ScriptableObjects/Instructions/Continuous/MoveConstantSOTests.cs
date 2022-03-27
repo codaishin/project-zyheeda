@@ -182,12 +182,12 @@ public class MoveConstantSOTests : TestCollection
 
 	class MockPluginSO : BaseInstructionsPluginSO
 	{
-		public Func<GameObject, PluginCallbacks> getCallbacks =
-			_ => new PluginCallbacks();
+		public Func<GameObject, PartialPluginCallbacks> getCallbacks =
+			_ => _ => new PluginCallbacks();
 
-		public override PluginCallbacks GetCallbacks(GameObject agent) {
-			return this.getCallbacks(agent);
-		}
+		public override PartialPluginCallbacks GetCallbacks(
+			GameObject agent
+		) => this.getCallbacks(agent);
 	}
 
 	[UnityTest]
@@ -205,8 +205,8 @@ public class MoveConstantSOTests : TestCollection
 
 		hitSO.getPoint = _ => Vector3.right * 100;
 
-		pluginSO.getCallbacks = _ => new PluginCallbacks {
-			onBegin = d => data = d.As<CorePluginData>()
+		pluginSO.getCallbacks = _ => d => new PluginCallbacks {
+			onBegin = () => data = d.As<CorePluginData>()
 		};
 
 		yield return new WaitForEndOfFrame();

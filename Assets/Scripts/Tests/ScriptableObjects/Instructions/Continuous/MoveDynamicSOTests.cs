@@ -24,12 +24,12 @@ public class MoveDynamicSOTests : TestCollection
 
 	class MockPluginSO : BaseInstructionsPluginSO
 	{
-		public Func<GameObject, PluginCallbacks> getCallbacks =
-			_ => new PluginCallbacks();
+		public Func<GameObject, PartialPluginCallbacks> getCallbacks =
+			_ => _ => new PluginCallbacks();
 
-		public override PluginCallbacks GetCallbacks(GameObject agent) {
-			return this.getCallbacks(agent);
-		}
+		public override PartialPluginCallbacks GetCallbacks(
+			GameObject agent
+		) => this.getCallbacks(agent);
 	}
 
 	[UnityTest]
@@ -325,8 +325,8 @@ public class MoveDynamicSOTests : TestCollection
 
 		moveSO.plugins = new MockPluginSO[] { plugin };
 
-		plugin.getCallbacks = _ => new PluginCallbacks {
-			onAfterYield = d => weights.Add(d.As<CorePluginData>()!.weight)
+		plugin.getCallbacks = _ => d => new PluginCallbacks {
+			onAfterYield = () => weights.Add(d.As<CorePluginData>()!.weight)
 		};
 
 		yield return new WaitForEndOfFrame();
