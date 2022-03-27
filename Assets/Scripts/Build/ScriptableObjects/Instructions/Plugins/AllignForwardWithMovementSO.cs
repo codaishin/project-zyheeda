@@ -4,23 +4,29 @@ using UnityEngine;
 [CreateAssetMenu(
 	menuName = "ScriptableObjects/Instructions/Plugins/AllignForwardWithMovement"
 )]
-public class AllignForwardWithMovementSO : BaseInstructionsPluginSO
+public class AllignForwardWithMovementSO :
+	BaseInstructionsPluginSO<Transform, PluginData>
 {
-	public override Func<PluginData, PluginCallbacks> GetCallbacks(
-		GameObject agent
+	public override Transform GetConcreteAgent(GameObject agent) {
+		return agent.transform;
+	}
+
+	public override PluginData GetPluginData(PluginData data) {
+		return data;
+	}
+
+	protected override PluginCallbacks GetCallbacks(
+		Transform agent,
+		PluginData data
 	) {
-		Transform transform = agent.transform;
 		Vector3 lastPosition = agent.transform.position;
-		Action trackPosition = () => lastPosition = transform.position;
+		Action trackPosition = () => lastPosition = agent.position;
 		Action setDirection = () => {
-			if (transform.position == lastPosition) {
+			if (agent.position == lastPosition) {
 				return;
 			}
-			transform.forward = transform.position - lastPosition;
+			agent.forward = agent.position - lastPosition;
 		};
-
-		return _ => new PluginCallbacks {
-			onAfterYield = setDirection + trackPosition
-		};
+		return new PluginCallbacks { onAfterYield = setDirection + trackPosition };
 	}
 }
