@@ -6,20 +6,21 @@ using UnityEngine;
 )]
 public class AllignForwardWithMovementSO : BaseInstructionsPluginSO
 {
-	public override PluginCallbacks GetCallbacks(GameObject agent) {
+	public override Func<PluginData, PluginCallbacks> GetCallbacks(
+		GameObject agent
+	) {
 		Transform transform = agent.transform;
 		Vector3 lastPosition = agent.transform.position;
+		Action trackPosition = () => lastPosition = transform.position;
+		Action setDirection = () => {
+			if (transform.position == lastPosition) {
+				return;
+			}
+			transform.forward = transform.position - lastPosition;
+		};
 
-		Action<PluginData> trackPosition =
-			_ => lastPosition = transform.position;
-		Action<PluginData> setDirection =
-			_ => {
-				if (transform.position == lastPosition) {
-					return;
-				}
-				transform.forward = transform.position - lastPosition;
-			};
-
-		return new PluginCallbacks { onAfterYield = setDirection + trackPosition };
+		return _ => new PluginCallbacks {
+			onAfterYield = setDirection + trackPosition
+		};
 	}
 }

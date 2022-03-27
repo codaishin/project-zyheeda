@@ -21,15 +21,19 @@ public class MovementAnimationPluginSOTests : TestCollection
 	public IEnumerator OnBeginWalk() {
 		var called = (Animation.State)(-1);
 		var agent = new GameObject().AddComponent<MockAnimationMB>();
-		var instructions = ScriptableObject.CreateInstance<MovementAnimationPluginSO>();
+		var pluginData = new CorePluginData();
+		var instructions = ScriptableObject
+			.CreateInstance<MovementAnimationPluginSO>();
 
 		agent.set = s => called = s;
 
-		var action = instructions.GetCallbacks(agent.gameObject).onBegin!;
+		var action = instructions
+			.GetCallbacks(agent.gameObject)(pluginData)
+			.onBegin!;
 
 		yield return new WaitForEndOfFrame();
 
-		action(new CorePluginData());
+		action();
 
 		Assert.AreEqual(Animation.State.WalkOrRun, called);
 	}
@@ -39,16 +43,19 @@ public class MovementAnimationPluginSOTests : TestCollection
 		var called = (Animation.State)(-1);
 		var agent = new GameObject();
 		var child = new GameObject().AddComponent<MockAnimationMB>();
+		var pluginData = new CorePluginData();
 		var instructions = ScriptableObject.CreateInstance<MovementAnimationPluginSO>();
 
 		child.transform.parent = agent.transform;
 		child.set = s => called = s;
 
-		var action = instructions.GetCallbacks(agent.gameObject).onBegin!;
+		var action = instructions
+			.GetCallbacks(agent.gameObject)(pluginData)
+			.onBegin!;
 
 		yield return new WaitForEndOfFrame();
 
-		action(new CorePluginData());
+		action();
 
 		Assert.AreEqual(Animation.State.WalkOrRun, called);
 	}
@@ -57,15 +64,18 @@ public class MovementAnimationPluginSOTests : TestCollection
 	public IEnumerator OnBeginWalkWeight() {
 		var called = ((Animation.BlendState)(-1), -1f);
 		var agent = new GameObject().AddComponent<MockAnimationMB>();
+		var pluginData = new CorePluginData { weight = 0.324f };
 		var instructions = ScriptableObject.CreateInstance<MovementAnimationPluginSO>();
 
 		agent.blend = (state, value) => called = (state, value);
 
-		var action = instructions.GetCallbacks(agent.gameObject).onBegin!;
+		var action = instructions
+			.GetCallbacks(agent.gameObject)(pluginData)
+			.onBegin!;
 
 		yield return new WaitForEndOfFrame();
 
-		action(new CorePluginData { weight = 0.324f });
+		action();
 
 		Assert.AreEqual((Animation.BlendState.WalkOrRun, 0.324f), called);
 	}
@@ -74,15 +84,18 @@ public class MovementAnimationPluginSOTests : TestCollection
 	public IEnumerator OnUpdateWalkWeight() {
 		var called = ((Animation.BlendState)(-1), -1f);
 		var agent = new GameObject().AddComponent<MockAnimationMB>();
+		var pluginData = new CorePluginData { weight = 0.111f };
 		var instructions = ScriptableObject.CreateInstance<MovementAnimationPluginSO>();
 
 		agent.blend = (state, value) => called = (state, value);
 
-		var action = instructions.GetCallbacks(agent.gameObject).onAfterYield!;
+		var action = instructions
+			.GetCallbacks(agent.gameObject)(pluginData)
+			.onAfterYield!;
 
 		yield return new WaitForEndOfFrame();
 
-		action(new CorePluginData { weight = 0.111f });
+		action();
 
 		Assert.AreEqual((Animation.BlendState.WalkOrRun, 0.111f), called);
 	}
@@ -91,15 +104,18 @@ public class MovementAnimationPluginSOTests : TestCollection
 	public IEnumerator OnEndStop() {
 		var called = (Animation.State)(-1);
 		var agent = new GameObject().AddComponent<MockAnimationMB>();
+		var pluginData = new CorePluginData { weight = 0.324f };
 		var instructions = ScriptableObject.CreateInstance<MovementAnimationPluginSO>();
 
 		agent.set = s => called = s;
 
-		var action = instructions.GetCallbacks(agent.gameObject).onEnd!;
+		var action = instructions
+			.GetCallbacks(agent.gameObject)(pluginData)
+			.onEnd!;
 
 		yield return new WaitForEndOfFrame();
 
-		action(new CorePluginData { weight = 0.324f });
+		action();
 
 		Assert.AreEqual(Animation.State.Idle, called);
 	}

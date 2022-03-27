@@ -3,10 +3,10 @@ using UnityEngine;
 
 public struct PluginCallbacks
 {
-	public Action<PluginData>? onBegin;
-	public Action<PluginData>? onBeforeYield;
-	public Action<PluginData>? onAfterYield;
-	public Action<PluginData>? onEnd;
+	public Action? onBegin;
+	public Action? onBeforeYield;
+	public Action? onAfterYield;
+	public Action? onEnd;
 
 	public static PluginCallbacks operator +(
 		PluginCallbacks a,
@@ -23,6 +23,7 @@ public struct PluginCallbacks
 
 public abstract class BaseInstructionsPluginSO : ScriptableObject
 {
-	public abstract PluginCallbacks GetCallbacks(GameObject agent);
-	public virtual void ExtendPluginData(PluginData data) { }
+	public abstract Func<PluginData, PluginCallbacks> GetCallbacks(
+		GameObject agent
+	);
 }

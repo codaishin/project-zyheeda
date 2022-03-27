@@ -39,11 +39,14 @@ public abstract class BaseInstructionsSO<TAgent> : BaseInstructionsSO
 		Func<bool>? runCheck = null
 	) {
 		TAgent concreteAgent = this.GetConcreteAgent(agent);
-		PluginCallbacks pluginCallbacks = this.PluginCallbacks(agent);
+		Func<PluginData, PluginCallbacks>[] agentPlugins = this.Plugins(agent);
 		InstructionsPluginFunc instructions = this.Instructions(concreteAgent);
 
 		return () => {
 			CorePluginData pluginData = this.GetPluginData();
+			PluginCallbacks pluginCallbacks = agentPlugins
+				.Select(plugin => plugin(pluginData))
+				.Aggregate(new PluginCallbacks(), (l, c) => l + c);
 			Instructions? loopWithPluginData = instructions(pluginData);
 			Func<bool> runCheckWithPluginData = runCheck is null
 					? (() => pluginData.run)
@@ -56,29 +59,25 @@ public abstract class BaseInstructionsSO<TAgent> : BaseInstructionsSO
 			pluginData.run = true;
 			return this.RunLoop(
 				loopWithPluginData,
-				() => pluginCallbacks.onBegin?.Invoke(pluginData),
-				() => pluginCallbacks.onBeforeYield?.Invoke(pluginData),
-				() => pluginCallbacks.onAfterYield?.Invoke(pluginData),
-				() => pluginCallbacks.onEnd?.Invoke(pluginData),
+				pluginCallbacks.onBegin,
+				pluginCallbacks.onBeforeYield,
+				pluginCallbacks.onAfterYield,
+				pluginCallbacks.onEnd,
 				runCheckWithPluginData
 			);
 		};
 	}
 
-	private PluginCallbacks PluginCallbacks(GameObject agent) {
+	private Func<PluginData, PluginCallbacks>[] Plugins(GameObject agent) {
 		return this.plugins
 			.Select(plugin => plugin.GetCallbacks(agent))
-			.Aggregate(new PluginCallbacks(), (l, c) => l + c);
+			.ToArray();
 	}
 
 	private CorePluginData GetPluginData() {
-		CorePluginData pluginData = new PluginData().Extent<CorePluginData>();
-
+		PluginData pluginData = new PluginData();
 		this.ExtendPluginData(pluginData);
-		foreach (BaseInstructionsPluginSO plugin in this.plugins) {
-			plugin.ExtendPluginData(pluginData);
-		}
-		return pluginData;
+		return pluginData.Extent<CorePluginData>();
 	}
 
 	private Func<Func<PluginData, PluginData>, Func<PluginData, PluginData>, Func<PluginData, PluginData>> Pipe() {
@@ -87,19 +86,19 @@ public abstract class BaseInstructionsSO<TAgent> : BaseInstructionsSO
 
 	private Instructions RunLoop(
 		Instructions instructions,
-		Action onBegin,
-		Action onBeforeYield,
-		Action onAfterYield,
-		Action onEnd,
+		Action? onBegin,
+		Action? onBeforeYield,
+		Action? onAfterYield,
+		Action? onEnd,
 		Func<bool> runCheck
 	) {
-		onBegin();
+		onBegin?.Invoke();
 		foreach (YieldInstruction? hold in this.RunLoop(instructions, runCheck)) {
-			onBeforeYield();
+			onBeforeYield?.Invoke();
 			yield return hold;
-			onAfterYield();
+			onAfterYield?.Invoke();
 		}
-		onEnd();
+		onEnd?.Invoke();
 	}
 
 	private Instructions RunLoop(Instructions instructions, Func<bool> runCheck) {
