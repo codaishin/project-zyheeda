@@ -23,9 +23,7 @@ public struct PluginCallbacks
 
 public abstract class BaseInstructionsPluginSO : ScriptableObject
 {
-	public abstract Func<PluginData, PluginCallbacks> GetCallbacks(
-		GameObject agent
-	);
+	public abstract PartialPluginCallbacks GetCallbacks(GameObject agent);
 }
 
 public abstract class BaseInstructionsPluginSO<TAgent, TPluginData> :
@@ -39,7 +37,7 @@ public abstract class BaseInstructionsPluginSO<TAgent, TPluginData> :
 		TPluginData data
 	);
 
-	public override Func<PluginData, PluginCallbacks> GetCallbacks(
+	public override PartialPluginCallbacks GetCallbacks(
 		GameObject agent
 	) {
 		TAgent concreteAgent = this.GetConcreteAgent(agent);

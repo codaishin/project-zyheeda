@@ -182,10 +182,10 @@ public class MoveConstantSOTests : TestCollection
 
 	class MockPluginSO : BaseInstructionsPluginSO
 	{
-		public Func<GameObject, Func<PluginData, PluginCallbacks>> getCallbacks =
+		public Func<GameObject, PartialPluginCallbacks> getCallbacks =
 			_ => _ => new PluginCallbacks();
 
-		public override Func<PluginData, PluginCallbacks> GetCallbacks(
+		public override PartialPluginCallbacks GetCallbacks(
 			GameObject agent
 		) => this.getCallbacks(agent);
 	}

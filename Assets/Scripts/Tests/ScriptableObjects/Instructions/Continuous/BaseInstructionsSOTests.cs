@@ -8,10 +8,10 @@ public class BaseInstructionsSOTests : TestCollection
 {
 	class MockPluginSO : BaseInstructionsPluginSO
 	{
-		public Func<GameObject, Func<PluginData, PluginCallbacks>> getCallbacks =
+		public Func<GameObject, PartialPluginCallbacks> getCallbacks =
 			_ => _ => new PluginCallbacks();
 
-		public override Func<PluginData, PluginCallbacks> GetCallbacks(
+		public override PartialPluginCallbacks GetCallbacks(
 			GameObject agent
 		) => this.getCallbacks(agent);
 	}
@@ -20,7 +20,7 @@ public class BaseInstructionsSOTests : TestCollection
 	{
 		public Func<GameObject, Transform> getConcreteAgent =
 			agent => agent.transform;
-		public Func<Transform, InstructionsPluginFunc> insructions =
+		public Func<Transform, PartialInstructionFunc> insructions =
 			_ => _ => new YieldInstruction[0];
 		public Action<PluginData> extendPluginData =
 			_ => { };
@@ -29,7 +29,7 @@ public class BaseInstructionsSOTests : TestCollection
 			return this.getConcreteAgent(agent);
 		}
 
-		protected override InstructionsPluginFunc Instructions(Transform agent) {
+		protected override PartialInstructionFunc Instructions(Transform agent) {
 			return this.insructions(agent);
 		}
 
@@ -83,7 +83,7 @@ public class BaseInstructionsSOTests : TestCollection
 		var agent = new GameObject();
 		var instructionsSO = ScriptableObject.CreateInstance<MockInstructionSO>();
 
-		Func<PluginData, PluginCallbacks> getCallbacks(GameObject agent) {
+		PartialPluginCallbacks getCallbacks(GameObject agent) {
 			called!.Add(agent);
 			return _ => new PluginCallbacks();
 		}
@@ -106,7 +106,7 @@ public class BaseInstructionsSOTests : TestCollection
 		var agent = new GameObject();
 		var instructionsSO = ScriptableObject.CreateInstance<MockInstructionSO>();
 
-		Func<PluginData, PluginCallbacks> getCallbacks(GameObject agent) {
+		PartialPluginCallbacks getCallbacks(GameObject agent) {
 			return d => new PluginCallbacks { onBegin = () => called = d };
 		}
 
@@ -172,7 +172,7 @@ public class BaseInstructionsSOTests : TestCollection
 		var agent = new GameObject();
 		var instructionsSO = ScriptableObject.CreateInstance<MockInstructionSO>();
 
-		Func<PluginData, PluginCallbacks> getCallbacks(GameObject agent) {
+		PartialPluginCallbacks getCallbacks(GameObject agent) {
 			return _ => new PluginCallbacks { onAfterYield = () => ++called };
 		};
 
@@ -205,7 +205,7 @@ public class BaseInstructionsSOTests : TestCollection
 		var agent = new GameObject();
 		var instructionsSO = ScriptableObject.CreateInstance<MockInstructionSO>();
 
-		Func<PluginData, PluginCallbacks> getCallbacks(GameObject agent) {
+		PartialPluginCallbacks getCallbacks(GameObject agent) {
 			return _ => new PluginCallbacks { onBeforeYield = () => ++called };
 		};
 
@@ -238,7 +238,7 @@ public class BaseInstructionsSOTests : TestCollection
 		var agent = new GameObject();
 		var instructionsSO = ScriptableObject.CreateInstance<MockInstructionSO>();
 
-		Func<PluginData, PluginCallbacks> getCallbacks(GameObject agent) {
+		PartialPluginCallbacks getCallbacks(GameObject agent) {
 			return _ => new PluginCallbacks { onEnd = () => ++called };
 		};
 
