@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: affe74fbc9047834cb4eb924a69ead73, type: 3}
   m_Name: UseItem
   m_EditorClassIdentifier: 
-  plugins: []
-  hitter:
-    value: {fileID: 11400000, guid: 3b00269755dc0e54ba10e5ffd12a6f2c, type: 2}
+  instructions:
+    plugins: []
+    hitter:
+      value: {fileID: 11400000, guid: 3b00269755dc0e54ba10e5ffd12a6f2c, type: 2}

@@ -1,9 +1,8 @@
 using System;
 using UnityEngine;
 
-
-public abstract class BaseInstructionsSO<TInstructions> :
-	ScriptableObject,
+public class BaseInstructionsMB<TInstructions> :
+	MonoBehaviour,
 	IInstructions
 	where TInstructions :
 		IInstructions,

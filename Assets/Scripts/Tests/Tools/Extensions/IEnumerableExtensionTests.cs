@@ -70,7 +70,7 @@ public class IEnumerableExtensionTests : TestCollection
 		};
 		var references = objects
 			.Select(obj => obj.AddComponent<MockMB>())
-			.Select(Reference<IMock>.PointToComponent)
+			.Select(Reference<IMock>.Component)
 			.ToArray();
 		var expected = references
 			.Select(r => r.Value!)
