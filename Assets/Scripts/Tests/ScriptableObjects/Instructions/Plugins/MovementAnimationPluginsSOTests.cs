@@ -6,7 +6,7 @@ using UnityEngine.TestTools;
 
 public class MovementAnimationPluginSOTests : TestCollection
 {
-	class MockAnimationMB : MonoBehaviour, IAnimationStates
+	class MockAnimationMB : MonoBehaviour, IAnimationStates, IAnimationStatesBlend
 	{
 		public Action<Animation.State> set = _ => { };
 		public Action<Animation.BlendState, float> blend = (_, __) => { };

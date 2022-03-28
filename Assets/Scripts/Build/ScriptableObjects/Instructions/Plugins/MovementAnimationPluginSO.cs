@@ -1,13 +1,22 @@
 using UnityEngine;
 
+public struct MovementAnimators
+{
+	public IAnimationStatesBlend statesBlend;
+	public IAnimationStates states;
+}
+
 [CreateAssetMenu(
 	menuName = "ScriptableObjects/Instructions/Plugins/MovementAnimation"
 )]
 public class MovementAnimationPluginSO :
-	BaseInstructionsPluginSO<IAnimationStates, CorePluginData>
+	BaseInstructionsPluginSO<MovementAnimators, CorePluginData>
 {
-	public override IAnimationStates GetConcreteAgent(GameObject agent) {
-		return agent.RequireComponent<IAnimationStates>(true);
+	public override MovementAnimators GetConcreteAgent(GameObject agent) {
+		return new MovementAnimators {
+			statesBlend = agent.RequireComponent<IAnimationStatesBlend>(true),
+			states = agent.RequireComponent<IAnimationStates>(true),
+		};
 	}
 
 	public override CorePluginData GetPluginData(PluginData data) {
@@ -15,19 +24,19 @@ public class MovementAnimationPluginSO :
 	}
 
 	protected override PluginCallbacks GetCallbacks(
-		IAnimationStates agent,
+		MovementAnimators agent,
 		CorePluginData data
 	) {
 		return new PluginCallbacks {
 			onBegin = () => {
-				agent.Set(Animation.State.WalkOrRun);
-				agent.Blend(Animation.BlendState.WalkOrRun, data.weight);
+				agent.states.Set(Animation.State.WalkOrRun);
+				agent.statesBlend.Blend(Animation.BlendState.WalkOrRun, data.weight);
 			},
 			onAfterYield = () => {
-				agent.Blend(Animation.BlendState.WalkOrRun, data.weight);
+				agent.statesBlend.Blend(Animation.BlendState.WalkOrRun, data.weight);
 			},
 			onEnd = () => {
-				agent.Set(Animation.State.Idle);
+				agent.states.Set(Animation.State.Idle);
 			},
 		};
 	}
