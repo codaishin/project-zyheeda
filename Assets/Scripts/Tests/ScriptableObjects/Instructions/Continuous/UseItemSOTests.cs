@@ -66,7 +66,7 @@ public class UseItemSOTests : TestCollection
 		var target = new GameObject();
 		var item = ((MockItem)loadout.Current.Item!);
 
-		instructions.hitter = Reference<IHit>.PointToScriptableObject(hitter);
+		instructions.hitter = Reference<IHit>.ScriptableObject(hitter);
 
 		hitter.tryComponent = _ => target.transform;
 		item.getUse = t => () => called = t;
@@ -94,7 +94,7 @@ public class UseItemSOTests : TestCollection
 		var target = new GameObject();
 		var item = ((MockItem)loadout.Current.Item!);
 
-		instructions.hitter = Reference<IHit>.PointToScriptableObject(hitter);
+		instructions.hitter = Reference<IHit>.ScriptableObject(hitter);
 
 		hitter.tryComponent = _ => target.transform;
 		animation.set = s => called = s;
@@ -129,7 +129,7 @@ public class UseItemSOTests : TestCollection
 
 		child.transform.parent = agent.transform;
 
-		instructions.hitter = Reference<IHit>.PointToScriptableObject(hitter);
+		instructions.hitter = Reference<IHit>.ScriptableObject(hitter);
 
 		hitter.tryComponent = _ => target.transform;
 		animation.set = s => calledSetWith = s;
@@ -161,7 +161,7 @@ public class UseItemSOTests : TestCollection
 		var target = new GameObject();
 		var item = ((MockItem)loadout.Current.Item!);
 
-		instructions.hitter = Reference<IHit>.PointToScriptableObject(hitter);
+		instructions.hitter = Reference<IHit>.ScriptableObject(hitter);
 
 		hitter.tryComponent = _ => target.transform;
 		item.getUse = t => () => called = t;
@@ -195,7 +195,7 @@ public class UseItemSOTests : TestCollection
 		var target = new GameObject();
 		var item = ((MockItem)loadout.Current.Item!);
 
-		instructions.hitter = Reference<IHit>.PointToScriptableObject(hitter);
+		instructions.hitter = Reference<IHit>.ScriptableObject(hitter);
 
 		hitter.tryComponent = _ => target.transform;
 		item.getUse = t => () => { };
@@ -235,7 +235,7 @@ public class UseItemSOTests : TestCollection
 
 		child.transform.parent = agent.transform;
 
-		instructions.hitter = Reference<IHit>.PointToScriptableObject(hitter);
+		instructions.hitter = Reference<IHit>.ScriptableObject(hitter);
 
 		hitter.tryComponent = _ => target.transform;
 		animation.set = s => calledSetWith = s;
@@ -289,7 +289,7 @@ public class UseItemSOTests : TestCollection
 
 		child.transform.parent = agent.transform;
 
-		instructions.hitter = Reference<IHit>.PointToScriptableObject(hitter);
+		instructions.hitter = Reference<IHit>.ScriptableObject(hitter);
 
 		hitter.tryComponent = _ => target.transform;
 		animation.set = s => calledSetWith = s;
@@ -336,7 +336,7 @@ public class UseItemSOTests : TestCollection
 		var loadout = agent.AddComponent<MockLoadoutManagerMB>();
 		var animation = agent.AddComponent<MockAnimationMB>();
 
-		instructions.hitter = Reference<IHit>.PointToScriptableObject(hitter);
+		instructions.hitter = Reference<IHit>.ScriptableObject(hitter);
 
 		hitter.tryComponent = _ => null;
 
@@ -357,7 +357,7 @@ public class UseItemSOTests : TestCollection
 		var animation = agent.AddComponent<MockAnimationMB>();
 		var item = ((MockItem)loadout.Current.Item!);
 
-		instructions.hitter = Reference<IHit>.PointToScriptableObject(hitter);
+		instructions.hitter = Reference<IHit>.ScriptableObject(hitter);
 
 		hitter.tryComponent = _ => new GameObject().transform;
 		item.getUse = _ => null;
@@ -378,7 +378,7 @@ public class UseItemSOTests : TestCollection
 		var animation = agent.AddComponent<MockAnimationMB>();
 
 		loadout.Current = new MockLoadout { Item = null };
-		instructions.hitter = Reference<IHit>.PointToScriptableObject(hitter);
+		instructions.hitter = Reference<IHit>.ScriptableObject(hitter);
 		hitter.tryComponent = _ => new GameObject().transform;
 
 		yield return new WaitForEndOfFrame();
@@ -413,7 +413,7 @@ public class UseItemSOTests : TestCollection
 		var animation = agent.AddComponent<MockAnimationMB>();
 		var item = ((MockItem)loadout.Current.Item!);
 
-		instructions.hitter = Reference<IHit>.PointToScriptableObject(hitter);
+		instructions.hitter = Reference<IHit>.ScriptableObject(hitter);
 
 		hitter.tryComponent = t => { called = t; return t; };
 		item.getUse = _ => () => { };

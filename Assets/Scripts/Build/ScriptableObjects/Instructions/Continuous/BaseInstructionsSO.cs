@@ -13,21 +13,15 @@ public delegate Instructions? InstructionsFunc();
 public delegate Instructions? PartialInstructionFunc(PluginData data);
 public delegate PluginCallbacks PartialPluginCallbacks(PluginData data);
 
-public abstract class BaseInstructionsSO : ScriptableObject
-{
-	public abstract InstructionsFunc GetInstructionsFor(
-		GameObject agent,
-		Func<bool>? run = null
-	);
-}
-
 public class CorePluginData : PluginData
 {
 	public bool run;
 	public float weight;
 }
 
-public abstract class BaseInstructionsSO<TAgent> : BaseInstructionsSO
+public abstract class BaseInstructionsSO<TAgent> :
+	ScriptableObject,
+	IInstructions
 {
 	public BaseInstructionsPluginSO[] plugins = new BaseInstructionsPluginSO[0];
 
@@ -35,7 +29,7 @@ public abstract class BaseInstructionsSO<TAgent> : BaseInstructionsSO
 	protected abstract PartialInstructionFunc Instructions(TAgent agent);
 	protected virtual void ExtendPluginData(PluginData pluginData) { }
 
-	public override InstructionsFunc GetInstructionsFor(
+	public InstructionsFunc GetInstructionsFor(
 		GameObject agent,
 		Func<bool>? runCheck = null
 	) {
