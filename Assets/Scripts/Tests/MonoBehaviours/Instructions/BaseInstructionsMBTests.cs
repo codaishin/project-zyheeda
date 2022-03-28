@@ -4,7 +4,7 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-public class BaseInstructionsSOTests : TestCollection
+public class BaseInstructionsMBTests : TestCollection
 {
 	class MockInstructions : IInstructions
 	{
@@ -17,36 +17,36 @@ public class BaseInstructionsSOTests : TestCollection
 		) => this.getInstructionsFor(agent, run);
 	}
 
-	class MockInstructionsSO : BaseInstructionsSO<MockInstructions> { }
+	class MockInstructionsMB : BaseInstructionsMB<MockInstructions> { }
 
 	[UnityTest]
 	public IEnumerator GetInstructionsArguments() {
 		var called = (null as GameObject, null as Func<bool>);
-		var instructionsSO = ScriptableObject.CreateInstance<MockInstructionsSO>();
+		var instructionsMB = new GameObject().AddComponent<MockInstructionsMB>();
 		var agent = new GameObject();
 		var run = (Func<bool>)(() => false);
 
-		instructionsSO.Instructions.getInstructionsFor = (agent, run) => {
+		instructionsMB.Instructions.getInstructionsFor = (agent, run) => {
 			called = (agent, run);
 			return () => null;
 		};
 
 		yield return new WaitForEndOfFrame();
 
-		_ = instructionsSO.GetInstructionsFor(agent, run);
+		_ = instructionsMB.GetInstructionsFor(agent, run);
 
 		Assert.AreEqual((agent, run), called);
 	}
 
 	[UnityTest]
 	public IEnumerator GetInstructionsFunc() {
-		var instructionsSO = ScriptableObject.CreateInstance<MockInstructionsSO>();
+		var instructionsMB = new GameObject().AddComponent<MockInstructionsMB>();
 		var func = (InstructionsFunc)(() => new YieldInstruction[0]);
 
-		instructionsSO.Instructions.getInstructionsFor = (_, __) => func;
+		instructionsMB.Instructions.getInstructionsFor = (_, __) => func;
 
 		yield return new WaitForEndOfFrame();
 
-		Assert.AreSame(func, instructionsSO.GetInstructionsFor(new GameObject()));
+		Assert.AreSame(func, instructionsMB.GetInstructionsFor(new GameObject()));
 	}
 }

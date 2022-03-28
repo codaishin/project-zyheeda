@@ -4,7 +4,7 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-public class UseItemSOTests : TestCollection
+public class UseItemTests : TestCollection
 {
 	class MockAnimationMB : MonoBehaviour, IAnimationStates
 	{
@@ -56,7 +56,7 @@ public class UseItemSOTests : TestCollection
 	[UnityTest]
 	public IEnumerator UseHitTransform() {
 		var called = null as Transform;
-		var instructions = ScriptableObject.CreateInstance<UseItemSO>();
+		var useItem = new UseItem();
 		var run = new GameObject().AddComponent<MockMB>();
 
 		var hitter = ScriptableObject.CreateInstance<MockHitterSO>();
@@ -66,14 +66,14 @@ public class UseItemSOTests : TestCollection
 		var target = new GameObject();
 		var item = ((MockItem)loadout.Current.Item!);
 
-		instructions.hitter = Reference<IHit>.ScriptableObject(hitter);
+		useItem.hitter = Reference<IHit>.ScriptableObject(hitter);
 
 		hitter.tryComponent = _ => target.transform;
 		item.getUse = t => () => called = t;
 
 		yield return new WaitForEndOfFrame();
 
-		var getRoutine = instructions.GetInstructionsFor(agent)!;
+		var getRoutine = useItem.GetInstructionsFor(agent)!;
 		run.StartCoroutine(getRoutine()!.GetEnumerator());
 
 		yield return new WaitForEndOfFrame();
@@ -84,7 +84,7 @@ public class UseItemSOTests : TestCollection
 	[UnityTest]
 	public IEnumerator Animate() {
 		var called = (Animation.State)(-1);
-		var instructions = ScriptableObject.CreateInstance<UseItemSO>();
+		var useItem = new UseItem();
 		var run = new GameObject().AddComponent<MockMB>();
 
 		var hitter = ScriptableObject.CreateInstance<MockHitterSO>();
@@ -94,7 +94,7 @@ public class UseItemSOTests : TestCollection
 		var target = new GameObject();
 		var item = ((MockItem)loadout.Current.Item!);
 
-		instructions.hitter = Reference<IHit>.ScriptableObject(hitter);
+		useItem.hitter = Reference<IHit>.ScriptableObject(hitter);
 
 		hitter.tryComponent = _ => target.transform;
 		animation.set = s => called = s;
@@ -104,7 +104,7 @@ public class UseItemSOTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		var getRoutine = instructions.GetInstructionsFor(agent)!;
+		var getRoutine = useItem.GetInstructionsFor(agent)!;
 		run.StartCoroutine(getRoutine()!.GetEnumerator());
 
 		yield return new WaitForEndOfFrame();
@@ -116,7 +116,7 @@ public class UseItemSOTests : TestCollection
 	public IEnumerator UseComponentsOnAgentChildren() {
 		var calledSetWith = (Animation.State)(-1);
 		var calledUseWith = null as Transform;
-		var instructions = ScriptableObject.CreateInstance<UseItemSO>();
+		var useItem = new UseItem();
 		var run = new GameObject().AddComponent<MockMB>();
 
 		var hitter = ScriptableObject.CreateInstance<MockHitterSO>();
@@ -129,7 +129,7 @@ public class UseItemSOTests : TestCollection
 
 		child.transform.parent = agent.transform;
 
-		instructions.hitter = Reference<IHit>.ScriptableObject(hitter);
+		useItem.hitter = Reference<IHit>.ScriptableObject(hitter);
 
 		hitter.tryComponent = _ => target.transform;
 		animation.set = s => calledSetWith = s;
@@ -139,7 +139,7 @@ public class UseItemSOTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		var getRoutine = instructions.GetInstructionsFor(agent)!;
+		var getRoutine = useItem.GetInstructionsFor(agent)!;
 		run.StartCoroutine(getRoutine()!.GetEnumerator());
 
 		yield return new WaitForEndOfFrame();
@@ -151,7 +151,7 @@ public class UseItemSOTests : TestCollection
 	[UnityTest]
 	public IEnumerator UseAfterSeconds() {
 		var called = null as Transform;
-		var instructions = ScriptableObject.CreateInstance<UseItemSO>();
+		var useItem = new UseItem();
 		var run = new GameObject().AddComponent<MockMB>();
 
 		var hitter = ScriptableObject.CreateInstance<MockHitterSO>();
@@ -161,7 +161,7 @@ public class UseItemSOTests : TestCollection
 		var target = new GameObject();
 		var item = ((MockItem)loadout.Current.Item!);
 
-		instructions.hitter = Reference<IHit>.ScriptableObject(hitter);
+		useItem.hitter = Reference<IHit>.ScriptableObject(hitter);
 
 		hitter.tryComponent = _ => target.transform;
 		item.getUse = t => () => called = t;
@@ -170,7 +170,7 @@ public class UseItemSOTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		var getRoutine = instructions.GetInstructionsFor(agent)!;
+		var getRoutine = useItem.GetInstructionsFor(agent)!;
 		run.StartCoroutine(getRoutine()!.GetEnumerator());
 
 		yield return new WaitForEndOfFrame();
@@ -185,7 +185,7 @@ public class UseItemSOTests : TestCollection
 	[UnityTest]
 	public IEnumerator ResetAnimationAfterSeconds() {
 		var called = (Animation.State)(-1);
-		var instructions = ScriptableObject.CreateInstance<UseItemSO>();
+		var useItem = new UseItem();
 		var run = new GameObject().AddComponent<MockMB>();
 
 		var hitter = ScriptableObject.CreateInstance<MockHitterSO>();
@@ -195,7 +195,7 @@ public class UseItemSOTests : TestCollection
 		var target = new GameObject();
 		var item = ((MockItem)loadout.Current.Item!);
 
-		instructions.hitter = Reference<IHit>.ScriptableObject(hitter);
+		useItem.hitter = Reference<IHit>.ScriptableObject(hitter);
 
 		hitter.tryComponent = _ => target.transform;
 		item.getUse = t => () => { };
@@ -206,7 +206,7 @@ public class UseItemSOTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		var getRoutine = instructions.GetInstructionsFor(agent)!;
+		var getRoutine = useItem.GetInstructionsFor(agent)!;
 		run.StartCoroutine(getRoutine()!.GetEnumerator());
 
 		yield return new WaitForEndOfFrame();
@@ -222,7 +222,7 @@ public class UseItemSOTests : TestCollection
 	public IEnumerator FirstUseThenResetAfterSeconds() {
 		var calledSetWith = (Animation.State)(-1);
 		var calledUseWith = null as Transform;
-		var instructions = ScriptableObject.CreateInstance<UseItemSO>();
+		var useItem = new UseItem();
 		var run = new GameObject().AddComponent<MockMB>();
 
 		var hitter = ScriptableObject.CreateInstance<MockHitterSO>();
@@ -235,7 +235,7 @@ public class UseItemSOTests : TestCollection
 
 		child.transform.parent = agent.transform;
 
-		instructions.hitter = Reference<IHit>.ScriptableObject(hitter);
+		useItem.hitter = Reference<IHit>.ScriptableObject(hitter);
 
 		hitter.tryComponent = _ => target.transform;
 		animation.set = s => calledSetWith = s;
@@ -247,7 +247,7 @@ public class UseItemSOTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		var getRoutine = instructions.GetInstructionsFor(agent)!;
+		var getRoutine = useItem.GetInstructionsFor(agent)!;
 		run.StartCoroutine(getRoutine()!.GetEnumerator());
 
 		yield return new WaitForEndOfFrame();
@@ -276,7 +276,7 @@ public class UseItemSOTests : TestCollection
 	public IEnumerator FirstResetThenUseAfterSeconds() {
 		var calledSetWith = (Animation.State)(-1);
 		var calledUseWith = null as Transform;
-		var instructions = ScriptableObject.CreateInstance<UseItemSO>();
+		var useItem = new UseItem();
 		var run = new GameObject().AddComponent<MockMB>();
 
 		var hitter = ScriptableObject.CreateInstance<MockHitterSO>();
@@ -289,7 +289,7 @@ public class UseItemSOTests : TestCollection
 
 		child.transform.parent = agent.transform;
 
-		instructions.hitter = Reference<IHit>.ScriptableObject(hitter);
+		useItem.hitter = Reference<IHit>.ScriptableObject(hitter);
 
 		hitter.tryComponent = _ => target.transform;
 		animation.set = s => calledSetWith = s;
@@ -301,7 +301,7 @@ public class UseItemSOTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		var getRoutine = instructions.GetInstructionsFor(agent)!;
+		var getRoutine = useItem.GetInstructionsFor(agent)!;
 		run.StartCoroutine(getRoutine()!.GetEnumerator());
 
 		yield return new WaitForEndOfFrame();
@@ -328,7 +328,7 @@ public class UseItemSOTests : TestCollection
 
 	[UnityTest]
 	public IEnumerator WhenNoHitReturnNull() {
-		var instructions = ScriptableObject.CreateInstance<UseItemSO>();
+		var useItem = new UseItem();
 		var run = new GameObject().AddComponent<MockMB>();
 
 		var hitter = ScriptableObject.CreateInstance<MockHitterSO>();
@@ -336,20 +336,20 @@ public class UseItemSOTests : TestCollection
 		var loadout = agent.AddComponent<MockLoadoutManagerMB>();
 		var animation = agent.AddComponent<MockAnimationMB>();
 
-		instructions.hitter = Reference<IHit>.ScriptableObject(hitter);
+		useItem.hitter = Reference<IHit>.ScriptableObject(hitter);
 
 		hitter.tryComponent = _ => null;
 
 		yield return new WaitForEndOfFrame();
 
-		var getRoutine = instructions.GetInstructionsFor(agent);
+		var getRoutine = useItem.GetInstructionsFor(agent);
 		Assert.Null(getRoutine());
 	}
 
 
 	[UnityTest]
 	public IEnumerator WhenItemCantUseTransformReturnNull() {
-		var instructions = ScriptableObject.CreateInstance<UseItemSO>();
+		var useItem = new UseItem();
 
 		var hitter = ScriptableObject.CreateInstance<MockHitterSO>();
 		var agent = new GameObject();
@@ -357,20 +357,20 @@ public class UseItemSOTests : TestCollection
 		var animation = agent.AddComponent<MockAnimationMB>();
 		var item = ((MockItem)loadout.Current.Item!);
 
-		instructions.hitter = Reference<IHit>.ScriptableObject(hitter);
+		useItem.hitter = Reference<IHit>.ScriptableObject(hitter);
 
 		hitter.tryComponent = _ => new GameObject().transform;
 		item.getUse = _ => null;
 
 		yield return new WaitForEndOfFrame();
 
-		var getRoutine = instructions.GetInstructionsFor(agent);
+		var getRoutine = useItem.GetInstructionsFor(agent);
 		Assert.Null(getRoutine());
 	}
 
 	[UnityTest]
 	public IEnumerator WhenNotItemSetReturnNull() {
-		var instructions = ScriptableObject.CreateInstance<UseItemSO>();
+		var useItem = new UseItem();
 
 		var hitter = ScriptableObject.CreateInstance<MockHitterSO>();
 		var agent = new GameObject();
@@ -378,18 +378,18 @@ public class UseItemSOTests : TestCollection
 		var animation = agent.AddComponent<MockAnimationMB>();
 
 		loadout.Current = new MockLoadout { Item = null };
-		instructions.hitter = Reference<IHit>.ScriptableObject(hitter);
+		useItem.hitter = Reference<IHit>.ScriptableObject(hitter);
 		hitter.tryComponent = _ => new GameObject().transform;
 
 		yield return new WaitForEndOfFrame();
 
-		var getRoutine = instructions.GetInstructionsFor(agent);
+		var getRoutine = useItem.GetInstructionsFor(agent);
 		Assert.Null(getRoutine());
 	}
 
 	[Test]
 	public void ThrowWhenHitterNotSet() {
-		var instructions = ScriptableObject.CreateInstance<UseItemSO>();
+		var useItem = new UseItem();
 		var run = new GameObject().AddComponent<MockMB>();
 
 		var agent = new GameObject();
@@ -397,14 +397,14 @@ public class UseItemSOTests : TestCollection
 		var animation = agent.AddComponent<MockAnimationMB>();
 
 		Assert.Throws<NullReferenceException>(
-			() => _ = instructions.GetInstructionsFor(agent)
+			() => _ = useItem.GetInstructionsFor(agent)
 		);
 	}
 
 	[UnityTest]
 	public IEnumerator HitterCalledWithAgentTransform() {
 		var called = null as object;
-		var instructions = ScriptableObject.CreateInstance<UseItemSO>();
+		var useItem = new UseItem();
 		var run = new GameObject().AddComponent<MockMB>();
 
 		var hitter = ScriptableObject.CreateInstance<MockHitterSO>();
@@ -413,14 +413,14 @@ public class UseItemSOTests : TestCollection
 		var animation = agent.AddComponent<MockAnimationMB>();
 		var item = ((MockItem)loadout.Current.Item!);
 
-		instructions.hitter = Reference<IHit>.ScriptableObject(hitter);
+		useItem.hitter = Reference<IHit>.ScriptableObject(hitter);
 
 		hitter.tryComponent = t => { called = t; return t; };
 		item.getUse = _ => () => { };
 
 		yield return new WaitForEndOfFrame();
 
-		var getRoutine = instructions.GetInstructionsFor(agent)!;
+		var getRoutine = useItem.GetInstructionsFor(agent)!;
 		run.StartCoroutine(getRoutine()!.GetEnumerator());
 
 		yield return new WaitForEndOfFrame();

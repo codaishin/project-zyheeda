@@ -5,7 +5,7 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-public class MoveDynamicSOTests : TestCollection
+public class MoveDynamicTests : TestCollection
 {
 	class MockHitSO : BaseHitSO
 	{
@@ -35,16 +35,16 @@ public class MoveDynamicSOTests : TestCollection
 	[UnityTest]
 	public IEnumerator PassTransformToHitter() {
 		Transform? transform = null;
-		var moveSO = ScriptableObject.CreateInstance<MoveDynamicSO>();
+		var move = new MoveDynamic();
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
 		var agent = new GameObject();
 		var runner = new GameObject().AddComponent<MockMB>();
-		moveSO.hitter = hitSO;
+		move.hitter = hitSO;
 		hitSO.getPoint = t => { transform = t; return null; };
 
 		yield return new WaitForEndOfFrame();
 
-		var getRoutine = moveSO.GetInstructionsFor(agent)!;
+		var getRoutine = move.GetInstructionsFor(agent)!;
 		runner.StartCoroutine(getRoutine()!.GetEnumerator());
 
 		yield return new WaitForEndOfFrame();
@@ -54,16 +54,16 @@ public class MoveDynamicSOTests : TestCollection
 
 	[UnityTest]
 	public IEnumerator MoveRight() {
-		var moveSO = ScriptableObject.CreateInstance<MoveDynamicSO>();
+		var move = new MoveDynamic();
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
 		var agent = new GameObject();
 		var runner = new GameObject().AddComponent<MockMB>();
-		moveSO.hitter = hitSO;
-		moveSO.min = new MoveDynamicSO.ValueSet {
+		move.hitter = hitSO;
+		move.min = new MoveDynamic.ValueSet {
 			speed = 1,
 			distance = 1,
 		};
-		moveSO.max = new MoveDynamicSO.ValueSet {
+		move.max = new MoveDynamic.ValueSet {
 			speed = 1,
 			distance = 1,
 		};
@@ -71,7 +71,7 @@ public class MoveDynamicSOTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		var getRoutine = moveSO.GetInstructionsFor(agent)!;
+		var getRoutine = move.GetInstructionsFor(agent)!;
 		runner.StartCoroutine(getRoutine()!.GetEnumerator());
 
 		yield return new WaitForEndOfFrame();
@@ -81,16 +81,16 @@ public class MoveDynamicSOTests : TestCollection
 
 	[UnityTest]
 	public IEnumerator MoveUpMaxSpeed() {
-		var moveSO = ScriptableObject.CreateInstance<MoveDynamicSO>();
+		var move = new MoveDynamic();
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
 		var agent = new GameObject();
 		var runner = new GameObject().AddComponent<MockMB>();
-		moveSO.hitter = hitSO;
-		moveSO.min = new MoveDynamicSO.ValueSet {
+		move.hitter = hitSO;
+		move.min = new MoveDynamic.ValueSet {
 			speed = 1,
 			distance = 1,
 		};
-		moveSO.max = new MoveDynamicSO.ValueSet {
+		move.max = new MoveDynamic.ValueSet {
 			speed = 5,
 			distance = 10,
 		};
@@ -98,7 +98,7 @@ public class MoveDynamicSOTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		var getRoutine = moveSO.GetInstructionsFor(agent)!;
+		var getRoutine = move.GetInstructionsFor(agent)!;
 		runner.StartCoroutine(getRoutine()!.GetEnumerator());
 
 		yield return new WaitForEndOfFrame();
@@ -108,16 +108,16 @@ public class MoveDynamicSOTests : TestCollection
 
 	[UnityTest]
 	public IEnumerator MoveLeftMaxSpeedContinuous() {
-		var moveSO = ScriptableObject.CreateInstance<MoveDynamicSO>();
+		var move = new MoveDynamic();
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
 		var agent = new GameObject();
 		var runner = new GameObject().AddComponent<MockMB>();
-		moveSO.hitter = hitSO;
-		moveSO.min = new MoveDynamicSO.ValueSet {
+		move.hitter = hitSO;
+		move.min = new MoveDynamic.ValueSet {
 			speed = 1,
 			distance = 1,
 		};
-		moveSO.max = new MoveDynamicSO.ValueSet {
+		move.max = new MoveDynamic.ValueSet {
 			speed = 5,
 			distance = 10,
 		};
@@ -125,7 +125,7 @@ public class MoveDynamicSOTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		var getRoutine = moveSO.GetInstructionsFor(agent)!;
+		var getRoutine = move.GetInstructionsFor(agent)!;
 		runner.StartCoroutine(getRoutine()!.GetEnumerator());
 
 		yield return new WaitForEndOfFrame();
@@ -145,23 +145,23 @@ public class MoveDynamicSOTests : TestCollection
 
 	[UnityTest]
 	public IEnumerator MoveChanginPositionMaxSpeedContinuous() {
-		var moveSO = ScriptableObject.CreateInstance<MoveDynamicSO>();
+		var move = new MoveDynamic();
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
 		var agent = new GameObject();
 		var runner = new GameObject().AddComponent<MockMB>();
-		moveSO.hitter = hitSO;
-		moveSO.min = new MoveDynamicSO.ValueSet {
+		move.hitter = hitSO;
+		move.min = new MoveDynamic.ValueSet {
 			speed = 1,
 			distance = 1,
 		};
-		moveSO.max = new MoveDynamicSO.ValueSet {
+		move.max = new MoveDynamic.ValueSet {
 			speed = 10,
 			distance = 10,
 		};
 
 		yield return new WaitForEndOfFrame();
 
-		var getRoutine = moveSO.GetInstructionsFor(agent)!;
+		var getRoutine = move.GetInstructionsFor(agent)!;
 		runner.StartCoroutine(getRoutine()!.GetEnumerator());
 
 		hitSO.getPoint = _ => Vector3.up * 100;
@@ -186,23 +186,23 @@ public class MoveDynamicSOTests : TestCollection
 
 	[UnityTest]
 	public IEnumerator MoveChanginPositionUseLastIfCurrentlyNoHit() {
-		var moveSO = ScriptableObject.CreateInstance<MoveDynamicSO>();
+		var move = new MoveDynamic();
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
 		var agent = new GameObject();
 		var runner = new GameObject().AddComponent<MockMB>();
-		moveSO.hitter = hitSO;
-		moveSO.min = new MoveDynamicSO.ValueSet {
+		move.hitter = hitSO;
+		move.min = new MoveDynamic.ValueSet {
 			speed = 1,
 			distance = 1,
 		};
-		moveSO.max = new MoveDynamicSO.ValueSet {
+		move.max = new MoveDynamic.ValueSet {
 			speed = 5,
 			distance = 10,
 		};
 
 		yield return new WaitForEndOfFrame();
 
-		var getRoutine = moveSO.GetInstructionsFor(agent)!;
+		var getRoutine = move.GetInstructionsFor(agent)!;
 		runner.StartCoroutine(getRoutine()!.GetEnumerator());
 
 		hitSO.getPoint = _ => Vector3.up * 100;
@@ -226,23 +226,23 @@ public class MoveDynamicSOTests : TestCollection
 
 	[UnityTest]
 	public IEnumerator MoveLeftMinSpeed() {
-		var moveSO = ScriptableObject.CreateInstance<MoveDynamicSO>();
+		var move = new MoveDynamic();
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
 		var agent = new GameObject();
 		var runner = new GameObject().AddComponent<MockMB>();
-		moveSO.hitter = hitSO;
-		moveSO.min = new MoveDynamicSO.ValueSet {
+		move.hitter = hitSO;
+		move.min = new MoveDynamic.ValueSet {
 			speed = 1,
 			distance = 500,
 		};
-		moveSO.max = new MoveDynamicSO.ValueSet {
+		move.max = new MoveDynamic.ValueSet {
 			speed = 5,
 			distance = 1000,
 		};
 
 		yield return new WaitForEndOfFrame();
 
-		var getRoutine = moveSO.GetInstructionsFor(agent)!;
+		var getRoutine = move.GetInstructionsFor(agent)!;
 		runner.StartCoroutine(getRoutine()!.GetEnumerator());
 
 
@@ -265,23 +265,23 @@ public class MoveDynamicSOTests : TestCollection
 
 	[UnityTest]
 	public IEnumerator MoveDownMediumSpeed() {
-		var moveSO = ScriptableObject.CreateInstance<MoveDynamicSO>();
+		var move = new MoveDynamic();
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
 		var agent = new GameObject();
 		var runner = new GameObject().AddComponent<MockMB>();
-		moveSO.hitter = hitSO;
-		moveSO.min = new MoveDynamicSO.ValueSet {
+		move.hitter = hitSO;
+		move.min = new MoveDynamic.ValueSet {
 			speed = 10,
 			distance = 100,
 		};
-		moveSO.max = new MoveDynamicSO.ValueSet {
+		move.max = new MoveDynamic.ValueSet {
 			speed = 20,
 			distance = 1100,
 		};
 
 		yield return new WaitForEndOfFrame();
 
-		var getRoutine = moveSO.GetInstructionsFor(agent)!;
+		var getRoutine = move.GetInstructionsFor(agent)!;
 		runner.StartCoroutine(getRoutine()!.GetEnumerator());
 
 		hitSO.getPoint = _ => agent.transform.position + Vector3.left * 600;
@@ -306,24 +306,24 @@ public class MoveDynamicSOTests : TestCollection
 	[UnityTest]
 	public IEnumerator UpdateWeight() {
 		var weights = new List<float>();
-		var moveSO = ScriptableObject.CreateInstance<MoveDynamicSO>();
+		var move = new MoveDynamic();
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
 		var plugin = ScriptableObject.CreateInstance<MockPluginSO>();
 		var agent = new GameObject();
 		var runner = new GameObject().AddComponent<MockMB>();
-		moveSO.hitter = hitSO;
-		moveSO.min = new MoveDynamicSO.ValueSet {
+		move.hitter = hitSO;
+		move.min = new MoveDynamic.ValueSet {
 			speed = 10,
 			distance = 100,
 			weight = 42,
 		};
-		moveSO.max = new MoveDynamicSO.ValueSet {
+		move.max = new MoveDynamic.ValueSet {
 			speed = 20,
 			distance = 1100,
 			weight = 200,
 		};
 
-		moveSO.plugins = new MockPluginSO[] { plugin };
+		move.plugins = new MockPluginSO[] { plugin };
 
 		plugin.getCallbacks = _ => d => new PluginCallbacks {
 			onAfterYield = () => weights.Add(d.As<CorePluginData>()!.weight)
@@ -331,7 +331,7 @@ public class MoveDynamicSOTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		var getRoutine = moveSO.GetInstructionsFor(agent)!;
+		var getRoutine = move.GetInstructionsFor(agent)!;
 		runner.StartCoroutine(getRoutine()!.GetEnumerator());
 
 		hitSO.getPoint = _ => agent.transform.position + Vector3.left * 5000;
