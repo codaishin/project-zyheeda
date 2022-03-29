@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using NUnit.Framework;
 using UnityEngine;
@@ -5,23 +6,88 @@ using UnityEngine.TestTools;
 
 public class ItemHandleMBTests : TestCollection
 {
-	private class MockAnimator : IAnimationStates
+	private class MockAnimateStates : IAnimationStates, IAnimationStance
 	{
-		public Animation.State state;
-		public void Set(Animation.State state) => this.state = state;
+		public Action<Animation.State> setState = _ => { };
+		public Action<Animation.Stance, bool> setStance = (_, __) => { };
+
+		public void Set(Animation.State state) =>
+			this.setState(state);
+		public void Set(Animation.Stance stance, bool value) =>
+			this.setStance(stance, value);
 	}
 
 	[UnityTest]
-	public IEnumerator SetAnimatorState() {
+	public IEnumerator SetAnimatorStance() {
 		var item = new GameObject().AddComponent<ItemHandleMB>();
-		var animator = new MockAnimator();
+		var animator = new MockAnimateStates();
+		var called = ((Animation.Stance)(-1), false);
+
+		item.idleStance = Animation.Stance.HoldRifle;
+		animator.setStance = (s, v) => called = (s, v);
 
 		yield return new WaitForEndOfFrame();
 
 		item.Equip(animator, new GameObject().transform);
-		item.Set(Animation.State.WalkOrRun);
 
-		Assert.AreEqual(Animation.State.WalkOrRun, animator.state);
+		Assert.AreEqual((Animation.Stance.HoldRifle, true), called);
+	}
+
+	[UnityTest]
+	public IEnumerator UnsetAnimatorStance() {
+		var item = new GameObject().AddComponent<ItemHandleMB>();
+		var animator = new MockAnimateStates();
+		var called = ((Animation.Stance)(-1), true);
+
+		item.idleStance = Animation.Stance.HoldRifle;
+
+		yield return new WaitForEndOfFrame();
+
+		item.Equip(animator, new GameObject().transform);
+
+		animator.setStance = (s, v) => called = (s, v);
+
+		item.UnEquip();
+
+		Assert.AreEqual((Animation.Stance.HoldRifle, false), called);
+	}
+
+
+	[UnityTest]
+	public IEnumerator SetAnimatorState() {
+		var item = new GameObject().AddComponent<ItemHandleMB>();
+		var animator = new MockAnimateStates();
+		var called = (Animation.State)(-1);
+
+		item.activeState = Animation.State.WalkOrRun;
+		animator.setState = s => called = s;
+
+		yield return new WaitForEndOfFrame();
+
+		item.Equip(animator, new GameObject().transform);
+		item.Use();
+
+		Assert.AreEqual(Animation.State.WalkOrRun, called);
+	}
+
+	[UnityTest]
+	public IEnumerator SetAnimatorStateStop() {
+		var item = new GameObject().AddComponent<ItemHandleMB>();
+		var animator = new MockAnimateStates();
+		var called = (Animation.State)(-1);
+
+		item.activeState = Animation.State.WalkOrRun;
+
+		yield return new WaitForEndOfFrame();
+
+		item.Equip(animator, new GameObject().transform);
+		item.Use();
+
+		animator.setState = s => called = s;
+
+		item.StopUsing();
+
+		Assert.AreEqual(Animation.State.Idle, called);
 	}
 
 	[UnityTest]
@@ -31,7 +97,7 @@ public class ItemHandleMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		item.Equip(new MockAnimator(), slot);
+		item.Equip(new MockAnimateStates(), slot);
 
 		Assert.AreSame(slot, item.transform.parent);
 	}
@@ -46,7 +112,7 @@ public class ItemHandleMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		item.Equip(new MockAnimator(), slot);
+		item.Equip(new MockAnimateStates(), slot);
 
 		Assert.AreEqual(Vector3.up, item.transform.position);
 		Tools.AssertEqual(Vector3.down, item.transform.forward);
@@ -62,7 +128,7 @@ public class ItemHandleMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		item.Equip(new MockAnimator(), slot);
+		item.Equip(new MockAnimateStates(), slot);
 
 		Assert.AreEqual(Vector3.one * 10f, item.transform.lossyScale);
 	}
@@ -74,7 +140,7 @@ public class ItemHandleMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		item.Equip(new MockAnimator(), slot);
+		item.Equip(new MockAnimateStates(), slot);
 		item.UnEquip();
 
 		Assert.Null(item.transform.parent);
@@ -90,7 +156,7 @@ public class ItemHandleMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		item.Equip(new MockAnimator(), slot);
+		item.Equip(new MockAnimateStates(), slot);
 		item.UnEquip();
 
 		Assert.AreSame(parent.transform, item.transform.parent);

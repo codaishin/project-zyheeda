@@ -6,7 +6,7 @@ using UnityEngine;
 public struct ItemActionData
 {
 	public Transform transform;
-	public IAnimationStates states;
+	public IApplicable item;
 	public IHit hitter;
 	public IApplicable<Transform> effect;
 }
@@ -15,8 +15,6 @@ public struct ItemActionData
 [Serializable]
 public class ItemAction : BaseInstructions<ItemActionData>
 {
-	public Animation.Stance idleStance;
-	public Animation.State activeState;
 	public float useAfterSeconds;
 	public float leaveActiveStateAfterSeconds;
 	public Reference<IHit> hitter;
@@ -35,7 +33,7 @@ public class ItemAction : BaseInstructions<ItemActionData>
 		}
 		return new ItemActionData {
 			transform = agent.transform,
-			states = agent.RequireComponent<IAnimationStates>(true),
+			item = agent.RequireComponent<IApplicable>(true),
 			hitter = this.hitter.Value,
 			effect = this.effect.Value,
 		};
@@ -53,8 +51,8 @@ public class ItemAction : BaseInstructions<ItemActionData>
 			}
 
 			return this.Instructions(
-				() => agent.states.Set(this.activeState),
-				() => agent.states.Set(Animation.State.Idle),
+				() => agent.item.Apply(),
+				() => agent.item.Release(),
 				() => this.effect.Value!.Apply(target)
 			);
 		}

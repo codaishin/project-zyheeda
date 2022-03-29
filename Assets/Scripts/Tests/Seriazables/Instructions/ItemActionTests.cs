@@ -5,11 +5,13 @@ using UnityEngine;
 using UnityEngine.TestTools;
 public class ItemActionTests : TestCollection
 {
-	class MockAnimationMB : MonoBehaviour, IAnimationStates
+	class MockItem : MonoBehaviour, IApplicable
 	{
-		public Action<Animation.State> set = _ => { };
+		public Action apply = () => { };
+		public Action release = () => { };
 
-		public void Set(Animation.State state) => this.set(state);
+		public void Apply() => this.apply();
+		public void Release() => this.release();
 	}
 
 	class MockHitterSO : ScriptableObject, IHit
@@ -43,7 +45,7 @@ public class ItemActionTests : TestCollection
 			effect = Reference<IApplicable<Transform>>.Component(effect),
 		};
 		var run = new GameObject().AddComponent<MockMB>();
-		var agent = new GameObject().AddComponent<MockAnimationMB>();
+		var agent = new GameObject().AddComponent<MockItem>();
 		var target = new GameObject();
 
 		useItem.hitter = Reference<IHit>.ScriptableObject(hitter);
@@ -61,21 +63,20 @@ public class ItemActionTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator Animate() {
-		var called = (Animation.State)(-1);
+	public IEnumerator Apply() {
+		var called = 0;
 		var hitter = ScriptableObject.CreateInstance<MockHitterSO>();
 		var effect = new GameObject().AddComponent<MockEffectMB>();
 		var useItem = new ItemAction {
 			hitter = Reference<IHit>.ScriptableObject(hitter),
 			effect = Reference<IApplicable<Transform>>.Component(effect),
-			activeState = Animation.State.ShootRifle,
 		};
 		var run = new GameObject().AddComponent<MockMB>();
-		var agent = new GameObject().AddComponent<MockAnimationMB>();
+		var agent = new GameObject().AddComponent<MockItem>();
 		var target = new GameObject();
 
 		hitter.tryComponent = _ => target.transform;
-		agent.set = s => called = s;
+		agent.apply = () => ++called;
 
 		yield return new WaitForEndOfFrame();
 
@@ -84,28 +85,27 @@ public class ItemActionTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		Assert.AreEqual(Animation.State.ShootRifle, called);
+		Assert.AreEqual(1, called);
 	}
 
 	[UnityTest]
-	public IEnumerator UseAnimatorOnAgentChild() {
-		var called = (Animation.State)(-1);
+	public IEnumerator ApplyOnAgentChild() {
+		var called = 0;
 		var hitter = ScriptableObject.CreateInstance<MockHitterSO>();
 		var effect = new GameObject().AddComponent<MockEffectMB>();
 		var useItem = new ItemAction {
 			hitter = Reference<IHit>.ScriptableObject(hitter),
 			effect = Reference<IApplicable<Transform>>.Component(effect),
-			activeState = Animation.State.ShootRifle,
 		};
 		var run = new GameObject().AddComponent<MockMB>();
 		var agent = new GameObject();
-		var child = new GameObject().AddComponent<MockAnimationMB>();
+		var child = new GameObject().AddComponent<MockItem>();
 		var target = new GameObject();
 
 		child.transform.parent = agent.transform;
 
 		hitter.tryComponent = _ => target.transform;
-		child.set = s => called = s;
+		child.apply = () => ++called;
 
 		yield return new WaitForEndOfFrame();
 
@@ -114,7 +114,7 @@ public class ItemActionTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		Assert.AreEqual(Animation.State.ShootRifle, called);
+		Assert.AreEqual(1, called);
 	}
 
 	[UnityTest]
@@ -125,10 +125,9 @@ public class ItemActionTests : TestCollection
 		var useItem = new ItemAction {
 			hitter = Reference<IHit>.ScriptableObject(hitter),
 			effect = Reference<IApplicable<Transform>>.Component(effect),
-			activeState = Animation.State.ShootRifle,
 		};
 		var run = new GameObject().AddComponent<MockMB>();
-		var agent = new GameObject().AddComponent<MockAnimationMB>();
+		var agent = new GameObject().AddComponent<MockItem>();
 		var target = new GameObject();
 
 		hitter.tryComponent = _ => target.transform;
@@ -151,22 +150,23 @@ public class ItemActionTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator ResetAnimationAfterSeconds() {
-		var called = (Animation.State)(-1);
+	public IEnumerator ReleaseAfterSeconds() {
+		var calledApply = 0;
+		var calledRelease = 0;
 		var hitter = ScriptableObject.CreateInstance<MockHitterSO>();
 		var effect = new GameObject().AddComponent<MockEffectMB>();
 		var useItem = new ItemAction {
 			hitter = Reference<IHit>.ScriptableObject(hitter),
 			effect = Reference<IApplicable<Transform>>.Component(effect),
-			activeState = Animation.State.ShootRifle,
 			leaveActiveStateAfterSeconds = 0.06f,
 		};
 		var run = new GameObject().AddComponent<MockMB>();
-		var agent = new GameObject().AddComponent<MockAnimationMB>();
+		var agent = new GameObject().AddComponent<MockItem>();
 		var target = new GameObject();
 
 		hitter.tryComponent = _ => target.transform;
-		agent.set = s => called = s;
+		agent.apply = () => ++calledApply;
+		agent.release = () => ++calledRelease;
 
 		yield return new WaitForEndOfFrame();
 
@@ -175,32 +175,33 @@ public class ItemActionTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		Assert.AreEqual(Animation.State.ShootRifle, called);
+		Assert.AreEqual(1, calledApply);
 
 		yield return new WaitForSeconds(0.06f);
 
-		Assert.AreEqual(Animation.State.Idle, called);
+		Assert.AreEqual(1, calledRelease);
 	}
 
 	[UnityTest]
 	public IEnumerator FirstUseThenResetAfterSeconds() {
-		var calledSetWith = (Animation.State)(-1);
+		var calledApply = 0;
+		var calledRelease = 0;
 		var calledUseWith = null as Transform;
 		var hitter = ScriptableObject.CreateInstance<MockHitterSO>();
 		var effect = new GameObject().AddComponent<MockEffectMB>();
 		var useItem = new ItemAction {
 			hitter = Reference<IHit>.ScriptableObject(hitter),
 			effect = Reference<IApplicable<Transform>>.Component(effect),
-			activeState = Animation.State.WalkOrRun,
 			useAfterSeconds = 0.3f,
 			leaveActiveStateAfterSeconds = 0.4f,
 		};
 		var run = new GameObject().AddComponent<MockMB>();
-		var agent = new GameObject().AddComponent<MockAnimationMB>();
+		var agent = new GameObject().AddComponent<MockItem>();
 		var target = new GameObject();
 
 		hitter.tryComponent = _ => target.transform;
-		agent.set = s => calledSetWith = s;
+		agent.apply = () => ++calledApply;
+		agent.release = () => ++calledRelease;
 		effect.apply = t => calledUseWith = t;
 
 		yield return new WaitForEndOfFrame();
@@ -210,47 +211,39 @@ public class ItemActionTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		Assert.AreEqual(
-			(Animation.State.WalkOrRun, null as Transform),
-			(calledSetWith, calledUseWith)
-		);
+		Assert.AreEqual((1, null as Transform), (calledApply, calledUseWith));
 
 		yield return new WaitForSeconds(0.3f);
 
-		Assert.AreEqual(
-			(Animation.State.WalkOrRun, target.transform),
-			(calledSetWith, calledUseWith)
-		);
+		Assert.AreSame(target.transform, calledUseWith);
 
 		yield return new WaitForSeconds(0.1f);
 
-		Assert.AreEqual(
-			(Animation.State.Idle, target.transform),
-			(calledSetWith, calledUseWith)
-		);
+		Assert.AreEqual((1, target.transform), (calledRelease, calledUseWith));
 	}
 
 	[UnityTest]
 	public IEnumerator FirstResetThenUseAfterSeconds() {
-		var calledSetWith = (Animation.State)(-1);
+		var calledApply = 0;
+		var calledRelease = 0;
 		var calledUseWith = null as Transform;
 		var hitter = ScriptableObject.CreateInstance<MockHitterSO>();
 		var effect = new GameObject().AddComponent<MockEffectMB>();
 		var useItem = new ItemAction {
 			hitter = Reference<IHit>.ScriptableObject(hitter),
 			effect = Reference<IApplicable<Transform>>.Component(effect),
-			activeState = Animation.State.WalkOrRun,
 			useAfterSeconds = 0.4f,
 			leaveActiveStateAfterSeconds = 0.3f,
 		};
 		var run = new GameObject().AddComponent<MockMB>();
-		var agent = new GameObject().AddComponent<MockAnimationMB>();
+		var agent = new GameObject().AddComponent<MockItem>();
 		var target = new GameObject();
 
 		useItem.hitter = Reference<IHit>.ScriptableObject(hitter);
 
 		hitter.tryComponent = _ => target.transform;
-		agent.set = s => calledSetWith = s;
+		agent.apply = () => ++calledApply;
+		agent.release = () => ++calledRelease;
 		effect.apply = t => calledUseWith = t;
 
 		yield return new WaitForEndOfFrame();
@@ -260,24 +253,15 @@ public class ItemActionTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		Assert.AreEqual(
-			(Animation.State.WalkOrRun, null as Transform),
-			(calledSetWith, calledUseWith)
-		);
+		Assert.AreEqual((1, null as Transform), (calledApply, calledUseWith));
 
 		yield return new WaitForSeconds(0.3f);
 
-		Assert.AreEqual(
-			(Animation.State.Idle, null as Transform),
-			(calledSetWith, calledUseWith)
-		);
+		Assert.AreEqual((1, null as Transform), (calledRelease, calledUseWith));
 
 		yield return new WaitForSeconds(0.1f);
 
-		Assert.AreEqual(
-			(Animation.State.Idle, target.transform),
-			(calledSetWith, calledUseWith)
-		);
+		Assert.AreSame(target.transform, calledUseWith);
 	}
 
 	[UnityTest]
@@ -288,7 +272,7 @@ public class ItemActionTests : TestCollection
 			hitter = Reference<IHit>.ScriptableObject(hitter),
 			effect = Reference<IApplicable<Transform>>.Component(effect),
 		};
-		var agent = new GameObject().AddComponent<MockAnimationMB>();
+		var agent = new GameObject().AddComponent<MockItem>();
 
 		hitter.tryComponent = _ => null;
 
@@ -304,7 +288,7 @@ public class ItemActionTests : TestCollection
 		var useItem = new ItemAction {
 			effect = Reference<IApplicable<Transform>>.Component(effect),
 		};
-		var agent = new GameObject().AddComponent<MockAnimationMB>();
+		var agent = new GameObject().AddComponent<MockItem>();
 
 		Assert.Throws<NullReferenceException>(
 			() => _ = useItem.GetInstructionsFor(agent.gameObject)
@@ -317,7 +301,7 @@ public class ItemActionTests : TestCollection
 		var useItem = new ItemAction {
 			hitter = Reference<IHit>.ScriptableObject(hitter),
 		};
-		var agent = new GameObject().AddComponent<MockAnimationMB>();
+		var agent = new GameObject().AddComponent<MockItem>();
 
 		Assert.Throws<NullReferenceException>(
 			() => _ = useItem.GetInstructionsFor(agent.gameObject)
@@ -348,7 +332,7 @@ public class ItemActionTests : TestCollection
 			effect = Reference<IApplicable<Transform>>.Component(effect),
 		};
 		var run = new GameObject().AddComponent<MockMB>();
-		var agent = new GameObject().AddComponent<MockAnimationMB>();
+		var agent = new GameObject().AddComponent<MockItem>();
 
 		hitter.tryComponent = t => { called = t; return t; };
 

@@ -9,16 +9,24 @@ public class LoadoutMBTests : TestCollection
 {
 	class MockItemHandleMB : MonoBehaviour, IItemHandle
 	{
-		public Action<IAnimationStates, Transform> equip = (_, __) => { };
-		public Action unEquip = () => { };
-		public Action<Animation.State> set = _ => { };
+		public Action<object, Transform> equip =
+			(_, ___) => { };
+		public Action unEquip =
+			() => { };
+		public Action use =
+			() => { };
+		public Action stopUsing =
+			() => { };
 
-		public void Set(Animation.State state) =>
-			this.set(state);
-		public void Equip(IAnimationStates animator, Transform slot) =>
+		public void Equip<TAnimator>(TAnimator animator, Transform slot)
+			where TAnimator : IAnimationStance, IAnimationStates =>
 			this.equip(animator, slot);
 		public void UnEquip() =>
 			this.unEquip();
+		public void Use() =>
+			this.use();
+		public void StopUsing() =>
+			this.stopUsing();
 	}
 
 	[UnityTest]
@@ -27,11 +35,11 @@ public class LoadoutMBTests : TestCollection
 		var item = new GameObject().AddComponent<MockItemHandleMB>();
 		var slot = new GameObject();
 		var animator = new GameObject().AddComponent<AnimationMB>();
-		var calledAnimator = null as IAnimationStates;
+		var calledAnimator = null as object;
 		var calledSlot = null as Transform;
 
 		loadout.slot = slot.transform;
-		loadout.animator = Reference<IAnimationStates>.Component(animator);
+		loadout.animator = animator;
 		loadout.items = new Reference<IItemHandle>[] {
 			Reference<IItemHandle>.Component(item),
 		};
@@ -55,12 +63,12 @@ public class LoadoutMBTests : TestCollection
 		};
 		var slot = new GameObject();
 		var animator = new GameObject().AddComponent<AnimationMB>();
-		var calledAnimator = null as IAnimationStates;
+		var calledAnimator = null as object;
 		var calledSlot = null as Transform;
 		var calledUnEquip = 0;
 
 		loadout.slot = slot.transform;
-		loadout.animator = Reference<IAnimationStates>.Component(animator);
+		loadout.animator = animator;
 		loadout.items = items.Select(Reference<IItemHandle>.Component).ToArray();
 		items[0].unEquip = () => ++calledUnEquip;
 		items[1].equip = (a, s) => {
@@ -87,12 +95,12 @@ public class LoadoutMBTests : TestCollection
 		};
 		var slot = new GameObject();
 		var animator = new GameObject().AddComponent<AnimationMB>();
-		var calledAnimator = null as IAnimationStates;
+		var calledAnimator = null as object;
 		var calledSlot = null as Transform;
 		var calledUnEquip = 0;
 
 		loadout.slot = slot.transform;
-		loadout.animator = Reference<IAnimationStates>.Component(animator);
+		loadout.animator = animator;
 		loadout.items = items.Select(Reference<IItemHandle>.Component).ToArray();
 		items[1].unEquip = () => ++calledUnEquip;
 		items[2].equip = (a, s) => {
@@ -120,12 +128,12 @@ public class LoadoutMBTests : TestCollection
 		};
 		var slot = new GameObject();
 		var animator = new GameObject().AddComponent<AnimationMB>();
-		var calledAnimator = null as IAnimationStates;
+		var calledAnimator = null as object;
 		var calledSlot = null as Transform;
 		var calledUnEquip = 0;
 
 		loadout.slot = slot.transform;
-		loadout.animator = Reference<IAnimationStates>.Component(animator);
+		loadout.animator = animator;
 		loadout.items = items.Select(Reference<IItemHandle>.Component).ToArray();
 
 		yield return new WaitForEndOfFrame();
@@ -153,19 +161,19 @@ public class LoadoutMBTests : TestCollection
 		};
 		var slot = new GameObject();
 		var animator = new GameObject().AddComponent<AnimationMB>();
-		var calledState = (Animation.State)(-1);
+		var calledUse = 0;
 
 		loadout.slot = slot.transform;
-		loadout.animator = Reference<IAnimationStates>.Component(animator);
+		loadout.animator = animator;
 		loadout.items = items.Select(Reference<IItemHandle>.Component).ToArray();
 
 		yield return new WaitForEndOfFrame();
 
-		items[0].set = s => calledState = s;
+		items[0].use = () => ++calledUse;
 
-		loadout.Animate(Animation.State.ShootRifle);
+		loadout.Use();
 
-		Assert.AreEqual(Animation.State.ShootRifle, calledState);
+		Assert.AreEqual(1, calledUse);
 	}
 
 	[UnityTest]
@@ -179,10 +187,10 @@ public class LoadoutMBTests : TestCollection
 		};
 		var slot = new GameObject();
 		var animator = new GameObject().AddComponent<AnimationMB>();
-		var calledState = (Animation.State)(-1);
+		var calledUse = 0;
 
 		loadout.slot = slot.transform;
-		loadout.animator = Reference<IAnimationStates>.Component(animator);
+		loadout.animator = animator;
 		loadout.items = items.Select(Reference<IItemHandle>.Component).ToArray();
 
 		yield return new WaitForEndOfFrame();
@@ -190,11 +198,11 @@ public class LoadoutMBTests : TestCollection
 		loadout.Circle();
 		loadout.Circle();
 
-		items[2].set = s => calledState = s;
+		items[2].use = () => ++calledUse;
 
-		loadout.Animate(Animation.State.ShootRifle);
+		loadout.Use();
 
-		Assert.AreEqual(Animation.State.ShootRifle, calledState);
+		Assert.AreEqual(1, calledUse);
 	}
 
 	[UnityTest]
@@ -205,7 +213,7 @@ public class LoadoutMBTests : TestCollection
 		var animator = new GameObject().AddComponent<AnimationMB>();
 
 		loadout.slot = slot.transform;
-		loadout.animator = Reference<IAnimationStates>.Component(animator);
+		loadout.animator = animator;
 		loadout.items = items
 			.Select(
 				item =>
@@ -217,6 +225,6 @@ public class LoadoutMBTests : TestCollection
 		yield return new WaitForEndOfFrame();
 
 		Assert.DoesNotThrow(() => loadout.Circle());
-		Assert.DoesNotThrow(() => loadout.Animate(default));
+		Assert.DoesNotThrow(() => loadout.Use());
 	}
 }
