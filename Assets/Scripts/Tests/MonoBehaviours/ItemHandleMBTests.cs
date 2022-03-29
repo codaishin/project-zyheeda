@@ -17,6 +17,15 @@ public class ItemHandleMBTests : TestCollection
 			this.setStance(stance, value);
 	}
 
+	private class MockInstructionsMB : MonoBehaviour, IInstructions
+	{
+		public Func<GameObject, InstructionsFunc> getInstructionsFor =
+			_ => _ => new YieldInstruction[0];
+		public InstructionsFunc GetInstructionsFor(GameObject agent) {
+			throw new NotImplementedException();
+		}
+	}
+
 	[UnityTest]
 	public IEnumerator SetAnimatorStance() {
 		var item = new GameObject().AddComponent<ItemHandleMB>();
@@ -52,44 +61,6 @@ public class ItemHandleMBTests : TestCollection
 		Assert.AreEqual((Animation.Stance.HoldRifle, false), called);
 	}
 
-
-	[UnityTest]
-	public IEnumerator SetAnimatorState() {
-		var item = new GameObject().AddComponent<ItemHandleMB>();
-		var animator = new MockAnimateStates();
-		var called = (Animation.State)(-1);
-
-		item.activeState = Animation.State.WalkOrRun;
-		animator.setState = s => called = s;
-
-		yield return new WaitForEndOfFrame();
-
-		item.Equip(animator, new GameObject().transform);
-		item.Use();
-
-		Assert.AreEqual(Animation.State.WalkOrRun, called);
-	}
-
-	[UnityTest]
-	public IEnumerator SetAnimatorStateStop() {
-		var item = new GameObject().AddComponent<ItemHandleMB>();
-		var animator = new MockAnimateStates();
-		var called = (Animation.State)(-1);
-
-		item.activeState = Animation.State.WalkOrRun;
-
-		yield return new WaitForEndOfFrame();
-
-		item.Equip(animator, new GameObject().transform);
-		item.Use();
-
-		animator.setState = s => called = s;
-
-		item.StopUsing();
-
-		Assert.AreEqual(Animation.State.Idle, called);
-	}
-
 	[UnityTest]
 	public IEnumerator SetSlot() {
 		var item = new GameObject().AddComponent<ItemHandleMB>();
@@ -100,6 +71,20 @@ public class ItemHandleMBTests : TestCollection
 		item.Equip(new MockAnimateStates(), slot);
 
 		Assert.AreSame(slot, item.transform.parent);
+	}
+
+	[UnityTest]
+	public IEnumerator Enable() {
+		var item = new GameObject().AddComponent<ItemHandleMB>();
+		var slot = new GameObject().transform;
+
+		item.gameObject.SetActive(false);
+
+		yield return new WaitForEndOfFrame();
+
+		item.Equip(new MockAnimateStates(), slot);
+
+		Assert.True(item.gameObject.activeSelf);
 	}
 
 	[UnityTest]
@@ -144,6 +129,19 @@ public class ItemHandleMBTests : TestCollection
 		item.UnEquip();
 
 		Assert.Null(item.transform.parent);
+	}
+
+	[UnityTest]
+	public IEnumerator Disable() {
+		var item = new GameObject().AddComponent<ItemHandleMB>();
+		var slot = new GameObject().transform;
+
+		yield return new WaitForEndOfFrame();
+
+		item.Equip(new MockAnimateStates(), slot);
+		item.UnEquip();
+
+		Assert.False(item.gameObject.activeSelf);
 	}
 
 	[UnityTest]

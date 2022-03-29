@@ -1,40 +1,24 @@
 using UnityEngine;
 
-public interface IItemHandle
+public interface IEquipable
 {
-	void Use();
-	void StopUsing();
-	void Equip<TAnimator>(TAnimator animator, Transform slot)
-		where TAnimator :
-			IAnimationStance,
-			IAnimationStates;
+	void Equip(IAnimationStance animator, Transform slot);
 	void UnEquip();
 }
 
-public class ItemHandleMB : MonoBehaviour, IItemHandle
+public interface IItem : IEquipable, IInstructions { }
+
+public class ItemHandleMB : BaseInstructionsMB<ItemAction>, IItem
 {
 	public Animation.Stance idleStance;
-	public Animation.State activeState;
+
 	private IAnimationStance? animateStance;
-	private IAnimationStates? animateStates;
 	private Transform? originalParent;
 
-	public void Use() {
-		this.animateStates!.Set(this.activeState);
-	}
-
-	public void StopUsing() {
-		this.animateStates!.Set(Animation.State.Idle);
-	}
-
-	public void Equip<TAnimator>(TAnimator animator, Transform slot)
-		where TAnimator :
-			IAnimationStance,
-			IAnimationStates {
+	public void Equip(IAnimationStance animator, Transform slot) {
 		this.originalParent = this.transform.parent;
 
 		this.animateStance = animator;
-		this.animateStates = animator;
 
 		this.transform.parent = null;
 		this.transform.position = slot.position;
@@ -42,10 +26,14 @@ public class ItemHandleMB : MonoBehaviour, IItemHandle
 		this.transform.parent = slot;
 
 		this.animateStance.Set(this.idleStance, true);
+
+		this.gameObject.SetActive(true);
 	}
 
 	public void UnEquip() {
 		this.transform.parent = this.originalParent;
 		this.animateStance!.Set(this.idleStance, false);
+
+		this.gameObject.SetActive(false);
 	}
 }

@@ -1,16 +1,16 @@
+using System.Linq;
 using UnityEngine;
 
 public interface ILoadout
 {
 	void Circle();
-	void Use();
 }
 
-public class LoadoutMB : MonoBehaviour, ILoadout
+public class LoadoutMB : MonoBehaviour, ILoadout, IInstructions
 {
 	public Transform? slot;
 	public AnimationMB? animator;
-	public Reference<IItemHandle>[] items = new Reference<IItemHandle>[0];
+	public Reference<IItem>[] items = new Reference<IItem>[0];
 
 	private int index = 0;
 
@@ -26,7 +26,10 @@ public class LoadoutMB : MonoBehaviour, ILoadout
 		this.items[this.index].Value?.Equip(this.animator!, this.slot!);
 	}
 
-	public void Use() {
-		this.items[this.index].Value?.Use();
+	public InstructionsFunc GetInstructionsFor(GameObject agent) {
+		InstructionsFunc?[] instructions = this.items
+			.Select(item => item.Value?.GetInstructionsFor(agent))
+			.ToArray();
+		return run => instructions[this.index]?.Invoke(run);
 	}
 }
