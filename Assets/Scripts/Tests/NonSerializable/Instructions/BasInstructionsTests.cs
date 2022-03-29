@@ -284,9 +284,9 @@ public class BaseInstructionsTests : TestCollection
 		instructions.plugins = new MockPluginSO[] { plugin }; ;
 		instructions.partialInstructions = _ => instructionFunc;
 
-		var insructions = instructions.GetInstructionsFor(agent, () => run);
+		var insructions = instructions.GetInstructionsFor(agent);
 
-		foreach (var _ in insructions()!) {
+		foreach (var _ in insructions(() => run)!) {
 			if (iterations == 9) {
 				run = false;
 			};
@@ -349,9 +349,9 @@ public class BaseInstructionsTests : TestCollection
 		instructions.plugins = new MockPluginSO[] { plugin }; ;
 		instructions.partialInstructions = _ => instructionFunc;
 
-		var insructions = instructions.GetInstructionsFor(agent, () => run);
+		var insructions = instructions.GetInstructionsFor(agent);
 
-		foreach (var _ in insructions()!) {
+		foreach (var _ in insructions(() => run)!) {
 			if (iterations == 9) {
 				pluginData!.run = false;
 			};

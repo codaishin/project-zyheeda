@@ -8,7 +8,7 @@ using Instructions =
 		.Generic
 		.IEnumerable<UnityEngine.YieldInstruction?>;
 
-public delegate Instructions? InstructionsFunc();
+public delegate Instructions? InstructionsFunc(Func<bool>? run = null);
 public delegate Instructions? PartialInstructionFunc(PluginData data);
 public delegate PluginCallbacks PartialPluginCallbacks(PluginData data);
 
@@ -26,16 +26,13 @@ public abstract class BaseInstructions<TAgent> : IInstructions
 	protected abstract PartialInstructionFunc PartialInstructions(TAgent agent);
 	protected virtual void ExtendPluginData(PluginData pluginData) { }
 
-	public InstructionsFunc GetInstructionsFor(
-		GameObject agent,
-		Func<bool>? runCheck = null
-	) {
+	public InstructionsFunc GetInstructionsFor(GameObject agent) {
 		TAgent concreteAgent = this.GetConcreteAgent(agent);
 		PartialInstructionFunc instructions = this.PartialInstructions(concreteAgent);
 		IEnumerable<PartialPluginCallbacks> partialPluginCalls =
 			this.PartialPluginCalls(agent);
 
-		return () => {
+		return runCheck => {
 			CorePluginData data = this.GetPluginData();
 			Instructions? loop = instructions(data);
 			PluginCallbacks pluginCalls =

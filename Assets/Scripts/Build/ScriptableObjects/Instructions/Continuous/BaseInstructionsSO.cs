@@ -1,6 +1,4 @@
-using System;
 using UnityEngine;
-
 
 public abstract class BaseInstructionsSO<TInstructions> :
 	ScriptableObject,
@@ -14,10 +12,7 @@ public abstract class BaseInstructionsSO<TInstructions> :
 
 	public TInstructions Instructions => this.instructions;
 
-	public InstructionsFunc GetInstructionsFor(
-		GameObject agent,
-		Func<bool>? run = null
-	) {
-		return this.instructions.GetInstructionsFor(agent, run);
+	public InstructionsFunc GetInstructionsFor(GameObject agent) {
+		return this.instructions.GetInstructionsFor(agent);
 	}
 }

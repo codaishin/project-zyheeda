@@ -25,29 +25,33 @@ public class ReferenceGenericPD : PropertyDrawer
 		};
 	}
 
-	private static Component GetComponent(GameObject obj, Type type) {
+	private static (Component?, string?) GetComponent(GameObject obj, Type type) {
 		Component? component = obj.GetComponent(type);
-		return component ?? throw new ArgumentException(
-			$"{obj}: must have a component that implements '{type}'"
-		);
+		return component != null
+			? (component, null)
+			: (null, $"{obj}: must have a component that implements '{type}'");
 	}
 
-	private static UnityObject ObjectIfTypeMatches(UnityObject obj, Type type) {
+	private static (UnityObject?, string?) ObjectIfTypeMatches(
+		UnityObject obj,
+		Type type
+	) {
 		return type.IsAssignableFrom(obj.GetType())
-			? obj
-			: throw new ArgumentException(
-				$"{obj}: must implement '{type}'"
-			);
+			? (obj, null)
+			: (null, $"{obj}: must implement '{type}'");
 	}
 
-	private static UnityObject? InstanceOrNull(UnityObject? assigned, Type type) {
+	private static (UnityObject?, string?) InstanceOrNull(
+		UnityObject? assigned,
+		Type type
+	) {
 		return assigned switch {
 			GameObject obj =>
 				ReferenceGenericPD.GetComponent(obj, type),
 			UnityObject obj =>
 				ReferenceGenericPD.ObjectIfTypeMatches(obj, type),
 			null =>
-				null,
+				(null, null),
 		};
 	}
 
@@ -65,9 +69,13 @@ public class ReferenceGenericPD : PropertyDrawer
 			typeof(UnityObject),
 			true
 		);
-		value.objectReferenceValue = ReferenceGenericPD.InstanceOrNull(
+		string? error;
+		(value.objectReferenceValue, error) = ReferenceGenericPD.InstanceOrNull(
 			assigned,
 			type
 		);
+		if (error != null) {
+			Debug.LogError(error);
+		}
 	}
 }

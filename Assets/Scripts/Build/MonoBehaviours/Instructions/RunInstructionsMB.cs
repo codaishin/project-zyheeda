@@ -2,80 +2,46 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum OverrideMode
+public class RunInstructionsMB : MonoBehaviour, IApplicable<CoroutineRunnerMB>
 {
-	None,
-	Own,
-	All,
-}
-
-public class RunInstructionsMB : MonoBehaviour, IApplicable
-{
-	private IEnumerator<YieldInstruction?>? currentCoroutine;
 	private InstructionsFunc? instructionsFunc;
-	private bool running;
 
-	public CoroutineRunnerMB? runner;
 	public Reference<IInstructions> instructions;
 	public Reference agent;
-	public OverrideMode overrideMode;
-
-	private MonoBehaviour OnRunnerOrSelf =>
-		this.runner != null
-			? this.runner
-			: this;
 
 	private void Start() {
 		this.instructionsFunc = this.instructions.Value!.GetInstructionsFor(
-			this.agent.GameObject,
-			this.IsRunning
+			this.agent.GameObject
 		);
 	}
 
-	private IEnumerator<YieldInstruction?>? GetCoroutine() {
-		IEnumerable<YieldInstruction?>? routine = this.instructionsFunc!();
+	private IEnumerator<YieldInstruction?>? GetCoroutine(Func<bool> run) {
+		IEnumerable<YieldInstruction?>? routine = this.instructionsFunc!(run);
 		if (routine == null) {
 			return null;
 		}
 		return routine.GetEnumerator();
 	}
 
-	private void StopNone() { }
-
-	private void StopAll() {
-		this.OnRunnerOrSelf.StopAllCoroutines();
-	}
-
-	private void StopOnw() {
-		if (this.currentCoroutine == null) return;
-
-		this.OnRunnerOrSelf.StopCoroutine(this.currentCoroutine);
-	}
-
-	private bool IsRunning() {
-		return this.running;
-	}
-
-	public void Apply() {
-		IEnumerator<YieldInstruction?>? newRoutine = this.GetCoroutine();
+	public void Apply(CoroutineRunnerMB runner) {
+		IEnumerator<YieldInstruction?>? newRoutine = this.GetCoroutine(
+			() => runner.IsRunning
+		);
 
 		if (newRoutine == null) {
 			return;
 		}
 
-		Action stop = this.overrideMode switch {
-			OverrideMode.All => this.StopAll,
-			OverrideMode.Own => this.StopOnw,
-			_ => this.StopNone,
-		};
-		stop();
-
-		this.running = true;
-		this.currentCoroutine = newRoutine;
-		this.OnRunnerOrSelf.StartCoroutine(this.currentCoroutine);
+		runner.StopAllCoroutines();
+		runner.IsRunning = true;
+		runner.CurrentSource = this;
+		runner.StartCoroutine(newRoutine);
 	}
 
-	public void Release() {
-		this.running = false;
+	public void Release(CoroutineRunnerMB runner) {
+		if (runner.CurrentSource != this) {
+			return;
+		}
+		runner.IsRunning = false;
 	}
 }

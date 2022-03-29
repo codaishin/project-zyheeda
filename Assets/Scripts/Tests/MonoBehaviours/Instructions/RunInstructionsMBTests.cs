@@ -9,13 +9,11 @@ public class RunInstructionsMBTests : TestCollection
 {
 	class MockCoroutineSO : ScriptableObject, IInstructions
 	{
-		public Func<GameObject, Func<bool>?, InstructionsFunc> getInstructions =
-			(_, __) => () => new YieldInstruction[0];
+		public Func<GameObject, InstructionsFunc> getInstructions =
+			_ => _ => new YieldInstruction[0];
 
-		public InstructionsFunc GetInstructionsFor(
-			GameObject agent,
-			Func<bool>? run = null
-		) => this.getInstructions(agent, run);
+		public InstructionsFunc GetInstructionsFor(GameObject agent) =>
+			this.getInstructions(agent);
 	}
 
 	[UnityTest]
@@ -24,17 +22,18 @@ public class RunInstructionsMBTests : TestCollection
 		var agent = new GameObject();
 		var comp = new GameObject().AddComponent<RunInstructionsMB>();
 		var instructions = ScriptableObject.CreateInstance<MockCoroutineSO>();
+		var runner = new GameObject().AddComponent<CoroutineRunnerMB>();
 		comp.instructions = Reference<IInstructions>.ScriptableObject(instructions);
 		comp.agent = agent;
 
-		instructions.getInstructions = (agent, run) => {
+		instructions.getInstructions = agent => {
 			called = agent;
-			return () => new YieldInstruction[0];
+			return _ => new YieldInstruction[0];
 		};
 
 		yield return new WaitForEndOfFrame();
 
-		comp.Apply();
+		comp.Apply(runner);
 
 		yield return new WaitForEndOfFrame();
 
@@ -47,18 +46,19 @@ public class RunInstructionsMBTests : TestCollection
 		var agent = new GameObject();
 		var comp = new GameObject().AddComponent<RunInstructionsMB>();
 		var instructions = ScriptableObject.CreateInstance<MockCoroutineSO>();
+		var runner = new GameObject().AddComponent<CoroutineRunnerMB>();
 		comp.instructions = Reference<IInstructions>.ScriptableObject(instructions);
 		comp.agent = agent;
 
-		instructions.getInstructions = (_, __) => () => {
+		instructions.getInstructions = _ => _ => {
 			++called;
 			return new YieldInstruction[0];
 		};
 
 		yield return new WaitForEndOfFrame();
 
-		comp.Apply();
-		comp.Apply();
+		comp.Apply(runner);
+		comp.Apply(runner);
 
 		yield return new WaitForEndOfFrame();
 
@@ -71,21 +71,22 @@ public class RunInstructionsMBTests : TestCollection
 		var agent = new GameObject();
 		var comp = new GameObject().AddComponent<RunInstructionsMB>();
 		var instructions = ScriptableObject.CreateInstance<MockCoroutineSO>();
+		var runner = new GameObject().AddComponent<CoroutineRunnerMB>();
 		comp.instructions = Reference<IInstructions>.ScriptableObject(instructions);
 		comp.agent = agent;
 
-		IEnumerable<YieldInstruction> run() {
+		IEnumerable<YieldInstruction> run(Func<bool>? runCheck) {
 			yield return new WaitForEndOfFrame();
 			++called;
 			yield return new WaitForEndOfFrame();
 			++called;
 		}
 
-		instructions.getInstructions = (_, __) => run;
+		instructions.getInstructions = _ => run;
 
 		yield return new WaitForEndOfFrame();
 
-		comp.Apply();
+		comp.Apply(runner);
 
 		yield return new WaitForEndOfFrame();
 		yield return new WaitForEndOfFrame();
@@ -94,47 +95,14 @@ public class RunInstructionsMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator RunCoroutineOnExternalRunner() {
-		var called = 0;
-		var agent = new GameObject();
-		var comp = new GameObject().AddComponent<RunInstructionsMB>();
-		var external = new GameObject().AddComponent<CoroutineRunnerMB>();
-		var instructions = ScriptableObject.CreateInstance<MockCoroutineSO>();
-		comp.instructions = Reference<IInstructions>.ScriptableObject(instructions);
-		comp.agent = agent;
-		comp.runner = external;
-
-		IEnumerable<YieldInstruction> run() {
-			yield return new WaitForEndOfFrame();
-			++called;
-			yield return new WaitForEndOfFrame();
-			++called;
-		}
-
-		instructions.getInstructions = (_, __) => run;
-
-		yield return new WaitForEndOfFrame();
-
-		comp.Apply();
-
-		yield return new WaitForEndOfFrame();
-
-		external.StopAllCoroutines();
-
-		yield return new WaitForEndOfFrame();
-
-		Assert.AreEqual(1, called);
-	}
-
-	[UnityTest]
 	public IEnumerator OverrideAll() {
 		var calledOther = false;
 		var agent = new GameObject();
 		var comp = new GameObject().AddComponent<RunInstructionsMB>();
 		var instructions = ScriptableObject.CreateInstance<MockCoroutineSO>();
+		var runner = new GameObject().AddComponent<CoroutineRunnerMB>();
 		comp.instructions = Reference<IInstructions>.ScriptableObject(instructions);
 		comp.agent = agent;
-		comp.overrideMode = OverrideMode.All;
 
 		IEnumerator otherRoutine() {
 			yield return new WaitForEndOfFrame();
@@ -143,121 +111,12 @@ public class RunInstructionsMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		comp.StartCoroutine(otherRoutine());
-		comp.Apply();
+		runner.StartCoroutine(otherRoutine());
+		comp.Apply(runner);
 
 		yield return new WaitForEndOfFrame();
 
 		Assert.False(calledOther);
-	}
-
-	[UnityTest]
-	public IEnumerator OverrideAllOnExternal() {
-		var calledOther = false;
-		var agent = new GameObject();
-		var comp = new GameObject().AddComponent<RunInstructionsMB>();
-		var external = new GameObject().AddComponent<CoroutineRunnerMB>();
-		var instructions = ScriptableObject.CreateInstance<MockCoroutineSO>();
-		comp.instructions = Reference<IInstructions>.ScriptableObject(instructions);
-		comp.agent = agent;
-		comp.overrideMode = OverrideMode.All;
-		comp.runner = external;
-
-		IEnumerator otherRoutine() {
-			yield return new WaitForEndOfFrame();
-			calledOther = true;
-		}
-
-		yield return new WaitForEndOfFrame();
-
-		external.StartCoroutine(otherRoutine());
-		comp.Apply();
-
-		yield return new WaitForEndOfFrame();
-
-		Assert.False(calledOther);
-	}
-
-	[UnityTest]
-	public IEnumerator OverrideOwn() {
-		var called = 0;
-		var calledOther = 0;
-		var agent = new GameObject();
-		var comp = new GameObject().AddComponent<RunInstructionsMB>();
-		var instructions = ScriptableObject.CreateInstance<MockCoroutineSO>();
-		comp.instructions = Reference<IInstructions>.ScriptableObject(instructions);
-		comp.agent = agent;
-		comp.overrideMode = OverrideMode.Own;
-
-		IEnumerable<YieldInstruction> run() {
-			yield return new WaitForEndOfFrame();
-			++called;
-			yield return new WaitForEndOfFrame();
-			++called;
-		}
-
-		instructions.getInstructions = (_, __) => run;
-
-		IEnumerator otherRoutine() {
-			yield return new WaitForEndOfFrame();
-			++calledOther;
-			yield return new WaitForEndOfFrame();
-			++calledOther;
-		}
-
-		yield return new WaitForEndOfFrame();
-
-		comp.StartCoroutine(otherRoutine());
-		comp.Apply();
-		comp.Apply();
-
-		yield return new WaitForEndOfFrame();
-		yield return new WaitForEndOfFrame();
-		yield return new WaitForEndOfFrame();
-
-		Assert.AreEqual((2, 2), (called, calledOther));
-	}
-
-	[UnityTest]
-	public IEnumerator OverrideOwnOnExternal() {
-		var called = 0;
-		var calledOther = 0;
-		var agent = new GameObject();
-		var comp = new GameObject().AddComponent<RunInstructionsMB>();
-		var external = new GameObject().AddComponent<CoroutineRunnerMB>();
-		var instructions = ScriptableObject.CreateInstance<MockCoroutineSO>();
-		comp.instructions = Reference<IInstructions>.ScriptableObject(instructions);
-		comp.agent = agent;
-		comp.overrideMode = OverrideMode.Own;
-		comp.runner = external;
-
-		IEnumerable<YieldInstruction> run() {
-			yield return new WaitForEndOfFrame();
-			++called;
-			yield return new WaitForEndOfFrame();
-			++called;
-		}
-
-		instructions.getInstructions = (_, __) => run;
-
-		IEnumerator otherRoutine() {
-			yield return new WaitForEndOfFrame();
-			++calledOther;
-			yield return new WaitForEndOfFrame();
-			++calledOther;
-		}
-
-		yield return new WaitForEndOfFrame();
-
-		external.StartCoroutine(otherRoutine());
-		comp.Apply();
-		comp.Apply();
-
-		yield return new WaitForEndOfFrame();
-		yield return new WaitForEndOfFrame();
-		yield return new WaitForEndOfFrame();
-
-		Assert.AreEqual((2, 2), (called, calledOther));
 	}
 
 	[UnityTest]
@@ -265,15 +124,13 @@ public class RunInstructionsMBTests : TestCollection
 		var runChecks = new List<bool>();
 		var agent = new GameObject();
 		var comp = new GameObject().AddComponent<RunInstructionsMB>();
-		var external = new GameObject().AddComponent<CoroutineRunnerMB>();
+		var runner = new GameObject().AddComponent<CoroutineRunnerMB>();
 		var instructions = ScriptableObject.CreateInstance<MockCoroutineSO>();
 		comp.instructions = Reference<IInstructions>.ScriptableObject(instructions);
 		comp.agent = agent;
-		comp.overrideMode = OverrideMode.Own;
-		comp.runner = external;
 
-		InstructionsFunc getInstructions(GameObject _, Func<bool>? runCheck) {
-			IEnumerable<YieldInstruction> instructions() {
+		InstructionsFunc getInstructions(GameObject _) {
+			IEnumerable<YieldInstruction> instructions(Func<bool>? runCheck) {
 				bool keepRunning;
 				do {
 					yield return new WaitForEndOfFrame();
@@ -288,13 +145,13 @@ public class RunInstructionsMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		comp.Apply();
+		comp.Apply(runner);
 
 		yield return new WaitForEndOfFrame();
 		yield return new WaitForEndOfFrame();
 		yield return new WaitForEndOfFrame();
 
-		comp.Release();
+		comp.Release(runner);
 
 		yield return new WaitForEndOfFrame();
 
@@ -305,18 +162,67 @@ public class RunInstructionsMBTests : TestCollection
 	}
 
 	[UnityTest]
+	public IEnumerator ReleaseOnlyOwn() {
+		var runChecks = new List<bool>();
+		var agent = new GameObject();
+		var compA = new GameObject().AddComponent<RunInstructionsMB>();
+		var compB = new GameObject().AddComponent<RunInstructionsMB>();
+		var runner = new GameObject().AddComponent<CoroutineRunnerMB>();
+		var instructions = ScriptableObject.CreateInstance<MockCoroutineSO>();
+		compA.instructions = Reference<IInstructions>
+			.ScriptableObject(instructions);
+		compA.agent = agent;
+		compB.instructions = Reference<IInstructions>
+			.ScriptableObject(instructions);
+		compB.agent = agent;
+
+		InstructionsFunc getInstructions(GameObject _) {
+			IEnumerable<YieldInstruction> instructions(Func<bool>? runCheck) {
+				bool keepRunning;
+				do {
+					yield return new WaitForEndOfFrame();
+					keepRunning = runCheck!();
+					runChecks.Add(keepRunning);
+				} while (keepRunning);
+			}
+			return instructions;
+		}
+
+		instructions.getInstructions = getInstructions;
+
+		yield return new WaitForEndOfFrame();
+
+		compA.Apply(runner);
+		compB.Apply(runner);
+
+		yield return new WaitForEndOfFrame();
+		yield return new WaitForEndOfFrame();
+		yield return new WaitForEndOfFrame();
+
+		compA.Release(runner);
+
+		yield return new WaitForEndOfFrame();
+
+		CollectionAssert.AreEqual(
+			new bool[] { true, true, true, true },
+			runChecks
+		);
+	}
+
+	[UnityTest]
 	public IEnumerator IgnoreNullRoutine() {
 		var agent = new GameObject();
 		var comp = new GameObject().AddComponent<RunInstructionsMB>();
 		var instructions = ScriptableObject.CreateInstance<MockCoroutineSO>();
+		var runner = new GameObject().AddComponent<CoroutineRunnerMB>();
 		comp.instructions = Reference<IInstructions>.ScriptableObject(instructions);
 		comp.agent = agent;
 
-		instructions.getInstructions = (_, __) => () => null;
+		instructions.getInstructions = _ => _ => null;
 
 		yield return new WaitForEndOfFrame();
 
-		comp.Apply();
+		comp.Apply(runner);
 
 		yield return new WaitForEndOfFrame();
 
@@ -329,11 +235,11 @@ public class RunInstructionsMBTests : TestCollection
 		var agent = new GameObject();
 		var comp = new GameObject().AddComponent<RunInstructionsMB>();
 		var instructions = ScriptableObject.CreateInstance<MockCoroutineSO>();
+		var runner = new GameObject().AddComponent<CoroutineRunnerMB>();
 		comp.instructions = Reference<IInstructions>.ScriptableObject(instructions);
 		comp.agent = agent;
-		comp.overrideMode = OverrideMode.All;
 
-		instructions.getInstructions = (_, __) => () => null;
+		instructions.getInstructions = _ => _ => null;
 
 		IEnumerator<YieldInstruction> otherRoutine() {
 			yield return new WaitForEndOfFrame();
@@ -346,8 +252,8 @@ public class RunInstructionsMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		comp.StartCoroutine(otherRoutine());
-		comp.Apply();
+		runner.StartCoroutine(otherRoutine());
+		comp.Apply(runner);
 
 		yield return new WaitForEndOfFrame();
 		yield return new WaitForEndOfFrame();
