@@ -47,10 +47,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   instructions:
-    plugins: []
-    useAfterSeconds: 1
-    leaveActiveStateAfterSeconds: 2
-    activeState: 2
+    plugins:
+    - {fileID: 11400000, guid: 916d42a8bc44f124496cc484186a4db9, type: 2}
+    preCastSeconds: 0.5
+    afterCastSeconds: 0.5
     hitter:
       value: {fileID: 11400000, guid: 3b00269755dc0e54ba10e5ffd12a6f2c, type: 2}
     effect:
