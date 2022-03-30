@@ -43,6 +43,7 @@ GameObject:
   - component: {fileID: 1287581793}
   - component: {fileID: 1287581795}
   - component: {fileID: 511523847885116986}
+  - component: {fileID: 511523847885116980}
   m_Layer: 0
   m_Name: CircleLoadouts
   m_TagString: Untagged
@@ -81,6 +82,7 @@ MonoBehaviour:
   callRelease: 0
   listenTo: 04000000
   apply:
+  - value: {fileID: 511523847885116980}
   - value: {fileID: 511523847885116986}
 --- !u!114 &511523847885116986
 MonoBehaviour:
@@ -96,6 +98,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   loadout:
     value: {fileID: 511523847885116985}
+--- !u!114 &511523847885116980
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1287581792}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30b51351f2149a143a1a81e1fb1534ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  handle: {fileID: 8328515223519877874}
+  instructions:
+  - value: {fileID: 1075485441}
 --- !u!1 &1399585302
 GameObject:
   m_ObjectHideFlags: 0
