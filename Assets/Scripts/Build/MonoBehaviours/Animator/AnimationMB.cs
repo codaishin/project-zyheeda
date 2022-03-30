@@ -14,7 +14,7 @@ public interface IAnimationStates
 
 public interface IAnimationStance
 {
-	void Set(Animation.Stance layer, bool value);
+	void Set(Animation.Stance stance, bool value);
 }
 
 public static class Animation

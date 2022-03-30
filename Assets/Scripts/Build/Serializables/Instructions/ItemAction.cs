@@ -1,12 +1,16 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
+
+
+public class TargetPluginData : PluginData
+{
+	public Transform? target;
+}
 
 public struct ItemActionData
 {
 	public Transform transform;
-	public IAnimationStates states;
 	public IHit hitter;
 	public IApplicable<Transform> effect;
 }
@@ -15,11 +19,14 @@ public struct ItemActionData
 [Serializable]
 public class ItemAction : BaseInstructions<ItemActionData>
 {
-	public float useAfterSeconds;
-	public float leaveActiveStateAfterSeconds;
-	public Animation.State activeState;
+	public float preCastSeconds;
+	public float afterCastSeconds;
 	public Reference<IHit> hitter;
 	public Reference<IApplicable<Transform>> effect;
+
+	protected override void ExtendPluginData(PluginData pluginData) {
+		pluginData.Extent<TargetPluginData>();
+	}
 
 	protected override ItemActionData GetConcreteAgent(GameObject agent) {
 		if (this.hitter.Value == null) {
@@ -34,7 +41,6 @@ public class ItemAction : BaseInstructions<ItemActionData>
 		}
 		return new ItemActionData {
 			transform = agent.transform,
-			states = agent.RequireComponent<IAnimationStates>(true),
 			hitter = this.hitter.Value,
 			effect = this.effect.Value,
 		};
@@ -44,39 +50,46 @@ public class ItemAction : BaseInstructions<ItemActionData>
 		ItemActionData agent
 	) {
 
-		IEnumerable<YieldInstruction>? action(PluginData _) {
+		IEnumerable<YieldInstruction>? action(PluginData pluginData) {
 			Transform? target = agent.hitter.Try(agent.transform);
 
 			if (target == null) {
 				return null;
 			}
 
-			return this.Instructions(
-				() => agent.states.Set(this.activeState),
-				() => agent.states.Set(Animation.State.Idle),
-				() => this.effect.Value!.Apply(target)
-			);
+			pluginData.As<TargetPluginData>()!.target = target;
+
+			return this.Instructions(agent, target);
 		}
 
 		return action;
 	}
 
-	private IEnumerable<WaitForSeconds> Instructions(
-		Action animationStart,
-		Action animationEnd,
-		Action use
+	private IEnumerable<YieldInstruction> Instructions(
+		ItemActionData agent,
+		Transform target
 	) {
-		(Action run, float time)[] actions = new (Action, float)[] {
-			(use, this.useAfterSeconds),
-			(animationEnd, this.leaveActiveStateAfterSeconds)
-		};
-		float elapsed = 0f;
+		Func<bool> notElapsed;
 
-		animationStart();
-		foreach ((Action run, float time) in actions.OrderBy(a => a.time)) {
-			yield return new WaitForSeconds(time - elapsed);
-			run();
-			elapsed += time;
+		notElapsed = ItemAction.NotElapsed(this.preCastSeconds);
+		while (notElapsed()) {
+			yield return new WaitForEndOfFrame();
 		}
+
+		agent.effect.Apply(target);
+
+		notElapsed = ItemAction.NotElapsed(this.afterCastSeconds);
+		while (notElapsed()) {
+			yield return new WaitForEndOfFrame();
+		}
+	}
+
+	private static Func<bool> NotElapsed(float time) {
+		float elapsed = 0;
+		return () => {
+			bool notElapsed = elapsed < time;
+			elapsed += Time.deltaTime;
+			return notElapsed;
+		};
 	}
 }
