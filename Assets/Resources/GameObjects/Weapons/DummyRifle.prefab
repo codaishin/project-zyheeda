@@ -49,6 +49,7 @@ MonoBehaviour:
   instructions:
     plugins:
     - {fileID: 11400000, guid: 916d42a8bc44f124496cc484186a4db9, type: 2}
+    - {fileID: 11400000, guid: 092a0d633c41b624da081522d1429185, type: 2}
     preCastSeconds: 0.5
     afterCastSeconds: 0.5
     hitter:
