@@ -6,7 +6,7 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-public class ReleaseApplicablesOnMBTests : TestCollection
+public class ReleaseInstructionsOnMBTests : TestCollection
 {
 	class MockApplyMB : MonoBehaviour, IApplicable<InstructionHandleMB>
 	{

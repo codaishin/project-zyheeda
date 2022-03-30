@@ -1,8 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class ReleaseApplicablesOnMB : MonoBehaviour, IApplicable
+public class ReleaseInstructionsOnMB : MonoBehaviour, IApplicable
 {
 	public InstructionHandleMB? handle;
 
