@@ -10,7 +10,7 @@ public class LoadoutMB : MonoBehaviour, ILoadout, IInstructions
 {
 	public Transform? slot;
 	public AnimationMB? animator;
-	public Reference<IItem>[] items = new Reference<IItem>[0];
+	public Reference<IItemAction>[] items = new Reference<IItemAction>[0];
 
 	private int index = 0;
 

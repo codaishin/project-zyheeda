@@ -4,7 +4,7 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-public class ItemHandleMBTests : TestCollection
+public class ItemActionMBTests : TestCollection
 {
 	private class MockAnimateStates : IAnimationStates, IAnimationStance
 	{
@@ -28,7 +28,7 @@ public class ItemHandleMBTests : TestCollection
 
 	[UnityTest]
 	public IEnumerator SetAnimatorStance() {
-		var item = new GameObject().AddComponent<ItemHandleMB>();
+		var item = new GameObject().AddComponent<ItemActionMB>();
 		var animator = new MockAnimateStates();
 		var called = ((Animation.Stance)(-1), false);
 
@@ -44,7 +44,7 @@ public class ItemHandleMBTests : TestCollection
 
 	[UnityTest]
 	public IEnumerator UnsetAnimatorStance() {
-		var item = new GameObject().AddComponent<ItemHandleMB>();
+		var item = new GameObject().AddComponent<ItemActionMB>();
 		var animator = new MockAnimateStates();
 		var called = ((Animation.Stance)(-1), true);
 
@@ -63,7 +63,7 @@ public class ItemHandleMBTests : TestCollection
 
 	[UnityTest]
 	public IEnumerator SetSlot() {
-		var item = new GameObject().AddComponent<ItemHandleMB>();
+		var item = new GameObject().AddComponent<ItemActionMB>();
 		var slot = new GameObject().transform;
 
 		yield return new WaitForEndOfFrame();
@@ -75,7 +75,7 @@ public class ItemHandleMBTests : TestCollection
 
 	[UnityTest]
 	public IEnumerator Enable() {
-		var item = new GameObject().AddComponent<ItemHandleMB>();
+		var item = new GameObject().AddComponent<ItemActionMB>();
 		var slot = new GameObject().transform;
 
 		item.gameObject.SetActive(false);
@@ -89,7 +89,7 @@ public class ItemHandleMBTests : TestCollection
 
 	[UnityTest]
 	public IEnumerator SetSlotPositionAndRotation() {
-		var item = new GameObject().AddComponent<ItemHandleMB>();
+		var item = new GameObject().AddComponent<ItemActionMB>();
 		var slot = new GameObject().transform;
 
 		slot.position = Vector3.up;
@@ -105,7 +105,7 @@ public class ItemHandleMBTests : TestCollection
 
 	[UnityTest]
 	public IEnumerator SetSlotRetainLossyScale() {
-		var item = new GameObject().AddComponent<ItemHandleMB>();
+		var item = new GameObject().AddComponent<ItemActionMB>();
 		var slot = new GameObject().transform;
 
 		slot.localScale *= 0.1f;
@@ -120,7 +120,7 @@ public class ItemHandleMBTests : TestCollection
 
 	[UnityTest]
 	public IEnumerator ResetParent() {
-		var item = new GameObject().AddComponent<ItemHandleMB>();
+		var item = new GameObject().AddComponent<ItemActionMB>();
 		var slot = new GameObject().transform;
 
 		yield return new WaitForEndOfFrame();
@@ -133,7 +133,7 @@ public class ItemHandleMBTests : TestCollection
 
 	[UnityTest]
 	public IEnumerator Disable() {
-		var item = new GameObject().AddComponent<ItemHandleMB>();
+		var item = new GameObject().AddComponent<ItemActionMB>();
 		var slot = new GameObject().transform;
 
 		yield return new WaitForEndOfFrame();
@@ -147,7 +147,7 @@ public class ItemHandleMBTests : TestCollection
 	[UnityTest]
 	public IEnumerator ResetOldParent() {
 		var parent = new GameObject();
-		var item = new GameObject().AddComponent<ItemHandleMB>();
+		var item = new GameObject().AddComponent<ItemActionMB>();
 		var slot = new GameObject().transform;
 
 		item.transform.parent = parent.transform;

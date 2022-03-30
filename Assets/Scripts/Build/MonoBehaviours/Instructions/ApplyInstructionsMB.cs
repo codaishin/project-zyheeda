@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RunInstructionsMB : MonoBehaviour, IApplicable<CoroutineRunnerMB>
+public class ApplyInstructionsMB :
+	MonoBehaviour,
+	IApplicable<InstructionHandleMB>
 {
 	private InstructionsFunc? instructionsFunc;
 
@@ -23,7 +25,7 @@ public class RunInstructionsMB : MonoBehaviour, IApplicable<CoroutineRunnerMB>
 		return routine.GetEnumerator();
 	}
 
-	public void Apply(CoroutineRunnerMB runner) {
+	public void Apply(InstructionHandleMB runner) {
 		IEnumerator<YieldInstruction?>? newRoutine = this.GetCoroutine(
 			() => runner.IsRunning
 		);
@@ -38,7 +40,7 @@ public class RunInstructionsMB : MonoBehaviour, IApplicable<CoroutineRunnerMB>
 		runner.StartCoroutine(newRoutine);
 	}
 
-	public void Release(CoroutineRunnerMB runner) {
+	public void Release(InstructionHandleMB runner) {
 		if (runner.CurrentSource != this) {
 			return;
 		}

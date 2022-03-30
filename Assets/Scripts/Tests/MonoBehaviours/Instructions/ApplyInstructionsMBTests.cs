@@ -5,7 +5,7 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-public class RunInstructionsMBTests : TestCollection
+public class ApplyInstructionsMBTests : TestCollection
 {
 	class MockCoroutineSO : ScriptableObject, IInstructions
 	{
@@ -20,9 +20,9 @@ public class RunInstructionsMBTests : TestCollection
 	public IEnumerator RunCoroutine() {
 		var called = null as GameObject;
 		var agent = new GameObject();
-		var comp = new GameObject().AddComponent<RunInstructionsMB>();
+		var comp = new GameObject().AddComponent<ApplyInstructionsMB>();
 		var instructions = ScriptableObject.CreateInstance<MockCoroutineSO>();
-		var runner = new GameObject().AddComponent<CoroutineRunnerMB>();
+		var runner = new GameObject().AddComponent<InstructionHandleMB>();
 		comp.instructions = Reference<IInstructions>.ScriptableObject(instructions);
 		comp.agent = agent;
 
@@ -44,9 +44,9 @@ public class RunInstructionsMBTests : TestCollection
 	public IEnumerator RunCoroutineMultipleAtATime() {
 		var called = 0;
 		var agent = new GameObject();
-		var comp = new GameObject().AddComponent<RunInstructionsMB>();
+		var comp = new GameObject().AddComponent<ApplyInstructionsMB>();
 		var instructions = ScriptableObject.CreateInstance<MockCoroutineSO>();
-		var runner = new GameObject().AddComponent<CoroutineRunnerMB>();
+		var runner = new GameObject().AddComponent<InstructionHandleMB>();
 		comp.instructions = Reference<IInstructions>.ScriptableObject(instructions);
 		comp.agent = agent;
 
@@ -69,9 +69,9 @@ public class RunInstructionsMBTests : TestCollection
 	public IEnumerator RunCoroutineTwice() {
 		var called = 0;
 		var agent = new GameObject();
-		var comp = new GameObject().AddComponent<RunInstructionsMB>();
+		var comp = new GameObject().AddComponent<ApplyInstructionsMB>();
 		var instructions = ScriptableObject.CreateInstance<MockCoroutineSO>();
-		var runner = new GameObject().AddComponent<CoroutineRunnerMB>();
+		var runner = new GameObject().AddComponent<InstructionHandleMB>();
 		comp.instructions = Reference<IInstructions>.ScriptableObject(instructions);
 		comp.agent = agent;
 
@@ -98,9 +98,9 @@ public class RunInstructionsMBTests : TestCollection
 	public IEnumerator OverrideAll() {
 		var calledOther = false;
 		var agent = new GameObject();
-		var comp = new GameObject().AddComponent<RunInstructionsMB>();
+		var comp = new GameObject().AddComponent<ApplyInstructionsMB>();
 		var instructions = ScriptableObject.CreateInstance<MockCoroutineSO>();
-		var runner = new GameObject().AddComponent<CoroutineRunnerMB>();
+		var runner = new GameObject().AddComponent<InstructionHandleMB>();
 		comp.instructions = Reference<IInstructions>.ScriptableObject(instructions);
 		comp.agent = agent;
 
@@ -123,8 +123,8 @@ public class RunInstructionsMBTests : TestCollection
 	public IEnumerator Release() {
 		var runChecks = new List<bool>();
 		var agent = new GameObject();
-		var comp = new GameObject().AddComponent<RunInstructionsMB>();
-		var runner = new GameObject().AddComponent<CoroutineRunnerMB>();
+		var comp = new GameObject().AddComponent<ApplyInstructionsMB>();
+		var runner = new GameObject().AddComponent<InstructionHandleMB>();
 		var instructions = ScriptableObject.CreateInstance<MockCoroutineSO>();
 		comp.instructions = Reference<IInstructions>.ScriptableObject(instructions);
 		comp.agent = agent;
@@ -165,9 +165,9 @@ public class RunInstructionsMBTests : TestCollection
 	public IEnumerator ReleaseOnlyOwn() {
 		var runChecks = new List<bool>();
 		var agent = new GameObject();
-		var compA = new GameObject().AddComponent<RunInstructionsMB>();
-		var compB = new GameObject().AddComponent<RunInstructionsMB>();
-		var runner = new GameObject().AddComponent<CoroutineRunnerMB>();
+		var compA = new GameObject().AddComponent<ApplyInstructionsMB>();
+		var compB = new GameObject().AddComponent<ApplyInstructionsMB>();
+		var runner = new GameObject().AddComponent<InstructionHandleMB>();
 		var instructions = ScriptableObject.CreateInstance<MockCoroutineSO>();
 		compA.instructions = Reference<IInstructions>
 			.ScriptableObject(instructions);
@@ -212,9 +212,9 @@ public class RunInstructionsMBTests : TestCollection
 	[UnityTest]
 	public IEnumerator IgnoreNullRoutine() {
 		var agent = new GameObject();
-		var comp = new GameObject().AddComponent<RunInstructionsMB>();
+		var comp = new GameObject().AddComponent<ApplyInstructionsMB>();
 		var instructions = ScriptableObject.CreateInstance<MockCoroutineSO>();
-		var runner = new GameObject().AddComponent<CoroutineRunnerMB>();
+		var runner = new GameObject().AddComponent<InstructionHandleMB>();
 		comp.instructions = Reference<IInstructions>.ScriptableObject(instructions);
 		comp.agent = agent;
 
@@ -233,9 +233,9 @@ public class RunInstructionsMBTests : TestCollection
 	public IEnumerator NoOverrideWhenNullRoutine() {
 		var called = 0;
 		var agent = new GameObject();
-		var comp = new GameObject().AddComponent<RunInstructionsMB>();
+		var comp = new GameObject().AddComponent<ApplyInstructionsMB>();
 		var instructions = ScriptableObject.CreateInstance<MockCoroutineSO>();
-		var runner = new GameObject().AddComponent<CoroutineRunnerMB>();
+		var runner = new GameObject().AddComponent<InstructionHandleMB>();
 		comp.instructions = Reference<IInstructions>.ScriptableObject(instructions);
 		comp.agent = agent;
 

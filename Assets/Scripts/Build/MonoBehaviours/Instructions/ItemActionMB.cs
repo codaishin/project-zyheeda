@@ -6,9 +6,9 @@ public interface IEquipable
 	void UnEquip();
 }
 
-public interface IItem : IEquipable, IInstructions { }
+public interface IItemAction : IEquipable, IInstructions { }
 
-public class ItemHandleMB : BaseInstructionsMB<ItemAction>, IItem
+public class ItemActionMB : BaseInstructionsMB<ItemAction>, IItemAction
 {
 	public Animation.Stance idleStance;
 
