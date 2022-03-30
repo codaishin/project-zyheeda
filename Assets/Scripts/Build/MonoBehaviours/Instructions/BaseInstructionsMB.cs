@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 public class BaseInstructionsMB<TInstructions> :
@@ -13,10 +12,7 @@ public class BaseInstructionsMB<TInstructions> :
 
 	public TInstructions Instructions => this.instructions;
 
-	public InstructionsFunc GetInstructionsFor(
-		GameObject agent,
-		Func<bool>? run = null
-	) {
-		return this.instructions.GetInstructionsFor(agent, run);
+	public InstructionsFunc GetInstructionsFor(GameObject agent) {
+		return this.instructions.GetInstructionsFor(agent);
 	}
 }

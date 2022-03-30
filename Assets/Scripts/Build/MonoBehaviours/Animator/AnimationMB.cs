@@ -1,10 +1,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public interface IAnimationStatesBlend
+{
+	void Blend(Animation.BlendState state, float weight);
+}
+
 public interface IAnimationStates
 {
 	void Set(Animation.State state);
-	void Blend(Animation.BlendState state, float weight);
+
 }
 
 public interface IAnimationStance
@@ -56,7 +61,11 @@ public static class Animation
 	}
 }
 
-public interface IAnimation : IAnimationStates, IAnimationStance { }
+public interface IAnimation :
+	IAnimationStates,
+	IAnimationStance,
+	IAnimationStatesBlend
+{ }
 
 
 [RequireComponent(typeof(Animator))]

@@ -8,42 +8,39 @@ public class BaseInstructionsMBTests : TestCollection
 {
 	class MockInstructions : IInstructions
 	{
-		public Func<GameObject, Func<bool>?, InstructionsFunc> getInstructionsFor =
-			(_, __) => () => null;
+		public Func<GameObject, InstructionsFunc> getInstructionsFor =
+			(_) => _ => null;
 
-		public InstructionsFunc GetInstructionsFor(
-			GameObject agent,
-			Func<bool>? run = null
-		) => this.getInstructionsFor(agent, run);
+		public InstructionsFunc GetInstructionsFor(GameObject agent) =>
+			this.getInstructionsFor(agent);
 	}
 
 	class MockInstructionsMB : BaseInstructionsMB<MockInstructions> { }
 
 	[UnityTest]
 	public IEnumerator GetInstructionsArguments() {
-		var called = (null as GameObject, null as Func<bool>);
+		var called = null as GameObject;
 		var instructionsMB = new GameObject().AddComponent<MockInstructionsMB>();
 		var agent = new GameObject();
-		var run = (Func<bool>)(() => false);
 
-		instructionsMB.Instructions.getInstructionsFor = (agent, run) => {
-			called = (agent, run);
-			return () => null;
+		instructionsMB.Instructions.getInstructionsFor = agent => {
+			called = agent;
+			return _ => null;
 		};
 
 		yield return new WaitForEndOfFrame();
 
-		_ = instructionsMB.GetInstructionsFor(agent, run);
+		_ = instructionsMB.GetInstructionsFor(agent);
 
-		Assert.AreEqual((agent, run), called);
+		Assert.AreEqual(agent, called);
 	}
 
 	[UnityTest]
 	public IEnumerator GetInstructionsFunc() {
 		var instructionsMB = new GameObject().AddComponent<MockInstructionsMB>();
-		var func = (InstructionsFunc)(() => new YieldInstruction[0]);
+		var func = (InstructionsFunc)(_ => new YieldInstruction[0]);
 
-		instructionsMB.Instructions.getInstructionsFor = (_, __) => func;
+		instructionsMB.Instructions.getInstructionsFor = _ => func;
 
 		yield return new WaitForEndOfFrame();
 
