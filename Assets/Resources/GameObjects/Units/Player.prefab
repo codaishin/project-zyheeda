@@ -110,7 +110,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30b51351f2149a143a1a81e1fb1534ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  handle: {fileID: 8328515223519877874}
+  runner:
+    value: {fileID: 8328515223519877874}
   instructions:
   - value: {fileID: 1075485441}
 --- !u!1 &1399585302
@@ -175,7 +176,7 @@ GameObject:
   - component: {fileID: 1075485442}
   - component: {fileID: 1075485441}
   m_Layer: 0
-  m_Name: Shoot
+  m_Name: UseCurrentLoadout
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -225,9 +226,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b4a1b906345a4249a2a3f59c56ea9fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  handle: {fileID: 8328515223519877874}
-  apply:
-  - value: {fileID: 1075485441}
+  runner:
+    value: {fileID: 8328515223519877874}
+  instructions:
+    value: {fileID: 1075485441}
 --- !u!114 &1075485441
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -240,7 +242,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0b172c2cfab6c744b256e6dc958f3a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  instructions:
+  template:
     value: {fileID: 511523847885116985}
   agent:
     gameObject: {fileID: 7584915075398348528}
@@ -352,9 +354,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b4a1b906345a4249a2a3f59c56ea9fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  handle: {fileID: 8328515223519877874}
-  apply:
-  - value: {fileID: 7281231052907152546}
+  runner:
+    value: {fileID: 8328515223519877874}
+  instructions:
+    value: {fileID: 7281231052907152546}
 --- !u!114 &7281231052907152546
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -367,7 +370,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0b172c2cfab6c744b256e6dc958f3a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  instructions:
+  template:
     value: {fileID: 11400000, guid: dc90fcd556d48664c80ab166bdfa2087, type: 2}
   agent:
     gameObject: {fileID: 7584915075398348528}
@@ -500,9 +503,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b4a1b906345a4249a2a3f59c56ea9fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  handle: {fileID: 8328515223519877874}
-  apply:
-  - value: {fileID: 537458123279172361}
+  runner:
+    value: {fileID: 8328515223519877874}
+  instructions:
+    value: {fileID: 537458123279172361}
 --- !u!114 &537458123279172361
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -515,7 +519,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0b172c2cfab6c744b256e6dc958f3a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  instructions:
+  template:
     value: {fileID: 11400000, guid: d42a1e74102d06946a27674dc56c2481, type: 2}
   agent:
     gameObject: {fileID: 7584915075398348528}
@@ -679,9 +683,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b4a1b906345a4249a2a3f59c56ea9fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  handle: {fileID: 8328515223519877874}
-  apply:
-  - value: {fileID: 26538448613842588}
+  runner:
+    value: {fileID: 8328515223519877874}
+  instructions:
+    value: {fileID: 26538448613842588}
 --- !u!114 &26538448613842588
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -694,7 +699,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0b172c2cfab6c744b256e6dc958f3a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  instructions:
+  template:
     value: {fileID: 11400000, guid: 56f212e2f9f9e2b4785eb2c7649aa2cc, type: 2}
   agent:
     gameObject: {fileID: 7584915075398348528}
@@ -709,7 +714,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6288338983254861984}
   m_Layer: 0
-  m_Name: Handles
+  m_Name: Runners
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
