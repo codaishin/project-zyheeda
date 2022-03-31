@@ -21,13 +21,7 @@ public struct PluginCallbacks
 	}
 }
 
-public abstract class BaseInstructionsPluginSO : ScriptableObject
-{
-	public abstract PartialPluginCallbacks GetCallbacks(GameObject agent);
-}
-
-public abstract class BaseInstructionsPluginSO<TAgent, TPluginData> :
-	BaseInstructionsPluginSO
+public abstract class BasePlugin<TAgent, TPluginData> : IPlugin
 {
 	public abstract TAgent GetConcreteAgent(GameObject agent);
 	public abstract TPluginData GetPluginData(PluginData data);
@@ -37,9 +31,7 @@ public abstract class BaseInstructionsPluginSO<TAgent, TPluginData> :
 		TPluginData data
 	);
 
-	public override PartialPluginCallbacks GetCallbacks(
-		GameObject agent
-	) {
+	public PartialPluginCallbacks GetCallbacks(GameObject agent) {
 		TAgent concreteAgent = this.GetConcreteAgent(agent);
 		return data => {
 			TPluginData pluginData = this.GetPluginData(data);

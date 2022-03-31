@@ -1,12 +1,12 @@
 using NUnit.Framework;
 using UnityEngine;
 
-public class AllignForwardWithMovementSOTests : TestCollection
+public class AllignForwardWithMovementTests : TestCollection
 {
 	[Test]
 	public void AllignForwardUp() {
 		var agent = new GameObject();
-		var plugin = ScriptableObject.CreateInstance<AllignForwardWithMovementSO>();
+		var plugin = new AllignForwardWithMovement();
 		var callbacks = plugin.GetCallbacks(agent)(new PluginData());
 
 		callbacks.onAfterYield?.Invoke();
@@ -21,7 +21,7 @@ public class AllignForwardWithMovementSOTests : TestCollection
 	[Test]
 	public void AllignForwardLeft() {
 		var agent = new GameObject();
-		var plugin = ScriptableObject.CreateInstance<AllignForwardWithMovementSO>();
+		var plugin = new AllignForwardWithMovement();
 		var callbacks = plugin.GetCallbacks(agent)(new PluginData());
 
 		callbacks.onAfterYield?.Invoke();
@@ -36,7 +36,7 @@ public class AllignForwardWithMovementSOTests : TestCollection
 	[Test]
 	public void AllignForwardWithMovement() {
 		var agent = new GameObject();
-		var plugin = ScriptableObject.CreateInstance<AllignForwardWithMovementSO>();
+		var plugin = new AllignForwardWithMovement();
 		var callbacks = plugin.GetCallbacks(agent)(new PluginData());
 
 		agent.transform.position = Vector3.up;

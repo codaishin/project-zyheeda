@@ -4,8 +4,32 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-public class BasePluginInstructionSOTests : TestCollection
+public class BasePluginTests : TestCollection
 {
+	class MockPluginData : PluginData { }
+
+	class MockMB : MonoBehaviour { }
+
+	class MockPluginSO : BasePlugin<MockMB, MockPluginData>
+	{
+		public Func<GameObject, MockMB> getConcreteAgent =
+			obj => obj.RequireComponent<MockMB>();
+		public Func<PluginData, MockPluginData> getPLuginData =
+			data => data.As<MockPluginData>()!;
+		public Func<MockMB, MockPluginData, PluginCallbacks> getCallbacks =
+			(_, __) => new PluginCallbacks();
+
+		public override MockMB GetConcreteAgent(GameObject agent) =>
+			this.getConcreteAgent(agent);
+		public override MockPluginData GetPluginData(PluginData data) =>
+			this.getPLuginData(data);
+		protected override PluginCallbacks GetCallbacks(
+			MockMB agent,
+			MockPluginData data
+		) => this.getCallbacks(agent, data);
+	}
+
+
 	[Test]
 	public void PluginCallbacksAdd() {
 		var called = "";
@@ -43,33 +67,11 @@ public class BasePluginInstructionSOTests : TestCollection
 		Assert.AreEqual("ab", called);
 	}
 
-	class MockPluginData : PluginData { }
-	class MockMB : MonoBehaviour { }
-
-	class MockPluginSO : BaseInstructionsPluginSO<MockMB, MockPluginData>
-	{
-		public Func<GameObject, MockMB> getConcreteAgent =
-			obj => obj.RequireComponent<MockMB>();
-		public Func<PluginData, MockPluginData> getPLuginData =
-			data => data.As<MockPluginData>()!;
-		public Func<MockMB, MockPluginData, PluginCallbacks> getCallbacks =
-			(_, __) => new PluginCallbacks();
-
-		public override MockMB GetConcreteAgent(GameObject agent) =>
-			this.getConcreteAgent(agent);
-		public override MockPluginData GetPluginData(PluginData data) =>
-			this.getPLuginData(data);
-		protected override PluginCallbacks GetCallbacks(
-			MockMB agent,
-			MockPluginData data
-		) => this.getCallbacks(agent, data);
-	}
-
 	[UnityTest]
 	public IEnumerator GetConcreteAgent() {
 		var calledAgent = null as GameObject;
 		var calledMB = null as MonoBehaviour;
-		var plugin = ScriptableObject.CreateInstance<MockPluginSO>();
+		var plugin = new MockPluginSO();
 		var mockMB = new GameObject().AddComponent<MockMB>();
 		var agent = new GameObject().AddComponent<MockMB>();
 
@@ -97,7 +99,7 @@ public class BasePluginInstructionSOTests : TestCollection
 	public IEnumerator GetPluginData() {
 		var calledPluginData = null as PluginData;
 		var calledMockPluginData = null as MockPluginData;
-		var plugin = ScriptableObject.CreateInstance<MockPluginSO>();
+		var plugin = new MockPluginSO();
 		var pluginData = new PluginData();
 		var mockPluginData = new MockPluginData();
 		var agent = new GameObject().AddComponent<MockMB>();
@@ -123,7 +125,7 @@ public class BasePluginInstructionSOTests : TestCollection
 	[UnityTest]
 	public IEnumerator ReturnPluginCallbacks() {
 		var called = 0;
-		var plugin = ScriptableObject.CreateInstance<MockPluginSO>();
+		var plugin = new MockPluginSO();
 		var agent = new GameObject().AddComponent<MockMB>();
 		var callbacks = new PluginCallbacks { onBegin = () => ++called };
 

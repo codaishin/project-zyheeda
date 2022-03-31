@@ -4,7 +4,7 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-public class StateAnimationPluginSOTests : TestCollection
+public class StateAnimationTests : TestCollection
 {
 	class MockAnimatorMB : MonoBehaviour, IAnimationStates
 	{
@@ -15,15 +15,15 @@ public class StateAnimationPluginSOTests : TestCollection
 	[UnityTest]
 	public IEnumerator StateOnBegin() {
 		var agent = new GameObject().AddComponent<MockAnimatorMB>();
-		var stance = ScriptableObject.CreateInstance<StateAnimationPluginSO>();
+		var plugin = new StateAnimation();
 		var called = Animation.State.Idle;
 
-		stance.beginState = Animation.State.ShootRifle;
+		plugin.beginState = Animation.State.ShootRifle;
 		agent.set = s => called = s;
 
 		yield return new WaitForEndOfFrame();
 
-		var callbacks = stance.GetCallbacks(agent.gameObject)!;
+		var callbacks = plugin.GetCallbacks(agent.gameObject)!;
 
 		callbacks(new PluginData()).onBegin!();
 
@@ -34,16 +34,16 @@ public class StateAnimationPluginSOTests : TestCollection
 	public IEnumerator StateOnBeginOnChild() {
 		var agent = new GameObject();
 		var child = new GameObject().AddComponent<MockAnimatorMB>();
-		var stance = ScriptableObject.CreateInstance<StateAnimationPluginSO>();
+		var plugin = new StateAnimation();
 		var called = Animation.State.Idle;
 
-		stance.beginState = Animation.State.WalkOrRun;
+		plugin.beginState = Animation.State.WalkOrRun;
 		child.set = s => called = s;
 		child.transform.parent = agent.transform;
 
 		yield return new WaitForEndOfFrame();
 
-		var callbacks = stance.GetCallbacks(agent)!;
+		var callbacks = plugin.GetCallbacks(agent)!;
 
 		callbacks(new PluginData()).onBegin!();
 
@@ -53,15 +53,15 @@ public class StateAnimationPluginSOTests : TestCollection
 	[UnityTest]
 	public IEnumerator StateOnEnd() {
 		var agent = new GameObject().AddComponent<MockAnimatorMB>();
-		var stance = ScriptableObject.CreateInstance<StateAnimationPluginSO>();
+		var plugin = new StateAnimation();
 		var called = Animation.State.WalkOrRun;
 
-		stance.endState = Animation.State.Idle;
+		plugin.endState = Animation.State.Idle;
 		agent.set = s => called = s;
 
 		yield return new WaitForEndOfFrame();
 
-		var callbacks = stance.GetCallbacks(agent.gameObject)!;
+		var callbacks = plugin.GetCallbacks(agent.gameObject)!;
 
 		callbacks(new PluginData()).onEnd!();
 

@@ -1,9 +1,8 @@
+using System;
 using UnityEngine;
 
-[CreateAssetMenu(
-	menuName = "ScriptableObjects/Instructions/Plugins/StateAnimation"
-)]
-public class StateAnimationPluginSO : BaseInstructionsPluginSO<IAnimationStates, PluginData>
+[Serializable]
+public class StateAnimation : BasePlugin<IAnimationStates, PluginData>
 {
 	public Animation.State beginState;
 	public Animation.State endState;
