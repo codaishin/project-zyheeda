@@ -9,7 +9,7 @@ public class FaceTargetPluginSOTests : TestCollection
 	public IEnumerator OnBeginFaceTarget() {
 		var target = new GameObject();
 		var agent = new GameObject();
-		var plugin = ScriptableObject.CreateInstance<FaceTargetPluginSO>();
+		var plugin = new FaceTarget();
 		var data = new TargetPluginData { target = target.transform };
 
 		yield return new WaitForEndOfFrame();
@@ -28,7 +28,7 @@ public class FaceTargetPluginSOTests : TestCollection
 	public IEnumerator OnBeginFaceTargetRelative() {
 		var target = new GameObject();
 		var agent = new GameObject();
-		var plugin = ScriptableObject.CreateInstance<FaceTargetPluginSO>();
+		var plugin = new FaceTarget();
 		var data = new TargetPluginData { target = target.transform };
 
 		yield return new WaitForEndOfFrame();
@@ -47,7 +47,7 @@ public class FaceTargetPluginSOTests : TestCollection
 	[UnityTest]
 	public IEnumerator OnBeginDoesntThrowWhenNoTargetSet() {
 		var agent = new GameObject();
-		var plugin = ScriptableObject.CreateInstance<FaceTargetPluginSO>();
+		var plugin = new FaceTarget();
 		var data = new TargetPluginData();
 
 		yield return new WaitForEndOfFrame();

@@ -22,12 +22,12 @@ public class MoveDynamicTests : TestCollection
 
 	class MockMB : MonoBehaviour { }
 
-	class MockPluginSO : BaseInstructionsPluginSO
+	class MockPluginSO : ScriptableObject, IPlugin
 	{
 		public Func<GameObject, PartialPluginCallbacks> getCallbacks =
 			_ => _ => new PluginCallbacks();
 
-		public override PartialPluginCallbacks GetCallbacks(
+		public PartialPluginCallbacks GetCallbacks(
 			GameObject agent
 		) => this.getCallbacks(agent);
 	}
@@ -323,7 +323,9 @@ public class MoveDynamicTests : TestCollection
 			weight = 200,
 		};
 
-		move.plugins = new MockPluginSO[] { plugin };
+		move.plugins = new Reference<IPlugin>[] {
+			Reference<IPlugin>.ScriptableObject(plugin),
+		};
 
 		plugin.getCallbacks = _ => d => new PluginCallbacks {
 			onAfterYield = () => weights.Add(d.As<CorePluginData>()!.weight)

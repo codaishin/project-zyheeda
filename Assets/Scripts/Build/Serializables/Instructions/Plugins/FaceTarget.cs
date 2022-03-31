@@ -1,11 +1,8 @@
 using System;
 using UnityEngine;
 
-[CreateAssetMenu(
-	menuName = "ScriptableObjects/Instructions/Plugins/FaceTarget"
-)]
-public class FaceTargetPluginSO :
-	BaseInstructionsPluginSO<Transform, TargetPluginData>
+[Serializable]
+public class FaceTarget : BasePlugin<Transform, TargetPluginData>
 {
 	public override Transform GetConcreteAgent(GameObject agent) {
 		return agent.transform;
@@ -20,7 +17,7 @@ public class FaceTargetPluginSO :
 		TargetPluginData data
 	) {
 		return new PluginCallbacks {
-			onBegin = FaceTargetPluginSO.LookAtTarget(agent, data.target),
+			onBegin = FaceTarget.LookAtTarget(agent, data.target),
 		};
 	}
 

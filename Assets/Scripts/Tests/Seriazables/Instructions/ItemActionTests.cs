@@ -18,12 +18,12 @@ public class ItemActionTests : TestCollection
 		}
 	}
 
-	class MockPluginSO : BaseInstructionsPluginSO
+	class MockPluginSO : ScriptableObject, IPlugin
 	{
 		public Action<PluginData> onBegin = _ => { };
 		public Action<PluginData> onEnd = _ => { };
 
-		public override PartialPluginCallbacks GetCallbacks(GameObject agent) {
+		public PartialPluginCallbacks GetCallbacks(GameObject agent) {
 			return data => new PluginCallbacks {
 				onBegin = () => this.onBegin(data),
 				onEnd = () => this.onEnd(data),
@@ -76,7 +76,9 @@ public class ItemActionTests : TestCollection
 		var useItem = new ItemAction {
 			hitter = Reference<IHit>.ScriptableObject(hitter),
 			effect = Reference<IApplicable<Transform>>.Component(effect),
-			plugins = new MockPluginSO[] { plugin },
+			plugins = new Reference<IPlugin>[] {
+				Reference<IPlugin>.ScriptableObject(plugin)
+			},
 		};
 		var run = new GameObject().AddComponent<MockMB>();
 		var agent = new GameObject();
@@ -137,7 +139,9 @@ public class ItemActionTests : TestCollection
 		var useItem = new ItemAction {
 			hitter = Reference<IHit>.ScriptableObject(hitter),
 			effect = Reference<IApplicable<Transform>>.Component(effect),
-			plugins = new MockPluginSO[] { plugin },
+			plugins = new Reference<IPlugin>[] {
+				Reference<IPlugin>.ScriptableObject(plugin)
+			},
 		};
 		var run = new GameObject().AddComponent<MockMB>();
 		var agent = new GameObject();

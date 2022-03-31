@@ -6,12 +6,12 @@ using UnityEngine;
 
 public class BaseInstructionsTests : TestCollection
 {
-	class MockPluginSO : BaseInstructionsPluginSO
+	class MockPluginSO : ScriptableObject, IPlugin
 	{
 		public Func<GameObject, PartialPluginCallbacks> getCallbacks =
 			_ => _ => new PluginCallbacks();
 
-		public override PartialPluginCallbacks GetCallbacks(
+		public PartialPluginCallbacks GetCallbacks(
 			GameObject agent
 		) => this.getCallbacks(agent);
 	}
@@ -93,7 +93,9 @@ public class BaseInstructionsTests : TestCollection
 			ScriptableObject.CreateInstance<MockPluginSO>(),
 		};
 		plugins.ForEach(plugin => plugin.getCallbacks = getCallbacks);
-		instructions.plugins = plugins;
+		instructions.plugins = plugins
+			.Select(Reference<IPlugin>.ScriptableObject)
+			.ToArray();
 
 		var insructions = instructions.GetInstructionsFor(agent)!;
 
@@ -115,7 +117,9 @@ public class BaseInstructionsTests : TestCollection
 			ScriptableObject.CreateInstance<MockPluginSO>(),
 		};
 		plugins.ForEach(pl => pl.getCallbacks = getCallbacks);
-		instructions.plugins = plugins;
+		instructions.plugins = plugins
+			.Select(Reference<IPlugin>.ScriptableObject)
+			.ToArray(); ;
 		instructions.partialInstructions = _ => _ => new YieldInstruction[] {
 			new WaitForEndOfFrame(),
 			new WaitForEndOfFrame(),
@@ -152,7 +156,9 @@ public class BaseInstructionsTests : TestCollection
 			data.Add(d);
 			return new YieldInstruction[0];
 		};
-		instructions.plugins = plugins;
+		instructions.plugins = plugins
+			.Select(Reference<IPlugin>.ScriptableObject)
+			.ToArray(); ;
 		instructions.partialInstructions = _ => _ => new YieldInstruction[] {
 			new WaitForEndOfFrame(),
 			new WaitForEndOfFrame(),
@@ -181,7 +187,9 @@ public class BaseInstructionsTests : TestCollection
 			ScriptableObject.CreateInstance<MockPluginSO>(),
 		};
 		plugins.ForEach(pl => pl.getCallbacks = getCallbacks);
-		instructions.plugins = plugins;
+		instructions.plugins = plugins
+			.Select(Reference<IPlugin>.ScriptableObject)
+			.ToArray(); ;
 		instructions.partialInstructions = _ => _ => new YieldInstruction[] {
 			new WaitForEndOfFrame(),
 			new WaitForEndOfFrame(),
@@ -214,7 +222,9 @@ public class BaseInstructionsTests : TestCollection
 			ScriptableObject.CreateInstance<MockPluginSO>(),
 		};
 		plugins.ForEach(pl => pl.getCallbacks = getCallbacks);
-		instructions.plugins = plugins;
+		instructions.plugins = plugins
+			.Select(Reference<IPlugin>.ScriptableObject)
+			.ToArray(); ;
 		instructions.partialInstructions = _ => _ => new YieldInstruction[] {
 			new WaitForEndOfFrame(),
 			new WaitForEndOfFrame(),
@@ -247,7 +257,9 @@ public class BaseInstructionsTests : TestCollection
 			ScriptableObject.CreateInstance<MockPluginSO>(),
 		};
 		plugins.ForEach(pl => pl.getCallbacks = getCallbacks);
-		instructions.plugins = plugins;
+		instructions.plugins = plugins
+			.Select(Reference<IPlugin>.ScriptableObject)
+			.ToArray(); ;
 		instructions.partialInstructions = _ => _ => new YieldInstruction[] {
 			new WaitForEndOfFrame(),
 			new WaitForEndOfFrame(),
@@ -281,7 +293,9 @@ public class BaseInstructionsTests : TestCollection
 		plugin.getCallbacks = _ => _ => new PluginCallbacks {
 			onEnd = () => ++called
 		};
-		instructions.plugins = new MockPluginSO[] { plugin }; ;
+		instructions.plugins = new Reference<IPlugin>[] {
+			Reference<IPlugin>.ScriptableObject(plugin),
+		};
 		instructions.partialInstructions = _ => instructionFunc;
 
 		var insructions = instructions.GetInstructionsFor(agent);
@@ -313,7 +327,9 @@ public class BaseInstructionsTests : TestCollection
 			onBegin = () => pluginData = d.As<CorePluginData>(),
 			onEnd = () => ++called
 		};
-		instructions.plugins = new MockPluginSO[] { plugin }; ;
+		instructions.plugins = new Reference<IPlugin>[] {
+			Reference<IPlugin>.ScriptableObject(plugin),
+		};
 		instructions.partialInstructions = _ => instructionFunc;
 
 		var insructions = instructions.GetInstructionsFor(agent);
@@ -346,7 +362,9 @@ public class BaseInstructionsTests : TestCollection
 			onBegin = () => pluginData = d.As<CorePluginData>(),
 			onEnd = () => ++called
 		};
-		instructions.plugins = new MockPluginSO[] { plugin }; ;
+		instructions.plugins = new Reference<IPlugin>[] {
+			Reference<IPlugin>.ScriptableObject(plugin),
+		};
 		instructions.partialInstructions = _ => instructionFunc;
 
 		var insructions = instructions.GetInstructionsFor(agent);
@@ -385,7 +403,9 @@ public class BaseInstructionsTests : TestCollection
 		plugin.getCallbacks = _ => d => new PluginCallbacks {
 			onBegin = () => data = d
 		};
-		instructions.plugins = new MockPluginSO[] { plugin };
+		instructions.plugins = new Reference<IPlugin>[] {
+			Reference<IPlugin>.ScriptableObject(plugin),
+		};
 		instructions.extendPluginData = d => d.Extent<MockPluginDataB>();
 
 		var insructions = instructions.GetInstructionsFor(agent);

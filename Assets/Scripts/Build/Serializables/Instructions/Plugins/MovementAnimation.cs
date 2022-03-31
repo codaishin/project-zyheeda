@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public struct MovementAnimators
@@ -6,11 +7,8 @@ public struct MovementAnimators
 	public IAnimationStates states;
 }
 
-[CreateAssetMenu(
-	menuName = "ScriptableObjects/Instructions/Plugins/MovementAnimation"
-)]
-public class MovementAnimationPluginSO :
-	BaseInstructionsPluginSO<MovementAnimators, CorePluginData>
+[Serializable]
+public class MovementAnimation : BasePlugin<MovementAnimators, CorePluginData>
 {
 	public override MovementAnimators GetConcreteAgent(GameObject agent) {
 		return new MovementAnimators {

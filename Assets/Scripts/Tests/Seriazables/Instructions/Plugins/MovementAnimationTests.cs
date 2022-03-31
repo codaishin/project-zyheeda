@@ -4,7 +4,7 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-public class MovementAnimationPluginSOTests : TestCollection
+public class MovementAnimationTests : TestCollection
 {
 	class MockAnimationMB : MonoBehaviour, IAnimationStates, IAnimationStatesBlend
 	{
@@ -22,12 +22,11 @@ public class MovementAnimationPluginSOTests : TestCollection
 		var called = (Animation.State)(-1);
 		var agent = new GameObject().AddComponent<MockAnimationMB>();
 		var pluginData = new CorePluginData();
-		var instructions = ScriptableObject
-			.CreateInstance<MovementAnimationPluginSO>();
+		var plugin = new MovementAnimation();
 
 		agent.set = s => called = s;
 
-		var action = instructions
+		var action = plugin
 			.GetCallbacks(agent.gameObject)(pluginData)
 			.onBegin!;
 
@@ -44,12 +43,12 @@ public class MovementAnimationPluginSOTests : TestCollection
 		var agent = new GameObject();
 		var child = new GameObject().AddComponent<MockAnimationMB>();
 		var pluginData = new CorePluginData();
-		var instructions = ScriptableObject.CreateInstance<MovementAnimationPluginSO>();
+		var plugin = new MovementAnimation();
 
 		child.transform.parent = agent.transform;
 		child.set = s => called = s;
 
-		var action = instructions
+		var action = plugin
 			.GetCallbacks(agent.gameObject)(pluginData)
 			.onBegin!;
 
@@ -65,11 +64,11 @@ public class MovementAnimationPluginSOTests : TestCollection
 		var called = ((Animation.BlendState)(-1), -1f);
 		var agent = new GameObject().AddComponent<MockAnimationMB>();
 		var pluginData = new CorePluginData { weight = 0.324f };
-		var instructions = ScriptableObject.CreateInstance<MovementAnimationPluginSO>();
+		var plugin = new MovementAnimation();
 
 		agent.blend = (state, value) => called = (state, value);
 
-		var action = instructions
+		var action = plugin
 			.GetCallbacks(agent.gameObject)(pluginData)
 			.onBegin!;
 
@@ -85,11 +84,11 @@ public class MovementAnimationPluginSOTests : TestCollection
 		var called = ((Animation.BlendState)(-1), -1f);
 		var agent = new GameObject().AddComponent<MockAnimationMB>();
 		var pluginData = new CorePluginData { weight = 0.111f };
-		var instructions = ScriptableObject.CreateInstance<MovementAnimationPluginSO>();
+		var plugin = new MovementAnimation();
 
 		agent.blend = (state, value) => called = (state, value);
 
-		var action = instructions
+		var action = plugin
 			.GetCallbacks(agent.gameObject)(pluginData)
 			.onAfterYield!;
 
@@ -105,11 +104,11 @@ public class MovementAnimationPluginSOTests : TestCollection
 		var called = (Animation.State)(-1);
 		var agent = new GameObject().AddComponent<MockAnimationMB>();
 		var pluginData = new CorePluginData { weight = 0.324f };
-		var instructions = ScriptableObject.CreateInstance<MovementAnimationPluginSO>();
+		var plugin = new MovementAnimation();
 
 		agent.set = s => called = s;
 
-		var action = instructions
+		var action = plugin
 			.GetCallbacks(agent.gameObject)(pluginData)
 			.onEnd!;
 

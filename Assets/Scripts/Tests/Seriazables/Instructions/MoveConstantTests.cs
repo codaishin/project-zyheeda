@@ -180,12 +180,12 @@ public class MoveConstantTests : TestCollection
 		Assert.AreEqual(Vector3.zero, agent.transform.position);
 	}
 
-	class MockPluginSO : BaseInstructionsPluginSO
+	class MockPluginSO : ScriptableObject, IPlugin
 	{
 		public Func<GameObject, PartialPluginCallbacks> getCallbacks =
 			_ => _ => new PluginCallbacks();
 
-		public override PartialPluginCallbacks GetCallbacks(
+		public PartialPluginCallbacks GetCallbacks(
 			GameObject agent
 		) => this.getCallbacks(agent);
 	}
@@ -201,7 +201,9 @@ public class MoveConstantTests : TestCollection
 		move.hitter = hitSO;
 		move.speed = 1;
 		move.weight = 0.0112f;
-		move.plugins = new MockPluginSO[] { pluginSO };
+		move.plugins = new Reference<IPlugin>[] {
+			Reference<IPlugin>.ScriptableObject(pluginSO)
+		};
 
 		hitSO.getPoint = _ => Vector3.right * 100;
 
