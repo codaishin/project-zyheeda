@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
-public class MoveDynamic : BaseInstructions<Transform>
+public class MoveDynamicTemplate : BaseInstructionsTemplate<Transform>
 {
 	[Serializable]
 	public struct ValueSet

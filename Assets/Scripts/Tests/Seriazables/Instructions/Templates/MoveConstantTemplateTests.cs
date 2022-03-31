@@ -4,7 +4,7 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-public class MoveConstantTests : TestCollection
+public class MoveConstantTemplateTests : TestCollection
 {
 	class MockHitSO : BaseHitSO
 	{
@@ -24,7 +24,7 @@ public class MoveConstantTests : TestCollection
 	[UnityTest]
 	public IEnumerator PassTransformToHitter() {
 		Transform? transform = null;
-		var move = new MoveConstant();
+		var move = new MoveConstantTemplate();
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
 		var agent = new GameObject();
 		var runner = new GameObject().AddComponent<MockMB>();
@@ -43,7 +43,7 @@ public class MoveConstantTests : TestCollection
 
 	[UnityTest]
 	public IEnumerator MoveRight() {
-		var move = new MoveConstant();
+		var move = new MoveConstantTemplate();
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
 		var agent = new GameObject();
 		var runner = new GameObject().AddComponent<MockMB>();
@@ -64,7 +64,7 @@ public class MoveConstantTests : TestCollection
 
 	[UnityTest]
 	public IEnumerator MoveFromOffCenterRight() {
-		var move = new MoveConstant();
+		var move = new MoveConstantTemplate();
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
 		var agent = new GameObject();
 		var runner = new GameObject().AddComponent<MockMB>();
@@ -86,7 +86,7 @@ public class MoveConstantTests : TestCollection
 
 	[UnityTest]
 	public IEnumerator MoveRightTwice() {
-		var move = new MoveConstant();
+		var move = new MoveConstantTemplate();
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
 		var agent = new GameObject();
 		var routineRunner = new GameObject().AddComponent<MockMB>();
@@ -111,7 +111,7 @@ public class MoveConstantTests : TestCollection
 
 	[UnityTest]
 	public IEnumerator MoveRightTwiceFaster() {
-		var move = new MoveConstant();
+		var move = new MoveConstantTemplate();
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
 		var agent = new GameObject();
 		var routineRunner = new GameObject().AddComponent<MockMB>();
@@ -137,7 +137,7 @@ public class MoveConstantTests : TestCollection
 
 	[UnityTest]
 	public IEnumerator NoMoveWhenNoHit() {
-		var move = new MoveConstant();
+		var move = new MoveConstantTemplate();
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
 		var agent = new GameObject();
 		var routineRunner = new GameObject().AddComponent<MockMB>();
@@ -158,7 +158,7 @@ public class MoveConstantTests : TestCollection
 
 	[UnityTest]
 	public IEnumerator StopWhenOnTarget() {
-		var move = new MoveConstant();
+		var move = new MoveConstantTemplate();
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
 		var agent = new GameObject();
 		var routineRunner = new GameObject().AddComponent<MockMB>();
@@ -193,7 +193,7 @@ public class MoveConstantTests : TestCollection
 	[UnityTest]
 	public IEnumerator WeightToPluginDataWeight() {
 		var data = null as CorePluginData;
-		var move = new MoveConstant();
+		var move = new MoveConstantTemplate();
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
 		var agent = new GameObject();
 		var routineRunner = new GameObject().AddComponent<MockMB>();

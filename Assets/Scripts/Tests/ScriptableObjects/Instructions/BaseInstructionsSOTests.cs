@@ -4,7 +4,7 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-public class BaseInstructionsSOTests : TestCollection
+public class BaseInstructionsTemplateSOTests : TestCollection
 {
 	class MockInstructions : IInstructionsTemplate
 	{
@@ -15,7 +15,7 @@ public class BaseInstructionsSOTests : TestCollection
 			this.getInstructionsFor(agent);
 	}
 
-	class MockInstructionsSO : BaseInstructionsSO<MockInstructions> { }
+	class MockInstructionsSO : BaseInstructionsTemplateSO<MockInstructions> { }
 
 	[UnityTest]
 	public IEnumerator GetInstructionsArguments() {
@@ -23,7 +23,7 @@ public class BaseInstructionsSOTests : TestCollection
 		var instructionsSO = ScriptableObject.CreateInstance<MockInstructionsSO>();
 		var agent = new GameObject();
 
-		instructionsSO.Instructions.getInstructionsFor = agent => {
+		instructionsSO.Template.getInstructionsFor = agent => {
 			called = agent;
 			return _ => null;
 		};
@@ -40,7 +40,7 @@ public class BaseInstructionsSOTests : TestCollection
 		var instructionsSO = ScriptableObject.CreateInstance<MockInstructionsSO>();
 		var func = (InstructionsFunc)(_ => new YieldInstruction[0]);
 
-		instructionsSO.Instructions.getInstructionsFor = _ => func;
+		instructionsSO.Template.getInstructionsFor = _ => func;
 
 		yield return new WaitForEndOfFrame();
 

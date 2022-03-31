@@ -8,7 +8,7 @@ using UnityEngine.TestTools;
 
 public class LoadoutMBTests : TestCollection
 {
-	class MockItemHandleMB : MonoBehaviour, IItemAction
+	class MockItemHandleMB : MonoBehaviour, IItem
 	{
 		public Action<IAnimationStance, Transform> equip =
 			(_, __) => { };
@@ -36,8 +36,8 @@ public class LoadoutMBTests : TestCollection
 
 		loadout.slot = slot.transform;
 		loadout.animator = animator;
-		loadout.items = new Reference<IItemAction>[] {
-			Reference<IItemAction>.Component(item),
+		loadout.items = new Reference<IItem>[] {
+			Reference<IItem>.Component(item),
 		};
 		item.equip = (a, s) => {
 			calledAnimator = a;
@@ -65,7 +65,7 @@ public class LoadoutMBTests : TestCollection
 
 		loadout.slot = slot.transform;
 		loadout.animator = animator;
-		loadout.items = items.Select(Reference<IItemAction>.Component).ToArray();
+		loadout.items = items.Select(Reference<IItem>.Component).ToArray();
 		items[0].unEquip = () => ++calledUnEquip;
 		items[1].equip = (a, s) => {
 			calledAnimator = a;
@@ -97,7 +97,7 @@ public class LoadoutMBTests : TestCollection
 
 		loadout.slot = slot.transform;
 		loadout.animator = animator;
-		loadout.items = items.Select(Reference<IItemAction>.Component).ToArray();
+		loadout.items = items.Select(Reference<IItem>.Component).ToArray();
 		items[1].unEquip = () => ++calledUnEquip;
 		items[2].equip = (a, s) => {
 			calledAnimator = a;
@@ -130,7 +130,7 @@ public class LoadoutMBTests : TestCollection
 
 		loadout.slot = slot.transform;
 		loadout.animator = animator;
-		loadout.items = items.Select(Reference<IItemAction>.Component).ToArray();
+		loadout.items = items.Select(Reference<IItem>.Component).ToArray();
 
 		yield return new WaitForEndOfFrame();
 
@@ -163,7 +163,7 @@ public class LoadoutMBTests : TestCollection
 
 		loadout.slot = slot.transform;
 		loadout.animator = animator;
-		loadout.items = items.Select(Reference<IItemAction>.Component).ToArray();
+		loadout.items = items.Select(Reference<IItem>.Component).ToArray();
 
 		yield return new WaitForEndOfFrame();
 
@@ -202,7 +202,7 @@ public class LoadoutMBTests : TestCollection
 
 		loadout.slot = slot.transform;
 		loadout.animator = animator;
-		loadout.items = items.Select(Reference<IItemAction>.Component).ToArray();
+		loadout.items = items.Select(Reference<IItem>.Component).ToArray();
 
 		yield return new WaitForEndOfFrame();
 
@@ -243,7 +243,7 @@ public class LoadoutMBTests : TestCollection
 
 		loadout.slot = slot.transform;
 		loadout.animator = animator;
-		loadout.items = items.Select(Reference<IItemAction>.Component).ToArray();
+		loadout.items = items.Select(Reference<IItem>.Component).ToArray();
 
 		items[0].getInstructions = agent => {
 			++calledA;
@@ -282,7 +282,7 @@ public class LoadoutMBTests : TestCollection
 
 		loadout.slot = slot.transform;
 		loadout.animator = animator;
-		loadout.items = items.Select(Reference<IItemAction>.Component).ToArray();
+		loadout.items = items.Select(Reference<IItem>.Component).ToArray();
 
 		items[0].getInstructions = agent => {
 			++called;
@@ -314,8 +314,8 @@ public class LoadoutMBTests : TestCollection
 			.Select(
 				item =>
 					item != null
-						? Reference<IItemAction>.Component(item)
-						: new Reference<IItemAction>())
+						? Reference<IItem>.Component(item)
+						: new Reference<IItem>())
 			.ToArray();
 
 		yield return new WaitForEndOfFrame();

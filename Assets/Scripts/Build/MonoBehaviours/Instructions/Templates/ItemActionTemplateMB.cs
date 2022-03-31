@@ -6,9 +6,11 @@ public interface IEquipable
 	void UnEquip();
 }
 
-public interface IItemAction : IEquipable, IInstructionsTemplate { }
+public interface IItem : IEquipable, IInstructionsTemplate { }
 
-public class ItemActionMB : BaseInstructionsMB<ItemAction>, IItemAction
+public class ItemActionTemplateMB :
+	BaseInstructionsTemplateMB<ItemActionTemplate>,
+	IItem
 {
 	public Animation.Stance idleStance;
 

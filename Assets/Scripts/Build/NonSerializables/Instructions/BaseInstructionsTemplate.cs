@@ -18,7 +18,7 @@ public class CorePluginData : PluginData
 	public float weight;
 }
 
-public abstract class BaseInstructions<TAgent> : IInstructionsTemplate
+public abstract class BaseInstructionsTemplate<TAgent> : IInstructionsTemplate
 {
 	public Reference<IPlugin>[] plugins = new Reference<IPlugin>[0];
 
@@ -85,7 +85,7 @@ public abstract class BaseInstructions<TAgent> : IInstructionsTemplate
 		Func<bool> runCheck
 	) {
 		IEnumerable<YieldInstruction?> runLoop =
-			BaseInstructions<TAgent>.RunLoop(loop, runCheck);
+			BaseInstructionsTemplate<TAgent>.RunLoop(loop, runCheck);
 
 		pluginCalls.onBegin?.Invoke();
 		foreach (YieldInstruction? hold in runLoop) {

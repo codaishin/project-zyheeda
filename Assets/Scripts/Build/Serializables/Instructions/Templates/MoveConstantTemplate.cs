@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
-public class MoveConstant : BaseInstructions<Transform>
+public class MoveConstantTemplate : BaseInstructionsTemplate<Transform>
 {
 	public BaseHitSO? hitter;
 	public float speed = 1;

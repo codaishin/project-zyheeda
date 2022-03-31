@@ -1,6 +1,6 @@
 using UnityEngine;
 
 [CreateAssetMenu(
-	menuName = "ScripableObjects/Instructions/Plugins/MovementAnimation"
+	menuName = "ScriptableObjects/Instructions/Plugins/MovementAnimation"
 )]
 public class MovementAnimationSO : BasePluginSO<MovementAnimation> { }

@@ -5,7 +5,7 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-public class MoveDynamicTests : TestCollection
+public class MoveDynamicTemplateTests : TestCollection
 {
 	class MockHitSO : BaseHitSO
 	{
@@ -35,7 +35,7 @@ public class MoveDynamicTests : TestCollection
 	[UnityTest]
 	public IEnumerator PassTransformToHitter() {
 		Transform? transform = null;
-		var move = new MoveDynamic();
+		var move = new MoveDynamicTemplate();
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
 		var agent = new GameObject();
 		var runner = new GameObject().AddComponent<MockMB>();
@@ -54,16 +54,16 @@ public class MoveDynamicTests : TestCollection
 
 	[UnityTest]
 	public IEnumerator MoveRight() {
-		var move = new MoveDynamic();
+		var move = new MoveDynamicTemplate();
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
 		var agent = new GameObject();
 		var runner = new GameObject().AddComponent<MockMB>();
 		move.hitter = hitSO;
-		move.min = new MoveDynamic.ValueSet {
+		move.min = new MoveDynamicTemplate.ValueSet {
 			speed = 1,
 			distance = 1,
 		};
-		move.max = new MoveDynamic.ValueSet {
+		move.max = new MoveDynamicTemplate.ValueSet {
 			speed = 1,
 			distance = 1,
 		};
@@ -81,16 +81,16 @@ public class MoveDynamicTests : TestCollection
 
 	[UnityTest]
 	public IEnumerator MoveUpMaxSpeed() {
-		var move = new MoveDynamic();
+		var move = new MoveDynamicTemplate();
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
 		var agent = new GameObject();
 		var runner = new GameObject().AddComponent<MockMB>();
 		move.hitter = hitSO;
-		move.min = new MoveDynamic.ValueSet {
+		move.min = new MoveDynamicTemplate.ValueSet {
 			speed = 1,
 			distance = 1,
 		};
-		move.max = new MoveDynamic.ValueSet {
+		move.max = new MoveDynamicTemplate.ValueSet {
 			speed = 5,
 			distance = 10,
 		};
@@ -108,16 +108,16 @@ public class MoveDynamicTests : TestCollection
 
 	[UnityTest]
 	public IEnumerator MoveLeftMaxSpeedContinuous() {
-		var move = new MoveDynamic();
+		var move = new MoveDynamicTemplate();
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
 		var agent = new GameObject();
 		var runner = new GameObject().AddComponent<MockMB>();
 		move.hitter = hitSO;
-		move.min = new MoveDynamic.ValueSet {
+		move.min = new MoveDynamicTemplate.ValueSet {
 			speed = 1,
 			distance = 1,
 		};
-		move.max = new MoveDynamic.ValueSet {
+		move.max = new MoveDynamicTemplate.ValueSet {
 			speed = 5,
 			distance = 10,
 		};
@@ -145,16 +145,16 @@ public class MoveDynamicTests : TestCollection
 
 	[UnityTest]
 	public IEnumerator MoveChanginPositionMaxSpeedContinuous() {
-		var move = new MoveDynamic();
+		var move = new MoveDynamicTemplate();
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
 		var agent = new GameObject();
 		var runner = new GameObject().AddComponent<MockMB>();
 		move.hitter = hitSO;
-		move.min = new MoveDynamic.ValueSet {
+		move.min = new MoveDynamicTemplate.ValueSet {
 			speed = 1,
 			distance = 1,
 		};
-		move.max = new MoveDynamic.ValueSet {
+		move.max = new MoveDynamicTemplate.ValueSet {
 			speed = 10,
 			distance = 10,
 		};
@@ -186,16 +186,16 @@ public class MoveDynamicTests : TestCollection
 
 	[UnityTest]
 	public IEnumerator MoveChanginPositionUseLastIfCurrentlyNoHit() {
-		var move = new MoveDynamic();
+		var move = new MoveDynamicTemplate();
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
 		var agent = new GameObject();
 		var runner = new GameObject().AddComponent<MockMB>();
 		move.hitter = hitSO;
-		move.min = new MoveDynamic.ValueSet {
+		move.min = new MoveDynamicTemplate.ValueSet {
 			speed = 1,
 			distance = 1,
 		};
-		move.max = new MoveDynamic.ValueSet {
+		move.max = new MoveDynamicTemplate.ValueSet {
 			speed = 5,
 			distance = 10,
 		};
@@ -226,16 +226,16 @@ public class MoveDynamicTests : TestCollection
 
 	[UnityTest]
 	public IEnumerator MoveLeftMinSpeed() {
-		var move = new MoveDynamic();
+		var move = new MoveDynamicTemplate();
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
 		var agent = new GameObject();
 		var runner = new GameObject().AddComponent<MockMB>();
 		move.hitter = hitSO;
-		move.min = new MoveDynamic.ValueSet {
+		move.min = new MoveDynamicTemplate.ValueSet {
 			speed = 1,
 			distance = 500,
 		};
-		move.max = new MoveDynamic.ValueSet {
+		move.max = new MoveDynamicTemplate.ValueSet {
 			speed = 5,
 			distance = 1000,
 		};
@@ -265,16 +265,16 @@ public class MoveDynamicTests : TestCollection
 
 	[UnityTest]
 	public IEnumerator MoveDownMediumSpeed() {
-		var move = new MoveDynamic();
+		var move = new MoveDynamicTemplate();
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
 		var agent = new GameObject();
 		var runner = new GameObject().AddComponent<MockMB>();
 		move.hitter = hitSO;
-		move.min = new MoveDynamic.ValueSet {
+		move.min = new MoveDynamicTemplate.ValueSet {
 			speed = 10,
 			distance = 100,
 		};
-		move.max = new MoveDynamic.ValueSet {
+		move.max = new MoveDynamicTemplate.ValueSet {
 			speed = 20,
 			distance = 1100,
 		};
@@ -306,18 +306,18 @@ public class MoveDynamicTests : TestCollection
 	[UnityTest]
 	public IEnumerator UpdateWeight() {
 		var weights = new List<float>();
-		var move = new MoveDynamic();
+		var move = new MoveDynamicTemplate();
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
 		var plugin = ScriptableObject.CreateInstance<MockPluginSO>();
 		var agent = new GameObject();
 		var runner = new GameObject().AddComponent<MockMB>();
 		move.hitter = hitSO;
-		move.min = new MoveDynamic.ValueSet {
+		move.min = new MoveDynamicTemplate.ValueSet {
 			speed = 10,
 			distance = 100,
 			weight = 42,
 		};
-		move.max = new MoveDynamic.ValueSet {
+		move.max = new MoveDynamicTemplate.ValueSet {
 			speed = 20,
 			distance = 1100,
 			weight = 200,

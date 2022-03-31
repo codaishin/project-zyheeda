@@ -3,7 +3,7 @@ using System.Collections;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
-public class ItemActionTests : TestCollection
+public class ItemActionTemplateTests : TestCollection
 {
 	class MockHitterSO : ScriptableObject, IHit
 	{
@@ -45,7 +45,7 @@ public class ItemActionTests : TestCollection
 		var called = null as Transform;
 		var hitter = ScriptableObject.CreateInstance<MockHitterSO>();
 		var effect = new GameObject().AddComponent<MockEffectMB>();
-		var useItem = new ItemAction {
+		var useItem = new ItemActionTemplate {
 			hitter = Reference<IHit>.ScriptableObject(hitter),
 			effect = Reference<IApplicable<Transform>>.Component(effect),
 		};
@@ -73,7 +73,7 @@ public class ItemActionTests : TestCollection
 		var hitter = ScriptableObject.CreateInstance<MockHitterSO>();
 		var effect = new GameObject().AddComponent<MockEffectMB>();
 		var plugin = ScriptableObject.CreateInstance<MockPluginSO>();
-		var useItem = new ItemAction {
+		var useItem = new ItemActionTemplate {
 			hitter = Reference<IHit>.ScriptableObject(hitter),
 			effect = Reference<IApplicable<Transform>>.Component(effect),
 			plugins = new Reference<IPlugin>[] {
@@ -103,7 +103,7 @@ public class ItemActionTests : TestCollection
 		var called = null as Transform;
 		var hitter = ScriptableObject.CreateInstance<MockHitterSO>();
 		var effect = new GameObject().AddComponent<MockEffectMB>();
-		var useItem = new ItemAction {
+		var useItem = new ItemActionTemplate {
 			hitter = Reference<IHit>.ScriptableObject(hitter),
 			effect = Reference<IApplicable<Transform>>.Component(effect),
 		};
@@ -136,7 +136,7 @@ public class ItemActionTests : TestCollection
 		var hitter = ScriptableObject.CreateInstance<MockHitterSO>();
 		var effect = new GameObject().AddComponent<MockEffectMB>();
 		var plugin = ScriptableObject.CreateInstance<MockPluginSO>();
-		var useItem = new ItemAction {
+		var useItem = new ItemActionTemplate {
 			hitter = Reference<IHit>.ScriptableObject(hitter),
 			effect = Reference<IApplicable<Transform>>.Component(effect),
 			plugins = new Reference<IPlugin>[] {
@@ -171,7 +171,7 @@ public class ItemActionTests : TestCollection
 	public IEnumerator UseFrameUpdate() {
 		var hitter = ScriptableObject.CreateInstance<MockHitterSO>();
 		var effect = new GameObject().AddComponent<MockEffectMB>();
-		var useItem = new ItemAction {
+		var useItem = new ItemActionTemplate {
 			hitter = Reference<IHit>.ScriptableObject(hitter),
 			effect = Reference<IApplicable<Transform>>.Component(effect),
 		};
@@ -196,7 +196,7 @@ public class ItemActionTests : TestCollection
 	public IEnumerator WhenNoHitReturnNull() {
 		var hitter = ScriptableObject.CreateInstance<MockHitterSO>();
 		var effect = new GameObject().AddComponent<MockEffectMB>();
-		var useItem = new ItemAction {
+		var useItem = new ItemActionTemplate {
 			hitter = Reference<IHit>.ScriptableObject(hitter),
 			effect = Reference<IApplicable<Transform>>.Component(effect),
 		};
@@ -213,7 +213,7 @@ public class ItemActionTests : TestCollection
 	[Test]
 	public void ThrowWhenHitterNotSet() {
 		var effect = new GameObject().AddComponent<MockEffectMB>();
-		var useItem = new ItemAction {
+		var useItem = new ItemActionTemplate {
 			effect = Reference<IApplicable<Transform>>.Component(effect),
 		};
 		var agent = new GameObject();
@@ -226,7 +226,7 @@ public class ItemActionTests : TestCollection
 	[Test]
 	public void ThrowWhenEffectNotSet() {
 		var hitter = ScriptableObject.CreateInstance<MockHitterSO>();
-		var useItem = new ItemAction {
+		var useItem = new ItemActionTemplate {
 			hitter = Reference<IHit>.ScriptableObject(hitter),
 		};
 		var agent = new GameObject();
@@ -241,7 +241,7 @@ public class ItemActionTests : TestCollection
 		var called = null as object;
 		var hitter = ScriptableObject.CreateInstance<MockHitterSO>();
 		var effect = new GameObject().AddComponent<MockEffectMB>();
-		var useItem = new ItemAction {
+		var useItem = new ItemActionTemplate {
 			hitter = Reference<IHit>.ScriptableObject(hitter),
 			effect = Reference<IApplicable<Transform>>.Component(effect),
 		};

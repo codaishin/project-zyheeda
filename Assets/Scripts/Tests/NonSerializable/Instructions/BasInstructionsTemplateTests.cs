@@ -4,7 +4,7 @@ using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
 
-public class BaseInstructionsTests : TestCollection
+public class BaseInstructionsTemplateTests : TestCollection
 {
 	class MockPluginSO : ScriptableObject, IPlugin
 	{
@@ -16,7 +16,7 @@ public class BaseInstructionsTests : TestCollection
 		) => this.getCallbacks(agent);
 	}
 
-	class MockInstructions : BaseInstructions<Transform>
+	class MockInstructions : BaseInstructionsTemplate<Transform>
 	{
 		public Func<GameObject, Transform> getConcreteAgent =
 			agent => agent.transform;

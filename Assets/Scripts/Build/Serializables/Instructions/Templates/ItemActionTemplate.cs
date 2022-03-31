@@ -17,7 +17,7 @@ public struct ItemActionData
 
 
 [Serializable]
-public class ItemAction : BaseInstructions<ItemActionData>
+public class ItemActionTemplate : BaseInstructionsTemplate<ItemActionData>
 {
 	public float preCastSeconds;
 	public float afterCastSeconds;
@@ -71,14 +71,14 @@ public class ItemAction : BaseInstructions<ItemActionData>
 	) {
 		Func<bool> notElapsed;
 
-		notElapsed = ItemAction.NotElapsed(this.preCastSeconds);
+		notElapsed = ItemActionTemplate.NotElapsed(this.preCastSeconds);
 		while (notElapsed()) {
 			yield return new WaitForEndOfFrame();
 		}
 
 		agent.effect.Apply(target);
 
-		notElapsed = ItemAction.NotElapsed(this.afterCastSeconds);
+		notElapsed = ItemActionTemplate.NotElapsed(this.afterCastSeconds);
 		while (notElapsed()) {
 			yield return new WaitForEndOfFrame();
 		}
