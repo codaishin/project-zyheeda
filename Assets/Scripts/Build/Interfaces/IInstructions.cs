@@ -1,6 +1,8 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public interface IInstructions
 {
-	InstructionsFunc GetInstructionsFor(GameObject agent);
+	IEnumerator<YieldInstruction?>? GetInstructions(Func<bool> run);
 }
