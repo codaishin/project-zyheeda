@@ -9,19 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 75a1dfbcdbac1c24cad5967949092f6a, type: 3}
-  m_Name: WalkOrRunToMouse
+  m_Script: {fileID: 11500000, guid: 46715968de352294dbaefbc0713a6f88, type: 3}
+  m_Name: RunToMouse
   m_EditorClassIdentifier: 
-  instructions:
+  template:
     plugins:
     - value: {fileID: 11400000, guid: aa435f6ef9bfffa409a9c7306b58f253, type: 2}
     - value: {fileID: 11400000, guid: 3a4adbab139152542b6a7712055a4ced, type: 2}
     hitter: {fileID: 11400000, guid: 9370508409fd36d43b04301710bbfee6, type: 2}
-    min:
-      distance: 1
-      speed: 1.5
-      weight: 0
-    max:
-      distance: 3
-      speed: 3
-      weight: 1
+    speed: 3
+    weight: 1
