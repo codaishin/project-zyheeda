@@ -6,7 +6,7 @@ using UnityEngine.TestTools;
 
 public class BaseInstructionsSOTests : TestCollection
 {
-	class MockInstructions : IInstructions
+	class MockInstructions : IInstructionsTemplate
 	{
 		public Func<GameObject, InstructionsFunc> getInstructionsFor =
 			_ => _ => null;

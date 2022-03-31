@@ -2,9 +2,9 @@ using UnityEngine;
 
 public abstract class BaseInstructionsSO<TInstructions> :
 	ScriptableObject,
-	IInstructions
+	IInstructionsTemplate
 	where TInstructions :
-		IInstructions,
+		IInstructionsTemplate,
 		new()
 {
 	[SerializeField]

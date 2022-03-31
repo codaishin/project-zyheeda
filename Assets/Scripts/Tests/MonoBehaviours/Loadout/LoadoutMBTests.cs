@@ -157,7 +157,7 @@ public class LoadoutMBTests : TestCollection
 		};
 		var slot = new GameObject();
 		var animator = new GameObject().AddComponent<AnimationMB>();
-		var runner = new GameObject().AddComponent<InstructionHandleMB>();
+		var runner = new GameObject().AddComponent<InstructionsRunMB>();
 		var calledAgent = null as GameObject;
 		var agent = new GameObject();
 
@@ -196,7 +196,7 @@ public class LoadoutMBTests : TestCollection
 		};
 		var slot = new GameObject();
 		var animator = new GameObject().AddComponent<AnimationMB>();
-		var runner = new GameObject().AddComponent<InstructionHandleMB>();
+		var runner = new GameObject().AddComponent<InstructionsRunMB>();
 		var calledAgent = null as GameObject;
 		var agent = new GameObject();
 
@@ -236,7 +236,7 @@ public class LoadoutMBTests : TestCollection
 		};
 		var slot = new GameObject();
 		var animator = new GameObject().AddComponent<AnimationMB>();
-		var runner = new GameObject().AddComponent<InstructionHandleMB>();
+		var runner = new GameObject().AddComponent<InstructionsRunMB>();
 		var calledA = 0;
 		var calledB = 0;
 		var agent = new GameObject();
@@ -276,7 +276,7 @@ public class LoadoutMBTests : TestCollection
 		};
 		var slot = new GameObject();
 		var animator = new GameObject().AddComponent<AnimationMB>();
-		var runner = new GameObject().AddComponent<InstructionHandleMB>();
+		var runner = new GameObject().AddComponent<InstructionsRunMB>();
 		var called = 0;
 		var agent = new GameObject();
 
@@ -305,7 +305,7 @@ public class LoadoutMBTests : TestCollection
 		var items = new MockItemHandleMB?[] { null, null };
 		var slot = new GameObject();
 		var animator = new GameObject().AddComponent<AnimationMB>();
-		var runner = new GameObject().AddComponent<InstructionHandleMB>();
+		var runner = new GameObject().AddComponent<InstructionsRunMB>();
 		var agent = new GameObject();
 
 		loadout.slot = slot.transform;

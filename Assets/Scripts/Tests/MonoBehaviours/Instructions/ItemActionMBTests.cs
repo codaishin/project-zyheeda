@@ -17,7 +17,7 @@ public class ItemActionMBTests : TestCollection
 			this.setStance(stance, value);
 	}
 
-	private class MockInstructionsMB : MonoBehaviour, IInstructions
+	private class MockInstructionsMB : MonoBehaviour, IInstructionsTemplate
 	{
 		public Func<GameObject, InstructionsFunc> getInstructionsFor =
 			_ => _ => new YieldInstruction[0];

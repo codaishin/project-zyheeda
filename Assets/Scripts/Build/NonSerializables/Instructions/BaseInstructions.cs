@@ -18,7 +18,7 @@ public class CorePluginData : PluginData
 	public float weight;
 }
 
-public abstract class BaseInstructions<TAgent> : IInstructions
+public abstract class BaseInstructions<TAgent> : IInstructionsTemplate
 {
 	public Reference<IPlugin>[] plugins = new Reference<IPlugin>[0];
 

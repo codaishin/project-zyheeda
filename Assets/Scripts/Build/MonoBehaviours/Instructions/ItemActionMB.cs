@@ -6,7 +6,7 @@ public interface IEquipable
 	void UnEquip();
 }
 
-public interface IItemAction : IEquipable, IInstructions { }
+public interface IItemAction : IEquipable, IInstructionsTemplate { }
 
 public class ItemActionMB : BaseInstructionsMB<ItemAction>, IItemAction
 {

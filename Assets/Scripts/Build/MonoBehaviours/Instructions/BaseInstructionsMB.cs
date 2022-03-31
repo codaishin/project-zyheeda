@@ -2,9 +2,9 @@ using UnityEngine;
 
 public class BaseInstructionsMB<TInstructions> :
 	MonoBehaviour,
-	IInstructions
+	IInstructionsTemplate
 	where TInstructions :
-		IInstructions,
+		IInstructionsTemplate,
 		new()
 {
 	[SerializeField]
