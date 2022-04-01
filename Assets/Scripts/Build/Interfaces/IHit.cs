@@ -1,7 +1,8 @@
+using System;
 using UnityEngine;
 
 public interface IHit
 {
-	T? Try<T>(T source) where T : Component;
-	Vector3? TryPoint(Transform source);
+	Func<T?> Try<T>(GameObject source) where T : Component;
+	Func<Vector3?> TryPoint(GameObject source);
 }

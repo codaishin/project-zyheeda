@@ -2,36 +2,46 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-[Serializable]
-public class MoveConstantTemplate : BaseInstructionsTemplate<Transform>
+public struct MovementData
 {
-	public BaseHitSO? hitter;
+	public Transform transform;
+	public Func<Vector3?> getTarget;
+}
+
+[Serializable]
+public class MoveConstantTemplate : BaseInstructionsTemplate<MovementData>
+{
+	public Reference<IHit> hitter;
 	public float speed = 1;
 	public float weight = 1;
 
-	protected override Transform GetConcreteAgent(GameObject agent) {
-		return agent.transform;
+	protected override MovementData GetConcreteAgent(GameObject agent) {
+		return new MovementData {
+			transform = agent.transform,
+			getTarget = this.hitter.Value!.TryPoint(agent),
+		};
 	}
 
 	protected override PartialInstructionFunc PartialInstructions(
-		Transform agent
+		MovementData agent
 	) {
 		return data => this.Move(agent, data);
 	}
 
 	private IEnumerable<WaitForEndOfFrame> Move(
-		Transform transform,
+		MovementData agent,
 		PluginData data
 	) {
-		Vector3? point = this.hitter!.TryPoint(transform);
+		Vector3? target = agent.getTarget();
+		Transform transform = agent.transform;
 
 		data.As<CorePluginData>()!.weight = this.weight;
-		if (!point.HasValue) {
+		if (!target.HasValue) {
 			yield break;
 		}
-		while (transform.position != point.Value) {
+		while (transform.position != target.Value) {
 			yield return new WaitForEndOfFrame();
-			transform.position = this.MoveTowards(transform.position, point.Value);
+			transform.position = this.MoveTowards(transform.position, target.Value);
 		}
 	}
 

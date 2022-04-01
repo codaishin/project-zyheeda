@@ -1,13 +1,16 @@
+using System;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "ScriptableObjects/Hitters/Source")]
-public class HitSourceSO : BaseHitSO
+public class HitSourceSO : ScriptableObject, IHit
 {
-	public override T? Try<T>(T source) where T : class {
-		return source;
+	public Func<T?> Try<T>(GameObject source) where T : Component {
+		T component = source.GetComponent<T>();
+		return () => component;
 	}
 
-	public override Vector3? TryPoint(Transform source) {
-		return source.position;
+	public Func<Vector3?> TryPoint(GameObject source) {
+		Transform transform = source.transform;
+		return () => transform.position;
 	}
 }

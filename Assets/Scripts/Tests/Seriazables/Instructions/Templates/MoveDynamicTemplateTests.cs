@@ -7,16 +7,16 @@ using UnityEngine.TestTools;
 
 public class MoveDynamicTemplateTests : TestCollection
 {
-	class MockHitSO : BaseHitSO
+	class MockHitSO : ScriptableObject, IHit
 	{
-		public Func<Transform, Vector3?> getPoint = _ => null;
+		public Func<GameObject, Vector3?> getPoint = _ => null;
 
-		public override Vector3? TryPoint(Transform source) {
-			return this.getPoint(source);
+		public Func<T?> Try<T>(GameObject source) where T : Component {
+			throw new NotImplementedException();
 		}
 
-		public override T? Try<T>(T source) where T : class {
-			throw new NotImplementedException();
+		public Func<Vector3?> TryPoint(GameObject source) {
+			return () => this.getPoint(source);
 		}
 	}
 
@@ -33,14 +33,14 @@ public class MoveDynamicTemplateTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator PassTransformToHitter() {
-		Transform? transform = null;
+	public IEnumerator PassAgentToHitter() {
+		var calledAgent = null as GameObject;
 		var move = new MoveDynamicTemplate();
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
 		var agent = new GameObject();
 		var runner = new GameObject().AddComponent<MockMB>();
-		move.hitter = hitSO;
-		hitSO.getPoint = t => { transform = t; return null; };
+		move.hitter = Reference<IHit>.ScriptableObject(hitSO);
+		hitSO.getPoint = a => { calledAgent = a; return null; };
 
 		yield return new WaitForEndOfFrame();
 
@@ -49,7 +49,7 @@ public class MoveDynamicTemplateTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		Assert.AreSame(agent.transform, transform);
+		Assert.AreSame(agent, calledAgent);
 	}
 
 	[UnityTest]
@@ -58,7 +58,7 @@ public class MoveDynamicTemplateTests : TestCollection
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
 		var agent = new GameObject();
 		var runner = new GameObject().AddComponent<MockMB>();
-		move.hitter = hitSO;
+		move.hitter = Reference<IHit>.ScriptableObject(hitSO);
 		move.min = new MoveDynamicTemplate.ValueSet {
 			speed = 1,
 			distance = 1,
@@ -85,7 +85,7 @@ public class MoveDynamicTemplateTests : TestCollection
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
 		var agent = new GameObject();
 		var runner = new GameObject().AddComponent<MockMB>();
-		move.hitter = hitSO;
+		move.hitter = Reference<IHit>.ScriptableObject(hitSO);
 		move.min = new MoveDynamicTemplate.ValueSet {
 			speed = 1,
 			distance = 1,
@@ -112,7 +112,7 @@ public class MoveDynamicTemplateTests : TestCollection
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
 		var agent = new GameObject();
 		var runner = new GameObject().AddComponent<MockMB>();
-		move.hitter = hitSO;
+		move.hitter = Reference<IHit>.ScriptableObject(hitSO);
 		move.min = new MoveDynamicTemplate.ValueSet {
 			speed = 1,
 			distance = 1,
@@ -149,7 +149,7 @@ public class MoveDynamicTemplateTests : TestCollection
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
 		var agent = new GameObject();
 		var runner = new GameObject().AddComponent<MockMB>();
-		move.hitter = hitSO;
+		move.hitter = Reference<IHit>.ScriptableObject(hitSO);
 		move.min = new MoveDynamicTemplate.ValueSet {
 			speed = 1,
 			distance = 1,
@@ -190,7 +190,7 @@ public class MoveDynamicTemplateTests : TestCollection
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
 		var agent = new GameObject();
 		var runner = new GameObject().AddComponent<MockMB>();
-		move.hitter = hitSO;
+		move.hitter = Reference<IHit>.ScriptableObject(hitSO);
 		move.min = new MoveDynamicTemplate.ValueSet {
 			speed = 1,
 			distance = 1,
@@ -230,7 +230,7 @@ public class MoveDynamicTemplateTests : TestCollection
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
 		var agent = new GameObject();
 		var runner = new GameObject().AddComponent<MockMB>();
-		move.hitter = hitSO;
+		move.hitter = Reference<IHit>.ScriptableObject(hitSO);
 		move.min = new MoveDynamicTemplate.ValueSet {
 			speed = 1,
 			distance = 500,
@@ -269,7 +269,7 @@ public class MoveDynamicTemplateTests : TestCollection
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
 		var agent = new GameObject();
 		var runner = new GameObject().AddComponent<MockMB>();
-		move.hitter = hitSO;
+		move.hitter = Reference<IHit>.ScriptableObject(hitSO);
 		move.min = new MoveDynamicTemplate.ValueSet {
 			speed = 10,
 			distance = 100,
@@ -311,7 +311,7 @@ public class MoveDynamicTemplateTests : TestCollection
 		var plugin = ScriptableObject.CreateInstance<MockPluginSO>();
 		var agent = new GameObject();
 		var runner = new GameObject().AddComponent<MockMB>();
-		move.hitter = hitSO;
+		move.hitter = Reference<IHit>.ScriptableObject(hitSO);
 		move.min = new MoveDynamicTemplate.ValueSet {
 			speed = 10,
 			distance = 100,
