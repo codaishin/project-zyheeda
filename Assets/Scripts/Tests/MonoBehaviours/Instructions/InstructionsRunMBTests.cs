@@ -315,4 +315,33 @@ public class InstructionsRunMBTests : TestCollection
 
 		Assert.AreEqual(2, called);
 	}
+
+	[UnityTest]
+	public IEnumerator ReleaseInstructionsDelayedOneFrame() {
+		var called = 0;
+		var handle = new GameObject().AddComponent<InstructionsRunMB>();
+		var source = new MockGetInstructions();
+
+		handle.delayApply = true;
+
+		IEnumerator<YieldInstruction> getInstructions(Func<bool> run) {
+			while (run()) {
+				yield return new WaitForEndOfFrame();
+				++called;
+			}
+		}
+
+		source.getInstructions = getInstructions;
+
+		yield return new WaitForEndOfFrame();
+
+		handle.Apply(source);
+		handle.Release(source);
+
+		yield return new WaitForEndOfFrame();
+		yield return new WaitForEndOfFrame();
+		yield return new WaitForEndOfFrame();
+
+		Assert.AreEqual(1, called);
+	}
 }

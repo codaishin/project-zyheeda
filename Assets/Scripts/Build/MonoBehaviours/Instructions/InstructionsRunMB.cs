@@ -17,15 +17,22 @@ public class InstructionsRunMB : MonoBehaviour, IApplicable<IInstructions>
 		this.StopCoroutine(this.currentlyRunning);
 	}
 
-	private void DelaydApply(IInstructions source) {
-		IEnumerator<YieldInstruction> delay() {
+	private Action<IInstructions> Delay(Action<IInstructions> action) {
+		IEnumerator<YieldInstruction> delay(IInstructions source) {
 			yield return new WaitForEndOfFrame();
-			this.ImmediateApply(source);
+			action(source);
 		}
-		this.StartCoroutine(delay());
+		return source => this.StartCoroutine(delay(source));
 	}
 
-	private void ImmediateApply(IInstructions source) {
+	private void NowOrDelay(Action<IInstructions> action, IInstructions source) {
+		action = this.delayApply
+			? this.Delay(action)
+			: action;
+		action(source);
+	}
+
+	private void ApplyNew(IInstructions source) {
 		IEnumerator<YieldInstruction?>? instructions =
 			source.GetInstructions(() => this.isRunning);
 
@@ -39,17 +46,18 @@ public class InstructionsRunMB : MonoBehaviour, IApplicable<IInstructions>
 		this.currentlyRunning = this.StartCoroutine(instructions);
 	}
 
-	public void Apply(IInstructions source) {
-		Action apply = this.delayApply
-			? () => this.DelaydApply(source)
-			: () => this.ImmediateApply(source);
-		apply();
-	}
-
-	public void Release(IInstructions source) {
+	private void ReleaseIfCurrentlyRunning(IInstructions source) {
 		if (this.currentSource != source) {
 			return;
 		}
 		this.isRunning = false;
+	}
+
+	public void Apply(IInstructions source) {
+		this.NowOrDelay(this.ApplyNew, source);
+	}
+
+	public void Release(IInstructions source) {
+		this.NowOrDelay(this.ReleaseIfCurrentlyRunning, source);
 	}
 }
