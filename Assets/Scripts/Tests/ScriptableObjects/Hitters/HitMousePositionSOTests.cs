@@ -95,12 +95,14 @@ public class HitMousePositionSOTests : TestCollection
 		this.camera!.transform.position = Vector3.up;
 		this.camera!.transform.LookAt(new Vector3(1, 0, 1));
 
+		plane.AddComponent<MockMB>();
+
 		yield return new WaitForEndOfFrame();
 		yield return new WaitForEndOfFrame();
 
 		var hit = hitMouseSO.Try<MockMB>(this.DefaultMockMB.gameObject);
 
-		Assert.AreSame(plane.transform, hit());
+		Assert.AreSame(plane.RequireComponent<MockMB>(), hit());
 	}
 
 	[UnityTest]
