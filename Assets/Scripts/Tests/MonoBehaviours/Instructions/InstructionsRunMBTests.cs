@@ -257,6 +257,7 @@ public class InstructionsRunMBTests : TestCollection
 
 		Assert.AreEqual(3, called);
 	}
+
 	[UnityTest]
 	public IEnumerator NotInterferingWithOtherCoroutines() {
 		var called = 0;
@@ -282,5 +283,36 @@ public class InstructionsRunMBTests : TestCollection
 		yield return new WaitForEndOfFrame();
 
 		Assert.AreEqual(1, called);
+	}
+
+	[UnityTest]
+	public IEnumerator ApplyInstructionsDelayedOneFrame() {
+		var called = 0;
+		var handle = new GameObject().AddComponent<InstructionsRunMB>();
+		var source = new MockGetInstructions();
+
+		handle.delayApply = true;
+
+		IEnumerator<YieldInstruction> getInstructions(Func<bool> _) {
+			++called;
+			yield return new WaitForEndOfFrame();
+			++called;
+		}
+
+		source.getInstructions = getInstructions;
+
+		yield return new WaitForEndOfFrame();
+
+		handle.Apply(source);
+
+		Assert.AreEqual(0, called);
+
+		yield return new WaitForEndOfFrame();
+
+		Assert.AreEqual(1, called);
+
+		yield return new WaitForEndOfFrame();
+
+		Assert.AreEqual(2, called);
 	}
 }

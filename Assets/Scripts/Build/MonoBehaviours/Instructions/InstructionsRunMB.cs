@@ -1,8 +1,11 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class InstructionsRunMB : MonoBehaviour, IApplicable<IInstructions>
 {
+	public bool delayApply = false;
+
 	private bool isRunning;
 	private IInstructions? currentSource;
 	private Coroutine? currentlyRunning;
@@ -14,7 +17,15 @@ public class InstructionsRunMB : MonoBehaviour, IApplicable<IInstructions>
 		this.StopCoroutine(this.currentlyRunning);
 	}
 
-	public void Apply(IInstructions source) {
+	private void DelaydApply(IInstructions source) {
+		IEnumerator<YieldInstruction> delay() {
+			yield return new WaitForEndOfFrame();
+			this.ImmediateApply(source);
+		}
+		this.StartCoroutine(delay());
+	}
+
+	private void ImmediateApply(IInstructions source) {
 		IEnumerator<YieldInstruction?>? instructions =
 			source.GetInstructions(() => this.isRunning);
 
@@ -26,6 +37,13 @@ public class InstructionsRunMB : MonoBehaviour, IApplicable<IInstructions>
 		this.isRunning = true;
 		this.currentSource = source;
 		this.currentlyRunning = this.StartCoroutine(instructions);
+	}
+
+	public void Apply(IInstructions source) {
+		Action apply = this.delayApply
+			? () => this.DelaydApply(source)
+			: () => this.ImmediateApply(source);
+		apply();
 	}
 
 	public void Release(IInstructions source) {
