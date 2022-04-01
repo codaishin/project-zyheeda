@@ -80,7 +80,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inputConfigSO: {fileID: 11400000, guid: cc25959ff6fb7d24bb7768115be8703c, type: 2}
   callRelease: 0
-  listenTo: 04000000
+  listenTo: 4
   apply:
   - value: {fileID: 511523847885116980}
   - value: {fileID: 511523847885116986}
@@ -211,7 +211,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inputConfigSO: {fileID: 11400000, guid: cc25959ff6fb7d24bb7768115be8703c, type: 2}
   callRelease: 0
-  listenTo: 05000000
+  listenTo: 5
   apply:
   - value: {fileID: 1075485442}
 --- !u!114 &1075485442
@@ -339,7 +339,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inputConfigSO: {fileID: 11400000, guid: cc25959ff6fb7d24bb7768115be8703c, type: 2}
   callRelease: 1
-  listenTo: 02000000
+  listenTo: 2
   apply:
   - value: {fileID: 8654607563464264433}
 --- !u!114 &8654607563464264433
@@ -488,7 +488,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inputConfigSO: {fileID: 11400000, guid: cc25959ff6fb7d24bb7768115be8703c, type: 2}
   callRelease: 0
-  listenTo: 01000000
+  listenTo: 1
   apply:
   - value: {fileID: 4557019240897075603}
 --- !u!114 &4557019240897075603
@@ -668,7 +668,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inputConfigSO: {fileID: 11400000, guid: cc25959ff6fb7d24bb7768115be8703c, type: 2}
   callRelease: 0
-  listenTo: 00000000
+  listenTo: 0
   apply:
   - value: {fileID: 4840711209905504144}
 --- !u!114 &4840711209905504144
