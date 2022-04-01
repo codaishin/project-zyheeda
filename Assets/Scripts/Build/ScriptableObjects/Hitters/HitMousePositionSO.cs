@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 [CreateAssetMenu(menuName = "ScriptableObjects/Hitters/MousePosition")]
-public class HitMousePositionSO : BaseHitSO
+public class HitMousePositionSO : ScriptableObject, IHit
 {
 	public ReferenceSO? cameraSO;
 	public BaseInputConfigSO? inputConfigSO;
@@ -33,13 +33,13 @@ public class HitMousePositionSO : BaseHitSO
 			: Physics.Raycast(origin, direction, out hit, infinity, this.constraint);
 	}
 
-	public override T? Try<T>(T source) where T : class =>
+	public Func<T?> Try<T>(GameObject _) where T : Component => () =>
 		this.Try(out RaycastHit hit) && hit.transform.TryGetComponent(out T target)
 			? target
 			: null;
 
 
-	public override Vector3? TryPoint(Transform source) =>
+	public Func<Vector3?> TryPoint(GameObject _) => () =>
 		this.Try(out RaycastHit hit)
 			? hit.point
 			: null;

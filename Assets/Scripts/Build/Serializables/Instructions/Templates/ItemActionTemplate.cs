@@ -11,7 +11,7 @@ public class TargetPluginData : PluginData
 public struct ItemActionData
 {
 	public Transform transform;
-	public IHit hitter;
+	public Func<Transform?> getTarget;
 	public IApplicable<Transform> effect;
 }
 
@@ -41,7 +41,7 @@ public class ItemActionTemplate : BaseInstructionsTemplate<ItemActionData>
 		}
 		return new ItemActionData {
 			transform = agent.transform,
-			hitter = this.hitter.Value,
+			getTarget = this.hitter.Value!.Try<Transform>(agent),
 			effect = this.effect.Value,
 		};
 	}
@@ -49,9 +49,8 @@ public class ItemActionTemplate : BaseInstructionsTemplate<ItemActionData>
 	protected override PartialInstructionFunc PartialInstructions(
 		ItemActionData agent
 	) {
-
 		IEnumerable<YieldInstruction>? action(PluginData pluginData) {
-			Transform? target = agent.hitter.Try(agent.transform);
+			Transform? target = agent.getTarget();
 
 			if (target == null) {
 				return null;

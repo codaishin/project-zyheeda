@@ -7,14 +7,14 @@ public class ItemActionTemplateTests : TestCollection
 {
 	class MockHitterSO : ScriptableObject, IHit
 	{
-		public Func<object, object?> tryComponent = _ => null;
+		public Func<GameObject, Component?> tryComponent = _ => null;
 
-		public T? Try<T>(T source) where T : Component {
-			return (T?)(this.tryComponent(source) ?? null);
+		public Func<T?> Try<T>(GameObject source) where T : Component {
+			return () => (T?)(this.tryComponent(source) ?? null);
 		}
 
-		public Vector3? TryPoint(Transform source) {
-			throw new System.NotImplementedException();
+		public Func<Vector3?> TryPoint(GameObject source) {
+			throw new NotImplementedException();
 		}
 	}
 
@@ -238,7 +238,7 @@ public class ItemActionTemplateTests : TestCollection
 
 	[UnityTest]
 	public IEnumerator HitterCalledWithAgentTransform() {
-		var called = null as object;
+		var called = null as GameObject;
 		var hitter = ScriptableObject.CreateInstance<MockHitterSO>();
 		var effect = new GameObject().AddComponent<MockEffectMB>();
 		var useItem = new ItemActionTemplate {
@@ -248,7 +248,7 @@ public class ItemActionTemplateTests : TestCollection
 		var run = new GameObject().AddComponent<MockMB>();
 		var agent = new GameObject();
 
-		hitter.tryComponent = t => { called = t; return t; };
+		hitter.tryComponent = t => { called = t; return t.transform; };
 
 		yield return new WaitForEndOfFrame();
 
@@ -257,6 +257,6 @@ public class ItemActionTemplateTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		Assert.AreSame(agent.transform, called);
+		Assert.AreSame(agent, called);
 	}
 }

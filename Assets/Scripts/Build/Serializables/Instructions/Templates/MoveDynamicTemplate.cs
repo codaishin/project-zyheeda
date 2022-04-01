@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
-public class MoveDynamicTemplate : BaseInstructionsTemplate<Transform>
+public class MoveDynamicTemplate : BaseInstructionsTemplate<MovementData>
 {
 	[Serializable]
 	public struct ValueSet
@@ -13,33 +13,45 @@ public class MoveDynamicTemplate : BaseInstructionsTemplate<Transform>
 		public float weight;
 	}
 
-	public BaseHitSO? hitter;
+	public Reference<IHit> hitter;
 	public ValueSet min;
 	public ValueSet max;
 
-	protected override Transform GetConcreteAgent(GameObject agent) {
-		return agent.transform;
+	protected override MovementData GetConcreteAgent(GameObject agent) {
+		return new MovementData {
+			transform = agent.transform,
+			getTarget = this.hitter.Value!.TryPoint(agent),
+		};
 	}
 
 	protected override PartialInstructionFunc PartialInstructions(
-		Transform agent
+		MovementData agent
 	) {
 		return data => this.Move(agent, data);
 	}
 
-	private IEnumerable<YieldInstruction> Move(Transform agent, PluginData data) {
+	private IEnumerable<YieldInstruction> Move(
+		MovementData agent,
+		PluginData data
+	) {
 		Vector3 target = agent.transform.position;
+		Transform transform = agent.transform;
+		CorePluginData corePluginData = data.As<CorePluginData>()!;
 		do {
 			yield return new WaitForEndOfFrame();
-			target = this.hitter!.TryPoint(agent) ?? target;
-			this.MoveFrame(agent, data, target);
-		} while (agent.position != target);
+			target = agent.getTarget() ?? target;
+			this.MoveFrame(transform, corePluginData, target);
+		} while (transform.position != target);
 	}
 
-	private void MoveFrame(Transform agent, PluginData data, Vector3 target) {
-		float lerp = this.GetLerp(agent.position, target);
-		agent.position = this.MoveTowards(agent.position, target, lerp);
-		data.As<CorePluginData>()!.weight = this.GetWeight(lerp);
+	private void MoveFrame(
+		Transform transform,
+		CorePluginData corePluginData,
+		Vector3 target
+	) {
+		float lerp = this.GetLerp(transform.position, target);
+		transform.position = this.MoveTowards(transform.position, target, lerp);
+		corePluginData.weight = this.GetWeight(lerp);
 	}
 
 	private Vector3 MoveTowards(Vector3 current, Vector3 target, float lerp) {

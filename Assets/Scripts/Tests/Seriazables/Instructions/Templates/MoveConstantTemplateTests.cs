@@ -6,15 +6,15 @@ using UnityEngine.TestTools;
 
 public class MoveConstantTemplateTests : TestCollection
 {
-	class MockHitSO : BaseHitSO
+	class MockHitSO : ScriptableObject, IHit
 	{
-		public Func<Transform, Vector3?> getPoint = _ => null;
+		public Func<GameObject, Vector3?> getPoint = _ => null;
 
-		public override Vector3? TryPoint(Transform source) {
-			return this.getPoint(source);
+		public Func<Vector3?> TryPoint(GameObject source) {
+			return () => this.getPoint(source);
 		}
 
-		public override T? Try<T>(T source) where T : class {
+		public Func<T?> Try<T>(GameObject source) where T : Component {
 			throw new NotImplementedException();
 		}
 	}
@@ -22,15 +22,16 @@ public class MoveConstantTemplateTests : TestCollection
 	class MockMB : MonoBehaviour { }
 
 	[UnityTest]
-	public IEnumerator PassTransformToHitter() {
-		Transform? transform = null;
-		var move = new MoveConstantTemplate();
+	public IEnumerator PassAgentToHitter() {
+		var calledAgent = null as GameObject;
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
+		var move = new MoveConstantTemplate {
+			hitter = Reference<IHit>.ScriptableObject(hitSO),
+		};
 		var agent = new GameObject();
 		var runner = new GameObject().AddComponent<MockMB>();
 		var getRoutine = move.GetInstructionsFor(agent)!;
-		move.hitter = hitSO;
-		hitSO.getPoint = t => { transform = t; return null; };
+		hitSO.getPoint = a => { calledAgent = a; return null; };
 
 		yield return new WaitForEndOfFrame();
 
@@ -38,17 +39,18 @@ public class MoveConstantTemplateTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		Assert.AreSame(agent.transform, transform);
+		Assert.AreSame(agent, calledAgent);
 	}
 
 	[UnityTest]
 	public IEnumerator MoveRight() {
-		var move = new MoveConstantTemplate();
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
 		var agent = new GameObject();
 		var runner = new GameObject().AddComponent<MockMB>();
+		var move = new MoveConstantTemplate {
+			hitter = Reference<IHit>.ScriptableObject(hitSO),
+		};
 		var getRoutine = move.GetInstructionsFor(agent)!;
-		move.hitter = hitSO;
 		hitSO.getPoint = _ => Vector3.right;
 
 		yield return new WaitForEndOfFrame();
@@ -64,12 +66,13 @@ public class MoveConstantTemplateTests : TestCollection
 
 	[UnityTest]
 	public IEnumerator MoveFromOffCenterRight() {
-		var move = new MoveConstantTemplate();
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
+		var move = new MoveConstantTemplate {
+			hitter = Reference<IHit>.ScriptableObject(hitSO),
+		};
 		var agent = new GameObject();
 		var runner = new GameObject().AddComponent<MockMB>();
 		var getRoutine = move.GetInstructionsFor(agent)!;
-		move.hitter = hitSO;
 		hitSO.getPoint = _ => new Vector3(1, 1, 0);
 		agent.transform.position = new Vector3(1, 0, 0);
 
@@ -86,12 +89,13 @@ public class MoveConstantTemplateTests : TestCollection
 
 	[UnityTest]
 	public IEnumerator MoveRightTwice() {
-		var move = new MoveConstantTemplate();
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
+		var move = new MoveConstantTemplate {
+			hitter = Reference<IHit>.ScriptableObject(hitSO),
+		};
 		var agent = new GameObject();
 		var routineRunner = new GameObject().AddComponent<MockMB>();
 		var getRoutine = move.GetInstructionsFor(agent)!;
-		move.hitter = hitSO;
 		hitSO.getPoint = _ => Vector3.right;
 
 		yield return new WaitForEndOfFrame();
@@ -111,13 +115,14 @@ public class MoveConstantTemplateTests : TestCollection
 
 	[UnityTest]
 	public IEnumerator MoveRightTwiceFaster() {
-		var move = new MoveConstantTemplate();
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
+		var move = new MoveConstantTemplate {
+			hitter = Reference<IHit>.ScriptableObject(hitSO),
+			speed = 2f,
+		};
 		var agent = new GameObject();
 		var routineRunner = new GameObject().AddComponent<MockMB>();
 		var getRoutine = move.GetInstructionsFor(agent)!;
-		move.hitter = hitSO;
-		move.speed = 2f;
 		hitSO.getPoint = _ => Vector3.right;
 
 		yield return new WaitForEndOfFrame();
@@ -137,13 +142,14 @@ public class MoveConstantTemplateTests : TestCollection
 
 	[UnityTest]
 	public IEnumerator NoMoveWhenNoHit() {
-		var move = new MoveConstantTemplate();
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
+		var move = new MoveConstantTemplate {
+			hitter = Reference<IHit>.ScriptableObject(hitSO),
+			speed = 2f,
+		};
 		var agent = new GameObject();
 		var routineRunner = new GameObject().AddComponent<MockMB>();
 		var getRoutine = move.GetInstructionsFor(agent)!;
-		move.hitter = hitSO;
-		move.speed = 2f;
 		hitSO.getPoint = _ => null;
 		agent.transform.position = Vector3.up;
 
@@ -158,13 +164,14 @@ public class MoveConstantTemplateTests : TestCollection
 
 	[UnityTest]
 	public IEnumerator StopWhenOnTarget() {
-		var move = new MoveConstantTemplate();
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
+		var move = new MoveConstantTemplate {
+			hitter = Reference<IHit>.ScriptableObject(hitSO),
+			speed = float.MaxValue,
+		};
 		var agent = new GameObject();
 		var routineRunner = new GameObject().AddComponent<MockMB>();
 		var getRoutine = move.GetInstructionsFor(agent)!;
-		move.hitter = hitSO;
-		move.speed = float.MaxValue;
 		hitSO.getPoint = _ => Vector3.right;
 
 		yield return new WaitForEndOfFrame();
@@ -193,17 +200,18 @@ public class MoveConstantTemplateTests : TestCollection
 	[UnityTest]
 	public IEnumerator WeightToPluginDataWeight() {
 		var data = null as CorePluginData;
-		var move = new MoveConstantTemplate();
 		var hitSO = ScriptableObject.CreateInstance<MockHitSO>();
+		var pluginSO = ScriptableObject.CreateInstance<MockPluginSO>();
+		var move = new MoveConstantTemplate {
+			hitter = Reference<IHit>.ScriptableObject(hitSO),
+			speed = 1f,
+			weight = 0.0112f,
+			plugins = new Reference<IPlugin>[] {
+				Reference<IPlugin>.ScriptableObject(pluginSO)
+			},
+		};
 		var agent = new GameObject();
 		var routineRunner = new GameObject().AddComponent<MockMB>();
-		var pluginSO = ScriptableObject.CreateInstance<MockPluginSO>();
-		move.hitter = hitSO;
-		move.speed = 1;
-		move.weight = 0.0112f;
-		move.plugins = new Reference<IPlugin>[] {
-			Reference<IPlugin>.ScriptableObject(pluginSO)
-		};
 
 		hitSO.getPoint = _ => Vector3.right * 100;
 

@@ -67,7 +67,9 @@ public class HitMousePositionSOTests : TestCollection
 		yield return new WaitForEndOfFrame();
 		yield return new WaitForEndOfFrame();
 
-		Assert.Null(hitMouseSO.Try(this.DefaultMockMB.transform));
+		var hit = hitMouseSO.Try<MockMB>(this.DefaultMockMB.gameObject);
+
+		Assert.Null(hit());
 	}
 
 	[UnityTest]
@@ -79,11 +81,13 @@ public class HitMousePositionSOTests : TestCollection
 		yield return new WaitForEndOfFrame();
 		yield return new WaitForEndOfFrame();
 
-		Assert.Null(hitMouseSO.TryPoint(this.DefaultMockMB.transform));
+		var hit = hitMouseSO.TryPoint(this.DefaultMockMB.gameObject);
+
+		Assert.Null(hit());
 	}
 
 	[UnityTest]
-	public IEnumerator HitTarget() {
+	public IEnumerator HitTargetComponent() {
 		var hitMouseSO = ScriptableObject.CreateInstance<HitMousePositionSO>();
 		var plane = GameObject.CreatePrimitive(PrimitiveType.Plane);
 		hitMouseSO.cameraSO = this.cameraRef;
@@ -94,10 +98,26 @@ public class HitMousePositionSOTests : TestCollection
 		yield return new WaitForEndOfFrame();
 		yield return new WaitForEndOfFrame();
 
-		Assert.AreSame(
-			plane.transform,
-			hitMouseSO.Try(this.DefaultMockMB.transform)
-		);
+		var hit = hitMouseSO.Try<MockMB>(this.DefaultMockMB.gameObject);
+
+		Assert.AreSame(plane.transform, hit());
+	}
+
+	[UnityTest]
+	public IEnumerator HitTargetTransform() {
+		var hitMouseSO = ScriptableObject.CreateInstance<HitMousePositionSO>();
+		var plane = GameObject.CreatePrimitive(PrimitiveType.Plane);
+		hitMouseSO.cameraSO = this.cameraRef;
+		hitMouseSO.inputConfigSO = this.inputConfSO;
+		this.camera!.transform.position = Vector3.up;
+		this.camera!.transform.LookAt(new Vector3(1, 0, 1));
+
+		yield return new WaitForEndOfFrame();
+		yield return new WaitForEndOfFrame();
+
+		var hit = hitMouseSO.Try<Transform>(this.DefaultMockMB.gameObject);
+
+		Assert.AreSame(plane.transform, hit());
 	}
 
 	[UnityTest]
@@ -113,7 +133,8 @@ public class HitMousePositionSOTests : TestCollection
 		yield return new WaitForEndOfFrame();
 
 		var expected = new Vector3(1, 0, 1);
-		var actual = hitMouseSO.TryPoint(this.DefaultMockMB.transform);
+		var hit = hitMouseSO.TryPoint(this.DefaultMockMB.gameObject);
+		var actual = hit();
 
 		if (actual == null) {
 			Assert.Fail("hit nothing");
@@ -140,7 +161,9 @@ public class HitMousePositionSOTests : TestCollection
 		yield return new WaitForEndOfFrame();
 		yield return new WaitForEndOfFrame();
 
-		Assert.Null(hitMouseSO.Try(this.DefaultMockMB.transform));
+		var hit = hitMouseSO.Try<MockMB>(this.DefaultMockMB.gameObject);
+
+		Assert.Null(hit());
 	}
 
 	[UnityTest]
@@ -158,7 +181,9 @@ public class HitMousePositionSOTests : TestCollection
 		yield return new WaitForEndOfFrame();
 		yield return new WaitForEndOfFrame();
 
-		Assert.Null(hitMouseSO.TryPoint(this.DefaultMockMB.transform));
+		var hit = hitMouseSO.TryPoint(this.DefaultMockMB.gameObject);
+
+		Assert.Null(hit());
 	}
 
 	[UnityTest]
@@ -176,10 +201,9 @@ public class HitMousePositionSOTests : TestCollection
 		yield return new WaitForEndOfFrame();
 		yield return new WaitForEndOfFrame();
 
-		Assert.AreSame(
-			plane.transform,
-			hitMouseSO.Try(this.DefaultMockMB.transform)
-		);
+		var hit = hitMouseSO.Try<Transform>(this.DefaultMockMB.gameObject);
+
+		Assert.AreSame(plane.transform, hit());
 	}
 
 	[UnityTest]
@@ -198,7 +222,8 @@ public class HitMousePositionSOTests : TestCollection
 		yield return new WaitForEndOfFrame();
 
 		var expected = new Vector3(1, 0, 1);
-		var actual = hitMouseSO.TryPoint(this.DefaultMockMB.transform);
+		var hit = hitMouseSO.TryPoint(this.DefaultMockMB.gameObject);
+		var actual = hit();
 
 		if (actual == null) {
 			Assert.Fail("hit nothing");
