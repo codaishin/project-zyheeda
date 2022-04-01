@@ -67,7 +67,7 @@ public class InputListenerMBTests : TestCollection
 			Reference<IApplicable>.Component(apply),
 		};
 		mb.inputConfigSO = so;
-		mb.listenTo = new InputEnum.Action[] { InputEnum.Action.Walk };
+		mb.listenTo = InputEnum.Action.Walk;
 		so.actions.Values.ForEach(a => a.Enable());
 
 		yield return new WaitForEndOfFrame();
@@ -91,7 +91,7 @@ public class InputListenerMBTests : TestCollection
 			Reference<IApplicable>.Component(apply),
 		};
 		mb.inputConfigSO = so;
-		mb.listenTo = new InputEnum.Action[] { InputEnum.Action.Run };
+		mb.listenTo = InputEnum.Action.Run;
 		so.actions.Values.ForEach(a => a.Enable());
 
 		yield return new WaitForEndOfFrame();
@@ -115,7 +115,7 @@ public class InputListenerMBTests : TestCollection
 			Reference<IApplicable>.Component(apply),
 		};
 		mb.inputConfigSO = so;
-		mb.listenTo = new InputEnum.Action[] { InputEnum.Action.Walk };
+		mb.listenTo = InputEnum.Action.Walk;
 		so.actions.Values.ForEach(a => a.Enable());
 
 		yield return new WaitForEndOfFrame();
@@ -156,7 +156,7 @@ public class InputListenerMBTests : TestCollection
 			Reference<IApplicable>.Component(apply),
 		};
 		mb.inputConfigSO = so;
-		mb.listenTo = new InputEnum.Action[] { InputEnum.Action.Walk };
+		mb.listenTo = InputEnum.Action.Walk;
 		mb.callRelease = true;
 		so.actions.Values.ForEach(a => a.Enable());
 
@@ -188,7 +188,7 @@ public class InputListenerMBTests : TestCollection
 		};
 		mb.apply = apply.Select(Reference<IApplicable>.Component).ToArray();
 		mb.inputConfigSO = so;
-		mb.listenTo = new InputEnum.Action[] { InputEnum.Action.Walk };
+		mb.listenTo = InputEnum.Action.Walk;
 		mb.callRelease = true;
 		so.actions.Values.ForEach(a => a.Enable());
 
@@ -222,7 +222,7 @@ public class InputListenerMBTests : TestCollection
 		};
 		mb.apply = apply.Select(Reference<IApplicable>.Component).ToArray();
 		mb.inputConfigSO = so;
-		mb.listenTo = new InputEnum.Action[] { InputEnum.Action.Walk };
+		mb.listenTo = InputEnum.Action.Walk;
 		mb.callRelease = false;
 		so.actions.Values.ForEach(a => a.Enable());
 

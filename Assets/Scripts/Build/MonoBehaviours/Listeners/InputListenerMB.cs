@@ -6,7 +6,7 @@ public class InputListenerMB : BaseListenerMB
 {
 	public BaseInputConfigSO? inputConfigSO;
 	public bool callRelease = false;
-	public InputEnum.Action[] listenTo = new InputEnum.Action[0];
+	public InputEnum.Action listenTo;
 	public Reference<IApplicable>[] apply = new Reference<IApplicable>[0];
 
 	private InputAction? input;
@@ -31,34 +31,26 @@ public class InputListenerMB : BaseListenerMB
 	}
 
 	private void InvokeOnRelease(InputAction.CallbackContext _) {
-		if (!this.callRelease || this.releaseAll is null) {
+		if (this.callRelease is false || this.releaseAll is null) {
 			return;
 		}
 		this.releaseAll();
 	}
 
-	private static Action GetApply(IApplicable applicable) {
-		return applicable.Apply;
-	}
-
-	private static Action GetRelease(IApplicable applicable) {
-		return applicable.Release;
-	}
-
-	private static Action ConcatActions(Action? fst, Action snd) {
-		return fst + snd;
-	}
-
 	protected override void Start() {
-		this.input = this.inputConfigSO![this.listenTo[0]];
+		Action getApply(IApplicable applicable) => applicable.Apply;
+		Action getRelease(IApplicable applicable) => applicable.Release;
+		Action concat(Action? fst, Action snd) => fst + snd;
+
+		this.input = this.inputConfigSO![this.listenTo];
 		this.applyAll = this.apply
 			.Values()
-			.Select(InputListenerMB.GetApply)
-			.Aggregate(null as Action, InputListenerMB.ConcatActions);
+			.Select(getApply)
+			.Aggregate(null as Action, concat);
 		this.releaseAll = this.apply
 			.Values()
-			.Select(InputListenerMB.GetRelease)
-			.Aggregate(null as Action, InputListenerMB.ConcatActions);
+			.Select(getRelease)
+			.Aggregate(null as Action, concat);
 		base.Start();
 	}
 }
