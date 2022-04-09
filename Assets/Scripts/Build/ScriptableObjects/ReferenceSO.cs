@@ -1,16 +1,21 @@
+using System;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "ScriptableObjects/Reference")]
 public class ReferenceSO : ScriptableObject
 {
-	private GameObject? target;
+	private GameObject? gameObject;
 
 	public GameObject GameObject {
-		get => this.target ?? throw this.NullError();
-		set => this.target = value;
+		get => this.gameObject ?? throw this.NotSetException();
+		set => this.gameObject = value;
 	}
 
-	public bool IsSet => this.target != null;
+	private NullReferenceException NotSetException() {
+		return new NullReferenceException($"{this} is not set with a GameObject");
+	}
 
-	public void Clear() => this.target = null;
+	public bool IsSet => this.gameObject != null;
+
+	public void Clear() => this.gameObject = null;
 }

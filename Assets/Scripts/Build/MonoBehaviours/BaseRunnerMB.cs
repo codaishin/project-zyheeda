@@ -11,7 +11,7 @@ public abstract class BaseRunnerMB<TBeginnable> :
 	private TBeginnable? value;
 
 	public TBeginnable Value {
-		get => this.value ?? throw this.NullError();
+		get => this.value!;
 		set => this.value = value;
 	}
 
