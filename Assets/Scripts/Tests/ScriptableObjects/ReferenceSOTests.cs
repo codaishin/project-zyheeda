@@ -1,3 +1,4 @@
+using System;
 using NUnit.Framework;
 using UnityEngine;
 
@@ -9,7 +10,7 @@ public class ReferenceSOTests : TestCollection
 		reference.GameObject = new GameObject("obj");
 		reference.Clear();
 
-		Assert.Throws<WasNullException>(() => _ = reference.GameObject);
+		Assert.Throws<NullReferenceException>(() => _ = reference.GameObject);
 	}
 
 	[Test]

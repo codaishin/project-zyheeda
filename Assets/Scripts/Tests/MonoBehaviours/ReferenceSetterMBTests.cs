@@ -87,6 +87,6 @@ public class ReferenceSetterMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		Assert.Throws<WasNullException>(() => _ = referenceSO.GameObject);
+		Assert.Throws<NullReferenceException>(() => _ = referenceSO.GameObject);
 	}
 }
