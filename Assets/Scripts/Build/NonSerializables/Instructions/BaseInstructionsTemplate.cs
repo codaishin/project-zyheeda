@@ -94,9 +94,8 @@ public abstract class BaseInstructionsTemplate<TAgent> : IInstructionsTemplate
 
 		pluginHooks.onBegin?.Invoke();
 		foreach (YieldInstruction? hold in run) {
-			pluginHooks.onBeforeYield?.Invoke();
 			yield return hold;
-			pluginHooks.onAfterYield?.Invoke();
+			pluginHooks.onUpdate?.Invoke();
 		}
 		pluginHooks.onEnd?.Invoke();
 	}

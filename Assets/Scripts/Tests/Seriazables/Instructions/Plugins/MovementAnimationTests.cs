@@ -90,7 +90,7 @@ public class MovementAnimationTests : TestCollection
 
 		var action = plugin
 			.PluginHooksFor(agent.gameObject)(pluginData)
-			.onAfterYield!;
+			.onUpdate!;
 
 		yield return new WaitForEndOfFrame();
 

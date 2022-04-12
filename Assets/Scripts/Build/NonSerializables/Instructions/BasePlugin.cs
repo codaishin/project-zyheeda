@@ -4,8 +4,7 @@ using UnityEngine;
 public struct PluginHooks
 {
 	public Action? onBegin;
-	public Action? onBeforeYield;
-	public Action? onAfterYield;
+	public Action? onUpdate;
 	public Action? onEnd;
 
 	public static PluginHooks Concat(
@@ -14,8 +13,7 @@ public struct PluginHooks
 	) {
 		return new PluginHooks {
 			onBegin = fst.onBegin + snd.onBegin,
-			onBeforeYield = fst.onBeforeYield + snd.onBeforeYield,
-			onAfterYield = fst.onAfterYield + snd.onAfterYield,
+			onUpdate = fst.onUpdate + snd.onUpdate,
 			onEnd = fst.onEnd + snd.onEnd,
 		};
 	}

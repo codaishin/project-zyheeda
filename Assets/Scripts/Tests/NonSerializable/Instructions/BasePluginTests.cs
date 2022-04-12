@@ -35,14 +35,12 @@ public class BasePluginTests : TestCollection
 		var called = "";
 		var a = new PluginHooks() {
 			onBegin = () => called += "a",
-			onBeforeYield = () => called += "a",
-			onAfterYield = () => called += "a",
+			onUpdate = () => called += "a",
 			onEnd = () => called += "a",
 		};
 		var b = new PluginHooks() {
 			onBegin = () => called += "b",
-			onBeforeYield = () => called += "b",
-			onAfterYield = () => called += "b",
+			onUpdate = () => called += "b",
 			onEnd = () => called += "b",
 		};
 		var c = PluginHooks.Concat(a, b);
@@ -52,12 +50,7 @@ public class BasePluginTests : TestCollection
 		Assert.AreEqual("ab", called);
 
 		called = "";
-		c.onBeforeYield?.Invoke();
-
-		Assert.AreEqual("ab", called);
-
-		called = "";
-		c.onAfterYield?.Invoke();
+		c.onUpdate?.Invoke();
 
 		Assert.AreEqual("ab", called);
 

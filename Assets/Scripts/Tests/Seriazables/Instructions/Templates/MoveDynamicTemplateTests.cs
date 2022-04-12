@@ -328,7 +328,7 @@ public class MoveDynamicTemplateTests : TestCollection
 		};
 
 		plugin.getCallbacks = _ => d => new PluginHooks {
-			onAfterYield = () => weights.Add(d.As<CorePluginData>()!.weight)
+			onUpdate = () => weights.Add(d.As<CorePluginData>()!.weight)
 		};
 
 		yield return new WaitForEndOfFrame();

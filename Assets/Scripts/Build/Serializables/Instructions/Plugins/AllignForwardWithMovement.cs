@@ -24,6 +24,6 @@ public class AllignForwardWithMovement : BasePlugin<Transform, PluginData>
 			}
 			agent.forward = agent.position - lastPosition;
 		};
-		return new PluginHooks { onAfterYield = setDirection + trackPosition };
+		return new PluginHooks { onUpdate = setDirection + trackPosition };
 	}
 }

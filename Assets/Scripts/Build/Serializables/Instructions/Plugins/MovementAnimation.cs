@@ -30,7 +30,7 @@ public class MovementAnimation : BasePlugin<MovementAnimators, CorePluginData>
 				agent.states.Set(Animation.State.WalkOrRun);
 				agent.statesBlend.Blend(Animation.BlendState.WalkOrRun, data.weight);
 			},
-			onAfterYield = () => {
+			onUpdate = () => {
 				agent.statesBlend.Blend(Animation.BlendState.WalkOrRun, data.weight);
 			},
 			onEnd = () => {
