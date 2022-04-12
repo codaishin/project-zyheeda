@@ -17,15 +17,6 @@ public class ItemActionTemplateMBTests : TestCollection
 			this.setStance(stance, value);
 	}
 
-	private class MockInstructionsMB : MonoBehaviour, IInstructionsTemplate
-	{
-		public Func<GameObject, InstructionsFunc> getInstructionsFor =
-			_ => _ => new YieldInstruction[0];
-		public InstructionsFunc GetInstructionsFor(GameObject agent) {
-			throw new NotImplementedException();
-		}
-	}
-
 	[UnityTest]
 	public IEnumerator SetAnimatorStance() {
 		var item = new GameObject().AddComponent<ItemActionTemplateMB>();

@@ -23,8 +23,8 @@ public class ItemActionTemplateTests : TestCollection
 		public Action<PluginData> onBegin = _ => { };
 		public Action<PluginData> onEnd = _ => { };
 
-		public PartialPluginCallbacks GetCallbacks(GameObject agent) {
-			return data => new PluginCallbacks {
+		public PluginHooksFn PluginHooksFor(GameObject agent) {
+			return data => new PluginHooks {
 				onBegin = () => this.onBegin(data),
 				onEnd = () => this.onEnd(data),
 			};
@@ -59,8 +59,8 @@ public class ItemActionTemplateTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		var getRoutine = useItem.GetInstructionsFor(agent)!;
-		run.StartCoroutine(getRoutine()!.GetEnumerator());
+		var (instructions, _) = useItem.GetInstructionsFor(agent)()!.Value;
+		run.StartCoroutine(instructions!.GetEnumerator());
 
 		yield return new WaitForEndOfFrame();
 
@@ -90,8 +90,8 @@ public class ItemActionTemplateTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		var getRoutine = useItem.GetInstructionsFor(agent)!;
-		run.StartCoroutine(getRoutine()!.GetEnumerator());
+		var (instructions, _) = useItem.GetInstructionsFor(agent)()!.Value;
+		run.StartCoroutine(instructions!.GetEnumerator());
 
 		yield return new WaitForEndOfFrame();
 
@@ -118,8 +118,8 @@ public class ItemActionTemplateTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		var getRoutine = useItem.GetInstructionsFor(agent)!;
-		run.StartCoroutine(getRoutine()!.GetEnumerator());
+		var (instructions, _) = useItem.GetInstructionsFor(agent)()!.Value;
+		run.StartCoroutine(instructions!.GetEnumerator());
 
 		yield return new WaitForEndOfFrame();
 
@@ -155,8 +155,8 @@ public class ItemActionTemplateTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		var getRoutine = useItem.GetInstructionsFor(agent)!;
-		run.StartCoroutine(getRoutine()!.GetEnumerator());
+		var (instructions, _) = useItem.GetInstructionsFor(agent)()!.Value;
+		run.StartCoroutine(instructions!.GetEnumerator());
 
 		yield return new WaitForEndOfFrame();
 
@@ -184,10 +184,10 @@ public class ItemActionTemplateTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		var getRoutine = useItem.GetInstructionsFor(agent)!;
+		var (instructions, _) = useItem.GetInstructionsFor(agent)()!.Value;
 
 		CollectionAssert.AllItemsAreInstancesOfType(
-			getRoutine()!,
+			instructions,
 			typeof(WaitForEndOfFrame)
 		);
 	}
@@ -252,8 +252,8 @@ public class ItemActionTemplateTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		var getRoutine = useItem.GetInstructionsFor(agent)!;
-		run.StartCoroutine(getRoutine()!.GetEnumerator());
+		var (instructions, _) = useItem.GetInstructionsFor(agent)()!.Value;
+		run.StartCoroutine(instructions!.GetEnumerator());
 
 		yield return new WaitForEndOfFrame();
 

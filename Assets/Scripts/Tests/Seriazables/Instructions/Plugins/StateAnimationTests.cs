@@ -23,7 +23,7 @@ public class StateAnimationTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		var callbacks = plugin.GetCallbacks(agent.gameObject)!;
+		var callbacks = plugin.PluginHooksFor(agent.gameObject)!;
 
 		callbacks(new PluginData()).onBegin!();
 
@@ -43,7 +43,7 @@ public class StateAnimationTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		var callbacks = plugin.GetCallbacks(agent)!;
+		var callbacks = plugin.PluginHooksFor(agent)!;
 
 		callbacks(new PluginData()).onBegin!();
 
@@ -61,7 +61,7 @@ public class StateAnimationTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		var callbacks = plugin.GetCallbacks(agent.gameObject)!;
+		var callbacks = plugin.PluginHooksFor(agent.gameObject)!;
 
 		callbacks(new PluginData()).onEnd!();
 

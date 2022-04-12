@@ -15,14 +15,14 @@ public class MoveConstantTemplate : BaseInstructionsTemplate<MovementData>
 	public float speed = 1;
 	public float weight = 1;
 
-	protected override MovementData GetConcreteAgent(GameObject agent) {
+	protected override MovementData ConcreteAgent(GameObject agent) {
 		return new MovementData {
 			transform = agent.transform,
 			getTarget = this.hitter.Value!.TryPoint(agent),
 		};
 	}
 
-	protected override PartialInstructionFunc PartialInstructions(
+	protected override InternalInstructionFn InternalInstructionsFn(
 		MovementData agent
 	) {
 		return data => this.Move(agent, data);

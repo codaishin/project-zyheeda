@@ -15,11 +15,11 @@ public class StateAnimation : BasePlugin<IAnimationStates, PluginData>
 		return data;
 	}
 
-	protected override PluginCallbacks GetCallbacks(
+	protected override PluginHooks GetCallbacks(
 		IAnimationStates agent,
 		PluginData data
 	) {
-		return new PluginCallbacks {
+		return new PluginHooks {
 			onBegin = () => agent.Set(this.beginState),
 			onEnd = () => agent.Set(this.endState),
 		};

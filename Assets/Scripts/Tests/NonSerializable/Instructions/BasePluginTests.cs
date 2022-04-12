@@ -16,14 +16,14 @@ public class BasePluginTests : TestCollection
 			obj => obj.RequireComponent<MockMB>();
 		public Func<PluginData, MockPluginData> getPLuginData =
 			data => data.As<MockPluginData>()!;
-		public Func<MockMB, MockPluginData, PluginCallbacks> getCallbacks =
-			(_, __) => new PluginCallbacks();
+		public Func<MockMB, MockPluginData, PluginHooks> getCallbacks =
+			(_, __) => new PluginHooks();
 
 		public override MockMB GetConcreteAgent(GameObject agent) =>
 			this.getConcreteAgent(agent);
 		public override MockPluginData GetPluginData(PluginData data) =>
 			this.getPLuginData(data);
-		protected override PluginCallbacks GetCallbacks(
+		protected override PluginHooks GetCallbacks(
 			MockMB agent,
 			MockPluginData data
 		) => this.getCallbacks(agent, data);
@@ -31,21 +31,21 @@ public class BasePluginTests : TestCollection
 
 
 	[Test]
-	public void PluginCallbacksAdd() {
+	public void PluginCallbacksConcat() {
 		var called = "";
-		var a = new PluginCallbacks() {
+		var a = new PluginHooks() {
 			onBegin = () => called += "a",
 			onBeforeYield = () => called += "a",
 			onAfterYield = () => called += "a",
 			onEnd = () => called += "a",
 		};
-		var b = new PluginCallbacks() {
+		var b = new PluginHooks() {
 			onBegin = () => called += "b",
 			onBeforeYield = () => called += "b",
 			onAfterYield = () => called += "b",
 			onEnd = () => called += "b",
 		};
-		var c = a + b;
+		var c = PluginHooks.Concat(a, b);
 
 		c.onBegin?.Invoke();
 
@@ -81,12 +81,12 @@ public class BasePluginTests : TestCollection
 		};
 		plugin.getCallbacks = (agent, _) => {
 			calledMB = agent;
-			return new PluginCallbacks();
+			return new PluginHooks();
 		};
 
 		yield return new WaitForEndOfFrame();
 
-		var partial = plugin.GetCallbacks(agent.gameObject);
+		var partial = plugin.PluginHooksFor(agent.gameObject);
 
 		Assert.AreSame(agent.gameObject, calledAgent);
 
@@ -111,12 +111,12 @@ public class BasePluginTests : TestCollection
 		};
 		plugin.getCallbacks = (_, data) => {
 			calledMockPluginData = data;
-			return new PluginCallbacks();
+			return new PluginHooks();
 		};
 
 		yield return new WaitForEndOfFrame();
 
-		_ = plugin.GetCallbacks(agent.gameObject)(pluginData);
+		_ = plugin.PluginHooksFor(agent.gameObject)(pluginData);
 
 		Assert.AreSame(pluginData, calledPluginData);
 		Assert.AreSame(mockPluginData, calledMockPluginData);
@@ -127,13 +127,13 @@ public class BasePluginTests : TestCollection
 		var called = 0;
 		var plugin = new MockPluginSO();
 		var agent = new GameObject().AddComponent<MockMB>();
-		var callbacks = new PluginCallbacks { onBegin = () => ++called };
+		var callbacks = new PluginHooks { onBegin = () => ++called };
 
 		plugin.getCallbacks = (_, __) => callbacks;
 
 		yield return new WaitForEndOfFrame();
 
-		callbacks = plugin.GetCallbacks(agent.gameObject)(new PluginData());
+		callbacks = plugin.PluginHooksFor(agent.gameObject)(new PluginData());
 
 		callbacks.onBegin!();
 

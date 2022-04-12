@@ -10,7 +10,7 @@ public class InstructionsReleaseMBTests : TestCollection
 {
 	class MockInstructionsMB : MonoBehaviour, IInstructions
 	{
-		public IEnumerator<YieldInstruction?>? GetInstructions(Func<bool> run) {
+		public InstructionData? GetInstructionData() {
 			throw new NotImplementedException();
 		}
 	}

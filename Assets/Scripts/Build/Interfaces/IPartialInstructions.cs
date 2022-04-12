@@ -2,5 +2,5 @@ using UnityEngine;
 
 public interface IInstructionsTemplate
 {
-	InstructionsFunc GetInstructionsFor(GameObject agent);
+	ExternalInstructionsFn GetInstructionsFor(GameObject agent);
 }

@@ -30,12 +30,12 @@ public class MoveConstantTemplateTests : TestCollection
 		};
 		var agent = new GameObject();
 		var runner = new GameObject().AddComponent<MockMB>();
-		var getRoutine = move.GetInstructionsFor(agent)!;
 		hitSO.getPoint = a => { calledAgent = a; return null; };
 
 		yield return new WaitForEndOfFrame();
 
-		runner.StartCoroutine(getRoutine()!.GetEnumerator());
+		var (run, _) = move.GetInstructionsFor(agent)()!.Value;
+		runner.StartCoroutine(run!.GetEnumerator());
 
 		yield return new WaitForEndOfFrame();
 
@@ -50,12 +50,12 @@ public class MoveConstantTemplateTests : TestCollection
 		var move = new MoveConstantTemplate {
 			hitter = Reference<IHit>.ScriptableObject(hitSO),
 		};
-		var getRoutine = move.GetInstructionsFor(agent)!;
 		hitSO.getPoint = _ => Vector3.right;
 
 		yield return new WaitForEndOfFrame();
 
-		runner.StartCoroutine(getRoutine()!.GetEnumerator());
+		var (run, _) = move.GetInstructionsFor(agent)()!.Value;
+		runner.StartCoroutine(run!.GetEnumerator());
 
 		yield return new WaitForEndOfFrame();
 
@@ -72,13 +72,13 @@ public class MoveConstantTemplateTests : TestCollection
 		};
 		var agent = new GameObject();
 		var runner = new GameObject().AddComponent<MockMB>();
-		var getRoutine = move.GetInstructionsFor(agent)!;
 		hitSO.getPoint = _ => new Vector3(1, 1, 0);
 		agent.transform.position = new Vector3(1, 0, 0);
 
 		yield return new WaitForEndOfFrame();
 
-		runner.StartCoroutine(getRoutine()!.GetEnumerator());
+		var (run, _) = move.GetInstructionsFor(agent)()!.Value;
+		runner.StartCoroutine(run!.GetEnumerator());
 
 		yield return new WaitForEndOfFrame();
 
@@ -94,13 +94,13 @@ public class MoveConstantTemplateTests : TestCollection
 			hitter = Reference<IHit>.ScriptableObject(hitSO),
 		};
 		var agent = new GameObject();
-		var routineRunner = new GameObject().AddComponent<MockMB>();
-		var getRoutine = move.GetInstructionsFor(agent)!;
+		var runner = new GameObject().AddComponent<MockMB>();
 		hitSO.getPoint = _ => Vector3.right;
 
 		yield return new WaitForEndOfFrame();
 
-		routineRunner.StartCoroutine(getRoutine()!.GetEnumerator());
+		var (run, _) = move.GetInstructionsFor(agent)()!.Value;
+		runner.StartCoroutine(run!.GetEnumerator());
 
 		yield return new WaitForEndOfFrame();
 
@@ -121,13 +121,13 @@ public class MoveConstantTemplateTests : TestCollection
 			speed = 2f,
 		};
 		var agent = new GameObject();
-		var routineRunner = new GameObject().AddComponent<MockMB>();
-		var getRoutine = move.GetInstructionsFor(agent)!;
+		var runner = new GameObject().AddComponent<MockMB>();
 		hitSO.getPoint = _ => Vector3.right;
 
 		yield return new WaitForEndOfFrame();
 
-		routineRunner.StartCoroutine(getRoutine()!.GetEnumerator());
+		var (run, _) = move.GetInstructionsFor(agent)()!.Value;
+		runner.StartCoroutine(run!.GetEnumerator());
 
 		yield return new WaitForEndOfFrame();
 
@@ -148,14 +148,14 @@ public class MoveConstantTemplateTests : TestCollection
 			speed = 2f,
 		};
 		var agent = new GameObject();
-		var routineRunner = new GameObject().AddComponent<MockMB>();
-		var getRoutine = move.GetInstructionsFor(agent)!;
+		var runner = new GameObject().AddComponent<MockMB>();
 		hitSO.getPoint = _ => null;
 		agent.transform.position = Vector3.up;
 
 		yield return new WaitForEndOfFrame();
 
-		routineRunner.StartCoroutine(getRoutine()!.GetEnumerator());
+		var (run, _) = move.GetInstructionsFor(agent)()!.Value;
+		runner.StartCoroutine(run!.GetEnumerator());
 
 		yield return new WaitForEndOfFrame();
 
@@ -170,13 +170,13 @@ public class MoveConstantTemplateTests : TestCollection
 			speed = float.MaxValue,
 		};
 		var agent = new GameObject();
-		var routineRunner = new GameObject().AddComponent<MockMB>();
-		var getRoutine = move.GetInstructionsFor(agent)!;
+		var runner = new GameObject().AddComponent<MockMB>();
 		hitSO.getPoint = _ => Vector3.right;
 
 		yield return new WaitForEndOfFrame();
 
-		routineRunner.StartCoroutine(getRoutine()!.GetEnumerator());
+		var (run, _) = move.GetInstructionsFor(agent)()!.Value;
+		runner.StartCoroutine(run!.GetEnumerator());
 
 		yield return new WaitForEndOfFrame();
 
@@ -189,10 +189,10 @@ public class MoveConstantTemplateTests : TestCollection
 
 	class MockPluginSO : ScriptableObject, IPlugin
 	{
-		public Func<GameObject, PartialPluginCallbacks> getCallbacks =
-			_ => _ => new PluginCallbacks();
+		public Func<GameObject, PluginHooksFn> getCallbacks =
+			_ => _ => new PluginHooks();
 
-		public PartialPluginCallbacks GetCallbacks(
+		public PluginHooksFn PluginHooksFor(
 			GameObject agent
 		) => this.getCallbacks(agent);
 	}
@@ -211,18 +211,18 @@ public class MoveConstantTemplateTests : TestCollection
 			},
 		};
 		var agent = new GameObject();
-		var routineRunner = new GameObject().AddComponent<MockMB>();
+		var runner = new GameObject().AddComponent<MockMB>();
 
 		hitSO.getPoint = _ => Vector3.right * 100;
 
-		pluginSO.getCallbacks = _ => d => new PluginCallbacks {
+		pluginSO.getCallbacks = _ => d => new PluginHooks {
 			onBegin = () => data = d.As<CorePluginData>()
 		};
 
 		yield return new WaitForEndOfFrame();
 
-		var getRoutine = move.GetInstructionsFor(agent)!;
-		routineRunner.StartCoroutine(getRoutine()!.GetEnumerator());
+		var (run, _) = move.GetInstructionsFor(agent)()!.Value;
+		runner.StartCoroutine(run!.GetEnumerator());
 
 		yield return new WaitForEndOfFrame();
 		yield return new WaitForEndOfFrame();

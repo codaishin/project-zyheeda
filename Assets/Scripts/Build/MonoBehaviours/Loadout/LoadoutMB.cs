@@ -26,10 +26,10 @@ public class LoadoutMB : MonoBehaviour, ILoadout, IInstructionsTemplate
 		this.items[this.index].Value?.Equip(this.animator!, this.slot!);
 	}
 
-	public InstructionsFunc GetInstructionsFor(GameObject agent) {
-		InstructionsFunc?[] instructions = this.items
+	public ExternalInstructionsFn GetInstructionsFor(GameObject agent) {
+		ExternalInstructionsFn?[] instructions = this.items
 			.Select(item => item.Value?.GetInstructionsFor(agent))
 			.ToArray();
-		return run => instructions[this.index]?.Invoke(run);
+		return () => instructions[this.index]?.Invoke();
 	}
 }

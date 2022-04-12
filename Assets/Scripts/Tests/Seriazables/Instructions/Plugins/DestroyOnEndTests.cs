@@ -9,7 +9,7 @@ public class DestroyOnEndTests : TestCollection
 	public IEnumerator DestroyOnEnd() {
 		var obj = new GameObject();
 		var plugin = new DestroyOnEnd();
-		var callbacks = plugin.GetCallbacks(obj);
+		var callbacks = plugin.PluginHooksFor(obj);
 		var onEnd = callbacks(new PluginData()).onEnd!;
 
 		yield return new WaitForEndOfFrame();

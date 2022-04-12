@@ -9,10 +9,10 @@ public class InstructionsRunMBTests : TestCollection
 {
 	class MockGetInstructions : IInstructions
 	{
-		public Func<Func<bool>, IEnumerator<YieldInstruction?>?> getInstructions =
-			_ => null;
-		public IEnumerator<YieldInstruction?>? GetInstructions(Func<bool> run) =>
-			this.getInstructions(run);
+		public Func<InstructionData?> getInstructions = () => null;
+
+		public InstructionData? GetInstructionData() =>
+			this.getInstructions();
 	}
 
 	[UnityTest]
@@ -21,13 +21,16 @@ public class InstructionsRunMBTests : TestCollection
 		var handle = new GameObject().AddComponent<InstructionsRunMB>();
 		var source = new MockGetInstructions();
 
-		IEnumerator<YieldInstruction> getInstructions(Func<bool> _) {
-			yield return new WaitForEndOfFrame();
-			++called;
-			yield return new WaitForEndOfFrame();
-			++called;
-			yield return new WaitForEndOfFrame();
-			++called;
+		InstructionData? getInstructions() {
+			IEnumerable<YieldInstruction> instructions() {
+				yield return new WaitForEndOfFrame();
+				++called;
+				yield return new WaitForEndOfFrame();
+				++called;
+				yield return new WaitForEndOfFrame();
+				++called;
+			}
+			return new InstructionData(instructions(), () => { });
 		}
 
 		source.getInstructions = getInstructions;
@@ -44,38 +47,21 @@ public class InstructionsRunMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator ApplyInstructionsRunCallbackTrue() {
-		var called = false;
-		var handle = new GameObject().AddComponent<InstructionsRunMB>();
-		var source = new MockGetInstructions();
-
-		IEnumerator<YieldInstruction> getInstructions(Func<bool> run) {
-			yield return new WaitForEndOfFrame();
-			called = run();
-		}
-
-		source.getInstructions = getInstructions;
-
-		yield return new WaitForEndOfFrame();
-
-		handle.Apply(source);
-
-		yield return new WaitForEndOfFrame();
-
-		Assert.True(called);
-	}
-
-	[UnityTest]
 	public IEnumerator ReleaseInstructions() {
 		var called = 0;
 		var handle = new GameObject().AddComponent<InstructionsRunMB>();
 		var source = new MockGetInstructions();
 
-		IEnumerator<YieldInstruction> getInstructions(Func<bool> run) {
-			while (run()) {
-				yield return new WaitForEndOfFrame();
-				++called;
+		InstructionData? getInstructions() {
+			var run = true;
+
+			IEnumerable<YieldInstruction> instructions() {
+				while (run) {
+					yield return new WaitForEndOfFrame();
+					++called;
+				}
 			}
+			return new InstructionData(instructions(), () => run = false);
 		}
 
 		source.getInstructions = getInstructions;
@@ -104,11 +90,16 @@ public class InstructionsRunMBTests : TestCollection
 		var sourceA = new MockGetInstructions();
 		var sourceB = new MockGetInstructions();
 
-		IEnumerator<YieldInstruction> getInstructions(Func<bool> run) {
-			while (run()) {
-				yield return new WaitForEndOfFrame();
-				++called;
+		InstructionData? getInstructions() {
+			var run = true;
+
+			IEnumerable<YieldInstruction> instructions() {
+				while (run) {
+					yield return new WaitForEndOfFrame();
+					++called;
+				}
 			}
+			return new InstructionData(instructions(), () => run = false);
 		}
 
 		sourceA.getInstructions = getInstructions;
@@ -134,12 +125,17 @@ public class InstructionsRunMBTests : TestCollection
 		var handle = new GameObject().AddComponent<InstructionsRunMB>();
 		var source = new MockGetInstructions();
 
-		IEnumerator<YieldInstruction> getInstructions(Func<bool> run) {
+		InstructionData? getInstructions() {
+			var run = true;
 			called = 0;
-			while (run()) {
-				yield return new WaitForEndOfFrame();
-				++called;
+
+			IEnumerable<YieldInstruction> instructions() {
+				while (run) {
+					yield return new WaitForEndOfFrame();
+					++called;
+				}
 			}
+			return new InstructionData(instructions(), () => run = false);
 		}
 
 		source.getInstructions = getInstructions;
@@ -165,16 +161,20 @@ public class InstructionsRunMBTests : TestCollection
 		var sourceA = new MockGetInstructions();
 		var sourceB = new MockGetInstructions();
 
-		IEnumerator<YieldInstruction> getInstructions(Func<bool> run) {
-			called = 0;
-			while (run()) {
-				yield return new WaitForEndOfFrame();
-				++called;
+		InstructionData? getInstructions() {
+			var run = true;
+
+			IEnumerable<YieldInstruction> instructions() {
+				while (run) {
+					yield return new WaitForEndOfFrame();
+					++called;
+				}
 			}
+			return new InstructionData(instructions(), () => run = false);
 		}
 
 		sourceA.getInstructions = getInstructions;
-		sourceB.getInstructions = _ => null;
+		sourceB.getInstructions = () => null;
 
 		yield return new WaitForEndOfFrame();
 
@@ -197,16 +197,20 @@ public class InstructionsRunMBTests : TestCollection
 		var sourceA = new MockGetInstructions();
 		var sourceB = new MockGetInstructions();
 
-		IEnumerator<YieldInstruction> getInstructions(Func<bool> run) {
-			called = 0;
-			while (run()) {
-				yield return new WaitForEndOfFrame();
-				++called;
+		InstructionData? getInstructions() {
+			var run = true;
+
+			IEnumerable<YieldInstruction> instructions() {
+				while (run) {
+					yield return new WaitForEndOfFrame();
+					++called;
+				}
 			}
+			return new InstructionData(instructions(), () => run = false);
 		}
 
 		sourceA.getInstructions = getInstructions;
-		sourceB.getInstructions = _ => null;
+		sourceB.getInstructions = () => null;
 
 		yield return new WaitForEndOfFrame();
 
@@ -231,16 +235,20 @@ public class InstructionsRunMBTests : TestCollection
 		var sourceA = new MockGetInstructions();
 		var sourceB = new MockGetInstructions();
 
-		IEnumerator<YieldInstruction> getInstructions(Func<bool> run) {
-			called = 0;
-			while (run()) {
-				yield return new WaitForEndOfFrame();
-				++called;
+		InstructionData? getInstructions() {
+			var run = true;
+
+			IEnumerable<YieldInstruction> instructions() {
+				while (run) {
+					yield return new WaitForEndOfFrame();
+					++called;
+				}
 			}
+			return new InstructionData(instructions(), () => run = false);
 		}
 
 		sourceA.getInstructions = getInstructions;
-		sourceB.getInstructions = _ => null;
+		sourceB.getInstructions = () => null;
 
 		yield return new WaitForEndOfFrame();
 
@@ -264,8 +272,11 @@ public class InstructionsRunMBTests : TestCollection
 		var handle = new GameObject().AddComponent<InstructionsRunMB>();
 		var source = new MockGetInstructions();
 
-		IEnumerator<YieldInstruction> getInstructions(Func<bool> run) {
-			yield break;
+		InstructionData? getInstructions() {
+			IEnumerable<YieldInstruction> instructions() {
+				yield break;
+			}
+			return new InstructionData(instructions(), () => { });
 		}
 
 		IEnumerator<YieldInstruction> otherCoroutine() {
@@ -293,10 +304,13 @@ public class InstructionsRunMBTests : TestCollection
 
 		handle.delayApply = true;
 
-		IEnumerator<YieldInstruction> getInstructions(Func<bool> _) {
-			++called;
-			yield return new WaitForEndOfFrame();
-			++called;
+		InstructionData? getInstructions() {
+			IEnumerable<YieldInstruction> instructions() {
+				++called;
+				yield return new WaitForEndOfFrame();
+				++called;
+			}
+			return new InstructionData(instructions(), () => { });
 		}
 
 		source.getInstructions = getInstructions;
@@ -324,11 +338,16 @@ public class InstructionsRunMBTests : TestCollection
 
 		handle.delayApply = true;
 
-		IEnumerator<YieldInstruction> getInstructions(Func<bool> run) {
-			while (run()) {
-				yield return new WaitForEndOfFrame();
-				++called;
+		InstructionData? getInstructions() {
+			var run = true;
+
+			IEnumerable<YieldInstruction> instructions() {
+				while (run) {
+					yield return new WaitForEndOfFrame();
+					++called;
+				}
 			}
+			return new InstructionData(instructions(), () => run = false);
 		}
 
 		source.getInstructions = getInstructions;

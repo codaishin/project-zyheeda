@@ -12,7 +12,7 @@ public class AllignForwardWithMovement : BasePlugin<Transform, PluginData>
 		return data;
 	}
 
-	protected override PluginCallbacks GetCallbacks(
+	protected override PluginHooks GetCallbacks(
 		Transform agent,
 		PluginData data
 	) {
@@ -24,6 +24,6 @@ public class AllignForwardWithMovement : BasePlugin<Transform, PluginData>
 			}
 			agent.forward = agent.position - lastPosition;
 		};
-		return new PluginCallbacks { onAfterYield = setDirection + trackPosition };
+		return new PluginHooks { onAfterYield = setDirection + trackPosition };
 	}
 }

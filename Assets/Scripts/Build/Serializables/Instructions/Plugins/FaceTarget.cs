@@ -12,11 +12,11 @@ public class FaceTarget : BasePlugin<Transform, TargetPluginData>
 		return data.Extent<TargetPluginData>();
 	}
 
-	protected override PluginCallbacks GetCallbacks(
+	protected override PluginHooks GetCallbacks(
 		Transform agent,
 		TargetPluginData data
 	) {
-		return new PluginCallbacks {
+		return new PluginHooks {
 			onBegin = FaceTarget.LookAtTarget(agent, data.target),
 		};
 	}

@@ -7,7 +7,7 @@ public class AllignForwardWithMovementTests : TestCollection
 	public void AllignForwardUp() {
 		var agent = new GameObject();
 		var plugin = new AllignForwardWithMovement();
-		var callbacks = plugin.GetCallbacks(agent)(new PluginData());
+		var callbacks = plugin.PluginHooksFor(agent)(new PluginData());
 
 		callbacks.onAfterYield?.Invoke();
 
@@ -22,7 +22,7 @@ public class AllignForwardWithMovementTests : TestCollection
 	public void AllignForwardLeft() {
 		var agent = new GameObject();
 		var plugin = new AllignForwardWithMovement();
-		var callbacks = plugin.GetCallbacks(agent)(new PluginData());
+		var callbacks = plugin.PluginHooksFor(agent)(new PluginData());
 
 		callbacks.onAfterYield?.Invoke();
 
@@ -37,7 +37,7 @@ public class AllignForwardWithMovementTests : TestCollection
 	public void AllignForwardWithMovement() {
 		var agent = new GameObject();
 		var plugin = new AllignForwardWithMovement();
-		var callbacks = plugin.GetCallbacks(agent)(new PluginData());
+		var callbacks = plugin.PluginHooksFor(agent)(new PluginData());
 
 		agent.transform.position = Vector3.up;
 

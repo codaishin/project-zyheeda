@@ -8,10 +8,10 @@ public class BaseInstructionsTemplateTests : TestCollection
 {
 	class MockPluginSO : ScriptableObject, IPlugin
 	{
-		public Func<GameObject, PartialPluginCallbacks> getCallbacks =
-			_ => _ => new PluginCallbacks();
+		public Func<GameObject, PluginHooksFn> getCallbacks =
+			_ => _ => new PluginHooks();
 
-		public PartialPluginCallbacks GetCallbacks(
+		public PluginHooksFn PluginHooksFor(
 			GameObject agent
 		) => this.getCallbacks(agent);
 	}
@@ -20,16 +20,16 @@ public class BaseInstructionsTemplateTests : TestCollection
 	{
 		public Func<GameObject, Transform> getConcreteAgent =
 			agent => agent.transform;
-		public Func<Transform, PartialInstructionFunc> partialInstructions =
+		public Func<Transform, InternalInstructionFn> partialInstructions =
 			_ => _ => new YieldInstruction[0];
 		public Action<PluginData> extendPluginData =
 			_ => { };
 
-		protected override Transform GetConcreteAgent(GameObject agent) {
+		protected override Transform ConcreteAgent(GameObject agent) {
 			return this.getConcreteAgent(agent);
 		}
 
-		protected override PartialInstructionFunc PartialInstructions(Transform agent) {
+		protected override InternalInstructionFn InternalInstructionsFn(Transform agent) {
 			return this.partialInstructions(agent);
 		}
 
@@ -49,7 +49,7 @@ public class BaseInstructionsTemplateTests : TestCollection
 			return _ => new YieldInstruction[0];
 		};
 
-		var _ = instructions.GetInstructionsFor(agent);
+		_ = instructions.GetInstructionsFor(agent);
 
 		Assert.AreSame(agent.transform, called);
 	}
@@ -71,9 +71,9 @@ public class BaseInstructionsTemplateTests : TestCollection
 
 		instructions.partialInstructions = agent => _ => moveUp(agent);
 
-		var insructions = instructions.GetInstructionsFor(agent);
+		var (run, _) = instructions.GetInstructionsFor(agent)()!.Value;
 
-		foreach (var _ in insructions()!) { }
+		foreach (var _ in run) { }
 
 		Assert.AreEqual(Vector3.up * 3, agent.transform.position);
 	}
@@ -83,9 +83,9 @@ public class BaseInstructionsTemplateTests : TestCollection
 		var agent = new GameObject();
 		var instructions = new MockInstructions();
 
-		PartialPluginCallbacks getCallbacks(GameObject agent) {
+		PluginHooksFn getCallbacks(GameObject agent) {
 			called!.Add(agent);
-			return _ => new PluginCallbacks();
+			return _ => new PluginHooks();
 		}
 
 		var plugins = new MockPluginSO[] {
@@ -97,7 +97,7 @@ public class BaseInstructionsTemplateTests : TestCollection
 			.Select(Reference<IPlugin>.ScriptableObject)
 			.ToArray();
 
-		var insructions = instructions.GetInstructionsFor(agent)!;
+		_ = instructions.GetInstructionsFor(agent);
 
 		Assert.AreEqual((agent, agent), (called[0], called[1]));
 	}
@@ -108,8 +108,8 @@ public class BaseInstructionsTemplateTests : TestCollection
 		var agent = new GameObject();
 		var instructions = new MockInstructions();
 
-		PartialPluginCallbacks getCallbacks(GameObject agent) {
-			return d => new PluginCallbacks { onBegin = () => called = d };
+		PluginHooksFn getCallbacks(GameObject agent) {
+			return d => new PluginHooks { onBegin = () => called = d };
 		}
 
 		var plugins = new MockPluginSO[] {
@@ -126,11 +126,11 @@ public class BaseInstructionsTemplateTests : TestCollection
 			new WaitForEndOfFrame(),
 		};
 
-		var insructions = instructions.GetInstructionsFor(agent);
+		var (run, _) = instructions.GetInstructionsFor(agent)()!.Value;
 
 		Assert.IsNull(called);
 
-		foreach (var hold in insructions()!) break;
+		foreach (var hold in run) break;
 
 		Assert.NotNull(called);
 	}
@@ -145,7 +145,7 @@ public class BaseInstructionsTemplateTests : TestCollection
 			ScriptableObject.CreateInstance<MockPluginSO>(),
 			ScriptableObject.CreateInstance<MockPluginSO>(),
 		};
-		plugins.ForEach(pl => pl.getCallbacks = _ => d => new PluginCallbacks {
+		plugins.ForEach(pl => pl.getCallbacks = _ => d => new PluginHooks {
 			onBegin = () => data.Add(d),
 			onBeforeYield = () => data.Add(d),
 			onAfterYield = () => data.Add(d),
@@ -165,9 +165,9 @@ public class BaseInstructionsTemplateTests : TestCollection
 			new WaitForEndOfFrame(),
 		};
 
-		var insructions = instructions.GetInstructionsFor(agent);
+		var (run, _) = instructions.GetInstructionsFor(agent)()!.Value;
 
-		foreach (var _ in insructions()!) ;
+		foreach (var _ in run) ;
 
 		Assert.AreEqual(1, data.Distinct().Count());
 	}
@@ -178,8 +178,8 @@ public class BaseInstructionsTemplateTests : TestCollection
 		var agent = new GameObject();
 		var instructions = new MockInstructions();
 
-		PartialPluginCallbacks getCallbacks(GameObject agent) {
-			return _ => new PluginCallbacks { onAfterYield = () => ++called };
+		PluginHooksFn getCallbacks(GameObject agent) {
+			return _ => new PluginHooks { onAfterYield = () => ++called };
 		};
 
 		var plugins = new MockPluginSO[] {
@@ -196,10 +196,10 @@ public class BaseInstructionsTemplateTests : TestCollection
 			new WaitForEndOfFrame(),
 		};
 
-		var insructions = instructions.GetInstructionsFor(agent);
+		var (run, _) = instructions.GetInstructionsFor(agent)()!.Value;
 
 		var i = 0;
-		foreach (var _ in insructions()!) {
+		foreach (var _ in run) {
 			Assert.AreEqual(i, called);
 			i += 2;
 		};
@@ -213,8 +213,8 @@ public class BaseInstructionsTemplateTests : TestCollection
 		var agent = new GameObject();
 		var instructions = new MockInstructions();
 
-		PartialPluginCallbacks getCallbacks(GameObject agent) {
-			return _ => new PluginCallbacks { onBeforeYield = () => ++called };
+		PluginHooksFn getCallbacks(GameObject agent) {
+			return _ => new PluginHooks { onBeforeYield = () => ++called };
 		};
 
 		var plugins = new MockPluginSO[] {
@@ -231,10 +231,10 @@ public class BaseInstructionsTemplateTests : TestCollection
 			new WaitForEndOfFrame(),
 		};
 
-		var insructions = instructions.GetInstructionsFor(agent);
+		var (run, _) = instructions.GetInstructionsFor(agent)()!.Value;
 
 		var i = 0;
-		foreach (var _ in insructions()!) {
+		foreach (var _ in run) {
 			i += 2;
 			Assert.AreEqual(i, called);
 		};
@@ -248,8 +248,8 @@ public class BaseInstructionsTemplateTests : TestCollection
 		var agent = new GameObject();
 		var instructions = new MockInstructions();
 
-		PartialPluginCallbacks getCallbacks(GameObject agent) {
-			return _ => new PluginCallbacks { onEnd = () => ++called };
+		PluginHooksFn getCallbacks(GameObject agent) {
+			return _ => new PluginHooks { onEnd = () => ++called };
 		};
 
 		var plugins = new MockPluginSO[] {
@@ -266,9 +266,9 @@ public class BaseInstructionsTemplateTests : TestCollection
 			new WaitForEndOfFrame(),
 		};
 
-		var insructions = instructions.GetInstructionsFor(agent);
+		var (run, _) = instructions.GetInstructionsFor(agent)()!.Value;
 
-		foreach (var _ in insructions()!) {
+		foreach (var _ in run) {
 			Assert.AreEqual(0, called);
 		};
 
@@ -276,9 +276,8 @@ public class BaseInstructionsTemplateTests : TestCollection
 	}
 
 	[Test]
-	public void StopWhenProvidedPredicateFalse() {
+	public void StopWhenReleaseCalled() {
 		var called = 0;
-		var run = true;
 		var iterations = 0;
 		var agent = new GameObject();
 		var instructions = new MockInstructions();
@@ -290,7 +289,7 @@ public class BaseInstructionsTemplateTests : TestCollection
 			}
 		}
 
-		plugin.getCallbacks = _ => _ => new PluginCallbacks {
+		plugin.getCallbacks = _ => _ => new PluginHooks {
 			onEnd = () => ++called
 		};
 		instructions.plugins = new Reference<IPlugin>[] {
@@ -298,11 +297,11 @@ public class BaseInstructionsTemplateTests : TestCollection
 		};
 		instructions.partialInstructions = _ => instructionFunc;
 
-		var insructions = instructions.GetInstructionsFor(agent);
+		var (run, release) = instructions.GetInstructionsFor(agent)()!.Value;
 
-		foreach (var _ in insructions(() => run)!) {
+		foreach (var _ in run) {
 			if (iterations == 9) {
-				run = false;
+				release();
 			};
 		};
 
@@ -323,7 +322,7 @@ public class BaseInstructionsTemplateTests : TestCollection
 			}
 		}
 		var pluginData = null as CorePluginData;
-		plugin.getCallbacks = _ => d => new PluginCallbacks {
+		plugin.getCallbacks = _ => d => new PluginHooks {
 			onBegin = () => pluginData = d.As<CorePluginData>(),
 			onEnd = () => ++called
 		};
@@ -332,44 +331,9 @@ public class BaseInstructionsTemplateTests : TestCollection
 		};
 		instructions.partialInstructions = _ => instructionFunc;
 
-		var insructions = instructions.GetInstructionsFor(agent);
+		var (run, _) = instructions.GetInstructionsFor(agent)()!.Value;
 
-		foreach (var _ in insructions()!) {
-			if (iterations == 9) {
-				pluginData!.run = false;
-			};
-		};
-
-		Assert.AreEqual((9, 1), (iterations, called));
-	}
-
-	[Test]
-	public void StopWhenPluginDataRunFalseWhenPredicateProvided() {
-		var called = 0;
-		var iterations = 0;
-		var agent = new GameObject();
-		var instructions = new MockInstructions();
-		var run = true;
-		var plugin = ScriptableObject.CreateInstance<MockPluginSO>();
-
-		IEnumerable<UnityEngine.YieldInstruction> instructionFunc(PluginData _) {
-			for (iterations = 0; iterations < 100; ++iterations) {
-				yield return new WaitForEndOfFrame();
-			}
-		}
-		var pluginData = null as CorePluginData;
-		plugin.getCallbacks = _ => d => new PluginCallbacks {
-			onBegin = () => pluginData = d.As<CorePluginData>(),
-			onEnd = () => ++called
-		};
-		instructions.plugins = new Reference<IPlugin>[] {
-			Reference<IPlugin>.ScriptableObject(plugin),
-		};
-		instructions.partialInstructions = _ => instructionFunc;
-
-		var insructions = instructions.GetInstructionsFor(agent);
-
-		foreach (var _ in insructions(() => run)!) {
+		foreach (var _ in run) {
 			if (iterations == 9) {
 				pluginData!.run = false;
 			};
@@ -400,7 +364,7 @@ public class BaseInstructionsTemplateTests : TestCollection
 		var instructions = new MockInstructions();
 		var plugin = ScriptableObject.CreateInstance<MockPluginSO>();
 
-		plugin.getCallbacks = _ => d => new PluginCallbacks {
+		plugin.getCallbacks = _ => d => new PluginHooks {
 			onBegin = () => data = d
 		};
 		instructions.plugins = new Reference<IPlugin>[] {
@@ -408,9 +372,9 @@ public class BaseInstructionsTemplateTests : TestCollection
 		};
 		instructions.extendPluginData = d => d.Extent<MockPluginDataB>();
 
-		var insructions = instructions.GetInstructionsFor(agent);
+		var (run, _) = instructions.GetInstructionsFor(agent)()!.Value;
 
-		foreach (var _ in insructions()!) ;
+		foreach (var _ in run) ;
 
 		Assert.NotNull(data!.As<MockPluginDataB>());
 	}

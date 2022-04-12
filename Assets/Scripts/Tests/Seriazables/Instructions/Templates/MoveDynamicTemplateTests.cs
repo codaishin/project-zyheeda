@@ -24,10 +24,10 @@ public class MoveDynamicTemplateTests : TestCollection
 
 	class MockPluginSO : ScriptableObject, IPlugin
 	{
-		public Func<GameObject, PartialPluginCallbacks> getCallbacks =
-			_ => _ => new PluginCallbacks();
+		public Func<GameObject, PluginHooksFn> getCallbacks =
+			_ => _ => new PluginHooks();
 
-		public PartialPluginCallbacks GetCallbacks(
+		public PluginHooksFn PluginHooksFor(
 			GameObject agent
 		) => this.getCallbacks(agent);
 	}
@@ -44,8 +44,8 @@ public class MoveDynamicTemplateTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		var getRoutine = move.GetInstructionsFor(agent)!;
-		runner.StartCoroutine(getRoutine()!.GetEnumerator());
+		var (run, _) = move.GetInstructionsFor(agent)()!.Value;
+		runner.StartCoroutine(run!.GetEnumerator());
 
 		yield return new WaitForEndOfFrame();
 
@@ -71,8 +71,8 @@ public class MoveDynamicTemplateTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		var getRoutine = move.GetInstructionsFor(agent)!;
-		runner.StartCoroutine(getRoutine()!.GetEnumerator());
+		var (run, _) = move.GetInstructionsFor(agent)()!.Value;
+		runner.StartCoroutine(run!.GetEnumerator());
 
 		yield return new WaitForEndOfFrame();
 
@@ -98,8 +98,8 @@ public class MoveDynamicTemplateTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		var getRoutine = move.GetInstructionsFor(agent)!;
-		runner.StartCoroutine(getRoutine()!.GetEnumerator());
+		var (run, _) = move.GetInstructionsFor(agent)()!.Value;
+		runner.StartCoroutine(run!.GetEnumerator());
 
 		yield return new WaitForEndOfFrame();
 
@@ -125,8 +125,8 @@ public class MoveDynamicTemplateTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		var getRoutine = move.GetInstructionsFor(agent)!;
-		runner.StartCoroutine(getRoutine()!.GetEnumerator());
+		var (run, _) = move.GetInstructionsFor(agent)()!.Value;
+		runner.StartCoroutine(run!.GetEnumerator());
 
 		yield return new WaitForEndOfFrame();
 
@@ -161,8 +161,8 @@ public class MoveDynamicTemplateTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		var getRoutine = move.GetInstructionsFor(agent)!;
-		runner.StartCoroutine(getRoutine()!.GetEnumerator());
+		var (run, _) = move.GetInstructionsFor(agent)()!.Value;
+		runner.StartCoroutine(run!.GetEnumerator());
 
 		hitSO.getPoint = _ => Vector3.up * 100;
 
@@ -202,8 +202,8 @@ public class MoveDynamicTemplateTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		var getRoutine = move.GetInstructionsFor(agent)!;
-		runner.StartCoroutine(getRoutine()!.GetEnumerator());
+		var (run, _) = move.GetInstructionsFor(agent)()!.Value;
+		runner.StartCoroutine(run!.GetEnumerator());
 
 		hitSO.getPoint = _ => Vector3.up * 100;
 
@@ -242,8 +242,8 @@ public class MoveDynamicTemplateTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		var getRoutine = move.GetInstructionsFor(agent)!;
-		runner.StartCoroutine(getRoutine()!.GetEnumerator());
+		var (run, _) = move.GetInstructionsFor(agent)()!.Value;
+		runner.StartCoroutine(run!.GetEnumerator());
 
 
 		hitSO.getPoint = _ => Vector3.left * 100;
@@ -281,8 +281,8 @@ public class MoveDynamicTemplateTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		var getRoutine = move.GetInstructionsFor(agent)!;
-		runner.StartCoroutine(getRoutine()!.GetEnumerator());
+		var (run, _) = move.GetInstructionsFor(agent)()!.Value;
+		runner.StartCoroutine(run!.GetEnumerator());
 
 		hitSO.getPoint = _ => agent.transform.position + Vector3.left * 600;
 
@@ -327,14 +327,14 @@ public class MoveDynamicTemplateTests : TestCollection
 			Reference<IPlugin>.ScriptableObject(plugin),
 		};
 
-		plugin.getCallbacks = _ => d => new PluginCallbacks {
+		plugin.getCallbacks = _ => d => new PluginHooks {
 			onAfterYield = () => weights.Add(d.As<CorePluginData>()!.weight)
 		};
 
 		yield return new WaitForEndOfFrame();
 
-		var getRoutine = move.GetInstructionsFor(agent)!;
-		runner.StartCoroutine(getRoutine()!.GetEnumerator());
+		var (run, _) = move.GetInstructionsFor(agent)()!.Value;
+		runner.StartCoroutine(run!.GetEnumerator());
 
 		hitSO.getPoint = _ => agent.transform.position + Vector3.left * 5000;
 

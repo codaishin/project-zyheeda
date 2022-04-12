@@ -14,14 +14,14 @@ public class LoadoutMBTests : TestCollection
 			(_, __) => { };
 		public Action unEquip =
 			() => { };
-		public Func<GameObject, InstructionsFunc> getInstructions =
-			_ => _ => null;
+		public Func<GameObject, ExternalInstructionsFn> getInstructions =
+			_ => () => null;
 
 		public void Equip(IAnimationStance animator, Transform slot) =>
 			this.equip(animator, slot);
 		public void UnEquip() =>
 			this.unEquip();
-		public InstructionsFunc GetInstructionsFor(GameObject agent) =>
+		public ExternalInstructionsFn GetInstructionsFor(GameObject agent) =>
 			this.getInstructions(agent);
 	}
 
@@ -168,10 +168,13 @@ public class LoadoutMBTests : TestCollection
 		yield return new WaitForEndOfFrame();
 
 		var count = 0;
-		IEnumerable<YieldInstruction?> getInstruction(Func<bool>? _) {
-			for (; count < 10; ++count) {
-				yield return null;
+		InstructionData? getInstruction() {
+			IEnumerable<YieldInstruction?> instructions() {
+				for (; count < 10; ++count) {
+					yield return null;
+				}
 			}
+			return new InstructionData(instructions(), () => { });
 		}
 
 		items[0].getInstructions = agent => {
@@ -179,7 +182,9 @@ public class LoadoutMBTests : TestCollection
 			return getInstruction;
 		};
 
-		foreach (var _ in loadout.GetInstructionsFor(agent)()!) ;
+		var (run, _) = loadout.GetInstructionsFor(agent)()!.Value;
+
+		foreach (var _ in run) ;
 
 		Assert.AreSame(agent, calledAgent);
 		Assert.AreEqual(10, count);
@@ -207,10 +212,13 @@ public class LoadoutMBTests : TestCollection
 		yield return new WaitForEndOfFrame();
 
 		var count = 0;
-		IEnumerable<YieldInstruction?> getInstruction(Func<bool>? _) {
-			for (; count < 10; ++count) {
-				yield return null;
+		InstructionData? getInstruction() {
+			IEnumerable<YieldInstruction?> instructions() {
+				for (; count < 10; ++count) {
+					yield return null;
+				}
 			}
+			return new InstructionData(instructions(), () => { });
 		}
 
 		items[2].getInstructions = agent => {
@@ -221,7 +229,9 @@ public class LoadoutMBTests : TestCollection
 		loadout.Circle();
 		loadout.Circle();
 
-		foreach (var _ in loadout.GetInstructionsFor(agent)()!) ;
+		var (run, _) = loadout.GetInstructionsFor(agent)()!.Value;
+
+		foreach (var _ in run) ;
 
 		Assert.AreSame(agent, calledAgent);
 		Assert.AreEqual(10, count);
@@ -247,22 +257,22 @@ public class LoadoutMBTests : TestCollection
 
 		items[0].getInstructions = agent => {
 			++calledA;
-			return _ => null;
+			return () => null;
 		};
 		items[1].getInstructions = agent => {
 			++calledB;
-			return _ => null;
+			return () => null;
 		};
 
 		yield return new WaitForEndOfFrame();
 
-		var instructions = loadout.GetInstructionsFor(agent);
+		var instructionsFn = loadout.GetInstructionsFor(agent);
 
-		foreach (var _ in instructions().OrEmpty()) ;
+		_ = instructionsFn();
 
 		loadout.Circle();
 
-		foreach (var _ in instructions().OrEmpty()) ;
+		_ = instructionsFn();
 
 		Assert.AreEqual((1, 1), (calledA, calledB));
 	}
@@ -286,15 +296,15 @@ public class LoadoutMBTests : TestCollection
 
 		items[0].getInstructions = agent => {
 			++called;
-			return _ => null;
+			return () => null;
 		};
 
 		yield return new WaitForEndOfFrame();
 
-		var instructions = loadout.GetInstructionsFor(agent);
+		var instructionsFn = loadout.GetInstructionsFor(agent);
 
-		foreach (var _ in instructions().OrEmpty()) ;
-		foreach (var _ in instructions().OrEmpty()) ;
+		_ = instructionsFn();
+		_ = instructionsFn();
 
 		Assert.AreEqual(1, called);
 	}

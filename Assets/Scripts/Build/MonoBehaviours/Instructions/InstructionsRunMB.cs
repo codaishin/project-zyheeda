@@ -8,13 +8,14 @@ public class InstructionsRunMB : MonoBehaviour, IApplicable<IInstructions>
 
 	private bool isRunning;
 	private IInstructions? currentSource;
-	private Coroutine? currentlyRunning;
+	private (Coroutine coroutine, Action release)? currentlyRunning;
 
 	private void ForceStopCurrentInstruction() {
 		if (this.currentlyRunning == null) {
 			return;
 		}
-		this.StopCoroutine(this.currentlyRunning);
+		var (coroutine, _) = this.currentlyRunning.Value;
+		this.StopCoroutine(coroutine);
 	}
 
 	private Action<IInstructions> Delay(Action<IInstructions> action) {
@@ -33,24 +34,29 @@ public class InstructionsRunMB : MonoBehaviour, IApplicable<IInstructions>
 	}
 
 	private void ApplyNew(IInstructions source) {
-		IEnumerator<YieldInstruction?>? instructions =
-			source.GetInstructions(() => this.isRunning);
+		var instructionData = source.GetInstructionData();
 
-		if (instructions == null) {
+		if (instructionData == null) {
 			return;
 		}
 
+		var (instructions, release) = instructionData.Value;
+
 		this.ForceStopCurrentInstruction();
-		this.isRunning = true;
 		this.currentSource = source;
-		this.currentlyRunning = this.StartCoroutine(instructions);
+		this.currentlyRunning = (
+			this.StartCoroutine(instructions.GetEnumerator()),
+			release
+		);
 	}
 
 	private void ReleaseIfCurrentlyRunning(IInstructions source) {
-		if (this.currentSource != source) {
+		if (this.currentSource != source || this.currentlyRunning == null) {
 			return;
 		}
-		this.isRunning = false;
+
+		var (_, release) = this.currentlyRunning.Value;
+		release();
 	}
 
 	public void Apply(IInstructions source) {

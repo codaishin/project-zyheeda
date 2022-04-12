@@ -7,11 +7,11 @@ public class DisableDuringCooldownTemplate : BaseInstructionsTemplate<GameObject
 {
 	public float cooldown;
 
-	protected override GameObject GetConcreteAgent(GameObject agent) {
+	protected override GameObject ConcreteAgent(GameObject agent) {
 		return agent;
 	}
 
-	protected override PartialInstructionFunc PartialInstructions(
+	protected override InternalInstructionFn InternalInstructionsFn(
 		GameObject agent
 	) {
 		IEnumerable<YieldInstruction> disable(PluginData _) {

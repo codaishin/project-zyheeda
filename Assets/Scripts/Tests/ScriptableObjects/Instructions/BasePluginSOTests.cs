@@ -8,10 +8,10 @@ public class BasePluginSOTests : TestCollection
 {
 	class MockPlugin : IPlugin
 	{
-		public Func<GameObject, PartialPluginCallbacks> getCallbacks =
-			_ => _ => new PluginCallbacks();
+		public Func<GameObject, PluginHooksFn> getCallbacks =
+			_ => _ => new PluginHooks();
 
-		public PartialPluginCallbacks GetCallbacks(GameObject agent) =>
+		public PluginHooksFn PluginHooksFor(GameObject agent) =>
 			this.getCallbacks(agent);
 	}
 
@@ -26,8 +26,8 @@ public class BasePluginSOTests : TestCollection
 		var agent = new GameObject();
 		var calledAgent = null as GameObject;
 
-		PartialPluginCallbacks callbackFunc = _ => new PluginCallbacks();
-		PartialPluginCallbacks getCallbacks(GameObject agent) {
+		PluginHooksFn callbackFunc = _ => new PluginHooks();
+		PluginHooksFn getCallbacks(GameObject agent) {
 			calledAgent = agent;
 			return callbackFunc;
 		};
@@ -36,7 +36,7 @@ public class BasePluginSOTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		var calledCallbackFunc = pluginSO.GetCallbacks(agent);
+		var calledCallbackFunc = pluginSO.PluginHooksFor(agent);
 
 		Assert.AreSame(callbackFunc, calledCallbackFunc);
 		Assert.AreSame(agent, calledAgent);

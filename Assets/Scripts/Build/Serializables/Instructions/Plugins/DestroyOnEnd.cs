@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class DestroyOnEnd : IPlugin
 {
-	public PartialPluginCallbacks GetCallbacks(GameObject agent) {
-		return _ => new PluginCallbacks {
+	public PluginHooksFn PluginHooksFor(GameObject agent) {
+		return _ => new PluginHooks {
 			onEnd = () => GameObject.Destroy(agent),
 		};
 	}

@@ -10,7 +10,7 @@ public abstract class BasePluginSO<TPlugin> :
 	[SerializeField]
 	protected TPlugin plugin = new TPlugin();
 
-	public PartialPluginCallbacks GetCallbacks(GameObject agent) {
-		return this.plugin.GetCallbacks(agent);
+	public PluginHooksFn PluginHooksFor(GameObject agent) {
+		return this.plugin.PluginHooksFor(agent);
 	}
 }

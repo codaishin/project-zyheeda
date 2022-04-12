@@ -8,10 +8,10 @@ public class BaseInstructionsTemplateSOTests : TestCollection
 {
 	class MockInstructions : IInstructionsTemplate
 	{
-		public Func<GameObject, InstructionsFunc> getInstructionsFor =
-			_ => _ => null;
+		public Func<GameObject, ExternalInstructionsFn> getInstructionsFor =
+			_ => () => null;
 
-		public InstructionsFunc GetInstructionsFor(GameObject agent) =>
+		public ExternalInstructionsFn GetInstructionsFor(GameObject agent) =>
 			this.getInstructionsFor(agent);
 	}
 
@@ -25,7 +25,7 @@ public class BaseInstructionsTemplateSOTests : TestCollection
 
 		instructionsSO.Template.getInstructionsFor = agent => {
 			called = agent;
-			return _ => null;
+			return () => null;
 		};
 
 		yield return new WaitForEndOfFrame();
@@ -38,7 +38,9 @@ public class BaseInstructionsTemplateSOTests : TestCollection
 	[UnityTest]
 	public IEnumerator GetInstructionsFunc() {
 		var instructionsSO = ScriptableObject.CreateInstance<MockInstructionsSO>();
-		var func = (InstructionsFunc)(_ => new YieldInstruction[0]);
+		var func = (ExternalInstructionsFn)(
+			() => new InstructionData(new YieldInstruction[0], () => { })
+		);
 
 		instructionsSO.Template.getInstructionsFor = _ => func;
 

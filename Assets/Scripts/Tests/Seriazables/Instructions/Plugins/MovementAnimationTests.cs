@@ -27,7 +27,7 @@ public class MovementAnimationTests : TestCollection
 		agent.set = s => called = s;
 
 		var action = plugin
-			.GetCallbacks(agent.gameObject)(pluginData)
+			.PluginHooksFor(agent.gameObject)(pluginData)
 			.onBegin!;
 
 		yield return new WaitForEndOfFrame();
@@ -49,7 +49,7 @@ public class MovementAnimationTests : TestCollection
 		child.set = s => called = s;
 
 		var action = plugin
-			.GetCallbacks(agent.gameObject)(pluginData)
+			.PluginHooksFor(agent.gameObject)(pluginData)
 			.onBegin!;
 
 		yield return new WaitForEndOfFrame();
@@ -69,7 +69,7 @@ public class MovementAnimationTests : TestCollection
 		agent.blend = (state, value) => called = (state, value);
 
 		var action = plugin
-			.GetCallbacks(agent.gameObject)(pluginData)
+			.PluginHooksFor(agent.gameObject)(pluginData)
 			.onBegin!;
 
 		yield return new WaitForEndOfFrame();
@@ -89,7 +89,7 @@ public class MovementAnimationTests : TestCollection
 		agent.blend = (state, value) => called = (state, value);
 
 		var action = plugin
-			.GetCallbacks(agent.gameObject)(pluginData)
+			.PluginHooksFor(agent.gameObject)(pluginData)
 			.onAfterYield!;
 
 		yield return new WaitForEndOfFrame();
@@ -109,7 +109,7 @@ public class MovementAnimationTests : TestCollection
 		agent.set = s => called = s;
 
 		var action = plugin
-			.GetCallbacks(agent.gameObject)(pluginData)
+			.PluginHooksFor(agent.gameObject)(pluginData)
 			.onEnd!;
 
 		yield return new WaitForEndOfFrame();

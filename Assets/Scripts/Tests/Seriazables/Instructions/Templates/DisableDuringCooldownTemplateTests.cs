@@ -16,9 +16,9 @@ public class DisableDuringCooldownTemplateTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		var instructions = template.GetInstructionsFor(agent);
+		var (instructions, _) = template.GetInstructionsFor(agent)()!.Value;
 
-		runner.StartCoroutine(instructions()!.GetEnumerator());
+		runner.StartCoroutine(instructions!.GetEnumerator());
 
 		yield return new WaitForEndOfFrame();
 
@@ -49,9 +49,9 @@ public class DisableDuringCooldownTemplateTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		var instructions = template.GetInstructionsFor(agent);
+		var (instructions, _) = template.GetInstructionsFor(agent)()!.Value;
 
-		runner.StartCoroutine(instructions()!.GetEnumerator());
+		runner.StartCoroutine(instructions!.GetEnumerator());
 
 		yield return new WaitForEndOfFrame();
 		yield return new WaitForSeconds(0.3f);

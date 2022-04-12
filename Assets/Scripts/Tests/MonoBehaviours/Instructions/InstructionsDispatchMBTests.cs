@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
@@ -9,7 +8,7 @@ public class InstructionsDispatchMBTests : TestCollection
 {
 	class MockInstructionsMB : MonoBehaviour, IInstructions
 	{
-		public IEnumerator<YieldInstruction?>? GetInstructions(Func<bool> run) {
+		public InstructionData? GetInstructionData() {
 			throw new NotImplementedException();
 		}
 	}

@@ -28,7 +28,7 @@ public class ItemActionTemplate : BaseInstructionsTemplate<ItemActionData>
 		pluginData.Extent<TargetPluginData>();
 	}
 
-	protected override ItemActionData GetConcreteAgent(GameObject agent) {
+	protected override ItemActionData ConcreteAgent(GameObject agent) {
 		if (this.hitter.Value == null) {
 			throw new NullReferenceException(
 				$"hitter on {this} must be set, but was null"
@@ -46,7 +46,7 @@ public class ItemActionTemplate : BaseInstructionsTemplate<ItemActionData>
 		};
 	}
 
-	protected override PartialInstructionFunc PartialInstructions(
+	protected override InternalInstructionFn InternalInstructionsFn(
 		ItemActionData agent
 	) {
 		IEnumerable<YieldInstruction>? action(PluginData pluginData) {

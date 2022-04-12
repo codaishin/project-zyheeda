@@ -8,9 +8,25 @@ using Instructions =
 		.Generic
 		.IEnumerable<UnityEngine.YieldInstruction?>;
 
-public delegate Instructions? InstructionsFunc(Func<bool>? run = null);
-public delegate Instructions? PartialInstructionFunc(PluginData data);
-public delegate PluginCallbacks PartialPluginCallbacks(PluginData data);
+public struct InstructionData
+{
+	public readonly Instructions instructions;
+	public readonly Action release;
+
+	public InstructionData(Instructions instructions, Action release) {
+		this.instructions = instructions;
+		this.release = release;
+	}
+
+	public void Deconstruct(out Instructions instructions, out Action release) {
+		instructions = this.instructions;
+		release = this.release;
+	}
+}
+
+public delegate InstructionData? ExternalInstructionsFn();
+public delegate Instructions? InternalInstructionFn(PluginData data);
+public delegate PluginHooks PluginHooksFn(PluginData data);
 
 public class CorePluginData : PluginData
 {
@@ -22,83 +38,75 @@ public abstract class BaseInstructionsTemplate<TAgent> : IInstructionsTemplate
 {
 	public Reference<IPlugin>[] plugins = new Reference<IPlugin>[0];
 
-	protected abstract TAgent GetConcreteAgent(GameObject agent);
-	protected abstract PartialInstructionFunc PartialInstructions(TAgent agent);
+	protected abstract TAgent ConcreteAgent(GameObject agent);
+	protected abstract InternalInstructionFn InternalInstructionsFn(TAgent agent);
 	protected virtual void ExtendPluginData(PluginData pluginData) { }
 
-	public InstructionsFunc GetInstructionsFor(GameObject agent) {
-		TAgent concreteAgent =
-			this.GetConcreteAgent(agent);
-		PartialInstructionFunc instructions =
-			this.PartialInstructions(concreteAgent);
-		IEnumerable<PartialPluginCallbacks> partialPluginCallbacks =
-			this.GetPartialPluginCallbacksFor(agent);
+	public ExternalInstructionsFn GetInstructionsFor(GameObject agent) {
+		var concreteAgent = this.ConcreteAgent(agent);
+		var instructionFn = this.InternalInstructionsFn(concreteAgent);
+		var pluginHooksFns = this.PluginHooksFns(agent);
 
-		return runCheck => {
-			CorePluginData data =
-				this.GetCorePluginData();
-			Instructions? loop =
-				instructions(data);
-			PluginCallbacks pluginCalls =
-				this.FinalizePluginCalls(partialPluginCallbacks, data);
-			Func<bool> runCheckWithPluginData =
-				runCheck is null
-					? (() => data.run)
-					: (() => data.run && runCheck());
+		return () => {
+			var pluginData = this.CorePluginData();
+			var pluginHooks = this.FinalizePluginHooks(pluginHooksFns, pluginData);
+			var instructions = instructionFn(pluginData);
 
-			if (loop is null) {
+			if (instructions is null) {
 				return null;
 			}
 
-			data.run = true;
-			return this.RunLoop(loop, pluginCalls, runCheckWithPluginData);
+			pluginData.run = true;
+			return new InstructionData(
+				this.Run(instructions, pluginHooks, pluginData),
+				() => pluginData.run = false
+			);
 		};
 	}
 
-	private IEnumerable<PartialPluginCallbacks> GetPartialPluginCallbacksFor(
-		GameObject agent
-	) {
+	private IEnumerable<PluginHooksFn> PluginHooksFns(GameObject agent) {
 		return this.plugins
 			.Values()
-			.Select(plugin => plugin.GetCallbacks(agent));
+			.Select(plugin => plugin.PluginHooksFor(agent));
 	}
 
-	private PluginCallbacks FinalizePluginCalls(
-		IEnumerable<PartialPluginCallbacks> partialPluginCallbacks,
+	private PluginHooks FinalizePluginHooks(
+		IEnumerable<PluginHooksFn> getPluginHooksFns,
 		CorePluginData data
 	) {
-		PluginCallbacks emptyPCB = new PluginCallbacks();
-		return partialPluginCallbacks
-			.Select(partialPCB => partialPCB(data))
-			.Aggregate(emptyPCB, (lastPCB, currentPCB) => lastPCB + currentPCB);
+		return getPluginHooksFns
+			.Select(getPluginHooksFn => getPluginHooksFn(data))
+			.Aggregate(new PluginHooks(), PluginHooks.Concat);
 	}
 
-	private CorePluginData GetCorePluginData() {
-		CorePluginData corePluginData = new CorePluginData();
+	private CorePluginData CorePluginData() {
+		var corePluginData = new CorePluginData();
 		this.ExtendPluginData(corePluginData);
 		return corePluginData;
 	}
 
-	private Instructions RunLoop(
-		Instructions loop,
-		PluginCallbacks pluginCalls,
-		Func<bool> runCheck
+	private Instructions Run(
+		Instructions instructions,
+		PluginHooks pluginHooks,
+		CorePluginData pluginData
 	) {
-		IEnumerable<YieldInstruction?> runLoop =
-			BaseInstructionsTemplate<TAgent>.RunLoop(loop, runCheck);
+		var run = BaseInstructionsTemplate<TAgent>.Run(instructions, pluginData);
 
-		pluginCalls.onBegin?.Invoke();
-		foreach (YieldInstruction? hold in runLoop) {
-			pluginCalls.onBeforeYield?.Invoke();
+		pluginHooks.onBegin?.Invoke();
+		foreach (YieldInstruction? hold in run) {
+			pluginHooks.onBeforeYield?.Invoke();
 			yield return hold;
-			pluginCalls.onAfterYield?.Invoke();
+			pluginHooks.onAfterYield?.Invoke();
 		}
-		pluginCalls.onEnd?.Invoke();
+		pluginHooks.onEnd?.Invoke();
 	}
 
-	private static Instructions RunLoop(Instructions loop, Func<bool> runCheck) {
-		using IEnumerator<YieldInstruction?> enumerator = loop.GetEnumerator();
-		while (runCheck() && enumerator.MoveNext()) {
+	private static Instructions Run(
+		Instructions instructions,
+		CorePluginData pluginData
+	) {
+		using var enumerator = instructions.GetEnumerator();
+		while (pluginData.run && enumerator.MoveNext()) {
 			yield return enumerator.Current;
 		}
 	}

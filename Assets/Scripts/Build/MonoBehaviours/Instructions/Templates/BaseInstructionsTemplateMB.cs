@@ -12,7 +12,7 @@ public class BaseInstructionsTemplateMB<TTemplate> :
 
 	public TTemplate Template => this.template;
 
-	public InstructionsFunc GetInstructionsFor(GameObject agent) {
+	public ExternalInstructionsFn GetInstructionsFor(GameObject agent) {
 		return this.template.GetInstructionsFor(agent);
 	}
 }

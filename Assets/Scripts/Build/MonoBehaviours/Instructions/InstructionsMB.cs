@@ -1,23 +1,18 @@
-using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class InstructionsMB : MonoBehaviour, IInstructions
 {
-	private InstructionsFunc? instructionsFunc;
+	private ExternalInstructionsFn? instructionsFunc;
 
 	public Reference<IInstructionsTemplate> template;
 	public Reference agent;
 
 	private void Start() {
-		this.instructionsFunc = this.template.Value!.GetInstructionsFor(
-			this.agent.GameObject
-		);
+		GameObject agent = this.agent.GameObject;
+		this.instructionsFunc = this.template.Value!.GetInstructionsFor(agent);
 	}
 
-	public IEnumerator<YieldInstruction?>? GetInstructions(Func<bool> run) {
-		return this.instructionsFunc
-			!.Invoke(run)
-			?.GetEnumerator();
+	public InstructionData? GetInstructionData() {
+		return this.instructionsFunc!.Invoke();
 	}
 }

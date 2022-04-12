@@ -21,11 +21,11 @@ public class MovementAnimation : BasePlugin<MovementAnimators, CorePluginData>
 		return data.As<CorePluginData>()!;
 	}
 
-	protected override PluginCallbacks GetCallbacks(
+	protected override PluginHooks GetCallbacks(
 		MovementAnimators agent,
 		CorePluginData data
 	) {
-		return new PluginCallbacks {
+		return new PluginHooks {
 			onBegin = () => {
 				agent.states.Set(Animation.State.WalkOrRun);
 				agent.statesBlend.Blend(Animation.BlendState.WalkOrRun, data.weight);

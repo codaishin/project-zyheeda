@@ -14,7 +14,7 @@ public class FaceTargetPluginSOTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		var callbacks = plugin.GetCallbacks(agent)!;
+		var callbacks = plugin.PluginHooksFor(agent)!;
 		var onBegin = callbacks(data).onBegin!;
 
 		target.transform.position = Vector3.left;
@@ -33,7 +33,7 @@ public class FaceTargetPluginSOTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		var callbacks = plugin.GetCallbacks(agent)!;
+		var callbacks = plugin.PluginHooksFor(agent)!;
 		var onBegin = callbacks(data).onBegin!;
 
 		target.transform.position = Vector3.up + Vector3.right;
@@ -52,7 +52,7 @@ public class FaceTargetPluginSOTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		var callbacks = plugin.GetCallbacks(agent)!;
+		var callbacks = plugin.PluginHooksFor(agent)!;
 		var onBegin = callbacks(data).onBegin!;
 
 		Assert.DoesNotThrow(() => onBegin());
