@@ -25,6 +25,26 @@ public class FaceTargetPluginSOTests : TestCollection
 	}
 
 	[UnityTest]
+	public IEnumerator OnBeginFaceTargetDelayedSet() {
+		var target = new GameObject();
+		var agent = new GameObject();
+		var plugin = new FaceTarget();
+		var data = new TargetPluginData();
+
+		yield return new WaitForEndOfFrame();
+
+		var callbacks = plugin.PluginHooksFor(agent)!;
+		var onBegin = callbacks(data).onBegin!;
+
+		target.transform.position = Vector3.left;
+
+		data.target = target.transform;
+		onBegin();
+
+		Tools.AssertEqual(Vector3.left, agent.transform.forward);
+	}
+
+	[UnityTest]
 	public IEnumerator OnBeginFaceTargetRelative() {
 		var target = new GameObject();
 		var agent = new GameObject();

@@ -17,21 +17,24 @@ public class FaceTarget : BasePlugin<Transform, TargetPluginData>
 		TargetPluginData data
 	) {
 		return new PluginHooks {
-			onBegin = FaceTarget.LookAtTarget(agent, data.target),
+			onBegin = FaceTarget.LookAtTarget(agent, data),
 		};
 	}
 
-	private static Action LookAtTarget(Transform agent, Transform? target) {
+	private static Action LookAtTarget(Transform agent, TargetPluginData data) {
 		return () => {
+			var target = data.target;
+
 			if (target == null) {
 				return;
 			}
-			Vector3 position = new Vector3(
+
+			var targetOnAgentHeight = new Vector3(
 				target.position.x,
 				agent.position.y,
 				target.position.z
 			);
-			agent.transform.LookAt(position);
+			agent.transform.LookAt(targetOnAgentHeight);
 		};
 	}
 }
