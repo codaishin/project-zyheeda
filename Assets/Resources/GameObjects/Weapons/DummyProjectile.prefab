@@ -194,7 +194,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   runner:
     value: {fileID: 3498958539416838655}
-  instructions:
+  routineFactory:
     value: {fileID: 3760164117269264671}
 --- !u!114 &3498958539416838655
 MonoBehaviour:
@@ -221,7 +221,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0b172c2cfab6c744b256e6dc958f3a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  template:
+  routineFuncFactory:
     value: {fileID: 11400000, guid: 5f172df60d0660c4299987c0f19023db, type: 2}
   agent:
     gameObject: {fileID: 2685238607673821597}

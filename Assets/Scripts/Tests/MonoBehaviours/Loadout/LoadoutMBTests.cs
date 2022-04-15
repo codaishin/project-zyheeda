@@ -3,32 +3,48 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
+using Routines;
 using UnityEngine;
 using UnityEngine.TestTools;
 
 public class LoadoutMBTests : TestCollection
 {
-	class MockItemHandleMB : MonoBehaviour, IItem
+	class MockRoutine : IRoutine
 	{
-		public Action<IAnimationStance, Transform> equip =
-			(_, __) => { };
-		public Action unEquip =
+		public Action release =
 			() => { };
-		public Func<GameObject, ExternalInstructionsFn> getInstructions =
-			_ => () => null;
+		public Func<IEnumerator<YieldInstruction?>> getEnumerator =
+			() =>
+				Enumerable
+					.Empty<YieldInstruction>()
+					.GetEnumerator();
+
+		public IEnumerator<YieldInstruction?> GetEnumerator() =>
+			this.getEnumerator();
+		IEnumerator IEnumerable.GetEnumerator() =>
+			this.getEnumerator();
+		public void Switch() =>
+			this.release();
+	}
+
+	class MockItemMB : MonoBehaviour, IItem
+	{
+		public Action<IAnimationStance, Transform> equip = (_, __) => { };
+		public Action unEquip = () => { };
+		public Func<GameObject, Func<IRoutine?>> getRoutineFnFor = _ => () => null;
 
 		public void Equip(IAnimationStance animator, Transform slot) =>
 			this.equip(animator, slot);
 		public void UnEquip() =>
 			this.unEquip();
-		public ExternalInstructionsFn GetInstructionsFor(GameObject agent) =>
-			this.getInstructions(agent);
+		public Func<IRoutine?> GetRoutineFnFor(GameObject agent) =>
+			this.getRoutineFnFor(agent);
 	}
 
 	[UnityTest]
 	public IEnumerator CircleFirstOnStart() {
 		var loadout = new GameObject().AddComponent<LoadoutMB>();
-		var item = new GameObject().AddComponent<MockItemHandleMB>();
+		var item = new GameObject().AddComponent<MockItemMB>();
 		var slot = new GameObject();
 		var animator = new GameObject().AddComponent<AnimationMB>();
 		var calledAnimator = null as object;
@@ -53,9 +69,9 @@ public class LoadoutMBTests : TestCollection
 	[UnityTest]
 	public IEnumerator Circle2nd() {
 		var loadout = new GameObject().AddComponent<LoadoutMB>();
-		var items = new MockItemHandleMB[] {
-			new GameObject().AddComponent<MockItemHandleMB>(),
-			new GameObject().AddComponent<MockItemHandleMB>(),
+		var items = new MockItemMB[] {
+			new GameObject().AddComponent<MockItemMB>(),
+			new GameObject().AddComponent<MockItemMB>(),
 		};
 		var slot = new GameObject();
 		var animator = new GameObject().AddComponent<AnimationMB>();
@@ -84,10 +100,10 @@ public class LoadoutMBTests : TestCollection
 	[UnityTest]
 	public IEnumerator Circle3rd() {
 		var loadout = new GameObject().AddComponent<LoadoutMB>();
-		var items = new MockItemHandleMB[] {
-			new GameObject().AddComponent<MockItemHandleMB>(),
-			new GameObject().AddComponent<MockItemHandleMB>(),
-			new GameObject().AddComponent<MockItemHandleMB>(),
+		var items = new MockItemMB[] {
+			new GameObject().AddComponent<MockItemMB>(),
+			new GameObject().AddComponent<MockItemMB>(),
+			new GameObject().AddComponent<MockItemMB>(),
 		};
 		var slot = new GameObject();
 		var animator = new GameObject().AddComponent<AnimationMB>();
@@ -117,10 +133,10 @@ public class LoadoutMBTests : TestCollection
 	[UnityTest]
 	public IEnumerator CircleBackTo1st() {
 		var loadout = new GameObject().AddComponent<LoadoutMB>();
-		var items = new MockItemHandleMB[] {
-			new GameObject().AddComponent<MockItemHandleMB>(),
-			new GameObject().AddComponent<MockItemHandleMB>(),
-			new GameObject().AddComponent<MockItemHandleMB>(),
+		var items = new MockItemMB[] {
+			new GameObject().AddComponent<MockItemMB>(),
+			new GameObject().AddComponent<MockItemMB>(),
+			new GameObject().AddComponent<MockItemMB>(),
 		};
 		var slot = new GameObject();
 		var animator = new GameObject().AddComponent<AnimationMB>();
@@ -152,12 +168,12 @@ public class LoadoutMBTests : TestCollection
 	[UnityTest]
 	public IEnumerator Use1st() {
 		var loadout = new GameObject().AddComponent<LoadoutMB>();
-		var items = new MockItemHandleMB[] {
-			new GameObject().AddComponent<MockItemHandleMB>(),
+		var items = new MockItemMB[] {
+			new GameObject().AddComponent<MockItemMB>(),
 		};
 		var slot = new GameObject();
 		var animator = new GameObject().AddComponent<AnimationMB>();
-		var runner = new GameObject().AddComponent<InstructionsRunMB>();
+		var runner = new GameObject().AddComponent<RoutineRunMB>();
 		var calledAgent = null as GameObject;
 		var agent = new GameObject();
 
@@ -168,23 +184,23 @@ public class LoadoutMBTests : TestCollection
 		yield return new WaitForEndOfFrame();
 
 		var count = 0;
-		InstructionData? getInstruction() {
-			IEnumerable<YieldInstruction?> instructions() {
+		IRoutine getInstruction() {
+			IEnumerator<YieldInstruction?> getEnumerator() {
 				for (; count < 10; ++count) {
 					yield return null;
 				}
 			}
-			return new InstructionData(instructions(), () => { });
+			return new MockRoutine { getEnumerator = getEnumerator };
 		}
 
-		items[0].getInstructions = agent => {
+		items[0].getRoutineFnFor = agent => {
 			calledAgent = agent;
 			return getInstruction;
 		};
 
-		var (run, _) = loadout.GetInstructionsFor(agent)()!.Value;
+		var routineFn = loadout.GetRoutineFnFor(agent)!;
 
-		foreach (var _ in run) ;
+		foreach (var _ in routineFn().OrEmpty()) ;
 
 		Assert.AreSame(agent, calledAgent);
 		Assert.AreEqual(10, count);
@@ -193,15 +209,15 @@ public class LoadoutMBTests : TestCollection
 	[UnityTest]
 	public IEnumerator Use3rd() {
 		var loadout = new GameObject().AddComponent<LoadoutMB>();
-		var items = new MockItemHandleMB[] {
-			new GameObject().AddComponent<MockItemHandleMB>(),
-			new GameObject().AddComponent<MockItemHandleMB>(),
-			new GameObject().AddComponent<MockItemHandleMB>(),
-			new GameObject().AddComponent<MockItemHandleMB>(),
+		var items = new MockItemMB[] {
+			new GameObject().AddComponent<MockItemMB>(),
+			new GameObject().AddComponent<MockItemMB>(),
+			new GameObject().AddComponent<MockItemMB>(),
+			new GameObject().AddComponent<MockItemMB>(),
 		};
 		var slot = new GameObject();
 		var animator = new GameObject().AddComponent<AnimationMB>();
-		var runner = new GameObject().AddComponent<InstructionsRunMB>();
+		var runner = new GameObject().AddComponent<RoutineRunMB>();
 		var calledAgent = null as GameObject;
 		var agent = new GameObject();
 
@@ -212,16 +228,16 @@ public class LoadoutMBTests : TestCollection
 		yield return new WaitForEndOfFrame();
 
 		var count = 0;
-		InstructionData? getInstruction() {
-			IEnumerable<YieldInstruction?> instructions() {
+		IRoutine getInstruction() {
+			IEnumerator<YieldInstruction?> getEnumerator() {
 				for (; count < 10; ++count) {
 					yield return null;
 				}
 			}
-			return new InstructionData(instructions(), () => { });
+			return new MockRoutine { getEnumerator = getEnumerator };
 		}
 
-		items[2].getInstructions = agent => {
+		items[2].getRoutineFnFor = agent => {
 			calledAgent = agent;
 			return getInstruction;
 		};
@@ -229,9 +245,9 @@ public class LoadoutMBTests : TestCollection
 		loadout.Circle();
 		loadout.Circle();
 
-		var (run, _) = loadout.GetInstructionsFor(agent)()!.Value;
+		var routineFn = loadout.GetRoutineFnFor(agent)!;
 
-		foreach (var _ in run) ;
+		foreach (var _ in routineFn().OrEmpty()) ;
 
 		Assert.AreSame(agent, calledAgent);
 		Assert.AreEqual(10, count);
@@ -240,13 +256,13 @@ public class LoadoutMBTests : TestCollection
 	[UnityTest]
 	public IEnumerator CircleInstructions() {
 		var loadout = new GameObject().AddComponent<LoadoutMB>();
-		var items = new MockItemHandleMB[] {
-			new GameObject().AddComponent<MockItemHandleMB>(),
-			new GameObject().AddComponent<MockItemHandleMB>(),
+		var items = new MockItemMB[] {
+			new GameObject().AddComponent<MockItemMB>(),
+			new GameObject().AddComponent<MockItemMB>(),
 		};
 		var slot = new GameObject();
 		var animator = new GameObject().AddComponent<AnimationMB>();
-		var runner = new GameObject().AddComponent<InstructionsRunMB>();
+		var runner = new GameObject().AddComponent<RoutineRunMB>();
 		var calledA = 0;
 		var calledB = 0;
 		var agent = new GameObject();
@@ -255,24 +271,24 @@ public class LoadoutMBTests : TestCollection
 		loadout.animator = animator;
 		loadout.items = items.Select(Reference<IItem>.Component).ToArray();
 
-		items[0].getInstructions = agent => {
+		items[0].getRoutineFnFor = agent => {
 			++calledA;
 			return () => null;
 		};
-		items[1].getInstructions = agent => {
+		items[1].getRoutineFnFor = agent => {
 			++calledB;
 			return () => null;
 		};
 
 		yield return new WaitForEndOfFrame();
 
-		var instructionsFn = loadout.GetInstructionsFor(agent);
+		var routineFn = loadout.GetRoutineFnFor(agent)!;
 
-		_ = instructionsFn();
+		_ = routineFn();
 
 		loadout.Circle();
 
-		_ = instructionsFn();
+		_ = routineFn();
 
 		Assert.AreEqual((1, 1), (calledA, calledB));
 	}
@@ -280,13 +296,13 @@ public class LoadoutMBTests : TestCollection
 	[UnityTest]
 	public IEnumerator CacheInstructions() {
 		var loadout = new GameObject().AddComponent<LoadoutMB>();
-		var items = new MockItemHandleMB[] {
-			new GameObject().AddComponent<MockItemHandleMB>(),
-			new GameObject().AddComponent<MockItemHandleMB>(),
+		var items = new MockItemMB[] {
+			new GameObject().AddComponent<MockItemMB>(),
+			new GameObject().AddComponent<MockItemMB>(),
 		};
 		var slot = new GameObject();
 		var animator = new GameObject().AddComponent<AnimationMB>();
-		var runner = new GameObject().AddComponent<InstructionsRunMB>();
+		var runner = new GameObject().AddComponent<RoutineRunMB>();
 		var called = 0;
 		var agent = new GameObject();
 
@@ -294,17 +310,17 @@ public class LoadoutMBTests : TestCollection
 		loadout.animator = animator;
 		loadout.items = items.Select(Reference<IItem>.Component).ToArray();
 
-		items[0].getInstructions = agent => {
+		items[0].getRoutineFnFor = agent => {
 			++called;
 			return () => null;
 		};
 
 		yield return new WaitForEndOfFrame();
 
-		var instructionsFn = loadout.GetInstructionsFor(agent);
+		var routineFn = loadout.GetRoutineFnFor(agent)!;
 
-		_ = instructionsFn();
-		_ = instructionsFn();
+		_ = routineFn();
+		_ = routineFn();
 
 		Assert.AreEqual(1, called);
 	}
@@ -312,10 +328,10 @@ public class LoadoutMBTests : TestCollection
 	[UnityTest]
 	public IEnumerator AllowEmptyItems() {
 		var loadout = new GameObject().AddComponent<LoadoutMB>();
-		var items = new MockItemHandleMB?[] { null, null };
+		var items = new MockItemMB?[] { null, null };
 		var slot = new GameObject();
 		var animator = new GameObject().AddComponent<AnimationMB>();
-		var runner = new GameObject().AddComponent<InstructionsRunMB>();
+		var runner = new GameObject().AddComponent<RoutineRunMB>();
 		var agent = new GameObject();
 
 		loadout.slot = slot.transform;
@@ -331,6 +347,6 @@ public class LoadoutMBTests : TestCollection
 		yield return new WaitForEndOfFrame();
 
 		Assert.DoesNotThrow(() => loadout.Circle());
-		Assert.DoesNotThrow(() => loadout.GetInstructionsFor(agent));
+		Assert.DoesNotThrow(() => loadout.GetRoutineFnFor(agent));
 	}
 }

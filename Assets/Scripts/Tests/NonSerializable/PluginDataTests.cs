@@ -1,12 +1,16 @@
 using NUnit.Framework;
+using Routines;
 
 public class PluginDataTests
 {
-	class PluginDataRoot : PluginData { public PluginDataRoot() : base() { } }
+	class PluginDataRoot : Data
+	{
+		public PluginDataRoot() : base() { }
+	}
 
-	class PluginDataA : PluginData { }
+	class PluginDataA : Data { }
 
-	class PluginDataB : PluginData { }
+	class PluginDataB : Data { }
 
 	[Test]
 	public void AsSelf() {
