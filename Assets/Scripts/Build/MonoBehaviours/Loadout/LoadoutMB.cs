@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using UnityEngine;
 
@@ -6,7 +7,7 @@ public interface ILoadout
 	void Circle();
 }
 
-public class LoadoutMB : MonoBehaviour, ILoadout, IInstructionsTemplate
+public class LoadoutMB : MonoBehaviour, ILoadout, Routines.IFuncFactory
 {
 	public Transform? slot;
 	public AnimationMB? animator;
@@ -26,10 +27,10 @@ public class LoadoutMB : MonoBehaviour, ILoadout, IInstructionsTemplate
 		this.items[this.index].Value?.Equip(this.animator!, this.slot!);
 	}
 
-	public InstructionsFunc GetInstructionsFor(GameObject agent) {
-		InstructionsFunc?[] instructions = this.items
-			.Select(item => item.Value?.GetInstructionsFor(agent))
+	public Func<Routines.IRoutine?> GetRoutineFnFor(GameObject agent) {
+		Func<Routines.IRoutine?>?[] instructions = this.items
+			.Select(item => item.Value?.GetRoutineFnFor(agent))
 			.ToArray();
-		return run => instructions[this.index]?.Invoke(run);
+		return () => instructions[this.index]?.Invoke();
 	}
 }
