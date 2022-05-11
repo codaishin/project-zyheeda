@@ -61,7 +61,7 @@ namespace Routines
 				}
 			}
 
-			public void Switch() {
+			public void NextSubRoutine() {
 				this.switched = true;
 			}
 		}

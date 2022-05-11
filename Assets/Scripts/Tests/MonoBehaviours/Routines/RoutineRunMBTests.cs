@@ -9,7 +9,7 @@ using UnityEngine.TestTools;
 
 public class RoutineRunMBTests : TestCollection
 {
-	class MockSubRoutine : IRoutine
+	class MockRoutine : IRoutine
 	{
 		public Action release =
 			() => { };
@@ -23,7 +23,7 @@ public class RoutineRunMBTests : TestCollection
 			this.getEnumerator();
 		IEnumerator IEnumerable.GetEnumerator() =>
 			this.getEnumerator();
-		public void Switch() =>
+		public void NextSubRoutine() =>
 			this.release();
 	}
 
@@ -50,7 +50,7 @@ public class RoutineRunMBTests : TestCollection
 				yield return new WaitForEndOfFrame();
 				++called;
 			}
-			return new MockSubRoutine { getEnumerator = getEnumerator };
+			return new MockRoutine { getEnumerator = getEnumerator };
 		}
 
 		source.getInstructions = getInstructions;
@@ -81,7 +81,7 @@ public class RoutineRunMBTests : TestCollection
 					++called;
 				}
 			}
-			return new MockSubRoutine {
+			return new MockRoutine {
 				getEnumerator = getEnumerator,
 				release = () => run = false,
 			};
@@ -122,7 +122,7 @@ public class RoutineRunMBTests : TestCollection
 					++called;
 				}
 			}
-			return new MockSubRoutine {
+			return new MockRoutine {
 				getEnumerator = getEnumerator,
 				release = () => run = false,
 			};
@@ -161,7 +161,7 @@ public class RoutineRunMBTests : TestCollection
 					++called;
 				}
 			}
-			return new MockSubRoutine {
+			return new MockRoutine {
 				getEnumerator = getEnumerator,
 				release = () => run = false,
 			};
@@ -199,7 +199,7 @@ public class RoutineRunMBTests : TestCollection
 					++called;
 				}
 			}
-			return new MockSubRoutine {
+			return new MockRoutine {
 				getEnumerator = getEnumerator,
 				release = () => run = false,
 			};
@@ -238,7 +238,7 @@ public class RoutineRunMBTests : TestCollection
 					++called;
 				}
 			}
-			return new MockSubRoutine {
+			return new MockRoutine {
 				getEnumerator = getEnumerator,
 				release = () => run = false,
 			};
@@ -279,7 +279,7 @@ public class RoutineRunMBTests : TestCollection
 					++called;
 				}
 			}
-			return new MockSubRoutine {
+			return new MockRoutine {
 				getEnumerator = getEnumerator,
 				release = () => run = false,
 			};
@@ -314,7 +314,7 @@ public class RoutineRunMBTests : TestCollection
 			IEnumerator<YieldInstruction> getEnumerator() {
 				yield break;
 			}
-			return new MockSubRoutine {
+			return new MockRoutine {
 				getEnumerator = getEnumerator,
 				release = () => { },
 			};
@@ -354,7 +354,7 @@ public class RoutineRunMBTests : TestCollection
 					yield return new WaitForEndOfFrame();
 				}
 			}
-			return new MockSubRoutine {
+			return new MockRoutine {
 				getEnumerator = getEnumerator,
 				release = () => run = false,
 			};
@@ -394,7 +394,7 @@ public class RoutineRunMBTests : TestCollection
 					++called;
 				}
 			}
-			return new MockSubRoutine {
+			return new MockRoutine {
 				getEnumerator = getEnumerator,
 				release = () => run = false,
 			};

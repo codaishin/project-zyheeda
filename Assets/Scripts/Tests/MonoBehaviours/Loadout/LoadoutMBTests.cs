@@ -23,7 +23,7 @@ public class LoadoutMBTests : TestCollection
 			this.getEnumerator();
 		IEnumerator IEnumerable.GetEnumerator() =>
 			this.getEnumerator();
-		public void Switch() =>
+		public void NextSubRoutine() =>
 			this.release();
 	}
 

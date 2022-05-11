@@ -8,7 +8,7 @@ public class RoutineRunMB : MonoBehaviour, IApplicable<IFactory>
 	public bool delayApply = false;
 
 	private IFactory? currentSource;
-	private (Coroutine coroutine, Action release)? currentlyRunning;
+	private (Coroutine coroutine, Action nextSubRoutine)? currentlyRunning;
 
 	private void ForceStopCurrent() {
 		if (this.currentlyRunning == null) {
@@ -44,17 +44,16 @@ public class RoutineRunMB : MonoBehaviour, IApplicable<IFactory>
 		this.currentSource = source;
 		this.currentlyRunning = (
 			this.StartCoroutine(routine.GetEnumerator()),
-			routine.Switch
+			routine.NextSubRoutine
 		);
 	}
 
-	private void ReleaseIfCurrentlyRunning(IFactory source) {
+	private void NextSubRoutineIfCurrentlyRunning(IFactory source) {
 		if (this.currentSource != source || this.currentlyRunning == null) {
 			return;
 		}
 
-		var (_, release) = this.currentlyRunning.Value;
-		release();
+		this.currentlyRunning.Value.nextSubRoutine();
 	}
 
 	public void Apply(IFactory source) {
@@ -62,6 +61,6 @@ public class RoutineRunMB : MonoBehaviour, IApplicable<IFactory>
 	}
 
 	public void Release(IFactory source) {
-		this.NowOrDelayed(this.ReleaseIfCurrentlyRunning, source);
+		this.NowOrDelayed(this.NextSubRoutineIfCurrentlyRunning, source);
 	}
 }

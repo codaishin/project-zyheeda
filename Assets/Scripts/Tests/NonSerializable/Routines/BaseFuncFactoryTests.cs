@@ -263,7 +263,7 @@ namespace Routines
 
 			foreach (var _ in routine) {
 				if (iterations == 9) {
-					routine.Switch();
+					routine.NextSubRoutine();
 				};
 			};
 
@@ -310,7 +310,7 @@ namespace Routines
 			var ran = 0;
 			foreach (var _ in routine) {
 				if (++ran % 4 == 0) {
-					routine.Switch();
+					routine.NextSubRoutine();
 				};
 			};
 
