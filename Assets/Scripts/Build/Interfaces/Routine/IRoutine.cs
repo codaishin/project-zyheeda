@@ -5,6 +5,6 @@ namespace Routines
 {
 	public interface IRoutine : IEnumerable<YieldInstruction?>
 	{
-		void NextSubRoutine();
+		bool NextSubRoutine();
 	}
 }

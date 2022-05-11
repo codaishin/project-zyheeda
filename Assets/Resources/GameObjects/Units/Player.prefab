@@ -125,7 +125,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inputConfigSO: {fileID: 11400000, guid: cc25959ff6fb7d24bb7768115be8703c, type: 2}
-  callRelease: 0
+  onPerformed: 1
+  onCanceled: 0
   listenTo: 4
   apply:
   - value: {fileID: 4159891739089745109}
@@ -227,7 +228,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inputConfigSO: {fileID: 11400000, guid: cc25959ff6fb7d24bb7768115be8703c, type: 2}
-  callRelease: 0
+  onPerformed: 1
+  onCanceled: 0
   listenTo: 5
   apply:
   - value: {fileID: 1075485442}
@@ -402,7 +404,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inputConfigSO: {fileID: 11400000, guid: cc25959ff6fb7d24bb7768115be8703c, type: 2}
-  callRelease: 1
+  onPerformed: 1
+  onCanceled: 1
   listenTo: 2
   apply:
   - value: {fileID: 8654607563464264433}
@@ -519,7 +522,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   factory:
-    applyModifiers: []
+    modifiers: []
     cooldown: 1
 --- !u!1 &3120450725131024759
 GameObject:
@@ -633,7 +636,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inputConfigSO: {fileID: 11400000, guid: cc25959ff6fb7d24bb7768115be8703c, type: 2}
-  callRelease: 0
+  onPerformed: 1
+  onCanceled: 0
   listenTo: 1
   apply:
   - value: {fileID: 4557019240897075603}
@@ -849,7 +853,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inputConfigSO: {fileID: 11400000, guid: cc25959ff6fb7d24bb7768115be8703c, type: 2}
-  callRelease: 0
+  onPerformed: 1
+  onCanceled: 0
   listenTo: 0
   apply:
   - value: {fileID: 4840711209905504144}

@@ -8,8 +8,4 @@ public class RoutineApplyMB : MonoBehaviour, IApplicable
 	public void Apply() {
 		this.runner.Value!.Apply(this.routineFactory.Value!);
 	}
-
-	public void Release() {
-		this.runner.Value!.Release(this.routineFactory.Value!);
-	}
 }

@@ -1,21 +1,23 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Routines;
 using UnityEngine;
 
-public class RoutineRunMB : MonoBehaviour, IApplicable<IFactory>
+public class RoutineRunMB :
+	MonoBehaviour,
+	IApplicable<IFactory>,
+	IStoppable<IFactory>
 {
 	public bool delayApply = false;
+	private (IFactory source, IRoutine routine, Coroutine coroutine)? current;
 
-	private IFactory? currentSource;
-	private (Coroutine coroutine, Action nextSubRoutine)? currentlyRunning;
-
-	private void ForceStopCurrent() {
-		if (this.currentlyRunning == null) {
+	private void ForceStopCurrentCoroutine() {
+		if (this.current == null) {
 			return;
 		}
-		var (coroutine, _) = this.currentlyRunning.Value;
-		this.StopCoroutine(coroutine);
+		this.StopCoroutine(this.current.Value.coroutine);
+		this.current = null;
 	}
 
 	private Action<IFactory> Delayed(Action<IFactory> action) {
@@ -33,34 +35,60 @@ public class RoutineRunMB : MonoBehaviour, IApplicable<IFactory>
 		action(source);
 	}
 
-	private void ApplyNew(IFactory source) {
-		var routine = source.GetRoutine();
-
-		if (routine == null) {
-			return;
+	private IRoutine? GetRoutineIfCurrentIs(IFactory source) {
+		if (this.current == null) {
+			return null;
 		}
-
-		this.ForceStopCurrent();
-		this.currentSource = source;
-		this.currentlyRunning = (
-			this.StartCoroutine(routine.GetEnumerator()),
-			routine.NextSubRoutine
-		);
+		if (this.current.Value.source != source) {
+			return null;
+		}
+		return this.current.Value.routine;
 	}
 
-	private void NextSubRoutineIfCurrentlyRunning(IFactory source) {
-		if (this.currentSource != source || this.currentlyRunning == null) {
+	private void StartRoutineOrNextSubRoutine(IFactory source) {
+		var currentRoutine = this.GetRoutineIfCurrentIs(source);
+		if (currentRoutine is not null && currentRoutine.NextSubRoutine()) {
 			return;
 		}
 
-		this.currentlyRunning.Value.nextSubRoutine();
+		var newRoutine = source.GetRoutine();
+		if (newRoutine is null) {
+			return;
+		}
+
+		this.ForceStopCurrentCoroutine();
+
+		var newCoroutine = this.StartCoroutine(newRoutine.GetEnumerator());
+
+		this.current = (source, newRoutine, newCoroutine);
 	}
 
 	public void Apply(IFactory source) {
-		this.NowOrDelayed(this.ApplyNew, source);
+		this.NowOrDelayed(this.StartRoutineOrNextSubRoutine, source);
 	}
 
-	public void Release(IFactory source) {
-		this.NowOrDelayed(this.NextSubRoutineIfCurrentlyRunning, source);
+	private static IEnumerable<bool> ExhaustSubRoutines(IRoutine routine) {
+		while (routine.NextSubRoutine()) {
+			yield return false;
+		};
+		yield return true;
+	}
+
+	public void Stop(IFactory value, int softStopAttempts) {
+		if (this.current?.source != value) {
+			return;
+		}
+
+		var routine = this.current.Value.routine;
+		var exhaustedSubRoutines = RoutineRunMB
+			.ExhaustSubRoutines(routine)
+			.Take(softStopAttempts)
+			.Last();
+
+		if (exhaustedSubRoutines) {
+			return;
+		}
+
+		this.ForceStopCurrentCoroutine();
 	}
 }

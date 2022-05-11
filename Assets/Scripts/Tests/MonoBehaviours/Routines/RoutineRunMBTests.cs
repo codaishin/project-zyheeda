@@ -11,8 +11,8 @@ public class RoutineRunMBTests : TestCollection
 {
 	class MockRoutine : IRoutine
 	{
-		public Action release =
-			() => { };
+		public Func<bool> nextSubRoutine =
+			() => false;
 		public Func<IEnumerator<YieldInstruction?>> getEnumerator =
 			() =>
 				Enumerable
@@ -23,37 +23,36 @@ public class RoutineRunMBTests : TestCollection
 			this.getEnumerator();
 		IEnumerator IEnumerable.GetEnumerator() =>
 			this.getEnumerator();
-		public void NextSubRoutine() =>
-			this.release();
+		public bool NextSubRoutine() =>
+			this.nextSubRoutine();
 	}
 
-	class MockGetInstructions : IFactory
+	class MockGetRoutine : IFactory
 	{
-		public Func<IRoutine?> getInstructions = () => null;
+		public Func<IRoutine?> getRoutine = () => null;
 
 		public IRoutine? GetRoutine() =>
-			this.getInstructions();
+			this.getRoutine();
 	}
 
 	[UnityTest]
-	public IEnumerator ApplyInstructions() {
+	public IEnumerator RunRoutine() {
 		var called = 0;
 		var handle = new GameObject().AddComponent<RoutineRunMB>();
-		var source = new MockGetInstructions();
 
-		IRoutine? getInstructions() {
+		IRoutine? getRoutine() {
 			IEnumerator<YieldInstruction> getEnumerator() {
-				yield return new WaitForEndOfFrame();
 				++called;
 				yield return new WaitForEndOfFrame();
 				++called;
 				yield return new WaitForEndOfFrame();
 				++called;
+				yield return new WaitForEndOfFrame();
 			}
 			return new MockRoutine { getEnumerator = getEnumerator };
 		}
 
-		source.getInstructions = getInstructions;
+		var source = new MockGetRoutine { getRoutine = getRoutine };
 
 		yield return new WaitForEndOfFrame();
 
@@ -67,27 +66,34 @@ public class RoutineRunMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator ReleaseInstructions() {
-		var called = 0;
+	public IEnumerator MoveThroughSubRoutines() {
+		var calledSubRoutines = (first: 0, second: 0, third: 0);
 		var handle = new GameObject().AddComponent<RoutineRunMB>();
-		var source = new MockGetInstructions();
 
-		IRoutine? getInstructions() {
-			var run = true;
+		IRoutine? getRoutine() {
+			var subRoutineIndex = 0;
 
 			IEnumerator<YieldInstruction> getEnumerator() {
-				while (run) {
+				while (subRoutineIndex == 0) {
+					++calledSubRoutines.first;
 					yield return new WaitForEndOfFrame();
-					++called;
+				}
+				while (subRoutineIndex == 1) {
+					++calledSubRoutines.second;
+					yield return new WaitForEndOfFrame();
+				}
+				while (subRoutineIndex == 2) {
+					++calledSubRoutines.third;
+					yield return new WaitForEndOfFrame();
 				}
 			}
 			return new MockRoutine {
 				getEnumerator = getEnumerator,
-				release = () => run = false,
+				nextSubRoutine = () => ++subRoutineIndex < 3,
 			};
 		}
 
-		source.getInstructions = getInstructions;
+		var source = new MockGetRoutine { getRoutine = getRoutine };
 
 		yield return new WaitForEndOfFrame();
 
@@ -96,39 +102,51 @@ public class RoutineRunMBTests : TestCollection
 		yield return new WaitForEndOfFrame();
 		yield return new WaitForEndOfFrame();
 
-		handle.Release(source);
+		Assert.AreEqual((3, 0, 0), calledSubRoutines);
+		handle.Apply(source);
 
 		yield return new WaitForEndOfFrame();
 		yield return new WaitForEndOfFrame();
 		yield return new WaitForEndOfFrame();
+
+		Assert.AreEqual((3, 3, 0), calledSubRoutines);
+		handle.Apply(source);
+
+		yield return new WaitForEndOfFrame();
 		yield return new WaitForEndOfFrame();
 
-		Assert.AreEqual(3, called);
+		Assert.AreEqual((3, 3, 2), calledSubRoutines);
+		handle.Apply(source);
+
+		yield return new WaitForEndOfFrame();
+		yield return new WaitForEndOfFrame();
+		yield return new WaitForEndOfFrame();
+
+		Assert.AreEqual((7, 3, 2), calledSubRoutines);
 	}
 
 	[UnityTest]
-	public IEnumerator DoNotReleaseInstructionsThatIsNotRunning() {
-		var called = 0;
+	public IEnumerator ApplyNextSubRoutine() {
+		var called = new[] { 0, 0 };
 		var handle = new GameObject().AddComponent<RoutineRunMB>();
-		var sourceA = new MockGetInstructions();
-		var sourceB = new MockGetInstructions();
 
-		IRoutine? getInstructions() {
+		Func<int, Func<IRoutine?>> getRoutine = routineIndex => () => {
 			var run = true;
 
 			IEnumerator<YieldInstruction> getEnumerator() {
 				while (run) {
+					++called[routineIndex];
 					yield return new WaitForEndOfFrame();
-					++called;
 				}
 			}
 			return new MockRoutine {
 				getEnumerator = getEnumerator,
-				release = () => run = false,
+				nextSubRoutine = () => run = false,
 			};
-		}
+		};
 
-		sourceA.getInstructions = getInstructions;
+		var sourceA = new MockGetRoutine { getRoutine = getRoutine(0) };
+		var sourceB = new MockGetRoutine { getRoutine = getRoutine(1) };
 
 		yield return new WaitForEndOfFrame();
 
@@ -137,76 +155,31 @@ public class RoutineRunMBTests : TestCollection
 		yield return new WaitForEndOfFrame();
 		yield return new WaitForEndOfFrame();
 
-		handle.Release(sourceB);
+		handle.Apply(sourceB);
 
 		yield return new WaitForEndOfFrame();
 		yield return new WaitForEndOfFrame();
 
-		Assert.AreEqual(4, called);
-	}
-
-	[UnityTest]
-	public IEnumerator OnlyRunLatest() {
-		var called = 0;
-		var handle = new GameObject().AddComponent<RoutineRunMB>();
-		var source = new MockGetInstructions();
-
-		IRoutine? getInstructions() {
-			var run = true;
-			called = 0;
-
-			IEnumerator<YieldInstruction> getEnumerator() {
-				while (run) {
-					yield return new WaitForEndOfFrame();
-					++called;
-				}
-			}
-			return new MockRoutine {
-				getEnumerator = getEnumerator,
-				release = () => run = false,
-			};
-		}
-
-		source.getInstructions = getInstructions;
-
-		yield return new WaitForEndOfFrame();
-
-		handle.Apply(source);
-
-		yield return new WaitForEndOfFrame();
-		yield return new WaitForEndOfFrame();
-
-		handle.Apply(source);
-
-		yield return new WaitForEndOfFrame();
-
-		Assert.AreEqual(1, called);
+		CollectionAssert.AreEqual(new int[] { 3, 3 }, called);
 	}
 
 	[UnityTest]
 	public IEnumerator IgnoreNullRoutine() {
 		var called = 0;
 		var handle = new GameObject().AddComponent<RoutineRunMB>();
-		var sourceA = new MockGetInstructions();
-		var sourceB = new MockGetInstructions();
 
-		IRoutine? getInstructions() {
-			var run = true;
-
+		IRoutine? getRoutine() {
 			IEnumerator<YieldInstruction> getEnumerator() {
-				while (run) {
-					yield return new WaitForEndOfFrame();
+				while (true) {
 					++called;
+					yield return new WaitForEndOfFrame();
 				}
 			}
-			return new MockRoutine {
-				getEnumerator = getEnumerator,
-				release = () => run = false,
-			};
+			return new MockRoutine { getEnumerator = getEnumerator };
 		}
 
-		sourceA.getInstructions = getInstructions;
-		sourceB.getInstructions = () => null;
+		var sourceA = new MockGetRoutine { getRoutine = getRoutine };
+		var sourceB = new MockGetRoutine { getRoutine = () => null };
 
 		yield return new WaitForEndOfFrame();
 
@@ -219,33 +192,34 @@ public class RoutineRunMBTests : TestCollection
 
 		yield return new WaitForEndOfFrame();
 
-		Assert.AreEqual(3, called);
+		Assert.AreEqual(4, called);
 	}
 
 	[UnityTest]
-	public IEnumerator NullRoutineDoesNotInterfereWithSubsequentRelease() {
+	public IEnumerator NullRoutineDoesNotInterfereWithSubRoutineAdvancement() {
 		var called = 0;
+		var calledNext = 0;
 		var handle = new GameObject().AddComponent<RoutineRunMB>();
-		var sourceA = new MockGetInstructions();
-		var sourceB = new MockGetInstructions();
 
-		IRoutine? getInstructions() {
-			var run = true;
+		IRoutine? getRoutine() {
+			var index = 0;
 
 			IEnumerator<YieldInstruction> getEnumerator() {
-				while (run) {
-					yield return new WaitForEndOfFrame();
+				while (index == 0) {
 					++called;
+					yield return new WaitForEndOfFrame();
 				}
+				++calledNext;
+				yield return new WaitForEndOfFrame();
 			}
 			return new MockRoutine {
 				getEnumerator = getEnumerator,
-				release = () => run = false,
+				nextSubRoutine = () => index++ < 1,
 			};
 		}
 
-		sourceA.getInstructions = getInstructions;
-		sourceB.getInstructions = () => null;
+		var sourceA = new MockGetRoutine { getRoutine = getRoutine };
+		var sourceB = new MockGetRoutine { getRoutine = () => null };
 
 		yield return new WaitForEndOfFrame();
 
@@ -255,38 +229,41 @@ public class RoutineRunMBTests : TestCollection
 		yield return new WaitForEndOfFrame();
 
 		handle.Apply(sourceB);
-		handle.Release(sourceA);
+		handle.Apply(sourceA);
 
 		yield return new WaitForEndOfFrame();
-		yield return new WaitForEndOfFrame();
 
-		Assert.AreEqual(3, called);
+		Assert.AreEqual((3, 1), (called, calledNext));
 	}
 
 	[UnityTest]
-	public IEnumerator NullRoutineDoesNotInterfereWithPreviousRelease() {
+	public
+	IEnumerator NullRoutineDoesNotInterfereWithSubRoutineAdvancementOfPrevious() {
 		var called = 0;
+		var calledNext = 0;
 		var handle = new GameObject().AddComponent<RoutineRunMB>();
-		var sourceA = new MockGetInstructions();
-		var sourceB = new MockGetInstructions();
+		var sourceA = new MockGetRoutine();
+		var sourceB = new MockGetRoutine();
 
 		IRoutine? getInstructions() {
-			var run = true;
+			var index = 0;
 
 			IEnumerator<YieldInstruction> getEnumerator() {
-				while (run) {
-					yield return new WaitForEndOfFrame();
+				while (index == 0) {
 					++called;
+					yield return new WaitForEndOfFrame();
 				}
+				++calledNext;
+				yield return new WaitForEndOfFrame();
 			}
 			return new MockRoutine {
 				getEnumerator = getEnumerator,
-				release = () => run = false,
+				nextSubRoutine = () => index++ < 1,
 			};
 		}
 
-		sourceA.getInstructions = getInstructions;
-		sourceB.getInstructions = () => null;
+		sourceA.getRoutine = getInstructions;
+		sourceB.getRoutine = () => null;
 
 		yield return new WaitForEndOfFrame();
 
@@ -295,29 +272,24 @@ public class RoutineRunMBTests : TestCollection
 		yield return new WaitForEndOfFrame();
 		yield return new WaitForEndOfFrame();
 
-		handle.Release(sourceA);
+		handle.Apply(sourceA);
 		handle.Apply(sourceB);
 
 		yield return new WaitForEndOfFrame();
-		yield return new WaitForEndOfFrame();
 
-		Assert.AreEqual(3, called);
+		Assert.AreEqual((3, 1), (called, calledNext));
 	}
 
 	[UnityTest]
 	public IEnumerator NotInterferingWithOtherCoroutines() {
 		var called = 0;
 		var handle = new GameObject().AddComponent<RoutineRunMB>();
-		var source = new MockGetInstructions();
 
-		IRoutine? getInstructions() {
+		IRoutine? getRoutine() {
 			IEnumerator<YieldInstruction> getEnumerator() {
 				yield break;
 			}
-			return new MockRoutine {
-				getEnumerator = getEnumerator,
-				release = () => { },
-			};
+			return new MockRoutine { getEnumerator = getEnumerator };
 		}
 
 		IEnumerator<YieldInstruction> otherCoroutine() {
@@ -325,7 +297,7 @@ public class RoutineRunMBTests : TestCollection
 			++called;
 		}
 
-		source.getInstructions = getInstructions;
+		var source = new MockGetRoutine { getRoutine = getRoutine };
 
 		yield return new WaitForEndOfFrame();
 
@@ -341,26 +313,20 @@ public class RoutineRunMBTests : TestCollection
 	public IEnumerator ApplyInstructionsDelayedOneFrame() {
 		var called = 0;
 		var run = new GameObject().AddComponent<RoutineRunMB>();
-		var source = new MockGetInstructions();
 
 		run.delayApply = true;
 
-		IRoutine? getInstructions() {
-			var run = true;
-
+		IRoutine? getRoutine() {
 			IEnumerator<YieldInstruction> getEnumerator() {
-				while (run) {
+				while (true) {
 					++called;
 					yield return new WaitForEndOfFrame();
 				}
 			}
-			return new MockRoutine {
-				getEnumerator = getEnumerator,
-				release = () => run = false,
-			};
+			return new MockRoutine { getEnumerator = getEnumerator };
 		}
 
-		source.getInstructions = getInstructions;
+		var source = new MockGetRoutine { getRoutine = getRoutine };
 
 		yield return new WaitForEndOfFrame();
 
@@ -378,39 +344,181 @@ public class RoutineRunMBTests : TestCollection
 	}
 
 	[UnityTest]
-	public IEnumerator ReleaseInstructionsDelayedOneFrame() {
-		var called = 0;
+	public IEnumerator StopSoft() {
+		var calls = (first: 0, second: 0, third: 0, after: 0);
 		var handle = new GameObject().AddComponent<RoutineRunMB>();
-		var source = new MockGetInstructions();
 
-		handle.delayApply = true;
-
-		IRoutine? getInstructions() {
-			var run = true;
+		IRoutine? getRoutine() {
+			var subRoutineIndex = 0;
 
 			IEnumerator<YieldInstruction> getEnumerator() {
-				while (run) {
+				while (subRoutineIndex == 0) {
+					++calls.first;
 					yield return new WaitForEndOfFrame();
-					++called;
 				}
+				while (subRoutineIndex == 1) {
+					++calls.second;
+					yield return new WaitForEndOfFrame();
+				}
+				while (subRoutineIndex == 2) {
+					++calls.third;
+					yield return new WaitForEndOfFrame();
+				}
+				++calls.after;
 			}
 			return new MockRoutine {
 				getEnumerator = getEnumerator,
-				release = () => run = false,
+				nextSubRoutine = () => ++subRoutineIndex < 3,
 			};
 		}
 
-		source.getInstructions = getInstructions;
+		var source = new MockGetRoutine { getRoutine = getRoutine };
 
 		yield return new WaitForEndOfFrame();
 
 		handle.Apply(source);
-		handle.Release(source);
 
 		yield return new WaitForEndOfFrame();
-		yield return new WaitForEndOfFrame();
+
+		handle.Stop(source, 3);
+
 		yield return new WaitForEndOfFrame();
 
-		Assert.AreEqual(1, called);
+		Assert.AreEqual((2, 0, 0, 1), calls);
+	}
+
+	[UnityTest]
+	public IEnumerator StopSoftFailsThenCancelRoutine() {
+		var calls = (first: 0, second: 0, third: 0, after: 0);
+		var handle = new GameObject().AddComponent<RoutineRunMB>();
+
+		IRoutine? getRoutine() {
+			var subRoutineIndex = 0;
+
+			IEnumerator<YieldInstruction> getEnumerator() {
+				while (subRoutineIndex == 0) {
+					++calls.first;
+					yield return new WaitForEndOfFrame();
+				}
+				while (subRoutineIndex == 1) {
+					++calls.second;
+					yield return new WaitForEndOfFrame();
+				}
+				while (subRoutineIndex == 2) {
+					++calls.third;
+					yield return new WaitForEndOfFrame();
+				}
+				++calls.after;
+			}
+			return new MockRoutine {
+				getEnumerator = getEnumerator,
+				nextSubRoutine = () => ++subRoutineIndex < 3,
+			};
+		}
+
+		var source = new MockGetRoutine { getRoutine = getRoutine };
+
+		yield return new WaitForEndOfFrame();
+
+		handle.Apply(source);
+
+		yield return new WaitForEndOfFrame();
+
+		handle.Stop(source, 1);
+
+		yield return new WaitForEndOfFrame();
+
+		Assert.AreEqual((2, 0, 0, 0), calls);
+	}
+
+	[UnityTest]
+	public IEnumerator StopSoftAfterHardStopAllowNewApply() {
+		var calls = (first: 0, second: 0, third: 0, after: 0);
+		var handle = new GameObject().AddComponent<RoutineRunMB>();
+
+		IRoutine? getRoutine() {
+			var subRoutineIndex = 0;
+
+			IEnumerator<YieldInstruction> getEnumerator() {
+				while (subRoutineIndex == 0) {
+					++calls.first;
+					yield return new WaitForEndOfFrame();
+				}
+				while (subRoutineIndex == 1) {
+					++calls.second;
+					yield return new WaitForEndOfFrame();
+				}
+				while (subRoutineIndex == 2) {
+					++calls.third;
+					yield return new WaitForEndOfFrame();
+				}
+				++calls.after;
+			}
+			return new MockRoutine {
+				getEnumerator = getEnumerator,
+				nextSubRoutine = () => ++subRoutineIndex < 3,
+			};
+		}
+
+		var source = new MockGetRoutine { getRoutine = getRoutine };
+
+		yield return new WaitForEndOfFrame();
+
+		handle.Apply(source);
+
+		yield return new WaitForEndOfFrame();
+
+		handle.Stop(source, 1);
+
+		yield return new WaitForEndOfFrame();
+
+		handle.Apply(source);
+
+		Assert.AreEqual((3, 0, 0, 0), calls);
+	}
+
+	[UnityTest]
+	public IEnumerator DoNotStopDifferentSource() {
+		var calls = (first: 0, second: 0, third: 0, after: 0);
+		var handle = new GameObject().AddComponent<RoutineRunMB>();
+
+		IRoutine? getRoutine() {
+			var subRoutineIndex = 0;
+
+			IEnumerator<YieldInstruction> getEnumerator() {
+				while (subRoutineIndex == 0) {
+					++calls.first;
+					yield return new WaitForEndOfFrame();
+				}
+				while (subRoutineIndex == 1) {
+					++calls.second;
+					yield return new WaitForEndOfFrame();
+				}
+				while (subRoutineIndex == 2) {
+					++calls.third;
+					yield return new WaitForEndOfFrame();
+				}
+				++calls.after;
+			}
+			return new MockRoutine {
+				getEnumerator = getEnumerator,
+				nextSubRoutine = () => ++subRoutineIndex < 3,
+			};
+		}
+
+		var sourceA = new MockGetRoutine { getRoutine = getRoutine };
+		var sourceB = new MockGetRoutine { getRoutine = () => null };
+
+		yield return new WaitForEndOfFrame();
+
+		handle.Apply(sourceA);
+
+		yield return new WaitForEndOfFrame();
+
+		handle.Stop(sourceB, 3);
+
+		yield return new WaitForEndOfFrame();
+
+		Assert.AreEqual((3, 0, 0, 0), calls);
 	}
 }

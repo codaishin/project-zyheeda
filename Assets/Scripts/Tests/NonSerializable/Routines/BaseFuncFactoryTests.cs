@@ -436,5 +436,46 @@ namespace Routines
 				(calledYieldsFn, calledModifiersFn, calledModifiers)
 			);
 		}
+
+		[Test]
+		public void NextSubRoutineFalse() {
+			var called = null as Transform;
+			var routineFactory = new MockFactory();
+
+			IEnumerable<YieldInstruction> yields() {
+				yield return new WaitForEndOfFrame();
+				yield return new WaitForEndOfFrame();
+				yield return new WaitForEndOfFrame();
+			}
+
+			routineFactory.subRoutines = a => new SubRoutineFn[] { _ => yields() };
+
+			var routineFn = routineFactory.GetRoutineFnFor(new GameObject())!;
+			var routine = routineFn()!;
+
+			Assert.False(routine.NextSubRoutine());
+		}
+
+		[Test]
+		public void NextSubRoutineTrue() {
+			var called = null as Transform;
+			var routineFactory = new MockFactory();
+
+			IEnumerable<YieldInstruction> yields() {
+				yield return new WaitForEndOfFrame();
+				yield return new WaitForEndOfFrame();
+				yield return new WaitForEndOfFrame();
+			}
+
+			routineFactory.subRoutines = a => new SubRoutineFn[] {
+				_ => yields(),
+				_ => yields(),
+			};
+
+			var routineFn = routineFactory.GetRoutineFnFor(new GameObject())!;
+			var routine = routineFn()!;
+
+			Assert.True(routine.NextSubRoutine());
+		}
 	}
 }
