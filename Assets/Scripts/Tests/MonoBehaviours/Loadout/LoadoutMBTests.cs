@@ -11,8 +11,8 @@ public class LoadoutMBTests : TestCollection
 {
 	class MockRoutine : IRoutine
 	{
-		public Action release =
-			() => { };
+		public Func<bool> nextSubRoutine =
+			() => false;
 		public Func<IEnumerator<YieldInstruction?>> getEnumerator =
 			() =>
 				Enumerable
@@ -23,8 +23,8 @@ public class LoadoutMBTests : TestCollection
 			this.getEnumerator();
 		IEnumerator IEnumerable.GetEnumerator() =>
 			this.getEnumerator();
-		public void Switch() =>
-			this.release();
+		public bool NextSubRoutine() =>
+			this.nextSubRoutine();
 	}
 
 	class MockItemMB : MonoBehaviour, IItem

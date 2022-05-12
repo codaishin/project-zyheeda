@@ -263,7 +263,7 @@ namespace Routines
 
 			foreach (var _ in routine) {
 				if (iterations == 9) {
-					routine.Switch();
+					routine.NextSubRoutine();
 				};
 			};
 
@@ -310,7 +310,7 @@ namespace Routines
 			var ran = 0;
 			foreach (var _ in routine) {
 				if (++ran % 4 == 0) {
-					routine.Switch();
+					routine.NextSubRoutine();
 				};
 			};
 
@@ -435,6 +435,47 @@ namespace Routines
 				(2, 1, (2, 2, 1)),
 				(calledYieldsFn, calledModifiersFn, calledModifiers)
 			);
+		}
+
+		[Test]
+		public void NextSubRoutineFalse() {
+			var called = null as Transform;
+			var routineFactory = new MockFactory();
+
+			IEnumerable<YieldInstruction> yields() {
+				yield return new WaitForEndOfFrame();
+				yield return new WaitForEndOfFrame();
+				yield return new WaitForEndOfFrame();
+			}
+
+			routineFactory.subRoutines = a => new SubRoutineFn[] { _ => yields() };
+
+			var routineFn = routineFactory.GetRoutineFnFor(new GameObject())!;
+			var routine = routineFn()!;
+
+			Assert.False(routine.NextSubRoutine());
+		}
+
+		[Test]
+		public void NextSubRoutineTrue() {
+			var called = null as Transform;
+			var routineFactory = new MockFactory();
+
+			IEnumerable<YieldInstruction> yields() {
+				yield return new WaitForEndOfFrame();
+				yield return new WaitForEndOfFrame();
+				yield return new WaitForEndOfFrame();
+			}
+
+			routineFactory.subRoutines = a => new SubRoutineFn[] {
+				_ => yields(),
+				_ => yields(),
+			};
+
+			var routineFn = routineFactory.GetRoutineFnFor(new GameObject())!;
+			var routine = routineFn()!;
+
+			Assert.True(routine.NextSubRoutine());
 		}
 	}
 }

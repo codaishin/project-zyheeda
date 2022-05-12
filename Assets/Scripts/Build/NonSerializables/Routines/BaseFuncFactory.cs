@@ -17,7 +17,8 @@ namespace Routines
 		private class Routine : IRoutine
 		{
 			private bool switched;
-			private IEnumerable<YieldInstruction?>[] instructions;
+			private int switchCount;
+			private IEnumerable<YieldInstruction?>[] yieldFns;
 			private (Action? begin, Action? update, Action? end) modifiers;
 
 			public Routine(
@@ -25,16 +26,17 @@ namespace Routines
 				(Action? begin, Action? update, Action? end) modifiers
 			) {
 				this.switched = false;
-				this.instructions = yieldFns;
+				this.switchCount = 0;
+				this.yieldFns = yieldFns;
 				this.modifiers = modifiers;
 			}
 
 			IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
 			public IEnumerator<YieldInstruction?> GetEnumerator() {
-				return this.instructions
-					.SelectMany(this.Iterate)
-					.GetEnumerator();
+				foreach (var yield in this.yieldFns.SelectMany(this.Iterate)) {
+					yield return yield;
+				}
 			}
 
 			private IEnumerable<YieldInstruction?> Iterate(
@@ -61,8 +63,9 @@ namespace Routines
 				}
 			}
 
-			public void Switch() {
+			public bool NextSubRoutine() {
 				this.switched = true;
+				return ++this.switchCount < this.yieldFns.Length;
 			}
 		}
 

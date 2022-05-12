@@ -18,7 +18,7 @@ public class RoutineFactoryMBTests : TestCollection
 			throw new NotImplementedException();
 		}
 
-		public void Switch() {
+		public bool NextSubRoutine() {
 			throw new NotImplementedException();
 		}
 	}
