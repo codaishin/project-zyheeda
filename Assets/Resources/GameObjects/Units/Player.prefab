@@ -369,6 +369,8 @@ GameObject:
   - component: {fileID: 7289972567945381448}
   - component: {fileID: 8654607563464264433}
   - component: {fileID: 7281231052907152546}
+  - component: {fileID: 4549351512817515649}
+  - component: {fileID: 87911278858572080}
   m_Layer: 0
   m_Name: WalkOrRun
   m_TagString: Untagged
@@ -405,7 +407,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inputConfigSO: {fileID: 11400000, guid: cc25959ff6fb7d24bb7768115be8703c, type: 2}
   onPerformed: 1
-  onCanceled: 1
+  onCanceled: 0
   listenTo: 2
   apply:
   - value: {fileID: 8654607563464264433}
@@ -442,6 +444,41 @@ MonoBehaviour:
   agent:
     gameObject: {fileID: 7584915075398348528}
     referenceSO: {fileID: 0}
+--- !u!114 &4549351512817515649
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2162708965769462361}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5081523c9ace734bbde1dddebdfea4c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputConfigSO: {fileID: 11400000, guid: cc25959ff6fb7d24bb7768115be8703c, type: 2}
+  onPerformed: 0
+  onCanceled: 1
+  listenTo: 2
+  apply:
+  - value: {fileID: 87911278858572080}
+--- !u!114 &87911278858572080
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2162708965769462361}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30b51351f2149a143a1a81e1fb1534ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  stopper:
+    value: {fileID: 8328515223519877874}
+  softStopAttempts: 1
+  routineFactories:
+  - value: {fileID: 7281231052907152546}
 --- !u!1 &2849882442319341901
 GameObject:
   m_ObjectHideFlags: 0
@@ -766,8 +803,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30b51351f2149a143a1a81e1fb1534ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  runner:
+  stopper:
     value: {fileID: 8328515223519877874}
+  softStopAttempts: 1
   routineFactories:
   - value: {fileID: 1075485441}
 --- !u!1 &7793497629419029189
