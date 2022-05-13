@@ -1,51 +1,51 @@
 namespace Routines
 {
-	public class Data
+	public class RoutineData
 	{
-		private Data? extention;
-		private Data? host;
+		private RoutineData? extention;
+		private RoutineData? host;
 
-		public Data() { }
+		public RoutineData() { }
 
-		public T? As<T>() where T : Data {
+		public T? As<T>() where T : RoutineData {
 			return (this as T)
-				?? Data.CheckExtention<T>(this)
-				?? Data.CheckHost<T>(this);
+				?? RoutineData.CheckExtention<T>(this)
+				?? RoutineData.CheckHost<T>(this);
 		}
 
-		public T Extent<T>() where T : Data, new() {
+		public T Extent<T>() where T : RoutineData, new() {
 			return this.As<T>() ?? this.Extend<T>();
 		}
 
-		private T Extend<T>() where T : Data, new() {
-			Data host = Data.FindWithoutExtention(this);
+		private T Extend<T>() where T : RoutineData, new() {
+			RoutineData host = RoutineData.FindWithoutExtention(this);
 			T extention = new T();
 			extention.host = host;
 			host.extention = extention;
 			return extention;
 		}
 
-		private static T? CheckExtention<T>(Data data) where T : Data {
+		private static T? CheckExtention<T>(RoutineData data) where T : RoutineData {
 			if (data.extention is null) {
 				return null;
 			}
-			Data extension = data.extention;
-			return (extension as T) ?? Data.CheckExtention<T>(extension);
+			RoutineData extension = data.extention;
+			return (extension as T) ?? RoutineData.CheckExtention<T>(extension);
 		}
 
-		private static T? CheckHost<T>(Data data) where T : Data {
+		private static T? CheckHost<T>(RoutineData data) where T : RoutineData {
 			if (data.host is null) {
 				return null;
 			}
-			Data host = data.host;
-			return (host as T) ?? Data.CheckHost<T>(host);
+			RoutineData host = data.host;
+			return (host as T) ?? RoutineData.CheckHost<T>(host);
 		}
 
-		private static Data FindWithoutExtention(Data data) {
+		private static RoutineData FindWithoutExtention(RoutineData data) {
 			if (data.extention is null) {
 				return data;
 			}
-			return Data.FindWithoutExtention(data.extention);
+			return RoutineData.FindWithoutExtention(data.extention);
 		}
 	}
 }

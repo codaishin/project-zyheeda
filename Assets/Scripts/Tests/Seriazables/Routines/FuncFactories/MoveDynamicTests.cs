@@ -26,12 +26,10 @@ namespace Routines
 
 		class MockPluginSO : ScriptableObject, IModifierFactory
 		{
-			public Func<GameObject, ModifierFn> getCallbacks =
-				_ => _ => (null as Action, null as Action, null as Action);
+			public Func<GameObject, ModifierFn> getCallbacks = _ => _ => null;
 
-			public ModifierFn GetModifierFnFor(
-				GameObject agent
-			) => this.getCallbacks(agent);
+			public ModifierFn GetModifierFnFor(GameObject agent) =>
+				this.getCallbacks(agent);
 		}
 
 		[UnityTest]
@@ -324,15 +322,15 @@ namespace Routines
 				weight = 200,
 			};
 
-			move.modifiers = new Reference<IModifierFactory>[] {
-			Reference<IModifierFactory>.ScriptableObject(plugin),
-		};
+			move.modifiers = new[] {
+				new ModifierData {
+					hook = ModifierHook.OnUpdate,
+					factory = Reference<IModifierFactory>.ScriptableObject(plugin),
+				},
+			};
 
-			plugin.getCallbacks = _ => d => (
-				begin: null,
-				update: () => weights.Add(d.As<WeightData>()!.weight),
-				end: null
-			);
+			plugin.getCallbacks = _ => d => () =>
+				weights.Add(d.As<WeightData>()!.weight);
 
 			yield return new WaitForEndOfFrame();
 

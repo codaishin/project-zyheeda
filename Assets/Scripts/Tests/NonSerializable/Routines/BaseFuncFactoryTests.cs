@@ -8,11 +8,17 @@ namespace Routines
 {
 	public class BaseFuncFactoryTests : TestCollection
 	{
+		private static Func<Reference<IModifierFactory>, ModifierData> ToModifierData(
+			ModifierHook hook
+		) {
+			return factory => new ModifierData { hook = hook, factory = factory, };
+		}
+
 		class MockFactory : BaseFuncFactory<Transform>
 		{
 			public Func<GameObject, Transform> concreteAgent = a => a.transform;
 			public Func<Transform, SubRoutineFn[]> subRoutines = _ => new SubRoutineFn[0];
-			public Action<Data> extendData = _ => { };
+			public Action<RoutineData> extendData = _ => { };
 
 			protected override SubRoutineFn[] SubRoutines(Transform agent) {
 				return this.subRoutines(agent);
@@ -24,18 +30,14 @@ namespace Routines
 
 			protected
 			override
-			void ExtendData(Data data) {
+			void ExtendData(RoutineData data) {
 				this.extendData(data);
 			}
 		}
 
 		class MockModifierFactory : MonoBehaviour, IModifierFactory
 		{
-			public Func<GameObject, ModifierFn> getModifierFnFor = _ => _ => (
-				null,
-				null,
-				null
-			);
+			public Func<GameObject, ModifierFn> getModifierFnFor = _ => _ => null;
 
 			public ModifierFn GetModifierFnFor(GameObject agent) {
 				return this.getModifierFnFor(agent);
@@ -84,7 +86,7 @@ namespace Routines
 
 		[Test]
 		public void DataAndAgentToModifierFactory() {
-			var data = new List<Data>();
+			var data = new List<RoutineData>();
 			var agents = new List<GameObject>();
 			var agent = new GameObject();
 			var routineFactory = new MockFactory();
@@ -93,7 +95,11 @@ namespace Routines
 				new WaitForEndOfFrame(),
 				new WaitForEndOfFrame(),
 			});
-			var modifiers = new MockModifierFactory[] {
+			var allHooks =
+				ModifierHook.OnBegin |
+				ModifierHook.OnUpdate |
+				ModifierHook.OnEnd;
+			var modifiers = new[] {
 				new GameObject().AddComponent<MockModifierFactory>(),
 				new GameObject().AddComponent<MockModifierFactory>(),
 			};
@@ -101,16 +107,13 @@ namespace Routines
 			foreach (var modifier in modifiers) {
 				modifier.getModifierFnFor = a => {
 					agents.Add(a);
-					return d => (
-						begin: () => data.Add(d),
-						update: () => data.Add(d),
-						end: () => data.Add(d)
-					);
+					return d => () => data.Add(d);
 				};
 			}
 
 			routineFactory.modifiers = modifiers
 				.Select(Reference<IModifierFactory>.Component)
+				.Select(BaseFuncFactoryTests.ToModifierData(allHooks))
 				.ToArray();
 			routineFactory.subRoutines = _ => new SubRoutineFn[] { yieldsFn };
 
@@ -136,14 +139,11 @@ namespace Routines
 				new GameObject().AddComponent<MockModifierFactory>(),
 			};
 
-			modifiers[0].getModifierFnFor = _ => d => (
-				begin: () => ++called,
-				update: null,
-				end: null
-			);
+			modifiers[0].getModifierFnFor = _ => d => () => ++called;
 
 			routineFactory.modifiers = modifiers
 				.Select(Reference<IModifierFactory>.Component)
+				.Select(BaseFuncFactoryTests.ToModifierData(ModifierHook.OnBegin))
 				.ToArray();
 			routineFactory.subRoutines = _ => new SubRoutineFn[] { yieldsFn };
 
@@ -175,14 +175,11 @@ namespace Routines
 				new GameObject().AddComponent<MockModifierFactory>(),
 			};
 
-			modifiers[0].getModifierFnFor = _ => d => (
-				begin: null,
-				update: () => ++called,
-				end: null
-			);
+			modifiers[0].getModifierFnFor = _ => d => () => ++called;
 
 			routineFactory.modifiers = modifiers
 				.Select(Reference<IModifierFactory>.Component)
+				.Select(BaseFuncFactoryTests.ToModifierData(ModifierHook.OnUpdate))
 				.ToArray();
 			routineFactory.subRoutines = _ => new SubRoutineFn[] { yieldsFn };
 
@@ -211,14 +208,11 @@ namespace Routines
 				new GameObject().AddComponent<MockModifierFactory>(),
 			};
 
-			modifiers[0].getModifierFnFor = _ => d => (
-				begin: null,
-				update: null,
-				end: () => ++called
-			);
+			modifiers[0].getModifierFnFor = _ => d => () => ++called;
 
 			routineFactory.modifiers = modifiers
 				.Select(Reference<IModifierFactory>.Component)
+				.Select(BaseFuncFactoryTests.ToModifierData(ModifierHook.OnEnd))
 				.ToArray();
 			routineFactory.subRoutines = _ => new SubRoutineFn[] { yieldsFn };
 
@@ -241,20 +235,17 @@ namespace Routines
 				new GameObject().AddComponent<MockModifierFactory>(),
 			};
 
-			IEnumerable<WaitForEndOfFrame> yieldsFn(Data _) {
+			IEnumerable<WaitForEndOfFrame> yieldsFn(RoutineData _) {
 				for (; iterations < 9; ++iterations) {
 					yield return new WaitForEndOfFrame();
 				}
 			}
 
-			modifiers[0].getModifierFnFor = _ => d => (
-				begin: null,
-				update: null,
-				end: () => ++called
-			);
+			modifiers[0].getModifierFnFor = _ => d => () => ++called;
 
 			routineFactory.modifiers = modifiers
 				.Select(Reference<IModifierFactory>.Component)
+				.Select(BaseFuncFactoryTests.ToModifierData(ModifierHook.OnEnd))
 				.ToArray();
 			routineFactory.subRoutines = _ => new SubRoutineFn[] { yieldsFn };
 
@@ -276,18 +267,14 @@ namespace Routines
 			var modifyCounters = (begin: 0, update: 0, end: 0);
 			var agent = new GameObject();
 			var routineFactory = new MockFactory();
-			var modifiers = new MockModifierFactory[] {
-				new GameObject().AddComponent<MockModifierFactory>(),
+			var modifiers = new (Action, ModifierHook)[] {
+				(() => ++modifyCounters.begin, ModifierHook.OnBegin),
+				(() => ++modifyCounters.update, ModifierHook.OnUpdate),
+				(() => ++modifyCounters.end, ModifierHook.OnEnd)
 			};
 
-			modifiers[0].getModifierFnFor = _ => d => (
-				() => ++modifyCounters.begin,
-				() => ++modifyCounters.update,
-				() => ++modifyCounters.end
-			);
-
-			SubRoutineFn rawroutine(int i) {
-				IEnumerable<WaitForEndOfFrame> run(Data _) {
+			SubRoutineFn GetSubRoutineFn() {
+				IEnumerable<WaitForEndOfFrame> run(RoutineData _) {
 					for (; iterations < 100; ++iterations) {
 						yield return new WaitForEndOfFrame();
 					}
@@ -295,21 +282,32 @@ namespace Routines
 				return run;
 			}
 
+			ModifierData ToModifierData((Action, ModifierHook) pairs) {
+				var (action, hook) = pairs;
+				var modifier = new GameObject().AddComponent<MockModifierFactory>();
+				modifier.getModifierFnFor = _ => _ => action;
+				return new ModifierData {
+					hook = hook,
+					factory = Reference<IModifierFactory>.Component(modifier),
+				};
+			}
+
 			routineFactory.modifiers = modifiers
-				.Select(Reference<IModifierFactory>.Component)
+				.Select(ToModifierData)
 				.ToArray();
 			routineFactory.subRoutines = _ => new SubRoutineFn[] {
-				rawroutine(0),
-				rawroutine(1),
-				rawroutine(2)
+				GetSubRoutineFn(),
+				GetSubRoutineFn(),
+				GetSubRoutineFn(),
 			};
 
 			var routineFn = routineFactory.GetRoutineFnFor(agent)!;
 			var routine = routineFn()!;
 
-			var ran = 0;
+			var frames = 0;
+			bool PassedFourFrames() => ++frames % 4 == 0;
 			foreach (var _ in routine) {
-				if (++ran % 4 == 0) {
+				if (PassedFourFrames()) {
 					routine.NextSubRoutine();
 				};
 			};
@@ -341,25 +339,23 @@ namespace Routines
 			Assert.Null(routineFn());
 		}
 
-		class MockmodifierFactoryDataA : Data { }
-		class MockmodifierFactoryDataB : Data { }
+		class MockmodifierFactoryDataA : RoutineData { }
+		class MockmodifierFactoryDataB : RoutineData { }
 
 		[Test]
 		public void ExtendModifierFactoryData() {
-			var data = null as Data;
+			var data = null as RoutineData;
 			var agent = new GameObject();
 			var routineFactory = new MockFactory();
 			var modifiers = new MockModifierFactory[] {
 				new GameObject().AddComponent<MockModifierFactory>(),
 			};
 
-			modifiers[0].getModifierFnFor = _ => d => (
-				begin: () => data = d,
-				update: null,
-				end: null
-			);
+			modifiers[0].getModifierFnFor = _ => d => () => data = d;
+
 			routineFactory.modifiers = modifiers
 				.Select(Reference<IModifierFactory>.Component)
+				.Select(BaseFuncFactoryTests.ToModifierData(ModifierHook.OnBegin))
 				.ToArray();
 			routineFactory.subRoutines = _ => new SubRoutineFn[] {
 				_ => new YieldInstruction[0]
@@ -378,21 +374,15 @@ namespace Routines
 		public void CallbackTimes() {
 			var agent = new GameObject();
 			var routineFactory = new MockFactory();
-			var modifiers = new MockModifierFactory[] {
-				new GameObject().AddComponent<MockModifierFactory>(),
-			};
 			var calledModifiers = (begin: 0, update: 0, end: 0);
+			var modifiers = new (Action, ModifierHook)[] {
+				(() => ++calledModifiers.begin, ModifierHook.OnBegin),
+				(() => ++calledModifiers.update, ModifierHook.OnUpdate),
+				(() => ++calledModifiers.end, ModifierHook.OnEnd),
+			};
 			var calledModifiersFn = 0;
 			var calledYieldsFn = 0;
 
-			modifiers[0].getModifierFnFor = _ => {
-				++calledModifiersFn;
-				return _ => (
-					() => ++calledModifiers.begin,
-					() => ++calledModifiers.update,
-					() => ++calledModifiers.end
-				);
-			};
 			SubRoutineFn yields = _ => {
 				++calledYieldsFn;
 				return new YieldInstruction[] {
@@ -401,15 +391,28 @@ namespace Routines
 				};
 			};
 
+			ModifierData ToModifierData((Action, ModifierHook) pairs) {
+				var (action, hook) = pairs;
+				var modifier = new GameObject().AddComponent<MockModifierFactory>();
+				modifier.getModifierFnFor = _ => {
+					++calledModifiersFn;
+					return _ => action;
+				};
+				return new ModifierData {
+					hook = hook,
+					factory = Reference<IModifierFactory>.Component(modifier),
+				};
+			}
+
 			routineFactory.modifiers = modifiers
-				.Select(Reference<IModifierFactory>.Component)
+				.Select(ToModifierData)
 				.ToArray();
 			routineFactory.subRoutines = _ => new[] { yields, yields };
 
 			var routineFn = routineFactory.GetRoutineFnFor(agent)!;
 
 			Assert.AreEqual(
-				(0, 1, (0, 0, 0)),
+				(0, 3, (0, 0, 0)),
 				(calledYieldsFn, calledModifiersFn, calledModifiers)
 			);
 
@@ -418,21 +421,21 @@ namespace Routines
 			routine.MoveNext(); // 1st set 1st yield: ++begin1
 
 			Assert.AreEqual(
-				(2, 1, (1, 0, 0)),
+				(2, 3, (1, 0, 0)),
 				(calledYieldsFn, calledModifiersFn, calledModifiers)
 			);
 
 			routine.MoveNext(); // 1st set 2nd yield: ++update1
 
 			Assert.AreEqual(
-				(2, 1, (1, 1, 0)),
+				(2, 3, (1, 1, 0)),
 				(calledYieldsFn, calledModifiersFn, calledModifiers)
 			);
 
 			routine.MoveNext(); // 2nd set 1st yield: ++update1 ++end1 ++begin2
 
 			Assert.AreEqual(
-				(2, 1, (2, 2, 1)),
+				(2, 3, (2, 2, 1)),
 				(calledYieldsFn, calledModifiersFn, calledModifiers)
 			);
 		}

@@ -8,15 +8,15 @@ namespace Routines
 	public class DestroyendTests : TestCollection
 	{
 		[UnityTest]
-		public IEnumerator Destroyend() {
+		public IEnumerator Destroy() {
 			var obj = new GameObject();
 			var plugin = new DestroyOnEnd();
 			var modifierFn = plugin.GetModifierFnFor(obj);
-			var end = modifierFn(new Data()).end!;
+			var destroy = modifierFn(new RoutineData())!;
 
 			yield return new WaitForEndOfFrame();
 
-			end();
+			destroy();
 
 			yield return new WaitForEndOfFrame();
 

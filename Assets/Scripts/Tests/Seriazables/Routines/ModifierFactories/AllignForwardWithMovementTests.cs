@@ -9,13 +9,13 @@ namespace Routines
 		public void AllignForwardUp() {
 			var agent = new GameObject();
 			var plugin = new AllignForwardWithMovement();
-			var modifiers = plugin.GetModifierFnFor(agent)(new Data());
+			var modify = plugin.GetModifierFnFor(agent)(new RoutineData())!;
 
-			modifiers.update?.Invoke();
+			modify();
 
 			agent.transform.position = Vector3.up;
 
-			modifiers.update?.Invoke();
+			modify();
 
 			Tools.AssertEqual(Vector3.up, agent.transform.forward);
 		}
@@ -24,13 +24,13 @@ namespace Routines
 		public void AllignForwardLeft() {
 			var agent = new GameObject();
 			var plugin = new AllignForwardWithMovement();
-			var modifiers = plugin.GetModifierFnFor(agent)(new Data());
+			var modify = plugin.GetModifierFnFor(agent)(new RoutineData())!;
 
-			modifiers.update?.Invoke();
+			modify();
 
 			agent.transform.position = Vector3.left;
 
-			modifiers.update?.Invoke();
+			modify();
 
 			Tools.AssertEqual(Vector3.left, agent.transform.forward);
 		}
@@ -39,15 +39,15 @@ namespace Routines
 		public void AllignForwardWithMovement() {
 			var agent = new GameObject();
 			var plugin = new AllignForwardWithMovement();
-			var modifiers = plugin.GetModifierFnFor(agent)(new Data());
+			var modify = plugin.GetModifierFnFor(agent)(new RoutineData())!;
 
 			agent.transform.position = Vector3.up;
 
-			modifiers.update?.Invoke();
+			modify();
 
 			agent.transform.position = Vector3.up + Vector3.right;
 
-			modifiers.update?.Invoke();
+			modify();
 
 			Tools.AssertEqual(Vector3.right, agent.transform.forward);
 		}

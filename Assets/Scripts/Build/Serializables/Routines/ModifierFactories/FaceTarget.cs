@@ -10,19 +10,12 @@ namespace Routines
 			return agent.transform;
 		}
 
-		public override TargetData GetRoutineData(Data data) {
+		public override TargetData GetRoutineData(RoutineData data) {
 			return data.Extent<TargetData>();
 		}
 
-		protected override (Action? begin, Action? update, Action? end) GetModifiers(
-			Transform agent,
-			TargetData data
-		) {
-			return (
-				begin: FaceTarget.LookAtTarget(agent, data),
-				update: null,
-				end: null
-			);
+		protected override Action? GetAction(Transform agent, TargetData data) {
+			return FaceTarget.LookAtTarget(agent, data);
 		}
 
 		private static Action LookAtTarget(Transform agent, TargetData data) {

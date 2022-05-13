@@ -14,7 +14,7 @@ namespace Routines
 		}
 
 		protected override SubRoutineFn[] SubRoutines(GameObject agent) {
-			IEnumerable<YieldInstruction> disable(Data _) {
+			IEnumerable<YieldInstruction> disable(RoutineData _) {
 				agent.SetActive(false);
 				yield return new WaitForSeconds(this.cooldown);
 				agent.SetActive(true);

@@ -8,7 +8,7 @@ namespace Routines
 {
 	public class BaseModifierFactoryTests : TestCollection
 	{
-		class MockData : Data { }
+		class MockData : RoutineData { }
 
 		class MockMB : MonoBehaviour { }
 
@@ -16,54 +16,17 @@ namespace Routines
 		{
 			public Func<GameObject, MockMB> getConcreteAgent =
 				obj => obj.RequireComponent<MockMB>();
-			public Func<Data, MockData> getPluginData =
+			public Func<RoutineData, MockData> getPluginData =
 				data => data.As<MockData>()!;
-			public Func<MockMB, MockData, (Action?, Action?, Action?)> getModifier =
-				(_, __) => (null as Action, null as Action, null as Action);
+			public Func<MockMB, MockData, Action?> getModifier =
+				(_, __) => null;
 
 			public override MockMB GetConcreteAgent(GameObject agent) =>
 				this.getConcreteAgent(agent);
-
-			public override MockData GetRoutineData(Data data) =>
+			public override MockData GetRoutineData(RoutineData data) =>
 				this.getPluginData(data);
-
-			protected
-			override (Action? begin, Action? update, Action? end) GetModifiers(
-				MockMB agent,
-				MockData data
-			) => this.getModifier(agent, data);
-		}
-
-
-		[Test]
-		public void PluginCallbacksConcat() {
-			var called = "";
-			(Action?, Action?, Action?) a = (
-				() => called += "a",
-				() => called += "a",
-				() => called += "a"
-			);
-			(Action?, Action?, Action?) b = (
-				() => called += "b",
-				() => called += "b",
-				() => called += "b"
-			);
-
-			var (cBegin, cUpdate, cEnd) = Modifiers.Concat(a, b);
-
-			cBegin?.Invoke();
-
-			Assert.AreEqual("ab", called);
-
-			called = "";
-			cUpdate?.Invoke();
-
-			Assert.AreEqual("ab", called);
-
-			called = "";
-			cEnd?.Invoke();
-
-			Assert.AreEqual("ab", called);
+			protected override Action? GetAction(MockMB agent, MockData data) =>
+				this.getModifier(agent, data);
 		}
 
 		[UnityTest]
@@ -80,7 +43,7 @@ namespace Routines
 			};
 			factory.getModifier = (agent, _) => {
 				calledMB = agent;
-				return (null as Action, null as Action, null as Action);
+				return null;
 			};
 
 			yield return new WaitForEndOfFrame();
@@ -96,10 +59,10 @@ namespace Routines
 
 		[UnityTest]
 		public IEnumerator GetPluginData() {
-			var calledData = null as Data;
+			var calledData = null as RoutineData;
 			var calledMockData = null as MockData;
 			var factory = new MockModifierFactory();
-			var data = new Data();
+			var data = new RoutineData();
 			var mockdata = new MockData();
 			var agent = new GameObject().AddComponent<MockMB>();
 
@@ -110,7 +73,7 @@ namespace Routines
 			};
 			factory.getModifier = (_, data) => {
 				calledMockData = data;
-				return (null as Action, null as Action, null as Action);
+				return null;
 			};
 
 			yield return new WaitForEndOfFrame();
@@ -126,19 +89,15 @@ namespace Routines
 			var called = 0;
 			var factory = new MockModifierFactory();
 			var agent = new GameObject().AddComponent<MockMB>();
-			(Action? begin, Action? update, Action? end) modifier = (
-				() => ++called,
-				null,
-				null
-			);
 
-			factory.getModifier = (_, __) => modifier;
+			factory.getModifier = (_, __) => () => ++called;
 
 			yield return new WaitForEndOfFrame();
 
-			modifier = factory.GetModifierFnFor(agent.gameObject)(new Data());
+			var modifierFn = factory.GetModifierFnFor(agent.gameObject);
+			var modifier = modifierFn(new RoutineData())!;
 
-			modifier.begin!();
+			modifier();
 
 			Assert.AreEqual(1, called);
 		}
