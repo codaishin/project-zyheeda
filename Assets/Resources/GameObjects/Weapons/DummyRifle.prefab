@@ -45,12 +45,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bec57db7ab191bb4589f533671bf3eea, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   factory:
     modifiers:
-    - value: {fileID: 11400000, guid: 092a0d633c41b624da081522d1429185, type: 2}
-    - value: {fileID: 11400000, guid: 916d42a8bc44f124496cc484186a4db9, type: 2}
+    - hook: 1
+      factory:
+        value: {fileID: 11400000, guid: 092a0d633c41b624da081522d1429185, type: 2}
+    - hook: 1
+      factory:
+        value: {fileID: 11400000, guid: 916d42a8bc44f124496cc484186a4db9, type: 2}
+    - hook: 4
+      factory:
+        value: {fileID: 11400000, guid: 14e8605d65af2ef44aeb285da97c7db9, type: 2}
     preCastSeconds: 0.2
     afterCastSeconds: 0.5
     hitter:
@@ -68,8 +75,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0b21b7137c9b5fc47b458335317899f7, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   prefab: {fileID: -2500926662313794417, guid: 3643149faa865d646bce481d6bbcd596, type: 3}
   spawnPoint: {fileID: 8581782450929461804}
 --- !u!1 &3530670246089074914

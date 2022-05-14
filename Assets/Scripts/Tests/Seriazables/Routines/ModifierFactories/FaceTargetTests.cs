@@ -8,7 +8,7 @@ namespace Routines
 	public class FaceTargetTests : TestCollection
 	{
 		[UnityTest]
-		public IEnumerator beginFaceTarget() {
+		public IEnumerator FaceTarget() {
 			var target = new GameObject();
 			var agent = new GameObject();
 			var plugin = new FaceTarget();
@@ -16,12 +16,12 @@ namespace Routines
 
 			yield return new WaitForEndOfFrame();
 
-			var modifiers = plugin.GetModifierFnFor(agent)!;
-			var begin = modifiers(data).begin!;
+			var modifierFn = plugin.GetModifierFnFor(agent)!;
+			var face = modifierFn(data)!;
 
 			target.transform.position = Vector3.left;
 
-			begin();
+			face();
 
 			Tools.AssertEqual(Vector3.left, agent.transform.forward);
 		}
@@ -36,18 +36,18 @@ namespace Routines
 			yield return new WaitForEndOfFrame();
 
 			var modifiers = plugin.GetModifierFnFor(agent)!;
-			var begin = modifiers(data).begin!;
+			var face = modifiers(data)!;
 
 			target.transform.position = Vector3.left;
 
 			data.target = target.transform;
-			begin();
+			face();
 
 			Tools.AssertEqual(Vector3.left, agent.transform.forward);
 		}
 
 		[UnityTest]
-		public IEnumerator beginFaceTargetRelative() {
+		public IEnumerator FaceTargetRelative() {
 			var target = new GameObject();
 			var agent = new GameObject();
 			var plugin = new FaceTarget();
@@ -55,29 +55,29 @@ namespace Routines
 
 			yield return new WaitForEndOfFrame();
 
-			var modifiers = plugin.GetModifierFnFor(agent)!;
-			var begin = modifiers(data).begin!;
+			var modifierFn = plugin.GetModifierFnFor(agent)!;
+			var face = modifierFn(data)!;
 
 			target.transform.position = Vector3.up + Vector3.right;
 			agent.transform.position = Vector3.left;
 
-			begin();
+			face();
 
 			Tools.AssertEqual(Vector3.right, agent.transform.forward);
 		}
 
 		[UnityTest]
-		public IEnumerator beginDoesntThrowWhenNoTargetSet() {
+		public IEnumerator DoesntThrowWhenNoTargetSet() {
 			var agent = new GameObject();
 			var plugin = new FaceTarget();
 			var data = new TargetData();
 
 			yield return new WaitForEndOfFrame();
 
-			var modifiers = plugin.GetModifierFnFor(agent)!;
-			var begin = modifiers(data).begin!;
+			var modifierFn = plugin.GetModifierFnFor(agent)!;
+			var face = modifierFn(data)!;
 
-			Assert.DoesNotThrow(() => begin());
+			Assert.DoesNotThrow(() => face());
 		}
 	}
 }

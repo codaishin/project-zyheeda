@@ -10,8 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 87a0a117d7bfc5546a6d5ae16a3d27e8, type: 3}
-  m_Name: AnimateShootRifle
+  m_Name: IdleAnimation
   m_EditorClassIdentifier: 
   modifier:
-    beginState: 2
-    endState: 0
+    state: 0

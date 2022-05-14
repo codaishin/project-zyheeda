@@ -7,11 +7,7 @@ namespace Routines
 	public class DestroyOnEnd : IModifierFactory
 	{
 		public ModifierFn GetModifierFnFor(GameObject agent) {
-			return _ => (
-				begin: null,
-				update: null,
-				end: () => GameObject.Destroy(agent)
-			);
+			return _ => () => GameObject.Destroy(agent);
 		}
 	}
 }

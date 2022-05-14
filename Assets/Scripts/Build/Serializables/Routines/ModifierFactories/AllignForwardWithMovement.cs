@@ -4,34 +4,34 @@ using UnityEngine;
 namespace Routines
 {
 	[Serializable]
-	public class AllignForwardWithMovement : BaseModifierFactory<Transform, Data>
+	public class AllignForwardWithMovement : BaseModifierFactory<Transform, RoutineData>
 	{
 		public override Transform GetConcreteAgent(GameObject agent) {
 			return agent.transform;
 		}
 
-		public override Data GetRoutineData(Data data) {
+		public override RoutineData GetRoutineData(RoutineData data) {
 			return data;
 		}
 
 		protected
-		override (Action? begin, Action? update, Action? end) GetModifiers(
+		override Action? GetAction(
 			Transform agent,
-			Data data
+			RoutineData data
 		) {
-			Vector3 lastPosition = agent.transform.position;
-			Action trackPosition = () => lastPosition = agent.position;
-			Action setDirection = () => {
+			var lastPosition = agent.transform.position;
+
+			void trackPosition() {
+				lastPosition = agent.position;
+			}
+			void setDirection() {
 				if (agent.position == lastPosition) {
 					return;
 				}
 				agent.forward = agent.position - lastPosition;
 			};
-			return (
-				begin: null,
-				update: setDirection + trackPosition,
-				end: null
-			);
+
+			return (Action)setDirection + trackPosition;
 		}
 	}
 }

@@ -23,15 +23,10 @@ namespace Routines
 
 		class MockPluginSO : ScriptableObject, IModifierFactory
 		{
-			public Action<Data> onBegin = _ => { };
-			public Action<Data> onEnd = _ => { };
+			public Action<RoutineData> action = _ => { };
 
 			public ModifierFn GetModifierFnFor(GameObject agent) {
-				return data => (
-					begin: () => this.onBegin(data),
-					update: null,
-					end: () => this.onEnd(data)
-				);
+				return d => () => this.action(d);
 			}
 		}
 
@@ -80,9 +75,12 @@ namespace Routines
 			var useItem = new ItemAction {
 				hitter = Reference<IHit>.ScriptableObject(hitter),
 				effect = Reference<IApplicable<Transform>>.Component(effect),
-				modifiers = new Reference<IModifierFactory>[] {
-				Reference<IModifierFactory>.ScriptableObject(plugin)
-			},
+				modifiers = new[] {
+					new ModifierData {
+						hook = ModifierHook.OnBegin,
+						factory = Reference<IModifierFactory>.ScriptableObject(plugin),
+					},
+				},
 			};
 			var run = new GameObject().AddComponent<MockMB>();
 			var agent = new GameObject();
@@ -90,7 +88,7 @@ namespace Routines
 
 			useItem.hitter = Reference<IHit>.ScriptableObject(hitter);
 			hitter.tryComponent = _ => target.transform;
-			plugin.onBegin = d => called = d.As<TargetData>()!.target;
+			plugin.action = d => called = d.As<TargetData>()!.target;
 
 			yield return new WaitForEndOfFrame();
 
@@ -143,8 +141,11 @@ namespace Routines
 			var useItem = new ItemAction {
 				hitter = Reference<IHit>.ScriptableObject(hitter),
 				effect = Reference<IApplicable<Transform>>.Component(effect),
-				modifiers = new Reference<IModifierFactory>[] {
-					Reference<IModifierFactory>.ScriptableObject(plugin)
+				modifiers = new[] {
+					new ModifierData {
+						hook = ModifierHook.OnEnd,
+						factory = Reference<IModifierFactory>.ScriptableObject(plugin),
+					},
 				},
 			};
 			var run = new GameObject().AddComponent<MockMB>();
@@ -155,7 +156,7 @@ namespace Routines
 			useItem.afterCastSeconds = 0.4f;
 			hitter.tryComponent = _ => target.transform;
 
-			plugin.onEnd = _ => ++called;
+			plugin.action = _ => ++called;
 
 			yield return new WaitForEndOfFrame();
 

@@ -11,11 +11,21 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 46715968de352294dbaefbc0713a6f88, type: 3}
   m_Name: RunToMouse
-  m_EditorClassIdentifier:
+  m_EditorClassIdentifier: 
   factory:
     modifiers:
-    - value: {fileID: 11400000, guid: aa435f6ef9bfffa409a9c7306b58f253, type: 2}
-    - value: {fileID: 11400000, guid: 3a4adbab139152542b6a7712055a4ced, type: 2}
+    - hook: 1
+      factory:
+        value: {fileID: 11400000, guid: 4b3e85606a030e4439058d370e76a913, type: 2}
+    - hook: 2
+      factory:
+        value: {fileID: 11400000, guid: 3a4adbab139152542b6a7712055a4ced, type: 2}
+    - hook: 2
+      factory:
+        value: {fileID: 11400000, guid: aa435f6ef9bfffa409a9c7306b58f253, type: 2}
+    - hook: 4
+      factory:
+        value: {fileID: 11400000, guid: 14e8605d65af2ef44aeb285da97c7db9, type: 2}
     hitter:
       value: {fileID: 11400000, guid: 9370508409fd36d43b04301710bbfee6, type: 2}
     speed: 3

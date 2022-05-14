@@ -10,7 +10,7 @@ public class BaseRoutineModifierSOTests : TestCollection
 	class MockModifier : IModifierFactory
 	{
 		public Func<GameObject, ModifierFn> getModifierFn =
-			_ => _ => (null as Action, null as Action, null as Action);
+			_ => _ => null;
 
 		public ModifierFn GetModifierFnFor(GameObject agent) =>
 			this.getModifierFn(agent);
@@ -27,11 +27,7 @@ public class BaseRoutineModifierSOTests : TestCollection
 		var agent = new GameObject();
 		var calledAgent = null as GameObject;
 
-		ModifierFn modifierFn = _ => (
-			null as Action,
-			null as Action,
-			null as Action
-		);
+		ModifierFn modifierFn = _ => null as Action;
 		ModifierFn getModifierFn(GameObject agent) {
 			calledAgent = agent;
 			return modifierFn;

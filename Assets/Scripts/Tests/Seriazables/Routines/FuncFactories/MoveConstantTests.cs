@@ -191,8 +191,7 @@ namespace Routines
 
 		class MockPluginSO : ScriptableObject, IModifierFactory
 		{
-			public Func<GameObject, ModifierFn> getCallbacks =
-				_ => _ => (null as Action, null as Action, null as Action);
+			public Func<GameObject, ModifierFn> getCallbacks = _ => _ => null;
 
 			public ModifierFn GetModifierFnFor(
 				GameObject agent
@@ -208,20 +207,19 @@ namespace Routines
 				hitter = Reference<IHit>.ScriptableObject(hitSO),
 				speed = 1f,
 				weight = 0.0112f,
-				modifiers = new Reference<IModifierFactory>[] {
-				Reference<IModifierFactory>.ScriptableObject(pluginSO)
-			},
+				modifiers = new[] {
+					new ModifierData {
+						hook = ModifierHook.OnBegin,
+						factory = Reference<IModifierFactory>.ScriptableObject(pluginSO),
+					},
+				},
 			};
 			var agent = new GameObject();
 			var runner = new GameObject().AddComponent<MockMB>();
 
 			hitSO.getPoint = _ => Vector3.right * 100;
 
-			pluginSO.getCallbacks = _ => d => (
-				begin: () => data = d.As<WeightData>(),
-				update: null,
-				end: null
-			);
+			pluginSO.getCallbacks = _ => d => () => data = d.As<WeightData>();
 
 			yield return new WaitForEndOfFrame();
 

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Routines
 {
-	public class TargetData : Data
+	public class TargetData : RoutineData
 	{
 		public Transform? target;
 	}
@@ -25,7 +25,7 @@ namespace Routines
 		public Reference<IHit> hitter;
 		public Reference<IApplicable<Transform>> effect;
 
-		protected override void ExtendData(Data pluginData) {
+		protected override void ExtendData(RoutineData pluginData) {
 			pluginData.Extent<TargetData>();
 		}
 
@@ -48,7 +48,7 @@ namespace Routines
 		}
 
 		protected override SubRoutineFn[] SubRoutines(ItemActionData agent) {
-			IEnumerable<YieldInstruction>? action(Data pluginData) {
+			IEnumerable<YieldInstruction>? action(RoutineData pluginData) {
 				Transform? target = agent.getTarget();
 
 				if (target == null) {
