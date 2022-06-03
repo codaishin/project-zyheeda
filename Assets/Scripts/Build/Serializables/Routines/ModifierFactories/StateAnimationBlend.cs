@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Routines
 {
-	public class WeightData : RoutineData
+	public class WeightData : Data
 	{
 		public float weight;
 	}
@@ -18,7 +18,7 @@ namespace Routines
 			return agent.RequireComponent<IAnimationStatesBlend>(true);
 		}
 
-		public override WeightData GetRoutineData(RoutineData data) {
+		public override WeightData GetRoutineData(Data data) {
 			return data.As<WeightData>()!;
 		}
 

@@ -17,6 +17,9 @@ MonoBehaviour:
     - hook: 1
       factory:
         value: {fileID: 11400000, guid: 092a0d633c41b624da081522d1429185, type: 2}
+    - hook: 4
+      factory:
+        value: {fileID: 11400000, guid: a5b98b6ff01ea234bac41b01e4c4b597, type: 2}
     hitter:
       value: {fileID: 11400000, guid: c45a98815e7f8c74181abef4f828037b, type: 2}
     speed: 10

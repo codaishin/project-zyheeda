@@ -10,7 +10,7 @@ namespace Routines
 			return agent.transform;
 		}
 
-		public override TargetData GetRoutineData(RoutineData data) {
+		public override TargetData GetRoutineData(Data data) {
 			return data.Extent<TargetData>();
 		}
 

@@ -209,7 +209,7 @@ namespace Routines
 				weight = 0.0112f,
 				modifiers = new[] {
 					new ModifierData {
-						hook = ModifierHook.OnBegin,
+						hook = ModifierFlags.OnBeginSubRoutine,
 						factory = Reference<IModifierFactory>.ScriptableObject(pluginSO),
 					},
 				},

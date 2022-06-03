@@ -324,7 +324,7 @@ namespace Routines
 
 			move.modifiers = new[] {
 				new ModifierData {
-					hook = ModifierHook.OnUpdate,
+					hook = ModifierFlags.OnUpdateSubRoutine,
 					factory = Reference<IModifierFactory>.ScriptableObject(plugin),
 				},
 			};

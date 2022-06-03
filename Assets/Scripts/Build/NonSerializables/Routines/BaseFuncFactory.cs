@@ -6,8 +6,8 @@ using UnityEngine;
 
 namespace Routines
 {
-	public delegate IEnumerable<YieldInstruction?>? SubRoutineFn(RoutineData data);
-	public delegate Action? ModifierFn(RoutineData data);
+	public delegate IEnumerable<YieldInstruction?>? SubRoutineFn(Data data);
+	public delegate Action? ModifierFn(Data data);
 
 	public abstract class BaseFuncFactory<TAgent> : IFuncFactory
 	{
@@ -16,11 +16,11 @@ namespace Routines
 			private bool switched;
 			private int switchCount;
 			private IEnumerable<YieldInstruction?>[] yieldFns;
-			private (Action? begin, Action? update, Action? end) modifiers;
+			private Dictionary<ModifierFlags, Action> modifiers;
 
 			public Routine(
 				IEnumerable<YieldInstruction?>[] yieldFns,
-				(Action? begin, Action? update, Action? end) modifiers
+				Dictionary<ModifierFlags, Action> modifiers
 			) {
 				this.switched = false;
 				this.switchCount = 0;
@@ -31,16 +31,25 @@ namespace Routines
 			IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
 			public IEnumerator<YieldInstruction?> GetEnumerator() {
+				var (begin, end) = (
+					this.modifiers.GetValueOrDefault(ModifierFlags.OnBegin),
+					this.modifiers.GetValueOrDefault(ModifierFlags.OnEnd)
+				);
+				begin?.Invoke();
 				foreach (var yield in this.yieldFns.SelectMany(this.Iterate)) {
 					yield return yield;
 				}
+				end?.Invoke();
 			}
 
 			private IEnumerable<YieldInstruction?> Iterate(
 				IEnumerable<YieldInstruction?> yields
 			) {
-				var (begin, update, end) = this.modifiers;
-
+				var (begin, update, end) = (
+					this.modifiers.GetValueOrDefault(ModifierFlags.OnBeginSubRoutine),
+					this.modifiers.GetValueOrDefault(ModifierFlags.OnUpdateSubRoutine),
+					this.modifiers.GetValueOrDefault(ModifierFlags.OnEndSubroutine)
+				);
 				begin?.Invoke();
 				foreach (var yield in this.IterateUntilSwitched(yields)) {
 					yield return yield;
@@ -68,27 +77,27 @@ namespace Routines
 
 		public ModifierData[] modifiers = new ModifierData[0];
 
-		protected virtual void ExtendData(RoutineData data) { }
+		protected virtual void ExtendData(Data data) { }
 
 		protected abstract TAgent ConcreteAgent(GameObject agent);
 
 		protected abstract SubRoutineFn[] SubRoutines(TAgent agent);
 
-		private (ModifierFn, ModifierHook)[] Modifiers(GameObject agent) {
+		private (ModifierFn, ModifierFlags)[] Modifiers(GameObject agent) {
 			return this.modifiers
 				.Select(d => (d.factory.Value!.GetModifierFnFor(agent), d.hook))
 				.ToArray();
 		}
 
-		private RoutineData GetData() {
-			var data = new RoutineData();
+		private Data GetData() {
+			var data = new Data();
 			this.ExtendData(data);
 			return data;
 		}
 
 		private IEnumerable<IEnumerable<YieldInstruction?>> GetSubRoutines(
 			IEnumerable<SubRoutineFn> yieldFns,
-			RoutineData data
+			Data data
 		) {
 			var yields = null as IEnumerable<YieldInstruction?>;
 
@@ -99,35 +108,35 @@ namespace Routines
 			}
 		}
 
-		private (Action?, Action?, Action?) GetModifier(
-			IEnumerable<(ModifierFn, ModifierHook)> getModifierFnData,
-			RoutineData data
+		private Dictionary<ModifierFlags, Action> GetModifiers(
+			IEnumerable<(ModifierFn, ModifierFlags)> getModifierFnData,
+			Data data
 		) {
-			var empty = (null as Action, null as Action, null as Action);
-
-			(Action?, ModifierHook) GetModifierFnForData(
-				(ModifierFn, ModifierHook) getModifierFnData
+			(Action?, ModifierFlags) GetModifierFnForData(
+				(ModifierFn, ModifierFlags) getModifierFnData
 			) {
 				var (getModifierFn, hook) = getModifierFnData;
 				return (getModifierFn(data), hook);
 			}
 
-			(Action?, Action?, Action?) Concat(
-				(Action?, Action?, Action?) aggregate,
-				(Action?, ModifierHook) current
+			Dictionary<ModifierFlags, Action> ConcatFlagActions(
+				Dictionary<ModifierFlags, Action> modifiers,
+				(Action?, ModifierFlags) current
 			) {
 				var (action, hook) = current;
-				var (begin, update, end) = aggregate;
-				return (
-					begin + (hook.HasFlag(ModifierHook.OnBegin) ? action : null),
-					update + (hook.HasFlag(ModifierHook.OnUpdate) ? action : null),
-					end + (hook.HasFlag(ModifierHook.OnEnd) ? action : null)
-				);
+				if (action is null) {
+					return modifiers;
+				}
+				foreach (var flag in hook.GetFlags()) {
+					var concat = modifiers.GetValueOrDefault(flag) + action;
+					modifiers[flag] = concat;
+				}
+				return modifiers;
 			}
 
 			return getModifierFnData
 				.Select(GetModifierFnForData)
-				.Aggregate(empty, Concat);
+				.Aggregate(new Dictionary<ModifierFlags, Action>(), ConcatFlagActions);
 		}
 
 		public Func<IRoutine?> GetRoutineFnFor(GameObject agent) {
@@ -137,7 +146,7 @@ namespace Routines
 
 			return () => {
 				var data = this.GetData();
-				var modifiers = this.GetModifier(modifierFns, data);
+				var modifiers = this.GetModifiers(modifierFns, data);
 				var subRoutines = this.GetSubRoutines(subRoutineFns, data).ToArray();
 
 				if (subRoutines.Length == 0) {
