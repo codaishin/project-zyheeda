@@ -8,12 +8,12 @@ using UnityEngine;
 [CustomPropertyDrawer(typeof(ModifierData))]
 public class ModifierDataPD : PropertyDrawer
 {
-	private static (ModifierHook, string)[] options = new[] {
-		(ModifierHook.OnBegin, "on begin"),
-		(ModifierHook.OnBeginSubRoutine, "on begin subroutine"),
-		(ModifierHook.OnUpdateSubRoutine, "on update subroutine"),
-		(ModifierHook.OnEndSubroutine, "on end subroutine"),
-		(ModifierHook.OnEnd, "on end"),
+	private static (ModifierFlags, string)[] options = new[] {
+		(ModifierFlags.OnBegin, "on begin"),
+		(ModifierFlags.OnBeginSubRoutine, "on begin subroutine"),
+		(ModifierFlags.OnUpdateSubRoutine, "on update subroutine"),
+		(ModifierFlags.OnEndSubroutine, "on end subroutine"),
+		(ModifierFlags.OnEnd, "on end"),
 	};
 	private float baseHeight;
 
@@ -29,13 +29,13 @@ public class ModifierDataPD : PropertyDrawer
 
 	private
 	static
-	IEnumerable<(ModifierHook, bool)> Convert(
-		ModifierHook hook
+	IEnumerable<(ModifierFlags, bool)> Convert(
+		ModifierFlags hook
 	) {
-		(ModifierHook, bool) Convert(ModifierHook option) {
+		(ModifierFlags, bool) Convert(ModifierFlags option) {
 			return (option, hook.HasFlag(option));
 		}
-		ModifierHook Option((ModifierHook, string) value) {
+		ModifierFlags Option((ModifierFlags, string) value) {
 			var (option, _) = value;
 			return option;
 		}
@@ -45,24 +45,24 @@ public class ModifierDataPD : PropertyDrawer
 
 	private
 	static
-	ModifierHook Convert(
-		IEnumerable<(ModifierHook, bool)> values
+	ModifierFlags Convert(
+		IEnumerable<(ModifierFlags, bool)> values
 	) {
-		ModifierHook Concat(ModifierHook aggregate, (ModifierHook, bool) current) {
+		ModifierFlags Concat(ModifierFlags aggregate, (ModifierFlags, bool) current) {
 			var (option, value) = current;
 			return value ? aggregate | option : aggregate;
 		}
-		return values.Aggregate((ModifierHook)0, Concat);
+		return values.Aggregate((ModifierFlags)0, Concat);
 	}
 
 	private
 	Rect GUIHook(SerializedProperty property, Rect pos) {
 		var side = this.baseHeight;
 		var left = pos.x;
-		var hook = (ModifierHook)property.enumValueFlag;
+		var hook = (ModifierFlags)property.enumValueFlag;
 		var values = ModifierDataPD.Convert(hook);
 
-		(ModifierHook, bool) GUIUpdate((ModifierHook, bool) current, int index) {
+		(ModifierFlags, bool) GUIUpdate((ModifierFlags, bool) current, int index) {
 			var (option, value) = current;
 			pos = new Rect(left + index * side, pos.y, side, side);
 			value = EditorGUI.Toggle(pos, value);
@@ -116,7 +116,7 @@ public class ModifierDataPD : PropertyDrawer
 		var right = pos.xMax;
 		var side = this.baseHeight;
 
-		string Name((ModifierHook, string) value) {
+		string Name((ModifierFlags, string) value) {
 			var (_, name) = value;
 			return name;
 		}

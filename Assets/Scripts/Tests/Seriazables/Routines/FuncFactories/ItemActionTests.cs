@@ -77,7 +77,7 @@ namespace Routines
 				effect = Reference<IApplicable<Transform>>.Component(effect),
 				modifiers = new[] {
 					new ModifierData {
-						hook = ModifierHook.OnBeginSubRoutine,
+						hook = ModifierFlags.OnBeginSubRoutine,
 						factory = Reference<IModifierFactory>.ScriptableObject(plugin),
 					},
 				},
@@ -143,7 +143,7 @@ namespace Routines
 				effect = Reference<IApplicable<Transform>>.Component(effect),
 				modifiers = new[] {
 					new ModifierData {
-						hook = ModifierHook.OnEndSubroutine,
+						hook = ModifierFlags.OnEndSubroutine,
 						factory = Reference<IModifierFactory>.ScriptableObject(plugin),
 					},
 				},

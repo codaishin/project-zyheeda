@@ -3,7 +3,7 @@ using System;
 namespace Routines
 {
 	[Flags]
-	public enum ModifierHook
+	public enum ModifierFlags
 	{
 		OnBeginSubRoutine = 1,
 		OnUpdateSubRoutine = 2,
