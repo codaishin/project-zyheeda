@@ -16,11 +16,11 @@ namespace Routines
 			private bool switched;
 			private int switchCount;
 			private IEnumerable<YieldInstruction?>[] yieldFns;
-			private (Action? begin, Action? update, Action? end) modifiers;
+			private (Action? begin, Action? beginSR, Action? updateSR, Action? endSR, Action? end) modifiers;
 
 			public Routine(
 				IEnumerable<YieldInstruction?>[] yieldFns,
-				(Action? begin, Action? update, Action? end) modifiers
+				(Action? begin, Action? beginSR, Action? updateSR, Action? endSR, Action? end) modifiers
 			) {
 				this.switched = false;
 				this.switchCount = 0;
@@ -31,22 +31,25 @@ namespace Routines
 			IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
 			public IEnumerator<YieldInstruction?> GetEnumerator() {
+				var (begin, _, _, _, end) = this.modifiers;
+				begin?.Invoke();
 				foreach (var yield in this.yieldFns.SelectMany(this.Iterate)) {
 					yield return yield;
 				}
+				end?.Invoke();
 			}
 
 			private IEnumerable<YieldInstruction?> Iterate(
 				IEnumerable<YieldInstruction?> yields
 			) {
-				var (begin, update, end) = this.modifiers;
+				var (_, beginSR, updateSR, endSR, _) = this.modifiers;
 
-				begin?.Invoke();
+				beginSR?.Invoke();
 				foreach (var yield in this.IterateUntilSwitched(yields)) {
 					yield return yield;
-					update?.Invoke();
+					updateSR?.Invoke();
 				}
-				end?.Invoke();
+				endSR?.Invoke();
 			}
 
 			private IEnumerable<YieldInstruction?> IterateUntilSwitched(
@@ -99,12 +102,10 @@ namespace Routines
 			}
 		}
 
-		private (Action?, Action?, Action?) GetModifier(
+		private (Action?, Action?, Action?, Action?, Action?) GetModifier(
 			IEnumerable<(ModifierFn, ModifierHook)> getModifierFnData,
 			RoutineData data
 		) {
-			var empty = (null as Action, null as Action, null as Action);
-
 			(Action?, ModifierHook) GetModifierFnForData(
 				(ModifierFn, ModifierHook) getModifierFnData
 			) {
@@ -112,18 +113,28 @@ namespace Routines
 				return (getModifierFn(data), hook);
 			}
 
-			(Action?, Action?, Action?) Concat(
-				(Action?, Action?, Action?) aggregate,
+			(Action?, Action?, Action?, Action?, Action?) Concat(
+				(Action?, Action?, Action?, Action?, Action?) aggregate,
 				(Action?, ModifierHook) current
 			) {
-				var (action, hook) = current;
-				var (begin, update, end) = aggregate;
+				var (act, h) = current;
+				var (begin, beginSR, updateSR, endSR, end) = aggregate;
 				return (
-					begin + (hook.HasFlag(ModifierHook.OnBegin) ? action : null),
-					update + (hook.HasFlag(ModifierHook.OnUpdate) ? action : null),
-					end + (hook.HasFlag(ModifierHook.OnEnd) ? action : null)
+					begin + (h.HasFlag(ModifierHook.OnBegin) ? act : null),
+					beginSR + (h.HasFlag(ModifierHook.OnBeginSubRoutine) ? act : null),
+					updateSR + (h.HasFlag(ModifierHook.OnUpdateSubRoutine) ? act : null),
+					endSR + (h.HasFlag(ModifierHook.OnEndSubroutine) ? act : null),
+					end + (h.HasFlag(ModifierHook.OnEnd) ? act : null)
 				);
 			}
+
+			var empty = (
+				begin: null as Action,
+				beginSR: null as Action,
+				updateSR: null as Action,
+				endSR: null as Action,
+				end: null as Action
+			);
 
 			return getModifierFnData
 				.Select(GetModifierFnForData)

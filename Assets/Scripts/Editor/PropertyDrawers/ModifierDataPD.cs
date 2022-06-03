@@ -9,21 +9,27 @@ using UnityEngine;
 public class ModifierDataPD : PropertyDrawer
 {
 	private static (ModifierHook, string)[] options = new[] {
-		(ModifierHook.OnBegin, "begin"),
-		(ModifierHook.OnUpdate, "update"),
-		(ModifierHook.OnEnd, "end"),
+		(ModifierHook.OnBegin, "on begin"),
+		(ModifierHook.OnBeginSubRoutine, "on begin subroutine"),
+		(ModifierHook.OnUpdateSubRoutine, "on update subroutine"),
+		(ModifierHook.OnEndSubroutine, "on end subroutine"),
+		(ModifierHook.OnEnd, "on end"),
 	};
 	private float baseHeight;
 
-	private bool InArray() {
+	private
+	bool InArray() {
 		return typeof(IEnumerable).IsAssignableFrom(this.fieldInfo.FieldType);
 	}
 
-	private bool NotFirst(string name) {
+	private
+	bool NotFirst(string name) {
 		return name != "Element 0";
 	}
 
-	private static IEnumerable<(ModifierHook, bool)> Convert(
+	private
+	static
+	IEnumerable<(ModifierHook, bool)> Convert(
 		ModifierHook hook
 	) {
 		(ModifierHook, bool) Convert(ModifierHook option) {
@@ -37,7 +43,9 @@ public class ModifierDataPD : PropertyDrawer
 		return ModifierDataPD.options.Select(Option).Select(Convert);
 	}
 
-	private static ModifierHook Convert(
+	private
+	static
+	ModifierHook Convert(
 		IEnumerable<(ModifierHook, bool)> values
 	) {
 		ModifierHook Concat(ModifierHook aggregate, (ModifierHook, bool) current) {
@@ -47,7 +55,8 @@ public class ModifierDataPD : PropertyDrawer
 		return values.Aggregate((ModifierHook)0, Concat);
 	}
 
-	private Rect GUIHook(SerializedProperty property, Rect pos) {
+	private
+	Rect GUIHook(SerializedProperty property, Rect pos) {
 		var side = this.baseHeight;
 		var left = pos.x;
 		var hook = (ModifierHook)property.enumValueFlag;
@@ -67,20 +76,23 @@ public class ModifierDataPD : PropertyDrawer
 		return pos;
 	}
 
-	private void GUIFactory(SerializedProperty property, Rect pos, float right) {
+	private
+	void GUIFactory(SerializedProperty property, Rect pos, float right) {
 		var width = right - pos.xMax;
 		pos = new Rect(pos.xMax, pos.y, width, this.baseHeight);
 		EditorGUI.PropertyField(pos, property, GUIContent.none);
 	}
 
-	private Rect GUIPrefixLabel(GUIContent label, Rect pos) {
+	private
+	Rect GUIPrefixLabel(GUIContent label, Rect pos) {
 		if (this.InArray()) {
 			return pos;
 		}
 		return EditorGUI.PrefixLabel(pos, label);
 	}
 
-	private Rect GUIConnectors(int line, Rect pos) {
+	private
+	Rect GUIConnectors(int line, Rect pos) {
 		var side = this.baseHeight;
 		var left = pos.x;
 		var indent = 0;
@@ -94,7 +106,8 @@ public class ModifierDataPD : PropertyDrawer
 		return pos;
 	}
 
-	private Rect GUIDescriptionLabel(GUIContent label, Rect pos) {
+	private
+	Rect GUIDescriptionLabel(GUIContent label, Rect pos) {
 		if (this.InArray() && this.NotFirst(label.text)) {
 			return pos;
 		}
@@ -127,29 +140,27 @@ public class ModifierDataPD : PropertyDrawer
 		return pos;
 	}
 
-	private Rect GUILabels(GUIContent label, Rect pos) {
+	private
+	Rect GUILabels(GUIContent label, Rect pos) {
 		pos = this.GUIPrefixLabel(label, pos);
 		pos = this.GUIDescriptionLabel(label, pos);
 		return pos;
 	}
 
-	public override float GetPropertyHeight(
-		SerializedProperty property,
-		GUIContent label
-	) {
+	public
+	override
+	float GetPropertyHeight(SerializedProperty property, GUIContent label) {
 		this.baseHeight = base.GetPropertyHeight(property, label);
 
 		if (this.InArray() && this.NotFirst(label.text)) {
 			return this.baseHeight;
 		}
-		return this.baseHeight * 4;
+		return this.baseHeight * (ModifierDataPD.options.Length + 1);
 	}
 
-	public override void OnGUI(
-		Rect pos,
-		SerializedProperty property,
-		GUIContent label
-	) {
+	public
+	override
+	void OnGUI(Rect pos, SerializedProperty property, GUIContent label) {
 		var right = pos.xMax;
 		var hook = property.FindPropertyRelative("hook");
 		var factory = property.FindPropertyRelative("factory");

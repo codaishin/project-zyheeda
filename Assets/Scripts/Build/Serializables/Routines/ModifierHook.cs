@@ -5,8 +5,10 @@ namespace Routines
 	[Flags]
 	public enum ModifierHook
 	{
-		OnBegin = 1,
-		OnUpdate = 2,
-		OnEnd = 4,
+		OnBeginSubRoutine = 1,
+		OnUpdateSubRoutine = 2,
+		OnEndSubroutine = 4,
+		OnBegin = 8,
+		OnEnd = 16,
 	}
 }
