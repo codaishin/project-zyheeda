@@ -23,7 +23,7 @@ namespace Routines
 
 		class MockPluginSO : ScriptableObject, IModifierFactory
 		{
-			public Action<RoutineData> action = _ => { };
+			public Action<Data> action = _ => { };
 
 			public ModifierFn GetModifierFnFor(GameObject agent) {
 				return d => () => this.action(d);

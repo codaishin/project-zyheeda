@@ -28,13 +28,13 @@ namespace Routines
 			return new SubRoutineFn[] { data => this.Move(agent, data) };
 		}
 
-		protected override void ExtendData(RoutineData data) {
+		protected override void ExtendData(Data data) {
 			data.Extent<WeightData>();
 		}
 
 		private IEnumerable<WaitForEndOfFrame> Move(
 			MovementData agent,
-			RoutineData data
+			Data data
 		) {
 			Vector3? target = agent.getTarget();
 			Transform transform = agent.transform;

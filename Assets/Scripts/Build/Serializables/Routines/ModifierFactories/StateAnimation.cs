@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Routines
 {
 	[Serializable]
-	public class StateAnimation : BaseModifierFactory<IAnimationStates, RoutineData>
+	public class StateAnimation : BaseModifierFactory<IAnimationStates, Data>
 	{
 		public Animation.State state;
 
@@ -12,11 +12,11 @@ namespace Routines
 			return agent.RequireComponent<IAnimationStates>(true);
 		}
 
-		public override RoutineData GetRoutineData(RoutineData data) {
+		public override Data GetRoutineData(Data data) {
 			return data;
 		}
 
-		protected override Action? GetAction(IAnimationStates agent, RoutineData data) {
+		protected override Action? GetAction(IAnimationStates agent, Data data) {
 			return () => agent.Set(this.state);
 		}
 	}

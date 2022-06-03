@@ -20,7 +20,7 @@ namespace Routines
 		{
 			public Func<GameObject, Transform> concreteAgent = a => a.transform;
 			public Func<Transform, SubRoutineFn[]> subRoutines = _ => new SubRoutineFn[0];
-			public Action<RoutineData> extendData = _ => { };
+			public Action<Data> extendData = _ => { };
 
 			protected override SubRoutineFn[] SubRoutines(Transform agent) {
 				return this.subRoutines(agent);
@@ -32,7 +32,7 @@ namespace Routines
 
 			protected
 			override
-			void ExtendData(RoutineData data) {
+			void ExtendData(Data data) {
 				this.extendData(data);
 			}
 		}
@@ -88,7 +88,7 @@ namespace Routines
 
 		[Test]
 		public void DataAndAgentToModifierFactory() {
-			var data = new List<RoutineData>();
+			var data = new List<Data>();
 			var agents = new List<GameObject>();
 			var agent = new GameObject();
 			var routineFactory = new MockFactory();
@@ -237,7 +237,7 @@ namespace Routines
 				new GameObject().AddComponent<MockModifierFactory>(),
 			};
 
-			IEnumerable<WaitForEndOfFrame> yieldsFn(RoutineData _) {
+			IEnumerable<WaitForEndOfFrame> yieldsFn(Data _) {
 				for (; iterations < 9; ++iterations) {
 					yield return new WaitForEndOfFrame();
 				}
@@ -276,7 +276,7 @@ namespace Routines
 			};
 
 			SubRoutineFn GetSubRoutineFn() {
-				IEnumerable<WaitForEndOfFrame> run(RoutineData _) {
+				IEnumerable<WaitForEndOfFrame> run(Data _) {
 					for (; iterations < 100; ++iterations) {
 						yield return new WaitForEndOfFrame();
 					}
@@ -341,12 +341,12 @@ namespace Routines
 			Assert.Null(routineFn());
 		}
 
-		class MockmodifierFactoryDataA : RoutineData { }
-		class MockModifierFactoryDataB : RoutineData { }
+		class MockmodifierFactoryDataA : Data { }
+		class MockModifierFactoryDataB : Data { }
 
 		[Test]
 		public void ExtendModifierFactoryData() {
-			var data = null as RoutineData;
+			var data = null as Data;
 			var agent = new GameObject();
 			var routineFactory = new MockFactory();
 			var modifiers = new MockModifierFactory[] {

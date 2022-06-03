@@ -8,7 +8,7 @@ namespace Routines
 {
 	public class BaseModifierFactoryTests : TestCollection
 	{
-		class MockData : RoutineData { }
+		class MockData : Data { }
 
 		class MockMB : MonoBehaviour { }
 
@@ -16,14 +16,14 @@ namespace Routines
 		{
 			public Func<GameObject, MockMB> getConcreteAgent =
 				obj => obj.RequireComponent<MockMB>();
-			public Func<RoutineData, MockData> getPluginData =
+			public Func<Data, MockData> getPluginData =
 				data => data.As<MockData>()!;
 			public Func<MockMB, MockData, Action?> getModifier =
 				(_, __) => null;
 
 			public override MockMB GetConcreteAgent(GameObject agent) =>
 				this.getConcreteAgent(agent);
-			public override MockData GetRoutineData(RoutineData data) =>
+			public override MockData GetRoutineData(Data data) =>
 				this.getPluginData(data);
 			protected override Action? GetAction(MockMB agent, MockData data) =>
 				this.getModifier(agent, data);
@@ -59,10 +59,10 @@ namespace Routines
 
 		[UnityTest]
 		public IEnumerator GetPluginData() {
-			var calledData = null as RoutineData;
+			var calledData = null as Data;
 			var calledMockData = null as MockData;
 			var factory = new MockModifierFactory();
-			var data = new RoutineData();
+			var data = new Data();
 			var mockdata = new MockData();
 			var agent = new GameObject().AddComponent<MockMB>();
 
@@ -95,7 +95,7 @@ namespace Routines
 			yield return new WaitForEndOfFrame();
 
 			var modifierFn = factory.GetModifierFnFor(agent.gameObject);
-			var modifier = modifierFn(new RoutineData())!;
+			var modifier = modifierFn(new Data())!;
 
 			modifier();
 

@@ -12,7 +12,7 @@ namespace Routines
 			var obj = new GameObject();
 			var plugin = new DestroyOnEnd();
 			var modifierFn = plugin.GetModifierFnFor(obj);
-			var destroy = modifierFn(new RoutineData())!;
+			var destroy = modifierFn(new Data())!;
 
 			yield return new WaitForEndOfFrame();
 

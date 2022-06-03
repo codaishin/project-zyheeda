@@ -6,22 +6,50 @@ using UnityEngine;
 
 namespace Routines
 {
-	public delegate IEnumerable<YieldInstruction?>? SubRoutineFn(RoutineData data);
-	public delegate Action? ModifierFn(RoutineData data);
+	public delegate IEnumerable<YieldInstruction?>? SubRoutineFn(Data data);
+	public delegate Action? ModifierFn(Data data);
 
 	public abstract class BaseFuncFactory<TAgent> : IFuncFactory
 	{
+		private class ModifierCallbacks :
+			Tuple<Action?, Action?, Action?, Action?, Action?>
+		{
+			public
+			ModifierCallbacks() : base(null, null, null, null, null) { }
+
+			public
+			ModifierCallbacks(
+				ModifierCallbacks source,
+				Action? action,
+				ModifierHook hook
+			) : base(
+					source.Item1 + (
+						hook.HasFlag(ModifierHook.OnBegin) ? action : null
+					),
+					source.Item2 + (
+						hook.HasFlag(ModifierHook.OnBeginSubRoutine) ? action : null
+					),
+					source.Item3 + (
+						hook.HasFlag(ModifierHook.OnUpdateSubRoutine) ? action : null
+					),
+					source.Item4 + (
+						hook.HasFlag(ModifierHook.OnEndSubroutine) ? action : null
+					),
+					source.Item5 + (
+						hook.HasFlag(ModifierHook.OnEnd) ? action : null
+					)
+			) { }
+		}
+
 		private class Routine : IRoutine
 		{
 			private bool switched;
 			private int switchCount;
 			private IEnumerable<YieldInstruction?>[] yieldFns;
-			private (Action? begin, Action? beginSR, Action? updateSR, Action? endSR, Action? end) modifiers;
+			private ModifierCallbacks modifiers;
 
-			public Routine(
-				IEnumerable<YieldInstruction?>[] yieldFns,
-				(Action? begin, Action? beginSR, Action? updateSR, Action? endSR, Action? end) modifiers
-			) {
+			public
+			Routine(IEnumerable<YieldInstruction?>[] yieldFns, ModifierCallbacks modifiers) {
 				this.switched = false;
 				this.switchCount = 0;
 				this.yieldFns = yieldFns;
@@ -30,7 +58,8 @@ namespace Routines
 
 			IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
-			public IEnumerator<YieldInstruction?> GetEnumerator() {
+			public
+			IEnumerator<YieldInstruction?> GetEnumerator() {
 				var (begin, _, _, _, end) = this.modifiers;
 				begin?.Invoke();
 				foreach (var yield in this.yieldFns.SelectMany(this.Iterate)) {
@@ -39,7 +68,8 @@ namespace Routines
 				end?.Invoke();
 			}
 
-			private IEnumerable<YieldInstruction?> Iterate(
+			private
+			IEnumerable<YieldInstruction?> Iterate(
 				IEnumerable<YieldInstruction?> yields
 			) {
 				var (_, beginSR, updateSR, endSR, _) = this.modifiers;
@@ -52,7 +82,8 @@ namespace Routines
 				endSR?.Invoke();
 			}
 
-			private IEnumerable<YieldInstruction?> IterateUntilSwitched(
+			private
+			IEnumerable<YieldInstruction?> IterateUntilSwitched(
 				IEnumerable<YieldInstruction?> yields
 			) {
 				using var enumerator = yields.GetEnumerator();
@@ -63,7 +94,8 @@ namespace Routines
 				}
 			}
 
-			public bool NextSubRoutine() {
+			public
+			bool NextSubRoutine() {
 				this.switched = true;
 				return ++this.switchCount < this.yieldFns.Length;
 			}
@@ -71,27 +103,36 @@ namespace Routines
 
 		public ModifierData[] modifiers = new ModifierData[0];
 
-		protected virtual void ExtendData(RoutineData data) { }
+		protected
+		virtual
+		void ExtendData(Data data) { }
 
-		protected abstract TAgent ConcreteAgent(GameObject agent);
+		protected
+		abstract
+		TAgent ConcreteAgent(GameObject agent);
 
-		protected abstract SubRoutineFn[] SubRoutines(TAgent agent);
+		protected
+		abstract
+		SubRoutineFn[] SubRoutines(TAgent agent);
 
-		private (ModifierFn, ModifierHook)[] Modifiers(GameObject agent) {
+		private
+		(ModifierFn, ModifierHook)[] Modifiers(GameObject agent) {
 			return this.modifiers
 				.Select(d => (d.factory.Value!.GetModifierFnFor(agent), d.hook))
 				.ToArray();
 		}
 
-		private RoutineData GetData() {
-			var data = new RoutineData();
+		private
+		Data GetData() {
+			var data = new Data();
 			this.ExtendData(data);
 			return data;
 		}
 
-		private IEnumerable<IEnumerable<YieldInstruction?>> GetSubRoutines(
+		private
+		IEnumerable<IEnumerable<YieldInstruction?>> GetSubRoutines(
 			IEnumerable<SubRoutineFn> yieldFns,
-			RoutineData data
+			Data data
 		) {
 			var yields = null as IEnumerable<YieldInstruction?>;
 
@@ -102,9 +143,10 @@ namespace Routines
 			}
 		}
 
-		private (Action?, Action?, Action?, Action?, Action?) GetModifier(
+		private
+		ModifierCallbacks GetModifier(
 			IEnumerable<(ModifierFn, ModifierHook)> getModifierFnData,
-			RoutineData data
+			Data data
 		) {
 			(Action?, ModifierHook) GetModifierFnForData(
 				(ModifierFn, ModifierHook) getModifierFnData
@@ -113,35 +155,21 @@ namespace Routines
 				return (getModifierFn(data), hook);
 			}
 
-			(Action?, Action?, Action?, Action?, Action?) Concat(
-				(Action?, Action?, Action?, Action?, Action?) aggregate,
+			ModifierCallbacks Concat(
+				ModifierCallbacks aggregate,
 				(Action?, ModifierHook) current
 			) {
-				var (act, h) = current;
-				var (begin, beginSR, updateSR, endSR, end) = aggregate;
-				return (
-					begin + (h.HasFlag(ModifierHook.OnBegin) ? act : null),
-					beginSR + (h.HasFlag(ModifierHook.OnBeginSubRoutine) ? act : null),
-					updateSR + (h.HasFlag(ModifierHook.OnUpdateSubRoutine) ? act : null),
-					endSR + (h.HasFlag(ModifierHook.OnEndSubroutine) ? act : null),
-					end + (h.HasFlag(ModifierHook.OnEnd) ? act : null)
-				);
+				var (action, hook) = current;
+				return new ModifierCallbacks(aggregate, action, hook);
 			}
-
-			var empty = (
-				begin: null as Action,
-				beginSR: null as Action,
-				updateSR: null as Action,
-				endSR: null as Action,
-				end: null as Action
-			);
 
 			return getModifierFnData
 				.Select(GetModifierFnForData)
-				.Aggregate(empty, Concat);
+				.Aggregate(new ModifierCallbacks(), Concat);
 		}
 
-		public Func<IRoutine?> GetRoutineFnFor(GameObject agent) {
+		public
+		Func<IRoutine?> GetRoutineFnFor(GameObject agent) {
 			var cAgent = this.ConcreteAgent(agent);
 			var modifierFns = this.Modifiers(agent);
 			var subRoutineFns = this.SubRoutines(cAgent);

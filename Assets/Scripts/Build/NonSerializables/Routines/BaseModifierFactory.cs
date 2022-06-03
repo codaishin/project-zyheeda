@@ -6,7 +6,7 @@ namespace Routines
 	public abstract class BaseModifierFactory<TAgent, TData> : IModifierFactory
 	{
 		public abstract TAgent GetConcreteAgent(GameObject agent);
-		public abstract TData GetRoutineData(RoutineData data);
+		public abstract TData GetRoutineData(Data data);
 
 		protected abstract Action? GetAction(TAgent agent, TData data);
 

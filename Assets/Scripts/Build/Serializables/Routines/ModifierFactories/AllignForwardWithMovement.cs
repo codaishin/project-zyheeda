@@ -4,20 +4,20 @@ using UnityEngine;
 namespace Routines
 {
 	[Serializable]
-	public class AllignForwardWithMovement : BaseModifierFactory<Transform, RoutineData>
+	public class AllignForwardWithMovement : BaseModifierFactory<Transform, Data>
 	{
 		public override Transform GetConcreteAgent(GameObject agent) {
 			return agent.transform;
 		}
 
-		public override RoutineData GetRoutineData(RoutineData data) {
+		public override Data GetRoutineData(Data data) {
 			return data;
 		}
 
 		protected
 		override Action? GetAction(
 			Transform agent,
-			RoutineData data
+			Data data
 		) {
 			var lastPosition = agent.transform.position;
 
