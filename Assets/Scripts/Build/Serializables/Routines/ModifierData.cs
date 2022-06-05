@@ -3,9 +3,9 @@ using System;
 namespace Routines
 {
 	[Serializable]
-	public struct ModifierData
+	public struct PluginData
 	{
-		public ModifierFlags hook;
-		public Reference<IModifierFactory> factory;
+		public PluginFlags flag;
+		public Reference<IPlugin> plugin;
 	}
 }

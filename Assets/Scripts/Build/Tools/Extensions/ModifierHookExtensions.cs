@@ -6,11 +6,11 @@ namespace Routines
 {
 	public static class ModifierHookExtensions
 	{
-		private static ModifierFlags[] flags = (ModifierFlags[])Enum.GetValues(
-			typeof(ModifierFlags)
+		private static PluginFlags[] flags = (PluginFlags[])Enum.GetValues(
+			typeof(PluginFlags)
 		);
 
-		public static IEnumerable<ModifierFlags> GetFlags(this ModifierFlags hook) {
+		public static IEnumerable<PluginFlags> GetFlags(this PluginFlags hook) {
 			return ModifierHookExtensions.flags.Where(flag => hook.HasFlag(flag));
 		}
 	}

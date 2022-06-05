@@ -7,7 +7,7 @@ public interface ILoadout
 	void Circle();
 }
 
-public class LoadoutMB : MonoBehaviour, ILoadout, Routines.IFuncFactory
+public class LoadoutMB : MonoBehaviour, ILoadout, Routines.ITemplate
 {
 	public Transform? slot;
 	public AnimationMB? animator;

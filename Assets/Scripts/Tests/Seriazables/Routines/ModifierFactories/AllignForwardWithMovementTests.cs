@@ -8,8 +8,8 @@ namespace Routines
 		[Test]
 		public void AllignForwardUp() {
 			var agent = new GameObject();
-			var plugin = new AllignForwardWithMovement();
-			var modify = plugin.GetModifierFnFor(agent)(new Data())!;
+			var plugin = new AlignForwardWithMovement();
+			var modify = plugin.GetPluginFnFor(agent)(new Data())!;
 
 			modify();
 
@@ -23,8 +23,8 @@ namespace Routines
 		[Test]
 		public void AllignForwardLeft() {
 			var agent = new GameObject();
-			var plugin = new AllignForwardWithMovement();
-			var modify = plugin.GetModifierFnFor(agent)(new Data())!;
+			var plugin = new AlignForwardWithMovement();
+			var modify = plugin.GetPluginFnFor(agent)(new Data())!;
 
 			modify();
 
@@ -38,8 +38,8 @@ namespace Routines
 		[Test]
 		public void AllignForwardWithMovement() {
 			var agent = new GameObject();
-			var plugin = new AllignForwardWithMovement();
-			var modify = plugin.GetModifierFnFor(agent)(new Data())!;
+			var plugin = new AlignForwardWithMovement();
+			var modify = plugin.GetPluginFnFor(agent)(new Data())!;
 
 			agent.transform.position = Vector3.up;
 

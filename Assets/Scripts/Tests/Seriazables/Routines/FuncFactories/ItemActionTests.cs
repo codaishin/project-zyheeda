@@ -21,11 +21,11 @@ namespace Routines
 			}
 		}
 
-		class MockPluginSO : ScriptableObject, IModifierFactory
+		class MockPluginSO : ScriptableObject, IPlugin
 		{
 			public Action<Data> action = _ => { };
 
-			public ModifierFn GetModifierFnFor(GameObject agent) {
+			public PluginFn GetPluginFnFor(GameObject agent) {
 				return d => () => this.action(d);
 			}
 		}
@@ -75,10 +75,10 @@ namespace Routines
 			var useItem = new ItemAction {
 				hitter = Reference<IHit>.ScriptableObject(hitter),
 				effect = Reference<IApplicable<Transform>>.Component(effect),
-				modifiers = new[] {
-					new ModifierData {
-						hook = ModifierFlags.OnBeginSubRoutine,
-						factory = Reference<IModifierFactory>.ScriptableObject(plugin),
+				plugins = new[] {
+					new PluginData {
+						flag = PluginFlags.OnBeginSubRoutine,
+						plugin = Reference<IPlugin>.ScriptableObject(plugin),
 					},
 				},
 			};
@@ -141,10 +141,10 @@ namespace Routines
 			var useItem = new ItemAction {
 				hitter = Reference<IHit>.ScriptableObject(hitter),
 				effect = Reference<IApplicable<Transform>>.Component(effect),
-				modifiers = new[] {
-					new ModifierData {
-						hook = ModifierFlags.OnEndSubroutine,
-						factory = Reference<IModifierFactory>.ScriptableObject(plugin),
+				plugins = new[] {
+					new PluginData {
+						flag = PluginFlags.OnEndSubroutine,
+						plugin = Reference<IPlugin>.ScriptableObject(plugin),
 					},
 				},
 			};

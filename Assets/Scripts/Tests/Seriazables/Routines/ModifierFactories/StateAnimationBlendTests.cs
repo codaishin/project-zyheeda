@@ -26,7 +26,7 @@ namespace Routines
 			agent.blend = (state, value) => called = (state, value);
 			plugin.blendState = (Animation.BlendState)(42);
 
-			var blend = plugin.GetModifierFnFor(agent.gameObject)(data)!;
+			var blend = plugin.GetPluginFnFor(agent.gameObject)(data)!;
 
 			yield return new WaitForEndOfFrame();
 
@@ -47,7 +47,7 @@ namespace Routines
 			child.transform.parent = agent.transform;
 			plugin.blendState = (Animation.BlendState)(33);
 
-			var blend = plugin.GetModifierFnFor(agent.gameObject)(data)!;
+			var blend = plugin.GetPluginFnFor(agent.gameObject)(data)!;
 
 			yield return new WaitForEndOfFrame();
 

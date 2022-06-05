@@ -25,7 +25,7 @@ namespace Routines
 
 			yield return new WaitForEndOfFrame();
 
-			var modifierFn = plugin.GetModifierFnFor(agent.gameObject);
+			var modifierFn = plugin.GetPluginFnFor(agent.gameObject);
 			var setState = modifierFn(new Data())!;
 
 			setState();
@@ -46,7 +46,7 @@ namespace Routines
 
 			yield return new WaitForEndOfFrame();
 
-			var modifierFn = plugin.GetModifierFnFor(agent.gameObject);
+			var modifierFn = plugin.GetPluginFnFor(agent.gameObject);
 			var setState = modifierFn(new Data())!;
 
 			setState();

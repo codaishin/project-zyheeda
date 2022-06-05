@@ -74,8 +74,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c0bf911bd0dba86428d5960337d3500f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   delayApply: 0
 --- !u!1 &1287581792
 GameObject:
@@ -122,8 +122,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b5081523c9ace734bbde1dddebdfea4c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   inputConfigSO: {fileID: 11400000, guid: cc25959ff6fb7d24bb7768115be8703c, type: 2}
   onPerformed: 1
   onCanceled: 0
@@ -174,8 +174,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7c8616e0938ebde4d9b819b847b20662, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   slot: {fileID: 6834114029933911244}
   animator: {fileID: 1338006734}
   items:
@@ -225,8 +225,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b5081523c9ace734bbde1dddebdfea4c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   inputConfigSO: {fileID: 11400000, guid: cc25959ff6fb7d24bb7768115be8703c, type: 2}
   onPerformed: 1
   onCanceled: 0
@@ -243,8 +243,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9b4a1b906345a4249a2a3f59c56ea9fa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   runner:
     value: {fileID: 8328515223519877874}
   routineFactory:
@@ -259,9 +259,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b0b172c2cfab6c744b256e6dc958f3a3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  routineFuncFactory:
+  m_Name:
+  m_EditorClassIdentifier:
+  template:
     value: {fileID: 511523847885116985}
   agent:
     gameObject: {fileID: 7584915075398348528}
@@ -308,8 +308,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 038715a082dcb0842917692aa7659aab, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   loadout:
     value: {fileID: 511523847885116985}
 --- !u!1 &1594313532673452562
@@ -354,8 +354,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c0bf911bd0dba86428d5960337d3500f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   delayApply: 0
 --- !u!1 &2162708965769462361
 GameObject:
@@ -403,8 +403,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b5081523c9ace734bbde1dddebdfea4c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   inputConfigSO: {fileID: 11400000, guid: cc25959ff6fb7d24bb7768115be8703c, type: 2}
   onPerformed: 1
   onCanceled: 0
@@ -421,8 +421,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9b4a1b906345a4249a2a3f59c56ea9fa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   runner:
     value: {fileID: 8328515223519877874}
   routineFactory:
@@ -437,9 +437,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b0b172c2cfab6c744b256e6dc958f3a3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  routineFuncFactory:
+  m_Name:
+  m_EditorClassIdentifier:
+  template:
     value: {fileID: 11400000, guid: dc90fcd556d48664c80ab166bdfa2087, type: 2}
   agent:
     gameObject: {fileID: 7584915075398348528}
@@ -454,8 +454,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b5081523c9ace734bbde1dddebdfea4c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   inputConfigSO: {fileID: 11400000, guid: cc25959ff6fb7d24bb7768115be8703c, type: 2}
   onPerformed: 0
   onCanceled: 1
@@ -472,8 +472,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 30b51351f2149a143a1a81e1fb1534ca, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   stopper:
     value: {fileID: 8328515223519877874}
   softStopAttempts: 1
@@ -523,8 +523,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9b4a1b906345a4249a2a3f59c56ea9fa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   runner:
     value: {fileID: 1151757391}
   routineFactory:
@@ -539,9 +539,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b0b172c2cfab6c744b256e6dc958f3a3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  routineFuncFactory:
+  m_Name:
+  m_EditorClassIdentifier:
+  template:
     value: {fileID: 7135120869041784572}
   agent:
     gameObject: {fileID: 1287581792}
@@ -556,10 +556,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 42ffcb242c736c04faf71920366f4932, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  factory:
-    modifiers: []
+  m_Name:
+  m_EditorClassIdentifier:
+  template:
+    plugins: []
     cooldown: 1
 --- !u!1 &3120450725131024759
 GameObject:
@@ -621,8 +621,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ff6b4c13011f29d4bbbc4d7a81a22fd0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   health:
     hp: 0
     maxHp: 100
@@ -670,8 +670,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b5081523c9ace734bbde1dddebdfea4c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   inputConfigSO: {fileID: 11400000, guid: cc25959ff6fb7d24bb7768115be8703c, type: 2}
   onPerformed: 1
   onCanceled: 0
@@ -688,8 +688,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9b4a1b906345a4249a2a3f59c56ea9fa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   runner:
     value: {fileID: 8328515223519877874}
   routineFactory:
@@ -704,9 +704,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b0b172c2cfab6c744b256e6dc958f3a3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  routineFuncFactory:
+  m_Name:
+  m_EditorClassIdentifier:
+  template:
     value: {fileID: 11400000, guid: d42a1e74102d06946a27674dc56c2481, type: 2}
   agent:
     gameObject: {fileID: 7584915075398348528}
@@ -756,8 +756,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56e53b0d9bd25a54cb1ccbb330a81f58, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   referenceSO: {fileID: 11400000, guid: 1581ede234bcf8449a707bf6512f1637, type: 2}
 --- !u!1 &7589812162931759910
 GameObject:
@@ -801,8 +801,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 30b51351f2149a143a1a81e1fb1534ca, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   stopper:
     value: {fileID: 8328515223519877874}
   softStopAttempts: 1
@@ -888,8 +888,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b5081523c9ace734bbde1dddebdfea4c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   inputConfigSO: {fileID: 11400000, guid: cc25959ff6fb7d24bb7768115be8703c, type: 2}
   onPerformed: 1
   onCanceled: 0
@@ -906,8 +906,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9b4a1b906345a4249a2a3f59c56ea9fa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   runner:
     value: {fileID: 8328515223519877874}
   routineFactory:
@@ -922,9 +922,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b0b172c2cfab6c744b256e6dc958f3a3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  routineFuncFactory:
+  m_Name:
+  m_EditorClassIdentifier:
+  template:
     value: {fileID: 11400000, guid: 56f212e2f9f9e2b4785eb2c7649aa2cc, type: 2}
   agent:
     gameObject: {fileID: 7584915075398348528}
@@ -1037,8 +1037,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bec57db7ab191bb4589f533671bf3eea, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
 --- !u!1001 &7751218681714315049
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1096,7 +1096,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5866666021909216657, guid: 68517d75af1a753479b4bffa05bdd920, type: 3}
       propertyPath: m_Controller
-      value: 
+      value:
       objectReference: {fileID: 9100000, guid: a6e92ae5c44fbee46a2a83fcd358db6b, type: 2}
     - target: {fileID: 5866666021909216657, guid: 68517d75af1a753479b4bffa05bdd920, type: 3}
       propertyPath: m_ApplyRootMotion
@@ -1124,8 +1124,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6c281cc3491e9fe408c107dbd3549d60, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
 --- !u!4 &7789931236180977858 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 68517d75af1a753479b4bffa05bdd920, type: 3}

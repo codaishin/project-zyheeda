@@ -16,7 +16,7 @@ namespace Routines
 
 			yield return new WaitForEndOfFrame();
 
-			var modifierFn = plugin.GetModifierFnFor(agent)!;
+			var modifierFn = plugin.GetPluginFnFor(agent)!;
 			var face = modifierFn(data)!;
 
 			target.transform.position = Vector3.left;
@@ -35,7 +35,7 @@ namespace Routines
 
 			yield return new WaitForEndOfFrame();
 
-			var modifiers = plugin.GetModifierFnFor(agent)!;
+			var modifiers = plugin.GetPluginFnFor(agent)!;
 			var face = modifiers(data)!;
 
 			target.transform.position = Vector3.left;
@@ -55,7 +55,7 @@ namespace Routines
 
 			yield return new WaitForEndOfFrame();
 
-			var modifierFn = plugin.GetModifierFnFor(agent)!;
+			var modifierFn = plugin.GetPluginFnFor(agent)!;
 			var face = modifierFn(data)!;
 
 			target.transform.position = Vector3.up + Vector3.right;
@@ -74,7 +74,7 @@ namespace Routines
 
 			yield return new WaitForEndOfFrame();
 
-			var modifierFn = plugin.GetModifierFnFor(agent)!;
+			var modifierFn = plugin.GetPluginFnFor(agent)!;
 			var face = modifierFn(data)!;
 
 			Assert.DoesNotThrow(() => face());
