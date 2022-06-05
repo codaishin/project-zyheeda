@@ -67,9 +67,7 @@ namespace Routines
 			ItemActionData agent,
 			Transform target
 		) {
-			Func<bool> notElapsed;
-
-			notElapsed = ItemAction.NotElapsed(this.preCastSeconds);
+			var notElapsed = ItemAction.NotElapsed(this.preCastSeconds);
 			while (notElapsed()) {
 				yield return new WaitForEndOfFrame();
 			}

@@ -5,5 +5,5 @@ public interface IStoppable
 
 public interface IStoppable<T>
 {
-	void Stop(T value, int softStopAttempts);
+	void Stop(T key, int softStopAttempts);
 }

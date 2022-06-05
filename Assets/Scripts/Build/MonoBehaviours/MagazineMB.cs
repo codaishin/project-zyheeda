@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public abstract class BaseMagazineMB<TProjectile> :
@@ -16,10 +17,17 @@ public abstract class BaseMagazineMB<TProjectile> :
 			this.spawnPoint!.position,
 			Quaternion.identity
 		)!;
-		projectile.Apply(target);
+		var apply = BaseMagazineMB<TProjectile>.DelayedApply(projectile, target);
+		projectile.StartCoroutine(apply);
 	}
 
-	public void Release(Transform target) { }
+	private static IEnumerator<WaitForEndOfFrame> DelayedApply(
+		TProjectile projectile,
+		Transform target
+	) {
+		yield return new WaitForEndOfFrame();
+		projectile.Apply(target);
+	}
 }
 
 public class MagazineMB : BaseMagazineMB<ProjectileMB> { }

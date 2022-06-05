@@ -67,4 +67,26 @@ public class MagazineMBTests : TestCollection
 
 		Assert.AreSame(target, spawned.calledApply);
 	}
+
+	[UnityTest]
+	public IEnumerator CallProjectileApplyNextFrame() {
+		var magazine = new GameObject().AddComponent<MockMagazineMB>();
+		var prefab = new GameObject().AddComponent<MockApplyMB>();
+		var target = new GameObject().transform;
+		var spawnPoint = new GameObject().transform;
+
+		magazine.prefab = prefab;
+		magazine.spawnPoint = spawnPoint;
+
+		yield return new WaitForEndOfFrame();
+
+		magazine.Apply(target);
+
+		var spawned = GameObject
+			.FindObjectsOfType<MockApplyMB>(true)
+			.Where(projectile => projectile != prefab)
+			.First();
+
+		Assert.Null(spawned.calledApply);
+	}
 }
