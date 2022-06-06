@@ -67,8 +67,10 @@
 	},
 	"cSpell.words": [
 		"applicables",
+		"Gamepad",
 		"lerp",
 		"Mathf",
-		"MonoBehaviour"
+		"MonoBehaviour",
+		"Scriptable"
 	],
 }

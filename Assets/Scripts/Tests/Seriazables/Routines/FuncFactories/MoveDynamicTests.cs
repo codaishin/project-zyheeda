@@ -24,11 +24,11 @@ namespace Routines
 
 		class MockMB : MonoBehaviour { }
 
-		class MockPluginSO : ScriptableObject, IModifierFactory
+		class MockPluginSO : ScriptableObject, IPlugin
 		{
-			public Func<GameObject, ModifierFn> getCallbacks = _ => _ => null;
+			public Func<GameObject, PluginFn> getCallbacks = _ => _ => null;
 
-			public ModifierFn GetModifierFnFor(GameObject agent) =>
+			public PluginFn GetPluginFnFor(GameObject agent) =>
 				this.getCallbacks(agent);
 		}
 
@@ -322,10 +322,10 @@ namespace Routines
 				weight = 200,
 			};
 
-			move.modifiers = new[] {
-				new ModifierData {
-					hook = ModifierFlags.OnUpdateSubRoutine,
-					factory = Reference<IModifierFactory>.ScriptableObject(plugin),
+			move.plugins = new[] {
+				new PluginData {
+					flag = PluginFlags.OnUpdateSubRoutine,
+					plugin = Reference<IPlugin>.ScriptableObject(plugin),
 				},
 			};
 

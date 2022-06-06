@@ -141,11 +141,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0cd59ec829034a24aa472e7aa723c8fb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   target: {fileID: 0}
   apply:
-    value: {fileID: 6194274662126432621}
+    value: {fileID: 3760164117269264671}
 --- !u!1 &5005090034301373617
 GameObject:
   m_ObjectHideFlags: 0
@@ -155,7 +155,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1160849139808051550}
-  - component: {fileID: 6194274662126432621}
   - component: {fileID: 3498958539416838655}
   - component: {fileID: 3760164117269264671}
   m_Layer: 0
@@ -180,22 +179,6 @@ Transform:
   m_Father: {fileID: 2685238607673821598}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6194274662126432621
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5005090034301373617}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9b4a1b906345a4249a2a3f59c56ea9fa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  runner:
-    value: {fileID: 3498958539416838655}
-  routineFactory:
-    value: {fileID: 3760164117269264671}
 --- !u!114 &3498958539416838655
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -206,8 +189,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c0bf911bd0dba86428d5960337d3500f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   delayApply: 1
 --- !u!114 &3760164117269264671
 MonoBehaviour:
@@ -219,10 +202,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b0b172c2cfab6c744b256e6dc958f3a3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  routineFuncFactory:
+  m_Name:
+  m_EditorClassIdentifier:
+  template:
     value: {fileID: 11400000, guid: 5f172df60d0660c4299987c0f19023db, type: 2}
   agent:
     gameObject: {fileID: 2685238607673821597}
     referenceSO: {fileID: 0}
+  runner:
+    value: {fileID: 3498958539416838655}

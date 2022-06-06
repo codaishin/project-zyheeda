@@ -7,10 +7,10 @@ namespace Routines
 		[Test]
 		public
 		void GetFlagsBegin() {
-			var hook = ModifierFlags.OnBegin;
+			var hook = PluginFlags.OnBegin;
 
 			CollectionAssert.AreEquivalent(
-				new[] { ModifierFlags.OnBegin },
+				new[] { PluginFlags.OnBegin },
 				hook.GetFlags()
 			);
 		}
@@ -18,10 +18,10 @@ namespace Routines
 		[Test]
 		public
 		void GetFlagsBeginAndEnd() {
-			var hook = ModifierFlags.OnBegin | ModifierFlags.OnEnd;
+			var hook = PluginFlags.OnBegin | PluginFlags.OnEnd;
 
 			CollectionAssert.AreEquivalent(
-				new[] { ModifierFlags.OnBegin, ModifierFlags.OnEnd },
+				new[] { PluginFlags.OnBegin, PluginFlags.OnEnd },
 				hook.GetFlags()
 			);
 		}

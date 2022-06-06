@@ -189,11 +189,11 @@ namespace Routines
 			Assert.AreEqual(Vector3.zero, agent.transform.position);
 		}
 
-		class MockPluginSO : ScriptableObject, IModifierFactory
+		class MockPluginSO : ScriptableObject, IPlugin
 		{
-			public Func<GameObject, ModifierFn> getCallbacks = _ => _ => null;
+			public Func<GameObject, PluginFn> getCallbacks = _ => _ => null;
 
-			public ModifierFn GetModifierFnFor(
+			public PluginFn GetPluginFnFor(
 				GameObject agent
 			) => this.getCallbacks(agent);
 		}
@@ -207,10 +207,10 @@ namespace Routines
 				hitter = Reference<IHit>.ScriptableObject(hitSO),
 				speed = 1f,
 				weight = 0.0112f,
-				modifiers = new[] {
-					new ModifierData {
-						hook = ModifierFlags.OnBeginSubRoutine,
-						factory = Reference<IModifierFactory>.ScriptableObject(pluginSO),
+				plugins = new[] {
+					new PluginData {
+						flag = PluginFlags.OnBeginSubRoutine,
+						plugin = Reference<IPlugin>.ScriptableObject(pluginSO),
 					},
 				},
 			};

@@ -61,12 +61,11 @@ public class InputListenerMBTests : TestCollection
 		var so = ScriptableObject.CreateInstance<MockInputConfigSO>();
 		var mb = new GameObject("obj").AddComponent<InputListenerMB>();
 		var apply = new GameObject("apply").AddComponent<MockApplicableMB>();
-		mb.apply = new Reference<IApplicable>[] {
+		mb.onPerformed = new Reference<IApplicable>[] {
 			Reference<IApplicable>.Component(apply),
 		};
 		mb.inputConfigSO = so;
 		mb.listenTo = InputEnum.Action.Walk;
-		mb.onPerformed = true;
 		so.actions.Values.ForEach(a => a.Enable());
 
 		yield return new WaitForEndOfFrame();
@@ -86,12 +85,11 @@ public class InputListenerMBTests : TestCollection
 		var so = ScriptableObject.CreateInstance<MockInputConfigSO>();
 		var mb = new GameObject("obj").AddComponent<InputListenerMB>();
 		var apply = new GameObject("apply").AddComponent<MockApplicableMB>();
-		mb.apply = new Reference<IApplicable>[] {
+		mb.onPerformed = new Reference<IApplicable>[] {
 			Reference<IApplicable>.Component(apply),
 		};
 		mb.inputConfigSO = so;
 		mb.listenTo = InputEnum.Action.Run;
-		mb.onPerformed = true;
 		so.actions.Values.ForEach(a => a.Enable());
 
 		yield return new WaitForEndOfFrame();
@@ -111,12 +109,11 @@ public class InputListenerMBTests : TestCollection
 		var so = ScriptableObject.CreateInstance<MockInputConfigSO>();
 		var mb = new GameObject("obj").AddComponent<InputListenerMB>();
 		var apply = new GameObject("apply").AddComponent<MockApplicableMB>();
-		mb.apply = new Reference<IApplicable>[] {
+		mb.onPerformed = new Reference<IApplicable>[] {
 			Reference<IApplicable>.Component(apply),
 		};
 		mb.inputConfigSO = so;
 		mb.listenTo = InputEnum.Action.Walk;
-		mb.onPerformed = true;
 		so.actions.Values.ForEach(a => a.Enable());
 
 		yield return new WaitForEndOfFrame();
@@ -153,12 +150,11 @@ public class InputListenerMBTests : TestCollection
 		var so = ScriptableObject.CreateInstance<MockInputConfigSO>();
 		var mb = new GameObject("obj").AddComponent<InputListenerMB>();
 		var apply = new GameObject("apply").AddComponent<MockApplicableMB>();
-		mb.apply = new Reference<IApplicable>[] {
+		mb.onCanceled = new Reference<IApplicable>[] {
 			Reference<IApplicable>.Component(apply),
 		};
 		mb.inputConfigSO = so;
 		mb.listenTo = InputEnum.Action.Walk;
-		mb.onCanceled = true;
 		so.actions.Values.ForEach(a => a.Enable());
 
 		yield return new WaitForEndOfFrame();
@@ -187,10 +183,9 @@ public class InputListenerMBTests : TestCollection
 			 new GameObject("apply a").AddComponent<MockApplicableMB>(),
 			 new GameObject("apply b").AddComponent<MockApplicableMB>(),
 		};
-		mb.apply = apply.Select(Reference<IApplicable>.Component).ToArray();
+		mb.onCanceled = apply.Select(Reference<IApplicable>.Component).ToArray();
 		mb.inputConfigSO = so;
 		mb.listenTo = InputEnum.Action.Walk;
-		mb.onCanceled = true;
 		so.actions.Values.ForEach(a => a.Enable());
 
 		yield return new WaitForEndOfFrame();
@@ -209,39 +204,6 @@ public class InputListenerMBTests : TestCollection
 
 		CollectionAssert.AreEqual(
 			new int[] { 1, 1 },
-			apply.Select(a => a.calledApply)
-		);
-	}
-
-	[UnityTest]
-	public IEnumerator NotCalledAtAll() {
-		var so = ScriptableObject.CreateInstance<MockInputConfigSO>();
-		var mb = new GameObject("obj").AddComponent<InputListenerMB>();
-		var apply = new MockApplicableMB[] {
-			 new GameObject("apply a").AddComponent<MockApplicableMB>(),
-			 new GameObject("apply b").AddComponent<MockApplicableMB>(),
-		};
-		mb.apply = apply.Select(Reference<IApplicable>.Component).ToArray();
-		mb.inputConfigSO = so;
-		mb.listenTo = InputEnum.Action.Walk;
-		so.actions.Values.ForEach(a => a.Enable());
-
-		yield return new WaitForEndOfFrame();
-
-		InputSystem.QueueStateEvent(
-			this.pad!,
-			new GamepadState { leftTrigger = 1f }
-		);
-
-		InputSystem.QueueStateEvent(
-			this.pad!,
-			new GamepadState { leftTrigger = 0f }
-		);
-
-		yield return new WaitForEndOfFrame();
-
-		CollectionAssert.AreEqual(
-			new int[] { 0, 0 },
 			apply.Select(a => a.calledApply)
 		);
 	}
